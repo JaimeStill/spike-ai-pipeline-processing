@@ -1,0 +1,11 @@
+# marathon working files.
+.claude/plans/
+.claude/briefs/
+
+# Build and coverage artifacts.
+bin/
+*.test
+coverage.out
+
+# Untracked spike state.
+.state/

@@ -1,0 +1,51 @@
+# mise: the toolchain and the check, currency, and integration tasks.
+[tools]
+go = "1.27.3"
+golangci-lint = "2.15.0"
+jq = "1.8.2"
+shellcheck = "0.11.0"
+
+[env]
+# The repository's Go modules, as directories; tasks run in each one.
+GO_MODULES = "."
+# The router the integration tier reads: gb10-2's llama.cpp router, serving set A, named by its
+# MagicDNS short name. A shell may point it elsewhere.
+SPIKE_ROUTER_URL = "{{ get_env(name='SPIKE_ROUTER_URL', default='http://gb10-2:8080') }}"
+
+[tasks.check]
+description = "Build, vet, format, fix, tidy, test, and lint every module and script; writes nothing"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+git ls-files -z '*.sh' | xargs -0 -r shellcheck
+for mod in $GO_MODULES; do
+  echo "check: $mod"
+  cd "$MISE_PROJECT_ROOT/$mod"
+  go build ./...
+  go vet ./...
+  unformatted=$(gofmt -l .)
+  if [ -n "$unformatted" ]; then echo "gofmt: unformatted files:"; echo "$unformatted"; exit 1; fi
+  go fix -diff ./...
+  go mod tidy -diff
+  go test -race ./...
+  golangci-lint run ./...
+  golangci-lint run --build-tags integration ./...
+done
+'''
+
+# The integration tier runs the integration-tagged tests against SPIKE_ROUTER_URL. It never
+# starts a server on this machine.
+[tasks.integration]
+description = "Run the integration-tagged tests against SPIKE_ROUTER_URL"
+run = '''
+set -eu
+export GOWORK=off
+for mod in $GO_MODULES; do
+  (cd "$MISE_PROJECT_ROOT/$mod" && go test -race -tags integration -count=1 ./...)
+done
+'''
+
+[tasks.currency]
+description = "Report every requirement, Go version, and tool behind its latest; writes nothing"
+run = "scripts/currency.sh"
