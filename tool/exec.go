@@ -12,6 +12,7 @@ import (
 	"slices"
 	"syscall"
 	"time"
+	"unsafe"
 )
 
 // NewExec builds a Tool that runs spec's program directly. It validates the spec, then finds the
@@ -86,7 +87,8 @@ func lookPath(program string) (string, error) {
 //
 // The program leads a process group of its own, so a cancel reaches everything it started:
 // SIGTERM to the group when ctx ends; SIGKILL to the program once killAfter passes (WaitDelay);
-// and, once the program has exited, SIGKILL to the group, so no child outlives it.
+// and, once the program has exited but before it is reaped, SIGKILL to the group, so no child
+// outlives it.
 func execRun(name, path string, lead []string, killAfter time.Duration) runFunc {
 	return func(ctx context.Context, inv Invocation) error {
 		cmd := exec.CommandContext(ctx, path, slices.Concat(lead, inv.Args)...)
@@ -102,14 +104,19 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 		}
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 		cmd.Cancel = func() error { return signalGroup(cmd.Process, syscall.SIGTERM) }
-		// WaitDelay also bounds the wait for a child that holds the program's output pipes after
-		// the program exits; the group's SIGKILL below then ends that child.
+		// WaitDelay's timer starts when ctx ends, in Start's own goroutine, so it SIGKILLs a
+		// program that outlasts killAfter while awaitExit blocks.
 		cmd.WaitDelay = killAfter
-		err := cmd.Run()
-		if ctx.Err() != nil && cmd.Process != nil {
-			// The leader is reaped, but a live member keeps the group's ID from reuse; an empty
-			// group gives ESRCH, which is ignored.
-			_ = signalGroup(cmd.Process, syscall.SIGKILL)
+		err := cmd.Start()
+		if err == nil {
+			// The program is exited but unreaped once awaitExit returns: a zombie keeps its pid,
+			// and so the group's ID, from reuse, so the group's SIGKILL reaches only what the
+			// program started. Should waitid fail, which Linux has offered since 2.6.9, the
+			// group is left alone rather than risk a reused ID.
+			if awaitExit(cmd.Process.Pid) == nil && ctx.Err() != nil {
+				_ = signalGroup(cmd.Process, syscall.SIGKILL)
+			}
+			err = cmd.Wait()
 		}
 		if err != nil && ctx.Err() != nil {
 			// ctx ended the run: its error is the cause, whatever the program's exit.
@@ -126,6 +133,27 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 			return fmt.Errorf("tool: %s: %w", name, err)
 		}
 		return nil
+	}
+}
+
+// pPID is waitid's idtype for a single pid, P_PID, which syscall doesn't define.
+const pPID = 1
+
+// awaitExit blocks until the child pid has exited, without reaping it: waitid with WNOWAIT
+// leaves the child waitable, so the os.Process's own wait, through its pidfd, still reaps it and
+// collects its status. The os package's wait does the same where it has no pidfd.
+func awaitExit(pid int) error {
+	// The kernel writes a siginfo_t, 128 bytes on Linux, which nothing here reads.
+	var info [128]byte
+	for {
+		_, _, errno := syscall.Syscall6(syscall.SYS_WAITID, pPID, uintptr(pid),
+			uintptr(unsafe.Pointer(&info)), syscall.WEXITED|syscall.WNOWAIT, 0, 0)
+		if errno != syscall.EINTR {
+			if errno != 0 {
+				return errno
+			}
+			return nil
+		}
 	}
 }
 

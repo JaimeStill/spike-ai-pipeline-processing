@@ -80,6 +80,25 @@ func TestCancelEndsChild(t *testing.T) {
 	assertGone(t, pid)
 }
 
+func TestCancelEndsChildHoldingOutput(t *testing.T) {
+	installStandin(t)
+	tl := newStandin(t) // the default KillAfter period, 10 s
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	pidFile := filepath.Join(t.TempDir(), "child.pid")
+	// The child holds the stdout and stderr pipes, so Wait can't finish until it dies; only the
+	// group's SIGKILL at its parent's exit ends it before WaitDelay closes the pipes.
+	done := runAsync(ctx, tl, tool.Invocation{Args: []string{"spawn", pidFile, "held"}, Stdout: newReadyWriter()})
+	pid := readPid(t, pidFile)
+	start := time.Now()
+	cancel()
+	assertContextError(t, <-done, context.Canceled)
+	if elapsed := time.Since(start); elapsed > 5*time.Second {
+		t.Errorf("Run took %v after cancel, want well under the 10 s KillAfter period", elapsed)
+	}
+	assertGone(t, pid)
+}
+
 func TestDeadlineExceeded(t *testing.T) {
 	installStandin(t)
 	tl := newStandin(t)

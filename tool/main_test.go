@@ -48,8 +48,8 @@ func TestMain(m *testing.M) {
 //	                  sleeps D and exits 1
 //	stubborn D [FILE] ignores SIGTERM, then writes ready to stdout and its pid to FILE, then
 //	                  sleeps D and exits 1
-//	spawn FILE        starts a stubborn child with no streams, which writes its pid to FILE,
-//	                  then acts as sleep 1m
+//	spawn FILE [held] starts a stubborn child, which writes its pid to FILE, then acts as
+//	                  sleep 1m; the child has no streams, or with held, holds stdout and stderr
 func standin(args []string) int {
 	if len(args) == 0 {
 		fmt.Fprintln(os.Stderr, "standin: no command")
@@ -97,7 +97,7 @@ func standin(args []string) int {
 		time.Sleep(duration(args[1]))
 		return 1
 	case "spawn":
-		return spawn(args[1])
+		return spawn(args[1], len(args) > 2 && args[2] == "held")
 	}
 	fmt.Fprintf(os.Stderr, "standin: unknown command %q\n", args[0])
 	return 2
@@ -116,16 +116,20 @@ func sleep(d string) int {
 	}
 }
 
-// spawn starts a stubborn stand-in as a child, in the stand-in's process group and holding none
-// of its streams, which writes its pid to file once it ignores SIGTERM; then it sleeps as sleep
-// does.
-func spawn(file string) int {
+// spawn starts a stubborn stand-in as a child, in the stand-in's process group, which writes its
+// pid to file once it ignores SIGTERM; then it sleeps as sleep does. The child holds none of the
+// stand-in's streams, or, when held, its stdout and stderr.
+func spawn(file string, held bool) int {
 	exe, err := os.Executable()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
-	if err := exec.Command(exe, "stubborn", "1m", file).Start(); err != nil {
+	child := exec.Command(exe, "stubborn", "1m", file)
+	if held {
+		child.Stdout, child.Stderr = os.Stdout, os.Stderr
+	}
+	if err := child.Start(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
