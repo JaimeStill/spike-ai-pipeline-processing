@@ -1,0 +1,179 @@
+//go:build linux
+
+package tool
+
+import (
+	"bytes"
+	"context"
+	"errors"
+	"fmt"
+	"io"
+	"regexp"
+	"strings"
+)
+
+// Spec declares a tool: its program, and how to check the program's version at construction.
+type Spec struct {
+	// Program is a name looked up on PATH, or a path, which is taken as given when it contains a
+	// separator.
+	Program string
+	// VersionArgs are the arguments that make the program print its version.
+	VersionArgs []string
+	// VersionPattern matches the version command's output, stdout and stderr together; its first
+	// capture group is the version, dotted numbers only.
+	VersionPattern *regexp.Regexp
+	// Minimum is the oldest version the tool accepts, dotted numbers.
+	Minimum string
+}
+
+// Invocation is one run of a tool. It names nothing about the runner, so an adapter builds the
+// same Invocation whichever runner built its Tool.
+type Invocation struct {
+	// Args are the program's arguments, the program's name not among them.
+	Args []string
+	// Dir is the working directory, which the caller owns; empty is the process's own.
+	Dir string
+	// Stdin is the program's standard input; nil is none.
+	Stdin io.Reader
+	// Stdout receives the program's standard output; nil discards it.
+	Stdout io.Writer
+	// Stderr receives all of the program's standard error; nil keeps its last 4 KiB for the
+	// ExitError instead.
+	Stderr io.Writer
+}
+
+// runFunc runs one invocation of a bound program; each runner supplies its own.
+type runFunc func(ctx context.Context, inv Invocation) error
+
+// Tool is one program, found and version-checked by the runner's constructor that built it.
+type Tool struct {
+	name    string
+	version Version
+	run     runFunc
+}
+
+// Name returns the program's name.
+func (t *Tool) Name() string { return t.name }
+
+// Version returns the program's version, found at construction.
+func (t *Tool) Version() Version { return t.version }
+
+// Run runs the program once, under ctx. A program that exits nonzero gives an *ExitError.
+func (t *Tool) Run(ctx context.Context, inv Invocation) error { return t.run(ctx, inv) }
+
+// stderrTail is how much of a program's standard error an ExitError keeps.
+const stderrTail = 4 << 10
+
+// ExitError reports a program that exited nonzero.
+type ExitError struct {
+	// Program is the program's name.
+	Program string
+	// Code is the exit code, -1 when a signal ended the program.
+	Code int
+	// Stderr is the last 4 KiB of the program's standard error, empty when the caller passed a
+	// writer for it.
+	Stderr string
+	err    error
+}
+
+func (e *ExitError) Error() string {
+	msg := fmt.Sprintf("tool: %s: exit code %d", e.Program, e.Code)
+	if s := strings.TrimSpace(e.Stderr); s != "" {
+		msg += ": " + s
+	}
+	return msg
+}
+
+// Unwrap returns the runner's own error, an *exec.ExitError for the exec runner.
+func (e *ExitError) Unwrap() error { return e.err }
+
+// VersionError reports a tool its constructor refused over its version: the version command
+// failed, its output didn't match the pattern, or the version is older than the minimum.
+type VersionError struct {
+	// Program is the program's name.
+	Program string
+	// Found is the version found, empty when none was.
+	Found string
+	// Minimum is the oldest version the tool accepts.
+	Minimum string
+	// Err is the cause: ErrTooOld, ErrNoVersion, or the version command's error.
+	Err error
+}
+
+func (e *VersionError) Error() string {
+	found := e.Found
+	if found == "" {
+		found = "none"
+	}
+	return fmt.Sprintf("tool: %s: version %s, minimum %s: %v", e.Program, found, e.Minimum, e.Err)
+}
+
+func (e *VersionError) Unwrap() error { return e.Err }
+
+var (
+	// ErrTooOld is a VersionError's cause when the version is older than the minimum.
+	ErrTooOld = errors.New("older than the minimum")
+	// ErrNoVersion is a VersionError's cause when the version output doesn't match the pattern,
+	// or its capture isn't dotted numbers.
+	ErrNoVersion = errors.New("no version in the output")
+)
+
+// checkVersion runs the spec's version command through run and checks the version it prints
+// against the minimum, returning the version found.
+func checkVersion(ctx context.Context, name string, spec Spec, run runFunc) (Version, error) {
+	if spec.VersionPattern == nil || spec.VersionPattern.NumSubexp() < 1 {
+		return Version{}, fmt.Errorf("tool: %s: version pattern must have a capture group", name)
+	}
+	minimum, err := ParseVersion(spec.Minimum)
+	if err != nil {
+		return Version{}, fmt.Errorf("tool: %s: minimum: %w", name, err)
+	}
+	var out bytes.Buffer
+	verr := &VersionError{Program: name, Minimum: spec.Minimum}
+	if err := run(ctx, Invocation{Args: spec.VersionArgs, Stdout: &out, Stderr: &out}); err != nil {
+		verr.Err = fmt.Errorf("version command: %w", err)
+		if line := firstLine(out.Bytes()); line != "" {
+			verr.Err = fmt.Errorf("%w: %s", verr.Err, line)
+		}
+		return Version{}, verr
+	}
+	m := spec.VersionPattern.FindSubmatch(out.Bytes())
+	if m == nil {
+		verr.Err = fmt.Errorf("%w: %s matched none of %q", ErrNoVersion, spec.VersionPattern, firstLine(out.Bytes()))
+		return Version{}, verr
+	}
+	verr.Found = string(m[1])
+	found, err := ParseVersion(verr.Found)
+	if err != nil {
+		verr.Err = fmt.Errorf("%w: %w", ErrNoVersion, err)
+		return Version{}, verr
+	}
+	if found.Compare(minimum) < 0 {
+		verr.Err = ErrTooOld
+		return Version{}, verr
+	}
+	return found, nil
+}
+
+// firstLine returns the first line of out, at most 200 bytes, for an error's context.
+func firstLine(out []byte) string {
+	line, _, _ := bytes.Cut(bytes.TrimSpace(out), []byte("\n"))
+	if len(line) > 200 {
+		line = line[:200]
+	}
+	return string(line)
+}
+
+// tailWriter keeps the last n bytes written to it.
+type tailWriter struct {
+	n   int
+	buf []byte
+}
+
+func (w *tailWriter) Write(p []byte) (int, error) {
+	w.buf = append(w.buf, p...)
+	if over := len(w.buf) - w.n; over > 0 {
+		w.buf = append(w.buf[:0], w.buf[over:]...)
+	}
+	return len(p), nil
+}
