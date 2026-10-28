@@ -19,7 +19,7 @@ import (
 
 func TestCancelTerminates(t *testing.T) {
 	installStandin(t)
-	tl := newStandin(t) // the default grace, 10 s
+	tl := newStandin(t) // the default KillAfter period, 10 s
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	ready := newReadyWriter()
@@ -30,15 +30,15 @@ func TestCancelTerminates(t *testing.T) {
 	err := <-done
 	assertContextError(t, err, context.Canceled)
 	if elapsed := time.Since(start); elapsed > 5*time.Second {
-		t.Errorf("Run took %v after cancel, want well under the 10 s grace", elapsed)
+		t.Errorf("Run took %v after cancel, want well under the 10 s KillAfter period", elapsed)
 	}
 }
 
-func TestCancelKillsAfterGrace(t *testing.T) {
+func TestCancelKillsAfterKillAfter(t *testing.T) {
 	installStandin(t)
-	const grace = 200 * time.Millisecond
+	const killAfter = 200 * time.Millisecond
 	spec := standinSpec("standin", "1.0", "1.0")
-	spec.Grace = grace
+	spec.KillAfter = killAfter
 	tl, err := tool.NewExec(t.Context(), spec)
 	if err != nil {
 		t.Fatal(err)
@@ -53,11 +53,11 @@ func TestCancelKillsAfterGrace(t *testing.T) {
 	err = <-done
 	elapsed := time.Since(start)
 	assertContextError(t, err, context.Canceled)
-	if elapsed < grace {
-		t.Errorf("Run took %v after cancel, want at least the %v grace", elapsed, grace)
+	if elapsed < killAfter {
+		t.Errorf("Run took %v after cancel, want at least the %v KillAfter period", elapsed, killAfter)
 	}
 	if elapsed > 5*time.Second {
-		t.Errorf("Run took %v after cancel, want about the %v grace", elapsed, grace)
+		t.Errorf("Run took %v after cancel, want about the %v KillAfter period", elapsed, killAfter)
 	}
 }
 
@@ -73,9 +73,9 @@ func TestCancelEndsChild(t *testing.T) {
 	cancel()
 	assertContextError(t, <-done, context.Canceled)
 	// The child ignores SIGTERM; the group's SIGKILL ends it once its parent exits, well
-	// before the grace.
+	// before the KillAfter period.
 	if elapsed := time.Since(start); elapsed > 5*time.Second {
-		t.Errorf("Run took %v after cancel, want well under the 10 s grace", elapsed)
+		t.Errorf("Run took %v after cancel, want well under the 10 s KillAfter period", elapsed)
 	}
 	assertGone(t, pid)
 }

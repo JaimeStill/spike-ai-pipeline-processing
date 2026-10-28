@@ -28,7 +28,7 @@ func NewExec(ctx context.Context, spec Spec) (*Tool, error) {
 	if err != nil {
 		return nil, err
 	}
-	run := execRun(name, path, nil, spec.grace())
+	run := execRun(name, path, nil, spec.killAfter())
 	version, err := checkVersion(ctx, name, spec, minimum, run)
 	if err != nil {
 		return nil, err
@@ -63,12 +63,12 @@ func NewScript(ctx context.Context, spec Spec, script string) (*Tool, error) {
 	if err != nil {
 		return nil, err
 	}
-	version, err := checkVersion(ctx, interpreter, spec, minimum, execRun(interpreter, path, nil, spec.grace()))
+	version, err := checkVersion(ctx, interpreter, spec, minimum, execRun(interpreter, path, nil, spec.killAfter()))
 	if err != nil {
 		return nil, err
 	}
 	name := filepath.Base(script)
-	return &Tool{name: name, version: version, run: execRun(name, path, []string{abs}, spec.grace())}, nil
+	return &Tool{name: name, version: version, run: execRun(name, path, []string{abs}, spec.killAfter())}, nil
 }
 
 // lookPath finds program on PATH, or takes a path containing a separator as given.
@@ -81,12 +81,13 @@ func lookPath(program string) (string, error) {
 }
 
 // execRun returns the exec runner's runFunc for the program at path, which runs it with lead and
-// then the invocation's arguments, and gives a cancelled run grace between SIGTERM and SIGKILL.
+// then the invocation's arguments, and gives a cancelled run killAfter, the KillAfter period,
+// between SIGTERM and SIGKILL.
 //
 // The program leads a process group of its own, so a cancel reaches everything it started:
-// SIGTERM to the group when ctx ends; SIGKILL to the program once grace passes (WaitDelay); and,
-// once the program has exited, SIGKILL to the group, so no child outlives it.
-func execRun(name, path string, lead []string, grace time.Duration) runFunc {
+// SIGTERM to the group when ctx ends; SIGKILL to the program once killAfter passes (WaitDelay);
+// and, once the program has exited, SIGKILL to the group, so no child outlives it.
+func execRun(name, path string, lead []string, killAfter time.Duration) runFunc {
 	return func(ctx context.Context, inv Invocation) error {
 		cmd := exec.CommandContext(ctx, path, slices.Concat(lead, inv.Args)...)
 		cmd.Dir = inv.Dir
@@ -103,7 +104,7 @@ func execRun(name, path string, lead []string, grace time.Duration) runFunc {
 		cmd.Cancel = func() error { return signalGroup(cmd.Process, syscall.SIGTERM) }
 		// WaitDelay also bounds the wait for a child that holds the program's output pipes after
 		// the program exits; the group's SIGKILL below then ends that child.
-		cmd.WaitDelay = grace
+		cmd.WaitDelay = killAfter
 		err := cmd.Run()
 		if ctx.Err() != nil && cmd.Process != nil {
 			// The leader is reaped, but a live member keeps the group's ID from reuse; an empty

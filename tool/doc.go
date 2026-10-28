@@ -8,7 +8,7 @@
 // Its exported identifiers:
 //
 //   - [Spec] declares a tool: its program, its version command and pattern, its minimum version,
-//     and a cancelled run's grace period.
+//     and a cancelled run's KillAfter period.
 //   - [Invocation] is one run of a tool: arguments, working directory, and standard streams.
 //   - [Tool] is one program, found and version-checked by the runner's constructor that built it.
 //   - [NewExec] builds a Tool that runs a program directly, the exec runner.
