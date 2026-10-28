@@ -13,6 +13,9 @@
 //   - [Tool] is one program, found and version-checked by the runner's constructor that built it.
 //   - [NewExec] builds a Tool that runs a program directly, the exec runner.
 //   - [NewScript] builds a Tool that runs a script through its interpreter, on the exec runner.
+//   - [NewContainer] builds a Tool that runs a program inside a pinned image through the docker
+//     CLI, the container runner.
+//   - [Image] is a container tool's image, pinned by digest, and its relaxations of the lockdown.
 //   - [Tool.Name] returns the program's name, or the script's.
 //   - [Tool.Version] returns the version found at construction.
 //   - [Tool.Run] runs the program once under the caller's context.

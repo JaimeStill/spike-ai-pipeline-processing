@@ -22,8 +22,11 @@ const standinEnv = "TOOL_TEST_STANDIN"
 
 func TestMain(m *testing.M) {
 	if os.Getenv(standinEnv) == "1" {
-		if filepath.Base(os.Args[0]) == interpreterName {
+		switch filepath.Base(os.Args[0]) {
+		case interpreterName:
 			os.Exit(interpreter(os.Args[1:]))
+		case "docker":
+			os.Exit(dockerStandin(os.Args[1:]))
 		}
 		os.Exit(standin(os.Args[1:]))
 	}
@@ -197,8 +200,9 @@ func atoi(s string) int {
 	return n
 }
 
-// installStandin links the stand-in tool as standin, and the stand-in interpreter as standin-sh,
-// in a directory of its own, makes that directory the whole PATH, and returns standin's path.
+// installStandin links the stand-in tool as standin, the stand-in interpreter as standin-sh, and
+// the stand-in docker CLI as docker, in a directory of its own, makes that directory the whole
+// PATH, and returns standin's path.
 func installStandin(t *testing.T) string {
 	t.Helper()
 	exe, err := os.Executable()
@@ -207,7 +211,7 @@ func installStandin(t *testing.T) string {
 	}
 	dir := t.TempDir()
 	link := filepath.Join(dir, "standin")
-	for _, name := range []string{"standin", interpreterName} {
+	for _, name := range []string{"standin", interpreterName, "docker"} {
 		if err := os.Symlink(exe, filepath.Join(dir, name)); err != nil {
 			t.Fatal(err)
 		}
