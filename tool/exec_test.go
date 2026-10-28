@@ -146,15 +146,28 @@ func TestNewExecFailingVersionCommand(t *testing.T) {
 	}
 }
 
+// TestNewExecRefusesBadSpec checks that a malformed spec fails as itself, before the program is
+// looked up: the program is missing, and the error still names the spec's defect.
 func TestNewExecRefusesBadSpec(t *testing.T) {
 	installStandin(t)
-	noGroup := standinSpec("standin", "1.0", "1.0")
+	noGroup := standinSpec("missing-tool", "1.0", "1.0")
 	noGroup.VersionPattern = regexp.MustCompile(`standin version`)
-	badMinimum := standinSpec("standin", "1.0", "v1")
-	for name, spec := range map[string]tool.Spec{"no capture group": noGroup, "bad minimum": badMinimum} {
+	badMinimum := standinSpec("missing-tool", "1.0", "v1")
+	tests := map[string]struct {
+		spec tool.Spec
+		want string
+	}{
+		"no capture group": {noGroup, "capture group"},
+		"bad minimum":      {badMinimum, `minimum: version "v1"`},
+	}
+	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
-			if _, err := tool.NewExec(t.Context(), spec); err == nil {
+			_, err := tool.NewExec(t.Context(), tt.spec)
+			if err == nil {
 				t.Fatal("NewExec succeeded, want an error")
+			}
+			if !strings.Contains(err.Error(), tt.want) {
+				t.Errorf("error %q doesn't name the spec's defect, %q", err, tt.want)
 			}
 		})
 	}

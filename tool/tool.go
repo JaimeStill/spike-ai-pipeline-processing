@@ -135,16 +135,22 @@ var (
 	ErrNoVersion = errors.New("no version in the output")
 )
 
-// checkVersion runs the spec's version command through run and checks the version it prints
-// against the minimum, returning the version found.
-func checkVersion(ctx context.Context, name string, spec Spec, run runFunc) (Version, error) {
-	if spec.VersionPattern == nil || spec.VersionPattern.NumSubexp() < 1 {
+// minimum validates the spec's own fields, its version pattern and its minimum, so a malformed
+// spec fails as itself before anything is looked up or run, and returns the minimum version.
+func (s Spec) minimum(name string) (Version, error) {
+	if s.VersionPattern == nil || s.VersionPattern.NumSubexp() < 1 {
 		return Version{}, fmt.Errorf("tool: %s: version pattern must have a capture group", name)
 	}
-	minimum, err := ParseVersion(spec.Minimum)
+	minimum, err := ParseVersion(s.Minimum)
 	if err != nil {
 		return Version{}, fmt.Errorf("tool: %s: minimum: %w", name, err)
 	}
+	return minimum, nil
+}
+
+// checkVersion runs the spec's version command through run and checks the version it prints
+// against minimum, the spec's, returning the version found.
+func checkVersion(ctx context.Context, name string, spec Spec, minimum Version, run runFunc) (Version, error) {
 	var out bytes.Buffer
 	verr := &VersionError{Program: name, Minimum: spec.Minimum}
 	if err := run(ctx, Invocation{Args: spec.VersionArgs, Stdout: &out, Stderr: &out}); err != nil {

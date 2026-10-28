@@ -9,37 +9,43 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"syscall"
 	"time"
 )
 
-// NewExec builds a Tool that runs spec's program directly. It finds the program on PATH, or takes
-// a path containing a separator as given, then runs the version command under ctx and refuses a
-// program it can't find, whose version command fails, or whose version is unmatched or older
-// than the minimum.
+// NewExec builds a Tool that runs spec's program directly. It validates the spec, then finds the
+// program on PATH, or takes a path containing a separator as given, then runs the version command
+// under ctx and refuses a program it can't find, whose version command fails, or whose version
+// is unmatched or older than the minimum.
 func NewExec(ctx context.Context, spec Spec) (*Tool, error) {
-	path, err := exec.LookPath(spec.Program)
-	if err != nil {
-		return nil, fmt.Errorf("tool: %s: not found: %w", spec.Program, err)
-	}
 	name := filepath.Base(spec.Program)
+	minimum, err := spec.minimum(name)
+	if err != nil {
+		return nil, err
+	}
+	path, err := lookPath(spec.Program)
+	if err != nil {
+		return nil, err
+	}
 	run := execRun(name, path, nil, spec.grace())
-	version, err := checkVersion(ctx, name, spec, run)
+	version, err := checkVersion(ctx, name, spec, minimum, run)
 	if err != nil {
 		return nil, err
 	}
 	return &Tool{name: name, version: version, run: run}, nil
 }
 
-// NewScript builds a Tool that runs script through spec's program, its interpreter. It finds and
-// checks the interpreter as NewExec does a binary, its version command run without the script,
-// and refuses a script that doesn't exist or is a directory. Run executes the interpreter with
-// the script and then the invocation's arguments. The Tool is named for the script; its version
-// is the interpreter's.
+// NewScript builds a Tool that runs script through spec's program, its interpreter. It validates
+// the spec, refuses a script that doesn't exist or is a directory, and finds and checks the
+// interpreter as NewExec does a binary, its version command run without the script. Run executes
+// the interpreter with the script and then the invocation's arguments. The Tool is named for the
+// script; its version is the interpreter's.
 func NewScript(ctx context.Context, spec Spec, script string) (*Tool, error) {
-	path, err := exec.LookPath(spec.Program)
+	interpreter := filepath.Base(spec.Program)
+	minimum, err := spec.minimum(interpreter)
 	if err != nil {
-		return nil, fmt.Errorf("tool: %s: not found: %w", spec.Program, err)
+		return nil, err
 	}
 	// The script's path is made absolute so an invocation's Dir doesn't change what it names.
 	abs, err := filepath.Abs(script)
@@ -53,13 +59,25 @@ func NewScript(ctx context.Context, spec Spec, script string) (*Tool, error) {
 	if info.IsDir() {
 		return nil, fmt.Errorf("tool: script %s: is a directory", script)
 	}
-	interpreter := filepath.Base(spec.Program)
-	version, err := checkVersion(ctx, interpreter, spec, execRun(interpreter, path, nil, spec.grace()))
+	path, err := lookPath(spec.Program)
+	if err != nil {
+		return nil, err
+	}
+	version, err := checkVersion(ctx, interpreter, spec, minimum, execRun(interpreter, path, nil, spec.grace()))
 	if err != nil {
 		return nil, err
 	}
 	name := filepath.Base(script)
 	return &Tool{name: name, version: version, run: execRun(name, path, []string{abs}, spec.grace())}, nil
+}
+
+// lookPath finds program on PATH, or takes a path containing a separator as given.
+func lookPath(program string) (string, error) {
+	path, err := exec.LookPath(program)
+	if err != nil {
+		return "", fmt.Errorf("tool: %s: not found: %w", program, err)
+	}
+	return path, nil
 }
 
 // execRun returns the exec runner's runFunc for the program at path, which runs it with lead and
@@ -70,7 +88,7 @@ func NewScript(ctx context.Context, spec Spec, script string) (*Tool, error) {
 // once the program has exited, SIGKILL to the group, so no child outlives it.
 func execRun(name, path string, lead []string, grace time.Duration) runFunc {
 	return func(ctx context.Context, inv Invocation) error {
-		cmd := exec.CommandContext(ctx, path, append(lead[:len(lead):len(lead)], inv.Args...)...)
+		cmd := exec.CommandContext(ctx, path, slices.Concat(lead, inv.Args)...)
 		cmd.Dir = inv.Dir
 		cmd.Stdin = inv.Stdin
 		cmd.Stdout = inv.Stdout

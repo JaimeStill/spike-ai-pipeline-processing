@@ -87,6 +87,14 @@ func TestNewScriptChecksInterpreter(t *testing.T) {
 			t.Fatalf("NewScript error = %v, want one naming missing-sh", err)
 		}
 	})
+	t.Run("bad spec before lookup", func(t *testing.T) {
+		spec := interpreterSpec("5.2", "v5")
+		spec.Program = "missing-sh"
+		_, err := tool.NewScript(t.Context(), spec, script)
+		if err == nil || !strings.Contains(err.Error(), `minimum: version "v5"`) {
+			t.Fatalf("NewScript error = %v, want one naming the bad minimum", err)
+		}
+	})
 	t.Run("too old", func(t *testing.T) {
 		_, err := tool.NewScript(t.Context(), interpreterSpec("4.9", "5"), script)
 		if !errors.Is(err, tool.ErrTooOld) {
