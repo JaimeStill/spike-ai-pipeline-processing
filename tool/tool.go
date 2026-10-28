@@ -10,6 +10,7 @@ import (
 	"io"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // Spec declares a tool: its program, and how to check the program's version at construction.
@@ -24,6 +25,20 @@ type Spec struct {
 	VersionPattern *regexp.Regexp
 	// Minimum is the oldest version the tool accepts, dotted numbers.
 	Minimum string
+	// Grace is how long a cancelled run has to exit after SIGTERM before SIGKILL ends it; zero
+	// or less is 10 s.
+	Grace time.Duration
+}
+
+// defaultGrace is a Spec's grace period when it sets none.
+const defaultGrace = 10 * time.Second
+
+// grace returns the spec's grace period, defaultGrace when unset.
+func (s Spec) grace() time.Duration {
+	if s.Grace <= 0 {
+		return defaultGrace
+	}
+	return s.Grace
 }
 
 // Invocation is one run of a tool. It names nothing about the runner, so an adapter builds the
@@ -52,13 +67,15 @@ type Tool struct {
 	run     runFunc
 }
 
-// Name returns the program's name.
+// Name returns the program's name; for a script, the script's.
 func (t *Tool) Name() string { return t.name }
 
-// Version returns the program's version, found at construction.
+// Version returns the program's version, found at construction; for a script, the interpreter's.
 func (t *Tool) Version() Version { return t.version }
 
-// Run runs the program once, under ctx. A program that exits nonzero gives an *ExitError.
+// Run runs the program once, under ctx. A program that exits nonzero gives an *ExitError. When ctx
+// ends the run, the error matches ctx's (errors.Is context.Canceled or
+// context.DeadlineExceeded), and is never an *ExitError.
 func (t *Tool) Run(ctx context.Context, inv Invocation) error { return t.run(ctx, inv) }
 
 // stderrTail is how much of a program's standard error an ExitError keeps.
