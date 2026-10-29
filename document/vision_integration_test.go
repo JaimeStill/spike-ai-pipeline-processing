@@ -3,12 +3,15 @@
 package document_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"encoding/json/jsontext"
 	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -21,14 +24,15 @@ import (
 
 // The vision tier: Pages and Document on clean.pdf through the host's gs, each page sent to
 // Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, which set A loads, and Document's final
-// request to gpt-oss-120b. Each test records its wall time and the pages' character error rate
-// against their ground truth, and asserts only completion and page order.
+// request to gpt-oss-120b for a digest for search under a JSON schema. Each test records its wall
+// time and the pages' character error rate against their ground truth, and asserts only
+// completion, page order, and the digest's schema; Document runs on scanned.pdf too.
 
 const (
 	// visionModel transcribes the pages, as in the renderer bake-off.
 	visionModel = "ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0"
-	// summaryModel writes Document's summary.
-	summaryModel = "ggml-org/gpt-oss-120b-GGUF:MXFP4"
+	// digestModel writes Document's digest.
+	digestModel = "ggml-org/gpt-oss-120b-GGUF:MXFP4"
 	// visionConcurrency is the pages in flight, the router's parallel slots for the model.
 	visionConcurrency = 4
 )
@@ -55,9 +59,8 @@ func routerClient(t *testing.T) *client.Client {
 }
 
 // hostVision builds a Vision over the router's Client and the host's gs, with no corrections
-// stage, and a request for clean.pdf: each page transcribed as the bake-off transcribes, greedy
-// and with reasoning off, at 150 dpi and 4 pages at once, and a final request for a short
-// summary.
+// stage, and a request for a PDF: each page transcribed as the bake-off transcribes, greedy and
+// with reasoning off, at 150 dpi and 4 pages at once, and a final request for a digest.
 func hostVision(t *testing.T) (*document.Vision, document.Request) {
 	t.Helper()
 	c := routerClient(t)
@@ -77,21 +80,104 @@ func hostVision(t *testing.T) (*document.Vision, document.Request) {
 		},
 		Concurrency: visionConcurrency,
 		Final: &protocol.Request{
-			Model:           summaryModel,
-			Instructions:    "Summarize this document in three sentences, as plain text.",
-			Reasoning:       protocol.ReasoningParam{Effort: protocol.ReasoningEffortLow},
-			Text:            protocol.TextParam{Format: protocol.PlainTextFormat{}},
-			MaxOutputTokens: 2048,
+			Model:        digestModel,
+			Instructions: digestInstructions,
+			Reasoning:    protocol.ReasoningParam{Effort: protocol.ReasoningEffortLow},
+			Text: protocol.TextParam{Format: protocol.JSONSchemaFormat{
+				Name:        "digest",
+				Description: "A lightweight digest of a document for search.",
+				Schema:      jsontext.Value(digestSchema),
+				Strict:      true,
+			}},
+			MaxOutputTokens: 4096,
 		},
 	}
 }
 
+// digestInstructions asks for a digest of a document's page transcriptions, the caller's final
+// template in the package's terms: the package imposes no schema.
+const digestInstructions = "The user's message is a document's pages, transcribed, each under a " +
+	"\"Page N of M:\" heading. Write a lightweight digest of the document for search, from the " +
+	"transcriptions alone: a summary of 2 to 3 sentences; its title; its kind, the type of " +
+	"document; the dates it names, as written; its markings, such as classification banners and " +
+	"handling caveats, as written; and keywords for search. Leave an array empty when the " +
+	"document has none."
+
+// digestSchema is the digest's JSON schema, an example of a final template's: every field
+// required and no others, as strict structured output requires.
+const digestSchema = `{
+	"type": "object",
+	"properties": {
+		"summary": {"type": "string", "description": "The document in 2 to 3 sentences."},
+		"title": {"type": "string"},
+		"kind": {"type": "string", "description": "The type of document, such as a memorandum or a report."},
+		"dates": {"type": "array", "items": {"type": "string"}},
+		"markings": {"type": "array", "items": {"type": "string"}, "description": "Markings such as classification banners, as written."},
+		"keywords": {"type": "array", "items": {"type": "string"}}
+	},
+	"required": ["summary", "title", "kind", "dates", "markings", "keywords"],
+	"additionalProperties": false
+}`
+
+// digest is a digest's fields, as the schema requires them.
+type digest struct {
+	Summary  *string   `json:"summary"`
+	Title    *string   `json:"title"`
+	Kind     *string   `json:"kind"`
+	Dates    *[]string `json:"dates"`
+	Markings *[]string `json:"markings"`
+	Keywords *[]string `json:"keywords"`
+}
+
+// checkDigest fails t unless the final response is completed and its output text is a JSON
+// object holding every field the schema requires, of its type, and returns the text. A field of
+// the wrong type fails decoding; a missing one is left nil. The text is returned compacted, so a
+// recorded line holds it whole on one line.
+func checkDigest(t *testing.T, final *protocol.Response) string {
+	t.Helper()
+	out := text(final)
+	if final.Status != protocol.StatusCompleted {
+		t.Fatalf("the final response is %s with %q, want completed", final.Status, out)
+	}
+	var d digest
+	if err := json.Unmarshal([]byte(out), &d); err != nil {
+		t.Fatalf("the digest %q doesn't decode as the schema's object: %v", out, err)
+	}
+	fields := map[string]bool{
+		"summary": d.Summary != nil, "title": d.Title != nil, "kind": d.Kind != nil,
+		"dates": d.Dates != nil, "markings": d.Markings != nil, "keywords": d.Keywords != nil,
+	}
+	for name, ok := range fields {
+		if !ok {
+			t.Errorf("the digest %q has no %s", out, name)
+		}
+	}
+	var compact bytes.Buffer
+	if err := json.Compact(&compact, []byte(out)); err != nil {
+		t.Fatal(err)
+	}
+	return compact.String()
+}
+
+// heading matches the "Page N of M:" heading lines Result.Text gives each page.
+var heading = regexp.MustCompile(`(?m)^Page \d+ of \d+:$`)
+
+// stripHeadings returns a Result's Text with its page headings removed, for scoring against the
+// ground truth, which has none.
+func stripHeadings(s string) string { return heading.ReplaceAllString(s, "") }
+
 // cleanTruth returns clean.pdf's pages' ground truth, in page order.
 func cleanTruth(t *testing.T) []string {
 	t.Helper()
+	return truthOf(t, "clean")
+}
+
+// truthOf returns a set's pages' ground truth, in page order.
+func truthOf(t *testing.T, set string) []string {
+	t.Helper()
 	var truth []string
 	for page := 1; ; page++ {
-		b, err := os.ReadFile(filepath.Join("testdata", "clean", fmt.Sprintf("page-%d.txt", page)))
+		b, err := os.ReadFile(filepath.Join("testdata", set, fmt.Sprintf("page-%d.txt", page)))
 		if os.IsNotExist(err) {
 			return truth
 		}
@@ -105,7 +191,13 @@ func cleanTruth(t *testing.T) []string {
 // openClean opens clean.pdf, closed when t ends.
 func openClean(t *testing.T) *os.File {
 	t.Helper()
-	f, err := os.Open(filepath.Join("testdata", "clean.pdf"))
+	return openSet(t, "clean")
+}
+
+// openSet opens a set's PDF, closed when t ends.
+func openSet(t *testing.T, set string) *os.File {
+	t.Helper()
+	f, err := os.Open(filepath.Join("testdata", set+".pdf"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -144,8 +236,9 @@ func TestVisionPagesHost(t *testing.T) {
 }
 
 // TestVisionDocumentHost checks Document on clean.pdf completes every page, in page order, and
-// the final summary, and records its wall time, the pages' character error rate, and the
-// summary.
+// a digest that decodes as the schema's object, and records its wall time, the pages' character
+// error rate, the digest in full, and the result's Text against the joined ground truth: its
+// length, and its character error rate with its page headings stripped.
 func TestVisionDocumentHost(t *testing.T) {
 	v, req := hostVision(t)
 	truth := cleanTruth(t)
@@ -167,11 +260,35 @@ func TestVisionDocumentHost(t *testing.T) {
 		e, n := charErrors(truth[i], text(p.Response))
 		edits, chars = edits+e, chars+n
 	}
-	if res.Final.Status != protocol.StatusCompleted || strings.TrimSpace(text(res.Final)) == "" {
-		t.Errorf("the final response is %s with %q, want completed with a summary", res.Final.Status, text(res.Final))
-	}
-	t.Logf("recorded: vision Document clean.pdf, %d pages at concurrency %d and a %s summary: %v wall, CER %.4f, summary %d output tokens (%d reasoning)",
-		len(res.Pages), req.Concurrency, summaryModel, elapsed.Round(time.Millisecond), rate(edits, chars),
+	out := checkDigest(t, res.Final)
+	joined := strings.Join(truth, "\n\n")
+	te, tn := charErrors(joined, stripHeadings(res.Text()))
+	t.Logf("recorded: vision Document clean.pdf, %d pages at concurrency %d and a %s digest: %v wall, CER %.4f, digest %d output tokens (%d reasoning)",
+		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond), rate(edits, chars),
 		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens)
-	t.Logf("recorded: vision Document clean.pdf summary: %q", text(res.Final))
+	t.Logf("recorded: vision Document clean.pdf Text: %d bytes against the joined ground truth's %d, CER %.4f with headings stripped, whitespace collapsed",
+		len(res.Text()), len(joined), rate(te, tn))
+	t.Logf("recorded: vision Document clean.pdf digest: %s", out)
+}
+
+// TestVisionDocumentScannedHost checks Document on scanned.pdf, real scans of marked documents,
+// completes every page and a digest that decodes as the schema's object, and records its wall
+// time and the digest in full.
+func TestVisionDocumentScannedHost(t *testing.T) {
+	v, req := hostVision(t)
+	truth := truthOf(t, "scanned")
+	start := time.Now()
+	res, err := v.Document(t.Context(), openSet(t, "scanned"), req)
+	elapsed := time.Since(start)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Pages) != len(truth) {
+		t.Fatalf("the result holds %d pages, want %d", len(res.Pages), len(truth))
+	}
+	out := checkDigest(t, res.Final)
+	t.Logf("recorded: vision Document scanned.pdf, %d pages at concurrency %d and a %s digest: %v wall, digest %d output tokens (%d reasoning)",
+		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond),
+		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens)
+	t.Logf("recorded: vision Document scanned.pdf digest: %s", out)
 }

@@ -737,6 +737,61 @@ func TestDocument(t *testing.T) {
 	if len(reqs) != 5 {
 		t.Errorf("%d requests sent, want 4 pages and the final", len(reqs))
 	}
+	wantText := "Page 1 of 4:\ntext of page 1\n\nPage 2 of 4:\ntext of page 2\n\n" +
+		"Page 3 of 4:\ntext of page 3\n\nPage 4 of 4:\ntext of page 4"
+	if got := res.Text(); got != wantText {
+		t.Errorf("the result's text is %q, want %q", got, wantText)
+	}
+}
+
+// TestDocumentTextSharesHeadings checks the result's Text is the final request's parts, the same
+// "Page N of M:" headings over the same text, joined by a blank line, for a page's text with
+// line breaks of its own.
+func TestDocumentTextSharesHeadings(t *testing.T) {
+	f := newFixture(t, 3)
+	f.gen.respond = func(_ context.Context, page int, _ *protocol.Request) (*protocol.Response, error) {
+		if page == 0 {
+			return answer("summary"), nil
+		}
+		return answer(fmt.Sprintf("line one of page %d\nline two\n", page)), nil
+	}
+	res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reqs := f.gen.requests()
+	msg := reqs[len(reqs)-1].Input[0].(protocol.Message)
+	var parts []string
+	for _, p := range msg.Content {
+		parts = append(parts, p.(protocol.InputText).Text)
+	}
+	if got, want := res.Text(), strings.Join(parts, "\n\n"); got != want {
+		t.Errorf("the result's text is %q, want the final request's parts joined, %q", got, want)
+	}
+}
+
+// TestResultText checks Text on a Result Document returned with an error: every page, in page
+// order, a page with no response as its heading alone and a page whose response isn't completed
+// with the text it holds. A nil Result and one with no pages return "".
+func TestResultText(t *testing.T) {
+	partial := answer("half of page 3")
+	partial.Status = protocol.StatusIncomplete
+	res := &document.Result{Pages: []document.PageResult{
+		{Number: 1, Count: 3, Response: answer("text of page 1")},
+		{Number: 2, Count: 3, Err: errors.New("gs: page 2 is damaged")},
+		{Number: 3, Count: 3, Response: partial, Err: errors.New("incomplete")},
+	}}
+	want := "Page 1 of 3:\ntext of page 1\n\nPage 2 of 3:\n\n\nPage 3 of 3:\nhalf of page 3"
+	if got := res.Text(); got != want {
+		t.Errorf("Text is %q, want %q", got, want)
+	}
+	var none *document.Result
+	if got := none.Text(); got != "" {
+		t.Errorf("a nil Result's text is %q, want empty", got)
+	}
+	if got := (&document.Result{}).Text(); got != "" {
+		t.Errorf("an empty Result's text is %q, want empty", got)
+	}
 }
 
 // TestDocumentFailedPages checks a failed page fails Document before the final request, with an

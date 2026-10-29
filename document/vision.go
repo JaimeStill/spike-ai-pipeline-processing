@@ -257,7 +257,9 @@ func withMessage(tmpl *protocol.Request, msg protocol.Message) *protocol.Request
 	return &r
 }
 
-// Result is a Document's outcome: every page's, in page order, and the final response.
+// Result is a Document's outcome: every page's, in page order, and the final response. The
+// pages' transcriptions are the document's digitized content, which Text joins; the final
+// response is derived from them and never replaces them.
 type Result struct {
 	// Pages holds every page the stream yielded, in page order, each with its response or its
 	// error.
@@ -267,16 +269,43 @@ type Result struct {
 	Final *protocol.Response
 }
 
+// Text returns the document's digitized content: every page's output text, in page order, each
+// preceded by its "Page N of M:" heading and a newline, the heading Document's final request
+// gives each page's part, and the pages joined by a blank line. A page's text is its response's
+// as the model wrote it, not trimmed.
+//
+// A Result Document returns without an error holds only completed pages. A Result returned with
+// an error may hold pages that failed: each still appears, a page with no response as its heading
+// alone, and a page whose response isn't completed with whatever text that response holds, so
+// the numbering shows where text is missing. A nil Result, or one with no pages, returns "".
+func (r *Result) Text() string {
+	if r == nil {
+		return ""
+	}
+	parts := make([]string, 0, len(r.Pages))
+	for _, p := range r.Pages {
+		var text string
+		if p.Response != nil {
+			text = outputText(p.Response)
+		}
+		parts = append(parts, pageText(p.Number, p.Count, text))
+	}
+	return strings.Join(parts, "\n\n")
+}
+
 // PageResult is one page of a Document: the Page and its error, nil for a page that succeeded.
 type PageResult struct {
 	Page
 	Err error
 }
 
-// Document runs a PDF's pages through the model as Pages does, then sends one final request:
-// a copy of req.Final with one user message appended, holding a text part per page, in page
-// order, each "Page N of M:" followed by a newline and that page's output text. It sets no cap
-// on the page count.
+// Document digitizes a PDF and then digests it. It runs the PDF's pages through the model as
+// Pages does, their transcriptions being the document's digitized content, which the result's
+// Text joins, and then sends one final request: a copy of req.Final with one user message
+// appended, holding a text part per page, in page order, each "Page N of M:" followed by a
+// newline and that page's output text. The final response derives from the transcriptions and
+// never replaces them; what it holds, such as a digest for search under a JSON schema, is the
+// final template's to ask, and the package imposes no schema. It sets no cap on the page count.
 //
 // A missing req.Final is refused before anything runs, as Pages refuses a request. A page that
 // fails, or whose response's status isn't completed, fails Document before the final request,
@@ -340,7 +369,8 @@ func (v *Vision) Document(ctx context.Context, pdf io.Reader, req Request) (*Res
 	return res, nil
 }
 
-// pageText is a page's part of the final request: "Page N of M:", a newline, and its text.
+// pageText is a page's part of the final request and of Result.Text: "Page N of M:", a newline,
+// and its text. The two share it so their headings can't drift.
 func pageText(page, n int, text string) string {
 	return fmt.Sprintf("Page %d of %d:\n%s", page, n, text)
 }

@@ -40,9 +40,13 @@
 // concurrency of pages are in flight, and pages come back in page order, a failed page as its
 // error, the stream carrying on. The stream is lazy, breaking out of it cancels the work in
 // flight and returns once that work has ended, and the spooled PDF is removed when it ends.
-// Document runs the pages and then one final request, a copy of the request's final template
-// with each page's output text appended as "Page N of M:" parts, and a failed page fails it
-// before the final request. The package sets no size limit on a page's image; the server's
+// Document digitizes, then digests: it runs the pages, whose transcriptions are the document's
+// digitized content, and then one final request, a copy of the request's final template with
+// each page's output text appended as "Page N of M:" parts, and a failed page fails it before
+// the final request. The final response derives from the transcriptions and never replaces
+// them: the caller's final template asks for what it wants of them, such as a digest for
+// search under a JSON schema, and the package imposes no schema. The result's Text joins the
+// transcriptions under the same headings. The package sets no size limit on a page's image; the server's
 // refusal of one is that page's error.
 //
 // Its exported identifiers:
@@ -77,5 +81,6 @@
 //   - [Vision.Pages] streams a PDF's pages through the model, in page order.
 //   - [Vision.Document] runs a PDF's pages and then one final request over their text.
 //   - [Result] is a Document's pages and its final response.
+//   - [Result.Text] returns a Document's digitized content, its pages' text under their headings.
 //   - [PageResult] is one page of a Document with its error.
 package document
