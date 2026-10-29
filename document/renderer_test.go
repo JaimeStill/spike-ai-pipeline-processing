@@ -5,20 +5,18 @@ package document_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 )
 
-// countingRenderer is a stand-in Renderer over a PDF of pages pages. It records how often each of
-// its tools ran, and its Render refuses through CheckRender, as a renderer does.
+// countingRenderer is a stand-in Renderer over a PDF of pages pages, whose Count records how often
+// it ran. CheckRender never renders, so its Render is never called.
 type countingRenderer struct {
 	pages    int
 	countErr error
 	counts   int
-	renders  int
 }
 
 func (r *countingRenderer) Count(context.Context, string) (int, error) {
@@ -26,16 +24,11 @@ func (r *countingRenderer) Count(context.Context, string) (int, error) {
 	return r.pages, r.countErr
 }
 
-func (r *countingRenderer) Render(ctx context.Context, pdf string, page, dpi int, w io.Writer) error {
-	if err := document.CheckRender(ctx, r, pdf, page, dpi); err != nil {
-		return err
-	}
-	r.renders++
-	_, err := fmt.Fprintf(w, "page %d at %d dpi", page, dpi)
-	return err
+func (r *countingRenderer) Render(context.Context, string, int, int, io.Writer) error {
+	return errors.New("CheckRender rendered a page")
 }
 
-func TestRenderRefusals(t *testing.T) {
+func TestCheckRender(t *testing.T) {
 	cases := []struct {
 		name      string
 		page, dpi int
@@ -54,19 +47,12 @@ func TestRenderRefusals(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			r := &countingRenderer{pages: 3}
-			var out writeCounter
-			err := r.Render(t.Context(), "doc.pdf", tc.page, tc.dpi, &out)
+			err := document.CheckRender(t.Context(), r, "doc.pdf", tc.page, tc.dpi)
 			if !errors.Is(err, tc.want) || (tc.want == nil) != (err == nil) {
-				t.Fatalf("Render(page %d, %d dpi) returned %v, want %v", tc.page, tc.dpi, err, tc.want)
+				t.Fatalf("CheckRender(page %d, %d dpi) returned %v, want %v", tc.page, tc.dpi, err, tc.want)
 			}
 			if r.counts != tc.counts {
 				t.Errorf("the counting tool ran %d times, want %d", r.counts, tc.counts)
-			}
-			if tc.want != nil && (r.renders != 0 || out != 0) {
-				t.Errorf("a refused page rendered %d times and wrote %d bytes, want none", r.renders, out)
-			}
-			if tc.want == nil && r.renders != 1 {
-				t.Errorf("rendered %d times, want 1", r.renders)
 			}
 		})
 	}
@@ -79,12 +65,4 @@ func TestCheckRenderCountError(t *testing.T) {
 	if err := document.CheckRender(t.Context(), r, "doc.pdf", 1, 150); !errors.Is(err, countErr) {
 		t.Errorf("CheckRender returned %v, want the count's error %v", err, countErr)
 	}
-}
-
-// writeCounter counts the bytes written to it.
-type writeCounter int
-
-func (w *writeCounter) Write(p []byte) (int, error) {
-	*w += writeCounter(len(p))
-	return len(p), nil
 }
