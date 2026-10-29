@@ -5,6 +5,7 @@ package tool
 import (
 	"context"
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -85,7 +86,7 @@ const cliKillAfter = 2 * time.Second
 func NewContainer(ctx context.Context, docker string, image Image, spec Spec) (*Tool, error) {
 	name := filepath.Base(spec.Program)
 	if spec.Program == "" {
-		return nil, fmt.Errorf("tool: container: no program")
+		return nil, errors.New("tool: container: no program")
 	}
 	minimum, err := spec.minimum(name)
 	if err != nil {

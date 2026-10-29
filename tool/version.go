@@ -3,6 +3,7 @@
 package tool
 
 import (
+	"cmp"
 	"fmt"
 	"strconv"
 	"strings"
@@ -37,12 +38,8 @@ func ParseVersion(s string) (Version, error) {
 // Compare returns -1 when v is older than w, 0 when they are equal, and +1 when v is newer.
 func (v Version) Compare(w Version) int {
 	for i := range max(len(v.parts), len(w.parts)) {
-		a, b := v.component(i), w.component(i)
-		if a != b {
-			if a < b {
-				return -1
-			}
-			return 1
+		if c := cmp.Compare(v.component(i), w.component(i)); c != 0 {
+			return c
 		}
 	}
 	return 0
