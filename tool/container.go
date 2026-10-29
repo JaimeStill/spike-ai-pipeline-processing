@@ -210,6 +210,12 @@ func containerRun(name, dpath string, drun runFunc, base []string, ref string, k
 			}
 			return &cancelError{program: name, ctxErr: ctx.Err(), outcome: outcome}
 		}
+		if err != nil && ctx.Err() != nil {
+			// ctx ended as the CLI exited on its own, and the select saw the exit first: no stop
+			// was needed, but ctx's error is still the cause, as the exec runner's is. A run that
+			// succeeded stays a success.
+			return &cancelError{program: name, ctxErr: ctx.Err(), outcome: runOutcome(err)}
+		}
 		return err
 	}
 }

@@ -13,6 +13,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -420,6 +421,72 @@ func TestContainerRunContextAlreadyDone(t *testing.T) {
 	if got := len(dockerCalls(t, dir, "run")); got != before {
 		t.Errorf("a run started under an ended context")
 	}
+}
+
+// TestContainerExitAsContextEnds checks that a run whose CLI exits nonzero on its own as ctx ends
+// returns an error matching ctx's, naming the CLI's outcome once. Its context ends at the first
+// look after the tool has written its stderr, which is after the runner's own look before it
+// starts the CLI and before the CLI exits, so the runner sees the CLI's exit and only then ctx's
+// end: no stop is issued, and the order needs no timing.
+func TestContainerExitAsContextEnds(t *testing.T) {
+	dir := installDocker(t, "29.0.1")
+	addImage(t, dir, testRef)
+	tl := newContainer(t, tool.Image{Ref: testRef})
+	ctx := newEndOnLook(t.Context())
+	defer ctx.cancel()
+	stderr := &armingWriter{ctx: ctx}
+	err := tl.Run(ctx, tool.Invocation{Args: []string{"exit", "3", "it broke"}, Stderr: stderr})
+	assertContextError(t, err, context.Canceled)
+	if got, want := err.Error(), "tool: standin: context canceled (exit status 3)"; got != want {
+		t.Errorf("Run error = %q, want %q", got, want)
+	}
+	if stops := dockerCalls(t, dir, "stop"); len(stops) != 0 {
+		t.Errorf("stop calls = %q, want none for a CLI that exited first", stops)
+	}
+}
+
+// TestContainerSuccessAsContextEnds checks that a run that succeeds as ctx ends is a success.
+func TestContainerSuccessAsContextEnds(t *testing.T) {
+	dir := installDocker(t, "29.0.1")
+	addImage(t, dir, testRef)
+	tl := newContainer(t, tool.Image{Ref: testRef})
+	ctx := newEndOnLook(t.Context())
+	defer ctx.cancel()
+	stdout := &armingWriter{ctx: ctx}
+	if err := tl.Run(ctx, tool.Invocation{Args: []string{"print", "done"}, Stdout: stdout}); err != nil {
+		t.Fatalf("Run error = %v, want nil for a run that succeeded", err)
+	}
+	if ctx.Err() == nil {
+		t.Fatal("the context never ended")
+	}
+}
+
+// endOnLook is a context that, once armed, ends at the next call to its Err: the run's next look
+// at it. Until then its Done stays open, so nothing waiting on it sees it end first.
+type endOnLook struct {
+	context.Context
+	cancel context.CancelFunc
+	armed  atomic.Bool
+}
+
+func newEndOnLook(parent context.Context) *endOnLook {
+	ctx, cancel := context.WithCancel(parent)
+	return &endOnLook{Context: ctx, cancel: cancel}
+}
+
+func (c *endOnLook) Err() error {
+	if c.armed.Load() {
+		c.cancel()
+	}
+	return c.Context.Err()
+}
+
+// armingWriter is a stand-in's stream; it arms ctx at the first write.
+type armingWriter struct{ ctx *endOnLook }
+
+func (w *armingWriter) Write(p []byte) (int, error) {
+	w.ctx.armed.Store(true)
+	return len(p), nil
 }
 
 // flagValue returns the value of the flag joined to it with = in args, empty when absent.
