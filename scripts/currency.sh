@@ -78,10 +78,17 @@ done
 # 9.0.2-cli-ls88 and 9.1.0-cli-ls1, either one trailing it, and never with
 # arm64v8-9.0.2-cli-ls87 or latest; an official image's 1.27 (N) with 1.28.
 # The tags read are the 100 most recently updated, where a newer build is.
-# The perl program is single-quoted for perl, not the shell, to expand.
-# shellcheck disable=SC2016
-pins=$(git ls-files -z '*.go' | xargs -0 -r perl -0ne \
-	's/"\s*\+\s*"//g; print "$ARGV $1\n" while /"([^"\s@]+:[\w][\w.-]*)\@sha256:[0-9a-f]{64}"/g' | sort -u)
+#
+# Each file is read as one line, its newlines made spaces, so the join and the
+# match see a pin split across lines; a file that can't be read fails currency.
+pins=$(git ls-files -z '*.go' | while IFS= read -r -d '' file; do
+	refs=$(tr '\n' ' ' <"$file" | sed -E 's/"[[:space:]]*\+[[:space:]]*"//g' |
+		{ grep -oE '"[^"[:space:]@]+:[[:alnum:]_][[:alnum:]_.-]*@sha256:[0-9a-f]{64}"' || [ $? -eq 1 ]; } |
+		sed -E 's/^"([^@]*)@.*/\1/') || exit 1
+	for ref in $refs; do
+		echo "$file $ref"
+	done
+done | sort -u)
 while read -r file ref; do
 	[ -n "$ref" ] || continue
 	repo=${ref%:*}
