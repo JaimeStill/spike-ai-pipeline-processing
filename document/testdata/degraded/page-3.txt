@@ -1,17 +1,17 @@
-Library Card Application
+Quarterly Rainfall by Station
 
-Full name: Margaret Ellen Doyle
+Station Winter Spring Summer Autumn
 
-Street address: 41 Orchard Lane
+North Ridge 212 mm 148 mm 64 mm 190 mm
 
-City: Fairhaven
+Mill Creek 187 mm 131 mm 58 mm 176 mm
 
-Postal code: 04821
+Lower Valley 143 mm 102 mm 41 mm 129 mm
 
-Telephone: 555 0142
+Harbor Point 236 mm 159 mm 77 mm 214 mm
 
-Date of birth: 12 March 1987
+Cedar Flats 98 mm 86 mm 35 mm 91 mm
 
-Card type: Adult
+East Summit 254 mm 171 mm 82 mm 233 mm
 
-Signed by the applicant on 3 June 2026.
+Readings are totals for each quarter, rounded to the nearest millimeter.

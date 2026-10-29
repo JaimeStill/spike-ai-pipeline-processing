@@ -1,0 +1,7 @@
+Seasonal Water Levels
+
+The reservoir rises through the wet months and falls through the dry ones. The chart below shows the average level at the end of each season over the last ten years.
+
+Figure 1: Average reservoir level at the end of winter, spring, summer, and autumn.
+
+The lowest level comes at the end of summer, when demand is highest and the inflow is smallest.
