@@ -9,7 +9,8 @@ shellcheck = "0.11.0"
 # The repository's Go modules, as directories; tasks run in each one.
 GO_MODULES = "."
 # gb10-2's llama.cpp router, serving set A, named by its MagicDNS short name, for the tests that
-# call a model: the bake-off reads it. A shell may point it elsewhere.
+# call a model: the bake-off and the integration tier's vision tests read it. A shell may point it
+# elsewhere.
 SPIKE_ROUTER_URL = "{{ get_env(name='SPIKE_ROUTER_URL', default='http://gb10-2:8080') }}"
 
 [tasks.check]
@@ -35,11 +36,11 @@ for mod in $GO_MODULES; do
 done
 '''
 
-# The integration tier runs the integration-tagged tests on this machine: real ffprobe on PATH
-# and a reachable docker daemon, which pulls the pinned ffmpeg image when it isn't present. It
-# never starts a server.
+# The integration tier runs the integration-tagged tests on this machine: real ffprobe, gs, and
+# magick on PATH, a reachable docker daemon, which pulls the pinned ffmpeg image when it isn't
+# present, and, for the vision tests, the router SPIKE_ROUTER_URL names. It never starts a server.
 [tasks.integration]
-description = "Run the integration-tagged tests against this machine's ffprobe and docker"
+description = "Run the integration-tagged tests against this machine's tools and docker, and the router"
 run = '''
 set -eu
 export GOWORK=off

@@ -32,6 +32,19 @@
 // *client.Client satisfies. TranscribeInstructions is the text of a request for a page's
 // transcription, sent in one user message beside the page's image.
 //
+// A Vision puts the stages together, built at the composition root from a Generator, a Renderer,
+// and, optionally, a Corrector. Pages streams a PDF's pages through the model: it spools the PDF,
+// read from an io.Reader, into the working directory the Request names, which the caller owns,
+// counts its pages, and renders, corrects, and sends each page in a copy of the request's
+// template with one user message appended, the page's PNG as a data URL. At most the request's
+// concurrency of pages are in flight, and pages come back in page order, a failed page as its
+// error, the stream carrying on. The stream is lazy, breaking out of it cancels the work in
+// flight and returns once that work has ended, and the spooled PDF is removed when it ends.
+// Document runs the pages and then one final request, a copy of the request's final template
+// with each page's output text appended as "Page N of M:" parts, and a failed page fails it
+// before the final request. The package sets no size limit on a page's image; the server's
+// refusal of one is that page's error.
+//
 // Its exported identifiers:
 //
 //   - [Generator] sends one request to a model and returns its response; *client.Client
@@ -56,4 +69,13 @@
 //   - [Corrector.Correct] runs a page image through the corrections a request names.
 //   - [MagickSpec] declares ImageMagick's magick for either runner's constructor.
 //   - [MagickMinimum] is the oldest magick the stage accepts, 7.1.
+//   - [Vision] runs a PDF's pages through a model's vision.
+//   - [NewVision] builds a Vision over a Generator, a Renderer, and an optional Corrector.
+//   - [Request] is one PDF's run through a Vision: its working directory, page template, DPI,
+//     corrections, concurrency, and Document's final template.
+//   - [Page] is one page's number, the page count, and the model's response.
+//   - [Vision.Pages] streams a PDF's pages through the model, in page order.
+//   - [Vision.Document] runs a PDF's pages and then one final request over their text.
+//   - [Result] is a Document's pages and its final response.
+//   - [PageResult] is one page of a Document with its error.
 package document
