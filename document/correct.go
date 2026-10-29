@@ -30,27 +30,25 @@ const (
 	Grayscale
 )
 
-// operators maps each Correction to its ImageMagick operator and arguments.
-var operators = map[Correction][]string{
-	Deskew:          {"-deskew", "40%"},
-	Despeckle:       {"-despeckle"},
-	ContrastStretch: {"-contrast-stretch", "0.5%x0.5%"},
-	Unsharp:         {"-unsharp", "0x1"},
-	Grayscale:       {"-colorspace", "Gray"},
+// correction is a Correction's name and its ImageMagick operator with its arguments.
+type correction struct {
+	name     string
+	operator []string
 }
 
-var correctionNames = map[Correction]string{
-	Deskew:          "Deskew",
-	Despeckle:       "Despeckle",
-	ContrastStretch: "ContrastStretch",
-	Unsharp:         "Unsharp",
-	Grayscale:       "Grayscale",
+// known holds every Correction's name and operator.
+var known = map[Correction]correction{
+	Deskew:          {"Deskew", []string{"-deskew", "40%"}},
+	Despeckle:       {"Despeckle", []string{"-despeckle"}},
+	ContrastStretch: {"ContrastStretch", []string{"-contrast-stretch", "0.5%x0.5%"}},
+	Unsharp:         {"Unsharp", []string{"-unsharp", "0x1"}},
+	Grayscale:       {"Grayscale", []string{"-colorspace", "Gray"}},
 }
 
 // String returns the correction's name, or Correction(N) for a value that is none.
 func (c Correction) String() string {
-	if name, ok := correctionNames[c]; ok {
-		return name
+	if corr, ok := known[c]; ok {
+		return corr.name
 	}
 	return fmt.Sprintf("Correction(%d)", int(c))
 }
@@ -103,7 +101,7 @@ func NewCorrector(magick *tool.Tool) (*Corrector, error) {
 // part of an image then.
 func (c *Corrector) Correct(ctx context.Context, corrections []Correction, in io.Reader, out io.Writer) error {
 	for _, corr := range corrections {
-		if _, ok := operators[corr]; !ok {
+		if _, ok := known[corr]; !ok {
 			return fmt.Errorf("document: unknown correction %v", corr)
 		}
 	}
@@ -111,10 +109,9 @@ func (c *Corrector) Correct(ctx context.Context, corrections []Correction, in io
 		_, err := io.Copy(out, in)
 		return err
 	}
-	ordered := slices.Compact(slices.Sorted(slices.Values(corrections)))
 	args := []string{"png:-"}
-	for _, corr := range ordered {
-		args = append(args, operators[corr]...)
+	for _, corr := range slices.Compact(slices.Sorted(slices.Values(corrections))) {
+		args = append(args, known[corr].operator...)
 	}
 	args = append(args, "png:-")
 	return c.magick.Run(ctx, tool.Invocation{Args: args, Stdin: in, Stdout: out})

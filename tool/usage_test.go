@@ -14,14 +14,11 @@ import (
 // this much.
 const allocMiB = 64
 
-// assertUsage checks that u holds at least allocMiB of peak RSS and some CPU time.
+// assertUsage checks that u holds at least allocMiB of peak RSS and some user CPU time.
 func assertUsage(t *testing.T, u tool.Usage) {
 	t.Helper()
 	if u.PeakRSS < allocMiB<<20 {
 		t.Errorf("PeakRSS = %d bytes, want at least %d MiB", u.PeakRSS, allocMiB)
-	}
-	if u.UserCPU+u.SystemCPU <= 0 {
-		t.Errorf("UserCPU + SystemCPU = %v + %v, want more than zero", u.UserCPU, u.SystemCPU)
 	}
 	if u.UserCPU <= 0 {
 		t.Errorf("UserCPU = %v, want more than zero after a 50 ms spin", u.UserCPU)
