@@ -26,7 +26,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   past the last against its own count.
 - `TranscribeInstructions`, the text of a request for a page's transcription: every word on the
   page, in reading order, as plain text, and nothing else, sent in one user message beside the
-  page's image.
+  page's image. The bake-off sent it with reasoning off, a `Reasoning.Effort` of none, as a
+  request for a transcription should: Gemma 4 26B-A4B, reasoning, ran a hard scanned page to
+  its output cap with no text.
 - The corrections stage: `Correction` values `Deskew`, `Despeckle`, `ContrastStretch`, `Unsharp`,
   and `Grayscale`, each one ImageMagick operator, applied in that fixed order however a request
   lists them. `NewCorrector` builds the stage over a magick `Tool` from either runner, refusing

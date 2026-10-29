@@ -50,8 +50,8 @@ const (
 	bakeoffRuns = 3
 	// inFlight is how many requests the router has at once.
 	inFlight = 4
-	// maxOutputTokens bounds a transcription, its reasoning included: well over the longest
-	// page's text and the model's reasoning about it.
+	// maxOutputTokens bounds a transcription: well over the longest page's text. The request
+	// turns reasoning off, so the bound is the text's alone.
 	maxOutputTokens = 8192
 	// requestTimeout bounds one transcription.
 	requestTimeout = 5 * time.Minute
@@ -142,6 +142,13 @@ type cell struct {
 	ReasoningTokens int `json:"reasoning_tokens"`
 	// png is the rendered page, held until its request is sent.
 	png []byte
+}
+
+// incomplete reports whether cl's transcription didn't complete: its request failed, its
+// response's status isn't completed, or it has no text. Its error rates aren't the renderer's,
+// so the error rates leave it out and the ranking counts it instead.
+func (cl cell) incomplete() bool {
+	return cl.Status != string(protocol.StatusCompleted) || strings.TrimSpace(cl.Output) == ""
 }
 
 // result is one renderer's bake-off: its fixed properties, whether it streams, and its cells.
@@ -365,7 +372,15 @@ func transcribeAll(t *testing.T, c *client.Client, sets []fixtureSet, cells []ce
 }
 
 // transcribe sends cl's page to the model with TranscribeInstructions in one user message,
-// greedy, and sets cl's output, status, and usage, or its error.
+// greedy and with reasoning off, and sets cl's output, status, and usage, or its error.
+//
+// Reasoning is off through the typed Reasoning.Effort, none, which the completions format sends
+// as reasoning_effort. Verified on gb10-2's router, llama.cpp b11669, with scanned page 7: with
+// no effort the model reasoned to the 8192-token cap and returned no text (8192 completion
+// tokens, finish length, about 22,000 characters of reasoning_content); with reasoning_effort
+// none it answered in 56 tokens, finish stop, with no reasoning_content, its prompt 533 tokens as
+// with chat_template_kwargs {"enable_thinking":false}, Gemma 4's own switch, against 536 with
+// thinking on.
 func transcribe(t *testing.T, c *client.Client, cl *cell) {
 	ctx, cancel := context.WithTimeout(t.Context(), requestTimeout)
 	defer cancel()
@@ -377,6 +392,7 @@ func transcribe(t *testing.T, c *client.Client, cl *cell) {
 			protocol.InputText{Text: document.TranscribeInstructions},
 			protocol.InputImage{ImageURL: protocol.DataURL("image/png", cl.png)},
 		}}},
+		Reasoning:       protocol.ReasoningParam{Effort: protocol.ReasoningEffortNone},
 		MaxOutputTokens: maxOutputTokens,
 		Native:          jsontext.Value(`{"temperature":0}`),
 	})
@@ -497,7 +513,10 @@ func (s spread) compare(o spread) int {
 
 // summary is one renderer's measures over a set of cells, each a spread over the runs.
 type summary struct {
+	// cer and wer are over the completed transcriptions alone.
 	cer, wer spread
+	// incomplete is the count of the cells whose transcription didn't complete, of cells.
+	incomplete, cells int
 	// renderTime is the mean render time per page, in seconds, and peakRSS the largest peak
 	// over the pages, in MiB.
 	renderTime, peakRSS spread
@@ -506,11 +525,14 @@ type summary struct {
 }
 
 // summarize returns res's measures over its cells in sets. A run's error rates are its edits
-// over its truth's length, the pages of a set together; over several sets they are the mean of
-// the sets' rates, so each set weighs the same however much text it has.
+// over its truth's length, the completed pages of a set together; over several sets they are
+// the mean of the rates of the sets the run completed a page of, so each set weighs the same
+// however much text it has. A run that completed no page of the sets has no error rate, and the
+// spread leaves it out. An incomplete page counts toward incomplete instead.
 func summarize(res result, sets ...string) summary {
 	var cer, wer, renderTime, peak []float64
 	var pngBytes, pngPages float64
+	var sum summary
 	for run := 1; run <= bakeoffRuns; run++ {
 		var setCER, setWER []float64
 		var seconds float64
@@ -522,7 +544,12 @@ func summarize(res result, sets ...string) summary {
 				if cl.Run != run || cl.Set != set {
 					continue
 				}
-				ce, cn, we, wn = ce+cl.CharEdits, cn+cl.Chars, we+cl.WordEdits, wn+cl.Words
+				sum.cells++
+				if cl.incomplete() {
+					sum.incomplete++
+				} else {
+					ce, cn, we, wn = ce+cl.CharEdits, cn+cl.Chars, we+cl.WordEdits, wn+cl.Words
+				}
 				seconds += cl.RenderTime.Seconds()
 				pages++
 				runPeak = max(runPeak, cl.PeakRSS)
@@ -531,19 +558,22 @@ func summarize(res result, sets ...string) summary {
 					pngPages++
 				}
 			}
-			setCER = append(setCER, rate(ce, cn))
-			setWER = append(setWER, rate(we, wn))
+			if cn > 0 {
+				setCER = append(setCER, rate(ce, cn))
+				setWER = append(setWER, rate(we, wn))
+			}
 		}
-		cer = append(cer, spreadOf(setCER).mean)
-		wer = append(wer, spreadOf(setWER).mean)
+		if len(setCER) > 0 {
+			cer = append(cer, spreadOf(setCER).mean)
+			wer = append(wer, spreadOf(setWER).mean)
+		}
 		renderTime = append(renderTime, seconds/float64(max(pages, 1)))
 		peak = append(peak, mib(runPeak))
 	}
-	return summary{
-		cer: spreadOf(cer), wer: spreadOf(wer),
-		renderTime: spreadOf(renderTime), peakRSS: spreadOf(peak),
-		pngBytes: pngBytes / max(pngPages, 1),
-	}
+	sum.cer, sum.wer = spreadOf(cer), spreadOf(wer)
+	sum.renderTime, sum.peakRSS = spreadOf(renderTime), spreadOf(peak)
+	sum.pngBytes = pngBytes / max(pngPages, 1)
+	return sum
 }
 
 // criterion is one of the ranking's criteria: its name, and an order of two renderers, the
@@ -560,11 +590,17 @@ type ranked struct {
 	wins int
 }
 
-// criteria are the ranking's criteria in the order they decide: the character error rate, then
-// render time, then peak memory, each tied inside the run-to-run spread; then streaming, the
-// license, the PNG's size, and the number of tools.
+// criteria are the ranking's criteria in the order they decide: the character error rate over
+// the completed transcriptions, tied inside the run-to-run spread; then the incomplete
+// transcriptions, fewer first; then render time and peak memory, each tied inside the spread;
+// then streaming, the license, the PNG's size, and the number of tools.
+//
+// The incomplete transcriptions are a count over every page of every run, and any difference
+// decides, with no spread: every renderer has the same pages and runs, and an incomplete page is
+// a failure its error rate doesn't see.
 var criteria = []criterion{
 	{"CER", func(a, b ranked) int { return a.all.cer.compare(b.all.cer) }},
+	{"incomplete", func(a, b ranked) int { return cmp.Compare(a.all.incomplete, b.all.incomplete) }},
 	{"time", func(a, b ranked) int { return a.all.renderTime.compare(b.all.renderTime) }},
 	{"memory", func(a, b ranked) int { return a.all.peakRSS.compare(b.all.peakRSS) }},
 	{"streaming", func(a, b ranked) int {
@@ -573,6 +609,11 @@ var criteria = []criterion{
 	{"license", func(a, b ranked) int { return cmp.Compare(a.res.LicenseRank, b.res.LicenseRank) }},
 	{"image size", func(a, b ranked) int { return cmp.Compare(a.all.pngBytes, b.all.pngBytes) }},
 	{"tools", func(a, b ranked) int { return cmp.Compare(len(a.res.Tools), len(b.res.Tools)) }},
+}
+
+// incompleteRate formats s's incomplete transcriptions as a count of its cells and a rate.
+func (s summary) incompleteRate() string {
+	return fmt.Sprintf("%d/%d (%.3f)", s.incomplete, s.cells, rate(s.incomplete, s.cells))
 }
 
 // boolInt returns 1 for true and 0 for false.
@@ -620,11 +661,11 @@ func TestBakeoffRanking(t *testing.T) {
 		}
 	}
 	for _, set := range setNames {
-		rows := []string{"renderer\tCER mean\tCER min..max\tWER mean\tWER min..max\t"}
+		rows := []string{"renderer\tCER mean\tCER min..max\tWER mean\tWER min..max\tincomplete\t"}
 		for _, res := range rs {
 			s := summarize(res, set)
-			rows = append(rows, fmt.Sprintf("%s\t%.4f\t%.4f..%.4f\t%.4f\t%.4f..%.4f\t",
-				res.Name, s.cer.mean, s.cer.lo, s.cer.hi, s.wer.mean, s.wer.lo, s.wer.hi))
+			rows = append(rows, fmt.Sprintf("%s\t%.4f\t%.4f..%.4f\t%.4f\t%.4f..%.4f\t%s\t",
+				res.Name, s.cer.mean, s.cer.lo, s.cer.hi, s.wer.mean, s.wer.lo, s.wer.hi, s.incompleteRate()))
 		}
 		for _, line := range table(rows) {
 			t.Logf("recorded: bakeoff %s: %s", set, line)
@@ -649,16 +690,16 @@ func TestBakeoffRanking(t *testing.T) {
 	slices.SortStableFunc(rank, func(a, b ranked) int {
 		return cmp.Or(-cmp.Compare(a.wins, b.wins), cmp.Compare(a.all.cer.mean, b.all.cer.mean))
 	})
-	rows := []string{"rank\trenderer\twins\tCER mean\tCER min..max\tWER mean\tWER min..max\t" +
+	rows := []string{"rank\trenderer\twins\tCER mean\tCER min..max\tWER mean\tWER min..max\tincomplete\t" +
 		"render s/page\ts min..max\tpeak MiB\tMiB min..max\tPNG KiB/page\tstreams\tlicense\ttools\tinstalled MiB\t"}
 	for i, r := range rank {
 		a := r.all
-		rows = append(rows, fmt.Sprintf("%d\t%s\t%d\t%.4f\t%.4f..%.4f\t%.4f\t%.4f..%.4f\t%.3f\t%.3f..%.3f\t%.1f\t%.1f..%.1f\t%.0f\t%v\t%s\t%s\t%.2f\t",
-			i+1, r.res.Name, r.wins, a.cer.mean, a.cer.lo, a.cer.hi, a.wer.mean, a.wer.lo, a.wer.hi,
+		rows = append(rows, fmt.Sprintf("%d\t%s\t%d\t%.4f\t%.4f..%.4f\t%.4f\t%.4f..%.4f\t%s\t%.3f\t%.3f..%.3f\t%.1f\t%.1f..%.1f\t%.0f\t%v\t%s\t%s\t%.2f\t",
+			i+1, r.res.Name, r.wins, a.cer.mean, a.cer.lo, a.cer.hi, a.wer.mean, a.wer.lo, a.wer.hi, a.incompleteRate(),
 			a.renderTime.mean, a.renderTime.lo, a.renderTime.hi, a.peakRSS.mean, a.peakRSS.lo, a.peakRSS.hi,
 			a.pngBytes/1024, r.res.Streams, r.res.License, strings.Join(r.res.Tools, "+"), r.res.FootprintMiB))
 	}
-	t.Log("recorded: bakeoff ranking over clean, degraded, and scanned: a run's CER and WER are the mean of the three sets' rates")
+	t.Log("recorded: bakeoff ranking over clean, degraded, and scanned: a run's CER and WER are the mean of the three sets' rates over the completed transcriptions; incomplete is the transcriptions that didn't complete, of all")
 	for _, line := range table(rows) {
 		t.Logf("recorded: bakeoff ranking: %s", line)
 	}
