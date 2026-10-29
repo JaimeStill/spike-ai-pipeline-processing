@@ -7,9 +7,9 @@
 //
 // A Renderer works per page. Count returns a PDF's page count, and Render writes one page, 1-based,
 // as PNG at a DPI to a writer, one process per page. A renderer counts pages with a tool from its
-// own package. Render refuses a DPI of zero or less and a page below 1 before any tool runs, and a
-// page past the last before its rendering tool runs, as CheckRender does; the upper bound needs
-// the count.
+// own package. Render refuses a DPI of zero or less and a page below 1 before any tool runs, as
+// CheckRender does. It doesn't count the pages: a page past the last gives the rendering tool's own
+// error, and a caller that walks a PDF's pages refuses one past the last against its own count.
 //
 // The corrections stage, a Corrector, runs a page image through ImageMagick's operators for the
 // corrections a request names: Deskew (-deskew 40%), Despeckle (-despeckle), ContrastStretch
@@ -29,7 +29,7 @@
 //   - [Renderer] counts a PDF's pages and renders one page as PNG at a DPI.
 //   - [CheckRender] makes a Renderer's refusals of a DPI and a page.
 //   - [ErrDPI] and [ErrPageRange] are the refusals' causes: a DPI of zero or less, and a page
-//     below 1 or past the last.
+//     below 1, or past the last for a caller that holds the count.
 //   - [Correction] is one scan correction: [Deskew], [Despeckle], [ContrastStretch], [Unsharp],
 //     or [Grayscale].
 //   - [Correction.String] returns a correction's name.

@@ -17,10 +17,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `tool`, and spike-ai-pipeline-client, which the module now requires at v0.4.0. `Generator` is
   the one method it needs of the client, `Generate`, which `*client.Client` satisfies.
 - The page-renderer interface, `Renderer`: `Count` returns a PDF's page count, and `Render`
-  writes one page, 1-based, as PNG at a DPI to a writer, one process per page. `CheckRender`
-  makes a renderer's refusals: a DPI of zero or less (`ErrDPI`) and a page below 1
-  (`ErrPageRange`) before any tool runs, and a page past the last (`ErrPageRange`) after the count
-  and before the rendering tool runs.
+  writes one page, 1-based, as PNG at a DPI to a writer, one process per page.
+  `CheckRender(page, dpi)` makes a renderer's refusals, running no tool: a DPI of zero or less
+  (`ErrDPI`) and a page below 1 (`ErrPageRange`). It doesn't count the pages, so a `Render` past
+  the last page gives its rendering tool's own error; a caller walking a PDF's pages refuses one
+  past the last against its own count.
 - The corrections stage: `Correction` values `Deskew`, `Despeckle`, `ContrastStretch`, `Unsharp`,
   and `Grayscale`, each one ImageMagick operator, applied in that fixed order however a request
   lists them. `NewCorrector` builds the stage over a magick `Tool` from either runner, refusing
