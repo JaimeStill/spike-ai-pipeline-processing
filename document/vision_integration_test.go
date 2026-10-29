@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"encoding/json/jsontext"
 	"fmt"
+	"image/png"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,7 +29,9 @@ import (
 // time and the pages' character error rate against their ground truth, and asserts only
 // completion, page order, and the digest's schema; Document runs on scanned.pdf too. A page is
 // sent again once when its response isn't completed, and a recorded line names every page that
-// needed it.
+// needed it. Document's tests record the final request's input tokens against the context of one
+// of the digest model's slots, and TestVisionImageTokensHost records how many tokens a letter
+// page's image costs at each DPI.
 
 const (
 	// visionModel transcribes the pages, as in the renderer bake-off.
@@ -247,6 +250,46 @@ func openSet(t *testing.T, set string) *os.File {
 	return f
 }
 
+// slotContext returns the context of one of model's slots on the router SPIKE_ROUTER_URL names,
+// as its /props reports it: n_ctx in its default generation settings. Under set A's unified KV
+// cache each slot may fill the whole pool, so it is the model's c, which the slots share.
+func slotContext(t *testing.T, model string) int {
+	t.Helper()
+	u := strings.TrimSuffix(os.Getenv("SPIKE_ROUTER_URL"), "/") + "/props?" +
+		url.Values{"model": {model}, "autoload": {"false"}}.Encode()
+	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, u, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+	var props struct {
+		Settings struct {
+			NCtx int `json:"n_ctx"`
+		} `json:"default_generation_settings"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&props); err != nil || resp.StatusCode != http.StatusOK {
+		t.Fatalf("/props for %s: status %d, %v", model, resp.StatusCode, err)
+	}
+	return props.Settings.NCtx
+}
+
+// recordFinal logs a recorded line with Document's final request's input tokens against the
+// context of one of the digest model's slots, and fails t when the request filled it.
+func recordFinal(t *testing.T, run string, final *protocol.Response) {
+	t.Helper()
+	ctx := slotContext(t, digestModel)
+	in := final.Usage.InputTokens
+	t.Logf("recorded: %s final request: %d input tokens, %.1f%% of a %s slot's %d-token context",
+		run, in, 100*rate(in, ctx), digestModel, ctx)
+	if in >= ctx {
+		t.Errorf("%s: the final request's %d input tokens fill the slot's %d-token context", run, in, ctx)
+	}
+}
+
 // TestVisionPagesHost checks every page of clean.pdf comes back completed, in page order, and
 // records the stream's wall time and the pages' character error rate.
 func TestVisionPagesHost(t *testing.T) {
@@ -307,6 +350,7 @@ func TestVisionDocumentHost(t *testing.T) {
 		edits, chars = edits+e, chars+n
 	}
 	out := checkDigest(t, res.Final)
+	recordFinal(t, "vision Document clean.pdf", res.Final)
 	joined := strings.Join(truth, "\n\n")
 	te, tn := charErrors(joined, stripHeadings(res.Text()))
 	t.Logf("recorded: vision Document clean.pdf, %d pages at concurrency %d and a %s digest: %v wall, CER %.4f, digest %d output tokens (%d reasoning), %d pages retried",
@@ -319,7 +363,8 @@ func TestVisionDocumentHost(t *testing.T) {
 
 // TestVisionDocumentScannedHost checks Document on scanned.pdf, real scans of marked documents,
 // completes every page and a digest that decodes as the schema's object, and records its wall
-// time and the digest in full.
+// time, the pages' character error rate, the final request's input tokens, and the digest in
+// full.
 func TestVisionDocumentScannedHost(t *testing.T) {
 	v, req := hostVision(t)
 	truth := truthOf(t, "scanned")
@@ -333,9 +378,57 @@ func TestVisionDocumentScannedHost(t *testing.T) {
 	if len(res.Pages) != len(truth) {
 		t.Fatalf("the result holds %d pages, want %d", len(res.Pages), len(truth))
 	}
+	var edits, chars int
+	for i, p := range res.Pages {
+		e, n := charErrors(truth[i], text(p.Response))
+		edits, chars = edits+e, chars+n
+	}
 	out := checkDigest(t, res.Final)
-	t.Logf("recorded: vision Document scanned.pdf, %d pages at concurrency %d and a %s digest: %v wall, digest %d output tokens (%d reasoning), %d pages retried",
-		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond),
+	recordFinal(t, "vision Document scanned.pdf", res.Final)
+	t.Logf("recorded: vision Document scanned.pdf, %d pages at concurrency %d and a %s digest: %v wall, CER %.4f, digest %d output tokens (%d reasoning), %d pages retried",
+		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond), rate(edits, chars),
 		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens, retried)
 	t.Logf("recorded: vision Document scanned.pdf digest: %s", out)
+}
+
+// TestVisionImageTokensHost records the tokens Gemma 4 26B-A4B counts for a letter page's image
+// at 72, 100, 150, and 200 dpi: clean.pdf's page 1, rendered by the host's gs, sent in a request
+// for one output token beside a short text, its input tokens less those of the same request
+// without the image. The difference holds the image's tokens and the few that mark where an image
+// begins and ends in the model's chat template. The request has no output bound of its own, which
+// the protocol sets no lower than 16; Native's max_completion_tokens of 1 bounds it instead.
+func TestVisionImageTokensHost(t *testing.T) {
+	c := routerClient(t)
+	g, _ := hostGhostscript(t)
+	ask := func(parts ...protocol.ContentPart) int {
+		t.Helper()
+		resp, err := c.Generate(t.Context(), &protocol.Request{
+			Model:     visionModel,
+			Input:     []protocol.Item{protocol.Message{Role: protocol.RoleUser, Content: parts}},
+			Reasoning: protocol.ReasoningParam{Effort: protocol.ReasoningEffortNone},
+			Native:    jsontext.Value(`{"temperature":0,"max_completion_tokens":1}`),
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return resp.Usage.InputTokens
+	}
+	prompt := protocol.InputText{Text: "Reply with one word."}
+	without := ask(prompt)
+	for _, dpi := range []int{72, 100, 150, 200} {
+		var page bytes.Buffer
+		if err := g.Render(t.Context(), filepath.Join("testdata", "clean.pdf"), 1, dpi, &page); err != nil {
+			t.Fatal(err)
+		}
+		cfg, err := png.DecodeConfig(bytes.NewReader(page.Bytes()))
+		if err != nil {
+			t.Fatal(err)
+		}
+		with := ask(prompt, protocol.InputImage{ImageURL: protocol.DataURL("image/png", page.Bytes())})
+		if with <= without {
+			t.Errorf("%d dpi: %d input tokens with the image, %d without, want more with it", dpi, with, without)
+		}
+		t.Logf("recorded: vision image tokens, %s, clean.pdf page 1 at %d dpi, %dx%d, %d PNG bytes: %d image tokens (%d input tokens with the image, %d without)",
+			visionModel, dpi, cfg.Width, cfg.Height, page.Len(), with-without, with, without)
+	}
 }
