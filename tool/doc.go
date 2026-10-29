@@ -10,8 +10,8 @@
 // The exec runner runs a program directly: NewExec looks a name up on PATH and takes a path with a
 // separator as given, and NewScript runs a script through its interpreter, which it finds and
 // checks as NewExec does a binary. The container runner, NewContainer, runs the program inside an
-// Image through the docker CLI, the only runtime, which itself runs through the exec runner,
-// checked against the server's version, minimum 20.10. The image's reference is pinned by digest;
+// Image through the docker CLI, the only runtime. It runs the CLI through the exec runner and
+// checks the server's version, minimum 20.10. The image's reference is pinned by digest;
 // construction pulls it when it isn't present and runs the version command inside it. Every run
 // is locked down, --rm, --init, --network=none, the caller's uid:gid, --cap-drop=ALL, and
 // --pull=never, and the Image's Network and CapAdd are its only relaxations. A run mounts its
@@ -19,17 +19,17 @@
 // files through either runner.
 //
 // A Spec declares the version check: arguments that print the version, a pattern whose first
-// capture group is it, and a minimum. A Version is dotted numbers compared as numbers, a missing
-// component counting as zero, and the check is a minimum, never an exact version.
+// capture group is the version, and a minimum. A Version is dotted numbers compared as numbers,
+// a missing component counting as zero, and the check is a minimum, never an exact version.
 //
 // Cancelling a run's context stops its tool. Through the exec runner the program's process group
-// gets SIGTERM, then SIGKILL once the Spec's KillAfter period passes, 10 s when unset; through the
-// container runner, docker stop on the run's container, given the KillAfter period, stops it, the
-// CLI's own signal forwarding never relied on. Either way Run returns an error matching the
-// context's, errors.Is context.Canceled or context.DeadlineExceeded, which names the program's own
-// outcome once, as in "tool: ffprobe: context canceled (exit status 143)", and is never an
-// ExitError. If the process running the package is itself SIGKILLed, a running container runs on
-// until its tool exits, and --rm removes it then.
+// gets SIGTERM, then SIGKILL once the Spec's KillAfter period passes, 10 s when unset. Through the
+// container runner, docker stop on the run's container stops it, given the KillAfter period; the
+// CLI's own signal forwarding is never relied on. Either way, a run that fails once its context
+// has ended returns an error matching the context's, errors.Is context.Canceled or
+// context.DeadlineExceeded, never an *ExitError; it names the program's own outcome once, as in
+// "tool: ffprobe: context canceled (exit status 143)". If the process running the package is
+// itself SIGKILLed, a running container runs on until its tool exits, and --rm removes it then.
 //
 // A program that exits nonzero is an *ExitError, which keeps the last 4 KiB of the program's
 // standard error when the caller passed no writer for it; a constructor's refusal over the version

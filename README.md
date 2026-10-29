@@ -13,13 +13,13 @@ office documents, and LibreOffice in a container for legacy office formats only.
 
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
-whose first capture group is the version, the minimum version, and the KillAfter period. A
-runner's constructor builds a `Tool` bound to that one program; it finds the program and checks
-its version, so a missing or outdated tool fails at startup, and the Tool reports its `Name` and
-the `Version` found. `Tool.Run` runs one `Invocation`, its arguments, a working directory the
-caller owns, and optional stdin, stdout, and stderr, under the caller's context. An Invocation
-names nothing about the runner, so an adapter written against Tool runs the same code whichever
-runner built it.
+whose first capture group is the version, the minimum version, and `KillAfter`, the KillAfter
+period: how long a cancelled run has after SIGTERM before SIGKILL. A runner's constructor builds
+a `Tool` bound to that one program; it finds the program and checks its version, so a missing or
+outdated tool fails at startup, and the Tool reports its `Name` and the `Version` found.
+`Tool.Run` runs one `Invocation`, its arguments, a working directory the caller owns, and optional
+stdin, stdout, and stderr, under the caller's context. An Invocation names nothing about the
+runner, so an adapter written against Tool runs the same code whichever runner built it.
 
 ```go
 spec := tool.Spec{
@@ -78,28 +78,31 @@ spec sets none; the group's SIGKILL lands before the program is reaped, so nothi
 outlives it. Through the container runner, `docker stop` on the run's name stops the container,
 given the KillAfter period rounded up to whole seconds, under a context of its own, and
 `docker rm --force` removes whatever remains; the CLI's own signal forwarding is never relied on.
-Either way, Run returns an error matching the context's (`errors.Is` `context.Canceled` or
-`context.DeadlineExceeded`), never an `*ExitError`, and it names the program's own outcome once:
-`tool: ffprobe: context canceled (exit status 143)`.
+Either way, a run that fails once its context has ended, even one whose program exited on its
+own as the context ended, returns an error matching the context's (`errors.Is`
+`context.Canceled` or `context.DeadlineExceeded`), never an `*ExitError`, and the error names the
+program's own outcome once: `tool: ffprobe: context canceled (exit status 143)`.
 
 A program that exits nonzero is an `*ExitError`: the program's name, its exit code, and, when the
 caller passed no stderr writer, the last 4 KiB of its standard error; given a writer, all of
-stderr goes to it and the error has no tail. A constructor's refusal over the version is a
-`*VersionError`, naming the program, the version found, and the minimum, its cause `ErrTooOld`,
-`ErrNoVersion`, or the version command's error.
+stderr goes to it and the error has no tail. Through the container runner, exit codes 125 to 127
+are docker's own: 125 is a failure of docker's, and 126 and 127 an entrypoint it can't run. A
+constructor's refusal over the version is a `*VersionError`, naming the program, the version
+found, and the minimum, its cause `ErrTooOld`, `ErrNoVersion`, or the version command's error.
 
 An `*os.File` stdin passes straight to the program. Any other reader is copied into a pipe Run
 owns, so a reader the caller holds open never keeps Run from returning: once the program has
-exited, Run waits for the copy at most a short bound, the KillAfter period through the exec runner
-and 2 s through the container runner, and a cancelled run doesn't wait for it. A program that
-exits without reading all of stdin is no error, and a failed Read of stdin is Run's error only
-when the program otherwise succeeds. The cost is one more Read: after Run returns, the copy may
-make one more Read of the caller's reader, and it ends when that Read returns.
+exited, Run waits for the copy at most the KillAfter period through the exec runner and 2 s
+through the container runner, and a cancelled run doesn't wait for it. A program that exits
+without reading all of stdin is no error, and a failed Read of stdin is Run's error only when the
+program otherwise succeeds. The cost: after Run returns, the copy may make one more Read of the
+caller's reader, and it ends when that Read returns.
 
 A known limit: if processing itself is SIGKILLed, a running container runs on until its tool
 exits, and `--rm` removes it then.
 
-It builds on spike-ai-pipeline-client by tag, and is released by tag, `vX.Y.Z`, with a CHANGELOG.
-The spike's question, evidence, and answer are in the root repository's README.
+The layer will take spike-ai-pipeline-client by tag once a stage first needs it. It is released by
+tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer are in the root
+repository's README.
 
 Apache-2.0.
