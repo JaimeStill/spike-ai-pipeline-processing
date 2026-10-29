@@ -8,11 +8,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- `tool.Usage` and `Invocation.Usage`: a run's resource usage, peak resident memory in bytes and
-  user and system CPU time, which `Run` sets when the pointer isn't nil, whether the program
-  exited zero, exited nonzero, or was cancelled. The exec runner fills it from the program's
-  rusage, which on Linux counts the children the program reaped; the container runner leaves it
-  zero, since the docker CLI's usage isn't the container's. A nil `Usage` asks for nothing.
+- `tool.Usage` and `Invocation.Usage`: a run's resource usage, user and system CPU time, which
+  `Run` sets when the pointer isn't nil, whether the program exited zero, exited nonzero, or was
+  cancelled. The exec runner fills it from the program's rusage, which on Linux counts the
+  children the program reaped; the container runner leaves it zero, since the docker CLI's usage
+  isn't the container's. A nil `Usage` asks for nothing. It reports no peak memory: Go starts a
+  program with a vfork-style clone, so the program's rusage peak starts at the Go parent's
+  resident memory.
 - `document`, which prepares a PDF's pages for a model's vision, on Linux, the standard library,
   `tool`, and spike-ai-pipeline-client, which the module now requires at v0.4.0. `Generator` is
   the one method it needs of the client, `Generate`, which `*client.Client` satisfies.

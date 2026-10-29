@@ -70,13 +70,14 @@ type Invocation struct {
 	Usage *Usage
 }
 
-// Usage is a run's resource usage, as the kernel accounts it for the program once it is reaped.
-// On Linux that accounting covers the children the program itself waited for, such as a
+// Usage is a run's CPU time, as the kernel accounts it for the program once it is reaped. On
+// Linux that accounting covers the children the program itself waited for, such as a
 // converter's delegate, but not a child it left unreaped.
+//
+// It has no peak memory. Go starts a program with a vfork-style clone, so Linux records the Go
+// parent's resident memory in the program's peak at exec, and the rusage figure reads the
+// caller's size rather than the program's whenever the caller is the larger.
 type Usage struct {
-	// PeakRSS is the peak resident memory in bytes: the largest of the program's own and its
-	// reaped children's, never their sum.
-	PeakRSS int64
 	// UserCPU is the CPU time spent in user mode, the program's and its reaped children's.
 	UserCPU time.Duration
 	// SystemCPU is the CPU time spent in the kernel on their behalf.

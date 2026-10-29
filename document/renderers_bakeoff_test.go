@@ -62,11 +62,11 @@ func (r *cliRenderer) peakMemory(ctx context.Context, pdf string, page, dpi int)
 	return launch(ctx, r.launcher, append([]string{r.render.Name()}, r.args(pdf, page, dpi)...))
 }
 
-// The launcher measures a program's peak memory, which an Invocation's Usage can't for a program
-// the test process starts: Go starts a program with a vfork-style clone, the child sharing the
-// parent's memory until it execs, and on exec Linux carries the shared memory's high-water mark
-// into the program's maxrss. So the Usage of a program the test process runs is never below the
-// test process's own peak resident memory, which holds every rendered page. The launcher is the
+// The launcher measures a program's peak memory, which a tool.Usage leaves out: Go starts a
+// program with a vfork-style clone, the child sharing the parent's memory until it execs, and on
+// exec Linux carries the shared memory's high-water mark into the program's maxrss. So the maxrss
+// of a program the test process runs is never below the test process's own peak resident memory,
+// which holds every rendered page. The launcher is the
 // test binary, re-executed with launchEnv set: a small process whose own high-water mark is the
 // floor instead, which launchFloor measures. It runs its arguments as a program with its own
 // standard streams, and writes the program's maxrss to stderr after it, as a last line that

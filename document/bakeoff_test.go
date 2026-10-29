@@ -118,14 +118,12 @@ type cell struct {
 	Run  int    `json:"run"`
 	// RenderTime is the render's wall-clock time, and UserCPU and SystemCPU the rendering
 	// tool's usage. PeakRSS is the rendering program's peak resident memory, from a second
-	// render of the page through the launcher; UsagePeakRSS is the Usage's own, which the test
-	// process's peak floors, kept to show the difference.
-	RenderTime   time.Duration `json:"render_time"`
-	PeakRSS      int64         `json:"peak_rss"`
-	UsagePeakRSS int64         `json:"usage_peak_rss"`
-	UserCPU      time.Duration `json:"user_cpu"`
-	SystemCPU    time.Duration `json:"system_cpu"`
-	PNGBytes     int           `json:"png_bytes"`
+	// render of the page through the launcher, since a tool.Usage has none.
+	RenderTime time.Duration `json:"render_time"`
+	PeakRSS    int64         `json:"peak_rss"`
+	UserCPU    time.Duration `json:"user_cpu"`
+	SystemCPU  time.Duration `json:"system_cpu"`
+	PNGBytes   int           `json:"png_bytes"`
 	// CharEdits over Chars is the character error rate, WordEdits over Words the word error
 	// rate.
 	CharEdits int `json:"char_edits"`
@@ -237,10 +235,10 @@ func TestBakeoff(t *testing.T) {
 			res.LaunchFloor = floor
 			cells := renderAll(t, r, sets)
 			transcribeAll(t, c, sets, cells, func(cl *cell) {
-				t.Logf("recorded: bakeoff %s: %s page %d run %d: CER %.4f WER %.4f, render %v (CPU %v user, %v system), peak %.1f MiB (Usage's %.1f), %d PNG bytes; transcribed in %v, %d output tokens (%d reasoning), status %s%s",
+				t.Logf("recorded: bakeoff %s: %s page %d run %d: CER %.4f WER %.4f, render %v (CPU %v user, %v system), peak %.1f MiB, %d PNG bytes; transcribed in %v, %d output tokens (%d reasoning), status %s%s",
 					cand.name, cl.Set, cl.Page, cl.Run, rate(cl.CharEdits, cl.Chars), rate(cl.WordEdits, cl.Words),
 					cl.RenderTime.Round(time.Millisecond), cl.UserCPU.Round(time.Millisecond), cl.SystemCPU.Round(time.Millisecond),
-					mib(cl.PeakRSS), mib(cl.UsagePeakRSS), cl.PNGBytes, cl.RequestTime.Round(time.Millisecond),
+					mib(cl.PeakRSS), cl.PNGBytes, cl.RequestTime.Round(time.Millisecond),
 					cl.OutputTokens, cl.ReasoningTokens, cl.Status, errSuffix(cl.Error))
 			})
 			res.Cells = cells
@@ -326,7 +324,7 @@ func renderAll(t *testing.T, r *cliRenderer, sets []fixtureSet) []cell {
 				}
 				cells = append(cells, cell{
 					Set: s.name, Page: page, Run: run,
-					RenderTime: elapsed, PeakRSS: peak, UsagePeakRSS: usage.PeakRSS,
+					RenderTime: elapsed, PeakRSS: peak,
 					UserCPU: usage.UserCPU, SystemCPU: usage.SystemCPU,
 					PNGBytes: out.Len(), png: out.Bytes(),
 				})

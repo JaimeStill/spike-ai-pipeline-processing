@@ -159,8 +159,9 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 	}
 }
 
-// usage returns the resource usage of a reaped program, from its rusage; zero when state is nil,
-// a program that never started. Linux reports ru_maxrss in KiB.
+// usage returns the CPU time of a reaped program, from its rusage; zero when state is nil, a
+// program that never started. It leaves out ru_maxrss, which holds the Go parent's resident
+// memory from the vfork-style clone that started the program (see Usage).
 func usage(state *os.ProcessState) Usage {
 	if state == nil {
 		return Usage{}
@@ -170,7 +171,6 @@ func usage(state *os.ProcessState) Usage {
 		return Usage{}
 	}
 	return Usage{
-		PeakRSS:   int64(ru.Maxrss) << 10,
 		UserCPU:   time.Duration(ru.Utime.Nano()),
 		SystemCPU: time.Duration(ru.Stime.Nano()),
 	}

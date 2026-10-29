@@ -39,9 +39,9 @@
 //
 // An Invocation's Usage, when not nil, asks for the run's resource usage, which Run sets whatever
 // the run's outcome. The exec runner fills it once the program is reaped, from the program's
-// rusage: peak resident memory in bytes, and user and system CPU time, the children the program
-// itself reaped included. The container runner leaves it zero, since the docker CLI's usage isn't
-// the container's.
+// rusage: user and system CPU time, the children the program itself reaped included. It reports
+// no peak memory, since the program's rusage peak starts at its Go parent's resident memory. The
+// container runner leaves it zero, since the docker CLI's usage isn't the container's.
 //
 // Its exported identifiers:
 //
@@ -49,7 +49,7 @@
 //     and a cancelled run's KillAfter period.
 //   - [Invocation] is one run of a tool: arguments, working directory, standard streams, and
 //     where to report its usage.
-//   - [Usage] is a run's resource usage: peak resident memory, and user and system CPU time.
+//   - [Usage] is a run's resource usage: user and system CPU time.
 //   - [Tool] is one program, found and version-checked by the runner's constructor that built it.
 //   - [NewExec] builds a Tool that runs a program directly, the exec runner.
 //   - [NewScript] builds a Tool that runs a script through its interpreter, on the exec runner.
