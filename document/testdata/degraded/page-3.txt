@@ -1,0 +1,17 @@
+Library Card Application
+
+Full name: Margaret Ellen Doyle
+
+Street address: 41 Orchard Lane
+
+City: Fairhaven
+
+Postal code: 04821
+
+Telephone: 555 0142
+
+Date of birth: 12 March 1987
+
+Card type: Adult
+
+Signed by the applicant on 3 June 2026.
