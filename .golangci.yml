@@ -3,7 +3,8 @@ version: "2"
 
 linters:
   # The standard set (errcheck, govet, ineffassign, staticcheck, unused),
-  # plus testpackage, which keeps tests black-box. Its skip regexp is
+  # plus depguard, which holds the module to its allowed imports, and
+  # testpackage, which keeps tests black-box. Its skip regexp is
   # narrowed to export_test.go: tests live in <pkg>_test and drive the
   # exported API, and the one white-box file allowed is export_test.go.
   # allow-packages is narrowed from its default, main, so a command's tests
@@ -11,8 +12,28 @@ linters:
   # which no package has: an empty list leaves the default, main, in force.
   default: standard
   enable:
+    - depguard
     - testpackage
   settings:
     testpackage:
       skip-regexp: export_test\.go
       allow-packages: [""]
+    depguard:
+      rules:
+        # The module depends on nothing but the standard library (unsafe
+        # among it, which waitid in tool/exec.go uses) and
+        # spike-ai-pipeline-client. The rule covers every Go file, tests
+        # included: they drive the API with the same imports plus the module
+        # itself. Allow entries match by prefix unless they end in `$`, so the
+        # module entries are anchored: each module as itself or a package
+        # under it (not a sibling like spike-ai-pipeline-processing-extra).
+        module:
+          list-mode: strict
+          files:
+            - "**/*.go"
+          allow:
+            - $gostd
+            - github.com/JaimeStill/spike-ai-pipeline-processing$
+            - github.com/JaimeStill/spike-ai-pipeline-processing/
+            - github.com/JaimeStill/spike-ai-pipeline-client$
+            - github.com/JaimeStill/spike-ai-pipeline-client/
