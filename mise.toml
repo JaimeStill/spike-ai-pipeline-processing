@@ -84,3 +84,38 @@ done
 go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestBakeoffRanking$' ./document/ || failed=1
 exit "$failed"
 '''
+
+# Evidence 11, the corrections matrix, in the bake-off tier: the degraded and scanned sets through
+# Vision.Pages with the released renderer, gs, and the corrections stage on this machine's magick,
+# each page sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, in seven cells (none,
+# each correction alone, all five), three runs each, at 150 dpi and again at 72. A task of its own,
+# so rerunning the matrix doesn't rerun the renderer bake-off. Each DPI, set, and cell is a run of
+# its own, capped at 10 minutes, and a last run reports the matrix from their results, which a
+# temporary directory carries between the runs. -v keeps the recorded lines. It isn't CI.
+[tasks.bakeoff-corrections]
+description = "Run the corrections matrix against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A BAKEOFF_RESULTS the shell sets keeps the runs' results, transcriptions included, there.
+if [ -z "${BAKEOFF_RESULTS:-}" ]; then
+  BAKEOFF_RESULTS=$(mktemp -d)
+  trap 'rm -rf "$BAKEOFF_RESULTS"' EXIT
+fi
+export BAKEOFF_RESULTS
+# A failed run doesn't stop the others; the task fails at the end.
+failed=0
+for dpi in 150 72; do
+  for set in degraded scanned; do
+    for cell in none Deskew Despeckle ContrastStretch Unsharp Grayscale all; do
+      start=$(date +%s)
+      BAKEOFF_DPI=$dpi BAKEOFF_SET=$set BAKEOFF_CELL=$cell \
+        go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestCorrections$' ./document/ || failed=1
+      echo "bakeoff-corrections: $dpi dpi $set $cell took $(( $(date +%s) - start )) s"
+    done
+  done
+done
+go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestCorrectionsMatrix$' ./document/ || failed=1
+exit "$failed"
+'''

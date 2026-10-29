@@ -137,7 +137,10 @@ type cell struct {
 	Status string `json:"status"`
 	Output string `json:"output"`
 	Error  string `json:"error,omitempty"`
-	// OutputTokens and ReasoningTokens are the response's usage.
+	// InputTokens, OutputTokens, and ReasoningTokens are the response's usage. InputTokens, the
+	// page image's tokens and the instructions', is absent from results written before it was
+	// recorded.
+	InputTokens     int `json:"input_tokens,omitempty"`
 	OutputTokens    int `json:"output_tokens"`
 	ReasoningTokens int `json:"reasoning_tokens"`
 	// png is the rendered page, held until its request is sent.
@@ -402,6 +405,7 @@ func transcribe(t *testing.T, c *client.Client, cl *cell) {
 		return
 	}
 	cl.Status = string(resp.Status)
+	cl.InputTokens = resp.Usage.InputTokens
 	cl.OutputTokens = resp.Usage.OutputTokens
 	cl.ReasoningTokens = resp.Usage.OutputTokensDetails.ReasoningTokens
 	var text strings.Builder
