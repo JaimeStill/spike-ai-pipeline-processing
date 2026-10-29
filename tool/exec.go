@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -89,11 +90,22 @@ func lookPath(program string) (string, error) {
 // SIGTERM to the group when ctx ends; SIGKILL to the program once killAfter passes (WaitDelay);
 // and, once the program has exited but before it is reaped, SIGKILL to the group, so no child
 // outlives it.
+//
+// An *os.File stdin passes straight to the program; any other reader goes through a stdinFeed,
+// so a run never waits on a Read of the caller's.
 func execRun(name, path string, lead []string, killAfter time.Duration) runFunc {
 	return func(ctx context.Context, inv Invocation) error {
 		cmd := exec.CommandContext(ctx, path, slices.Concat(lead, inv.Args)...)
 		cmd.Dir = inv.Dir
 		cmd.Stdin = inv.Stdin
+		var feed *stdinFeed
+		if _, ok := inv.Stdin.(*os.File); inv.Stdin != nil && !ok {
+			var err error
+			if feed, err = newStdinFeed(inv.Stdin); err != nil {
+				return fmt.Errorf("tool: %s: stdin: %w", name, err)
+			}
+			cmd.Stdin = feed.r
+		}
 		cmd.Stdout = inv.Stdout
 		var tail *tailWriter
 		if inv.Stderr != nil {
@@ -108,6 +120,9 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 		// program that outlasts killAfter while awaitExit blocks.
 		cmd.WaitDelay = killAfter
 		err := cmd.Start()
+		if feed != nil {
+			feed.start(err == nil)
+		}
 		if err == nil {
 			// The program is exited but unreaped once awaitExit returns: a zombie keeps its pid,
 			// and so the group's ID, from reuse, so the group's SIGKILL reaches only what the
@@ -117,6 +132,11 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 				_ = signalGroup(cmd.Process, syscall.SIGKILL)
 			}
 			err = cmd.Wait()
+		}
+		if feed != nil {
+			if ferr := feed.finish(ctx, killAfter); ferr != nil && err == nil {
+				err = fmt.Errorf("stdin: %w", ferr)
+			}
 		}
 		if err != nil && ctx.Err() != nil {
 			// ctx ended the run: its error is the cause, whatever the program's exit.
@@ -134,6 +154,78 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 		}
 		return nil
 	}
+}
+
+// stdinFeed is the pipe a run's stdin passes through when the caller's reader isn't an *os.File.
+// os/exec would copy such a reader itself, and, once the program has exited, wait for that copy
+// with no bound, even past WaitDelay: a copy blocked in the caller's Read, on a pipe the caller
+// holds open, would keep Run from ever returning. The feed's copy is execRun's own, so Run decides
+// how long to wait for it.
+type stdinFeed struct {
+	src  io.Reader
+	r, w *os.File
+	// done carries the copy's outcome; nil until start begins the copy.
+	done chan error
+}
+
+// newStdinFeed makes the pipe src is copied into, its read end the program's stdin.
+func newStdinFeed(src io.Reader) (*stdinFeed, error) {
+	r, w, err := os.Pipe()
+	if err != nil {
+		return nil, err
+	}
+	return &stdinFeed{src: src, r: r, w: w}, nil
+}
+
+// start runs once the command's Start has returned, started reporting whether it succeeded. The
+// program holds the read end of its own, so the parent's copy is closed either way: the program,
+// and whatever it starts, are then the pipe's only readers, and a write once they have all exited
+// fails with EPIPE rather than blocking. A program that started gets the copy, which closes the
+// write end when it ends, so the program reads EOF at the end of src; one that didn't, nothing.
+func (f *stdinFeed) start(started bool) {
+	_ = f.r.Close()
+	if !started {
+		_ = f.w.Close()
+		return
+	}
+	f.done = make(chan error, 1)
+	go func() {
+		_, err := io.Copy(f.w, f.src)
+		_ = f.w.Close()
+		// EPIPE is a program that exited, or closed its stdin, without reading all of src, and
+		// ErrClosed is a write end that finish closed: neither is the copy's failure.
+		if errors.Is(err, syscall.EPIPE) || errors.Is(err, os.ErrClosed) {
+			err = nil
+		}
+		f.done <- err
+	}()
+}
+
+// finish runs once the program has exited and been reaped, and returns the copy's error, a read
+// of src that failed while the program ran. A run that ctx ended doesn't wait for the copy at
+// all. Otherwise finish waits for the copy at most killAfter, as WaitDelay bounds the wait for
+// the program's output, and stops early should ctx end: a program that read all of src has its
+// copy already ended, and one that left src unread ends its copy with EPIPE at the next write,
+// but a copy blocked in a Read of src, which the caller holds open, ends only when that Read
+// returns, which no bound here can hasten. When finish stops waiting, it closes the write end, so
+// the copy's next write fails and it ends, and reports nothing: an exited program can read no
+// more of src, and leaving src unread is no error.
+func (f *stdinFeed) finish(ctx context.Context, killAfter time.Duration) error {
+	if f.done == nil {
+		return nil
+	}
+	if ctx.Err() == nil {
+		timer := time.NewTimer(killAfter)
+		defer timer.Stop()
+		select {
+		case err := <-f.done:
+			return err
+		case <-timer.C:
+		case <-ctx.Done():
+		}
+	}
+	_ = f.w.Close()
+	return nil
 }
 
 // pPID is waitid's idtype for a single pid, P_PID, which syscall doesn't define.

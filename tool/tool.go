@@ -48,7 +48,14 @@ type Invocation struct {
 	Args []string
 	// Dir is the working directory, which the caller owns; empty is the process's own.
 	Dir string
-	// Stdin is the program's standard input; nil is none.
+	// Stdin is the program's standard input; nil is none. An *os.File passes straight to the
+	// program. Any other reader is copied into a pipe by a goroutine of Run's own, which closes
+	// the pipe at the reader's EOF. Once the program has exited, Run waits for that copy at most
+	// a short bound, the KillAfter period through the exec runner and 2 s through the container
+	// runner, then returns: a program that exits without reading all of Stdin is no error, and a
+	// failed Read of Stdin is Run's error only when the program otherwise succeeds. A run that
+	// ctx ended doesn't wait for the copy. The cost: after Run returns, the goroutine may make
+	// one more Read of Stdin, and it exits when that Read returns.
 	Stdin io.Reader
 	// Stdout receives the program's standard output; nil discards it.
 	Stdout io.Writer
