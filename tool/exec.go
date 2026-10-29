@@ -140,7 +140,7 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 		}
 		if err != nil && ctx.Err() != nil {
 			// ctx ended the run: its error is the cause, whatever the program's exit.
-			return fmt.Errorf("tool: %s: %w (%v)", name, ctx.Err(), err)
+			return &cancelError{program: name, ctxErr: ctx.Err(), outcome: err}
 		}
 		if exitErr, ok := errors.AsType[*exec.ExitError](err); ok {
 			e := &ExitError{Program: name, Code: exitErr.ExitCode(), err: err}
@@ -154,6 +154,38 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 		}
 		return nil
 	}
+}
+
+// cancelError reports a run that its context ended. It matches the context's error alone; the
+// program's own outcome, its exit or the runner's failure, is only named in the message, so a
+// cancelled run is never an *ExitError.
+type cancelError struct {
+	program string
+	ctxErr  error
+	// outcome is the run's own error, nil when the program exited 0.
+	outcome error
+}
+
+func (e *cancelError) Error() string {
+	if e.outcome == nil {
+		return fmt.Sprintf("tool: %s: %v", e.program, e.ctxErr)
+	}
+	return fmt.Sprintf("tool: %s: %v (%v)", e.program, e.ctxErr, e.outcome)
+}
+
+func (e *cancelError) Unwrap() error { return e.ctxErr }
+
+// runOutcome returns the run's own outcome within err, a runner's error: a cancelError's outcome,
+// an ExitError's exec.ExitError, or err itself. A runner built on another's names the outcome it
+// gets once in its own error, without the inner runner's program or context.
+func runOutcome(err error) error {
+	if ce, ok := errors.AsType[*cancelError](err); ok {
+		return ce.outcome
+	}
+	if ee, ok := errors.AsType[*ExitError](err); ok {
+		return ee.err
+	}
+	return err
 }
 
 // stdinFeed is the pipe a run's stdin passes through when the caller's reader isn't an *os.File.

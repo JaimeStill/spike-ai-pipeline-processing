@@ -169,7 +169,7 @@ func containerRun(name, dpath string, drun runFunc, base []string, ref string, k
 		// A run whose context has already ended never starts, so no container can start after
 		// the stop meant for it.
 		if err := ctx.Err(); err != nil {
-			return fmt.Errorf("tool: %s: %w", name, err)
+			return &cancelError{program: name, ctxErr: err}
 		}
 		dir, err := workDir(inv.Dir)
 		if err != nil {
@@ -198,11 +198,14 @@ func containerRun(name, dpath string, drun runFunc, base []string, ref string, k
 		err = cli(cliCtx, Invocation{Args: args, Stdin: inv.Stdin, Stdout: inv.Stdout, Stderr: inv.Stderr})
 		close(exited)
 		if <-stopped {
-			// ctx ended the run: its error is the cause, whatever the CLI's exit.
+			// ctx ended the run: its error is the cause, whatever the CLI's exit. The CLI's error
+			// is the exec runner's, an ExitError or, once endCLI has ended the CLI's context, a
+			// cancelError of its own, so only its outcome is named.
+			var outcome error
 			if err != nil {
-				return fmt.Errorf("tool: %s: %w (%v)", name, ctx.Err(), err)
+				outcome = runOutcome(err)
 			}
-			return fmt.Errorf("tool: %s: %w", name, ctx.Err())
+			return &cancelError{program: name, ctxErr: ctx.Err(), outcome: outcome}
 		}
 		return err
 	}

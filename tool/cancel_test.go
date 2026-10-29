@@ -117,6 +117,36 @@ func TestRunContextAlreadyDone(t *testing.T) {
 	assertContextError(t, err, context.Canceled)
 }
 
+// TestCancelErrorNamesContextOnce checks that a cancelled run's error, through either runner,
+// reads as the program's name, the context's error, and the program's own outcome in parentheses,
+// each once. The container runner's CLI runs under a context of its own, which it ends once the
+// container is stopped, so its error carries a cancel of its own that the run's error doesn't
+// repeat. The stand-in ignores SIGTERM, so the KillAfter period's SIGKILL ends it: the exec
+// runner's program is killed by signal, and the container's CLI exits 137 for it.
+func TestCancelErrorNamesContextOnce(t *testing.T) {
+	want := map[string]string{
+		"exec":      "tool: standin: context canceled (signal: killed)",
+		"container": "tool: standin: context canceled (exit status 137)",
+	}
+	for label, build := range runnerCases {
+		t.Run(label, func(t *testing.T) {
+			tl, leftover := build(t, time.Second)
+			ctx, cancel := context.WithCancel(t.Context())
+			defer cancel()
+			ready := newReadyWriter()
+			done := runAsync(ctx, tl, tool.Invocation{Args: []string{"stubborn", "1m"}, Stdout: ready})
+			ready.wait(t)
+			cancel()
+			err := <-done
+			assertContextError(t, err, context.Canceled)
+			if err.Error() != want[label] {
+				t.Errorf("Run error = %q, want %q", err, want[label])
+			}
+			leftover(t)
+		})
+	}
+}
+
 // runAsync runs tl in a goroutine, sending Run's error on the channel it returns.
 func runAsync(ctx context.Context, tl *tool.Tool, inv tool.Invocation) <-chan error {
 	done := make(chan error, 1)
