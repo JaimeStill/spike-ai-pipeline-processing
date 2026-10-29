@@ -11,29 +11,43 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
-// standinEnv marks a process as the stand-in magick: the test binary, re-executed through a link
-// named magick, acting on its arguments instead of running the tests.
+// standinEnv marks a process as a stand-in tool: the test binary, re-executed through a link
+// named magick or gs, acting on its arguments as that program instead of running the tests.
 const standinEnv = "DOCUMENT_TEST_STANDIN"
 
-// The stand-in magick's settings, which it reads from the environment it inherits.
+// The stand-in's settings, which it reads from the environment it inherits.
 const (
-	// versionEnv is the ImageMagick version -version prints, as "7.1.2-34".
-	versionEnv = "DOCUMENT_TEST_MAGICK_VERSION"
-	// logEnv names the file each run appends its arguments to, one JSON array per line.
-	logEnv = "DOCUMENT_TEST_MAGICK_LOG"
+	// versionEnv is the version the stand-in's version command prints, in its program's form:
+	// "7.1.2-34" for magick, "10.08.0" for gs.
+	versionEnv = "DOCUMENT_TEST_STANDIN_VERSION"
+	// logEnv names the file each run appends its working directory and arguments to, one JSON
+	// object per line.
+	logEnv = "DOCUMENT_TEST_STANDIN_LOG"
 	// failEnv, when set, makes a run write its value to stderr and exit 1 after logging.
-	failEnv = "DOCUMENT_TEST_MAGICK_FAIL"
+	failEnv = "DOCUMENT_TEST_STANDIN_FAIL"
+	// stdoutEnv, when set, is what the stand-in gs writes to stdout for a run in place of its
+	// own: its page count or its page.
+	stdoutEnv = "DOCUMENT_TEST_STANDIN_STDOUT"
 )
 
 func TestMain(m *testing.M) {
 	if os.Getenv(standinEnv) == "1" {
-		os.Exit(magick(os.Args[1:]))
+		switch name := filepath.Base(os.Args[0]); name {
+		case "magick":
+			os.Exit(magick(os.Args[1:]))
+		case "gs":
+			os.Exit(gs(os.Args[1:]))
+		default:
+			fmt.Fprintf(os.Stderr, "stand-in: no tool named %s\n", name)
+			os.Exit(2)
+		}
 	}
 	// The stand-in inherits the environment. Under -race, GORACE's atexit_sleep_ms keeps it from
 	// sleeping a second as it exits.
@@ -69,9 +83,54 @@ func magick(args []string) int {
 	return 0
 }
 
-// appendLog appends args to file as one JSON array and a newline.
+// standinPage is the stand-in gs's page: the PNG signature and a tail that names it.
+var standinPage = []byte("\x89PNG\r\n\x1a\nstand-in gs page")
+
+// gs is the stand-in gs. With --version alone it prints the version alone, as gs does.
+// Otherwise it appends its working directory and arguments to the log file, then fails when
+// failEnv is set, or else writes stdoutEnv's value to stdout when it is set, and its own output
+// when it isn't: a page count of 6 for a run with -dNODISPLAY, and standinPage for any other.
+func gs(args []string) int {
+	if len(args) == 1 && args[0] == "--version" {
+		fmt.Println(os.Getenv(versionEnv))
+		return 0
+	}
+	if err := appendLog(os.Getenv(logEnv), args); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	if msg := os.Getenv(failEnv); msg != "" {
+		fmt.Fprint(os.Stderr, msg)
+		return 1
+	}
+	out, set := os.LookupEnv(stdoutEnv)
+	switch {
+	case set:
+	case slices.Contains(args, "-dNODISPLAY"):
+		out = "6\n"
+	default:
+		out = string(standinPage)
+	}
+	if _, err := os.Stdout.WriteString(out); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	return 0
+}
+
+// standinRun is one logged run of a stand-in: its working directory and arguments.
+type standinRun struct {
+	Dir  string   `json:"dir"`
+	Args []string `json:"args"`
+}
+
+// appendLog appends the working directory and args to file as one JSON object and a newline.
 func appendLog(file string, args []string) error {
-	line, err := json.Marshal(args)
+	dir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	line, err := json.Marshal(standinRun{Dir: dir, Args: args})
 	if err != nil {
 		return err
 	}
@@ -100,19 +159,35 @@ func standinMagick(t *testing.T, version string, spec tool.Spec) (*tool.Tool, fu
 // returns the arguments of every run since, in order, the version command's left out.
 func installMagick(t *testing.T, version string) func() [][]string {
 	t.Helper()
+	runs := installStandin(t, "magick", version)
+	return func() [][]string {
+		t.Helper()
+		var args [][]string
+		for _, r := range runs() {
+			args = append(args, r.Args)
+		}
+		return args
+	}
+}
+
+// installStandin links the test binary as program in a directory of its own, makes that
+// directory the whole PATH, and has the stand-in report version. It returns a function that
+// returns every run since, in order, the version command's left out.
+func installStandin(t *testing.T, program, version string) func() []standinRun {
+	t.Helper()
 	exe, err := os.Executable()
 	if err != nil {
 		t.Fatal(err)
 	}
 	dir := t.TempDir()
-	if err := os.Symlink(exe, filepath.Join(dir, "magick")); err != nil {
+	if err := os.Symlink(exe, filepath.Join(dir, program)); err != nil {
 		t.Fatal(err)
 	}
 	t.Setenv("PATH", dir)
 	t.Setenv(versionEnv, version)
 	log := filepath.Join(t.TempDir(), "runs.jsonl")
 	t.Setenv(logEnv, log)
-	return func() [][]string {
+	return func() []standinRun {
 		t.Helper()
 		f, err := os.Open(log)
 		if errors.Is(err, fs.ErrNotExist) {
@@ -122,14 +197,14 @@ func installMagick(t *testing.T, version string) func() [][]string {
 			t.Fatal(err)
 		}
 		defer func() { _ = f.Close() }()
-		var runs [][]string
+		var runs []standinRun
 		lines := bufio.NewScanner(f)
 		for lines.Scan() {
-			var args []string
-			if err := json.Unmarshal(lines.Bytes(), &args); err != nil {
+			var r standinRun
+			if err := json.Unmarshal(lines.Bytes(), &r); err != nil {
 				t.Fatal(err)
 			}
-			runs = append(runs, args)
+			runs = append(runs, r)
 		}
 		if err := lines.Err(); err != nil {
 			t.Fatal(err)

@@ -11,6 +11,15 @@
 // CheckRender does. It doesn't count the pages: a page past the last gives the rendering tool's own
 // error, and a caller that walks a PDF's pages refuses one past the last against its own count.
 //
+// The released renderer, Ghostscript, is the renderer bake-off's winner. It counts pages with
+// gs's own PDF interpreter and renders a page with gs's png16m device, text and graphics
+// anti-aliased, to stdout, reading the PDF by its absolute path in the PDF's directory, so
+// either runner's Tool sees the same file. gs past the last page exits zero with a message in
+// place of a PNG, which Render returns as its error, writing nothing. NewGhostscript takes a gs
+// Tool built through either runner, GhostscriptSpec declaring it, and refuses one older than
+// 10.0. Ghostscript is AGPL-licensed, and the package runs it as a separate program, never
+// linked.
+//
 // The corrections stage, a Corrector, runs a page image through ImageMagick's operators for the
 // corrections a request names: Deskew (-deskew 40%), Despeckle (-despeckle), ContrastStretch
 // (-contrast-stretch 0.5%x0.5%), Unsharp (-unsharp 0x1), and Grayscale (-colorspace Gray), always
@@ -31,6 +40,12 @@
 //     as plain text.
 //   - [Renderer] counts a PDF's pages and renders one page as PNG at a DPI.
 //   - [CheckRender] makes a Renderer's refusals of a DPI and a page.
+//   - [Ghostscript] is the released Renderer, over Ghostscript's gs.
+//   - [NewGhostscript] builds the released renderer over a gs Tool.
+//   - [Ghostscript.Count] counts a PDF's pages with gs.
+//   - [Ghostscript.Render] renders one page as PNG with gs.
+//   - [GhostscriptSpec] declares Ghostscript's gs for either runner's constructor.
+//   - [GhostscriptMinimum] is the oldest gs the renderer accepts, 10.0.
 //   - [ErrDPI] and [ErrPageRange] are the refusals' causes: a DPI of zero or less, and a page
 //     below 1, or past the last for a caller that holds the count.
 //   - [Correction] is one scan correction: [Deskew], [Despeckle], [ContrastStretch], [Unsharp],

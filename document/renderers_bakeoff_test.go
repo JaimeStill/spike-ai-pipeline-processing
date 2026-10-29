@@ -20,9 +20,10 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
-// The bake-off's five renderers: test code behind document.Renderer, each on the host's exec
-// runner. Each renders one page at a DPI to PNG on stdout, reading the PDF by path, one process
-// per page, and can also read the PDF on stdin, which the bake-off probes.
+// The bake-off's five renderers behind document.Renderer, each on the host's exec runner. Each
+// renders one page at a DPI to PNG on stdout, reading the PDF by path, one process per page, and
+// can also read the PDF on stdin, which the bake-off probes. Four are test code; gs, the winner,
+// runs the released renderer, document.Ghostscript, so a rerun ranks released code.
 
 // cliRenderer is a renderer that runs one command per page.
 type cliRenderer struct {
@@ -34,6 +35,9 @@ type cliRenderer struct {
 	args func(pdf string, page, dpi int) []string
 	// count counts the PDF's pages with a tool of the renderer's own package.
 	count func(ctx context.Context, pdf string) (int, error)
+	// released, when set, renders in place of running render with args: a released renderer's
+	// own run, from the PDF at pdf or from stdin when pdf is "", filling usage.
+	released func(ctx context.Context, pdf string, stdin io.Reader, page, dpi int, w io.Writer, usage *tool.Usage) error
 }
 
 var _ document.Renderer = (*cliRenderer)(nil)
@@ -49,6 +53,10 @@ func (r *cliRenderer) Render(ctx context.Context, pdf string, page, dpi int, w i
 // returns the rendering tool's usage.
 func (r *cliRenderer) measure(ctx context.Context, pdf string, stdin io.Reader, page, dpi int, w io.Writer) (tool.Usage, error) {
 	var usage tool.Usage
+	if r.released != nil {
+		err := r.released(ctx, pdf, stdin, page, dpi, w, &usage)
+		return usage, err
+	}
 	if err := document.CheckRender(page, dpi); err != nil {
 		return usage, err
 	}
@@ -218,17 +226,18 @@ var candidates = []candidate{
 		tools: []string{"gs"}, packages: []string{"ghostscript"},
 		license: "AGPL (ghostscript)", licenseRank: 3,
 		build: func(t *testing.T) *cliRenderer {
-			gs := hostTool(t, gsSpec())
+			gs := hostTool(t, document.GhostscriptSpec())
+			released, err := document.NewGhostscript(gs)
+			if err != nil {
+				t.Fatal(err)
+			}
 			return &cliRenderer{
-				render: gs, launcher: launcherTool(t, gsSpec()),
-				// png16m is 24-bit RGB; the alpha bits anti-alias text and graphics as the
-				// poppler renderers do by default, which gs doesn't.
-				args: func(pdf string, page, dpi int) []string {
-					return []string{"-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "-sDEVICE=png16m",
-						"-dTextAlphaBits=4", "-dGraphicsAlphaBits=4", "-r" + itoa(dpi),
-						"-dFirstPage=" + itoa(page), "-dLastPage=" + itoa(page), "-sOutputFile=-", stdinAs(pdf, "-")}
+				render: gs, launcher: launcherTool(t, document.GhostscriptSpec()),
+				args:  document.GhostscriptRenderArgs,
+				count: released.Count,
+				released: func(ctx context.Context, pdf string, stdin io.Reader, page, dpi int, w io.Writer, usage *tool.Usage) error {
+					return document.GhostscriptRender(released, ctx, pdf, stdin, page, dpi, w, usage)
 				},
-				count: gsCount(gs),
 			}
 		},
 	},
@@ -257,7 +266,7 @@ var candidates = []candidate{
 		license: "AGPL (ImageMagick's own license, but it renders PDF through ghostscript)", licenseRank: 3,
 		build: func(t *testing.T) *cliRenderer {
 			// magick renders a PDF through its gs delegate, which must be present and current.
-			hostTool(t, gsSpec())
+			hostTool(t, document.GhostscriptSpec())
 			magick := hostTool(t, document.MagickSpec())
 			return &cliRenderer{
 				render: magick, launcher: launcherTool(t, document.MagickSpec()),
@@ -306,16 +315,6 @@ func popplerSpec(program string) tool.Spec {
 	}
 }
 
-// gsSpec declares Ghostscript, minimum 10.0, whose --version prints "10.08.0" alone.
-func gsSpec() tool.Spec {
-	return tool.Spec{
-		Program:        "gs",
-		VersionArgs:    []string{"--version"},
-		VersionPattern: regexp.MustCompile(`^(\d+(?:\.\d+)*)`),
-		Minimum:        "10.0",
-	}
-}
-
 // vipsSpec declares one of libvips's programs, minimum 8.10, which prints "vips-8.18.7" for
 // --version.
 func vipsSpec(program string) tool.Spec {
@@ -349,20 +348,6 @@ func pdfinfoCount(pdfinfo *tool.Tool) func(context.Context, string) (int, error)
 			return 0, fmt.Errorf("pdfinfo: no Pages line in %q", out)
 		}
 		return strconv.Atoi(m[1])
-	}
-}
-
-// gsCount counts pages with Ghostscript's own PDF interpreter, permitted to read the one file.
-func gsCount(gs *tool.Tool) func(context.Context, string) (int, error) {
-	return func(ctx context.Context, pdf string) (int, error) {
-		// The path is a PostScript string, whose backslashes and parentheses are escaped.
-		ps := strings.NewReplacer(`\`, `\\`, `(`, `\(`, `)`, `\)`).Replace(pdf)
-		out, err := output(ctx, gs, "-q", "-dNODISPLAY", "-dSAFER", "--permit-file-read="+pdf,
-			"-c", "("+ps+") (r) file runpdfbegin pdfpagecount = quit")
-		if err != nil {
-			return 0, err
-		}
-		return strconv.Atoi(strings.TrimSpace(out))
 	}
 }
 
