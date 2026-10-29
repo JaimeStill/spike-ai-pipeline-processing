@@ -22,6 +22,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`ErrDPI`) and a page below 1 (`ErrPageRange`). It doesn't count the pages, so a `Render` past
   the last page gives its rendering tool's own error; a caller walking a PDF's pages refuses one
   past the last against its own count.
+- `TranscribeInstructions`, the text of a request for a page's transcription: every word on the
+  page, in reading order, as plain text, and nothing else, sent in one user message beside the
+  page's image.
 - The corrections stage: `Correction` values `Deskew`, `Despeckle`, `ContrastStretch`, `Unsharp`,
   and `Grayscale`, each one ImageMagick operator, applied in that fixed order however a request
   lists them. `NewCorrector` builds the stage over a magick `Tool` from either runner, refusing

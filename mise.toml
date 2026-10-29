@@ -8,9 +8,8 @@ shellcheck = "0.11.0"
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
 GO_MODULES = "."
-# gb10-2's llama.cpp router, serving set A, named by its MagicDNS short name, for the later
-# processing tasks whose integration tests call a model; no test reads it yet. A shell may point
-# it elsewhere.
+# gb10-2's llama.cpp router, serving set A, named by its MagicDNS short name, for the tests that
+# call a model: the bake-off reads it. A shell may point it elsewhere.
 SPIKE_ROUTER_URL = "{{ get_env(name='SPIKE_ROUTER_URL', default='http://gb10-2:8080') }}"
 
 [tasks.check]
@@ -32,6 +31,7 @@ for mod in $GO_MODULES; do
   go test -race ./...
   golangci-lint run ./...
   golangci-lint run --build-tags integration ./...
+  golangci-lint run --build-tags bakeoff ./...
 done
 '''
 
@@ -51,3 +51,35 @@ done
 [tasks.currency]
 description = "Report every requirement, Go version, and tool behind its latest; writes nothing"
 run = "scripts/currency.sh"
+
+# The bake-off tier runs the bakeoff-tagged tests in package document: five PDF renderers on this
+# machine's poppler, ghostscript, libvips, and ImageMagick, each page sent to Gemma 4 26B-A4B on
+# the router SPIKE_ROUTER_URL names. The full matrix runs far longer than one 10-minute go test
+# run, and one renderer's three sets longer too, so each renderer and fixture set is a run of its
+# own, capped at 10 minutes, and a last run ranks their results, which a temporary directory
+# carries between the runs. -v keeps the recorded lines. It isn't CI.
+[tasks.bakeoff]
+description = "Run the renderer bake-off against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A BAKEOFF_RESULTS the shell sets keeps the runs' results, transcriptions included, there.
+if [ -z "${BAKEOFF_RESULTS:-}" ]; then
+  BAKEOFF_RESULTS=$(mktemp -d)
+  trap 'rm -rf "$BAKEOFF_RESULTS"' EXIT
+fi
+export BAKEOFF_RESULTS
+# A failed run doesn't stop the others; the task fails at the end.
+failed=0
+for renderer in pdftoppm pdftocairo gs vips magick; do
+  for set in clean degraded scanned; do
+    start=$(date +%s)
+    BAKEOFF_RENDERER=$renderer BAKEOFF_SET=$set \
+      go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestBakeoff$' ./document/ || failed=1
+    echo "bakeoff: $renderer $set took $(( $(date +%s) - start )) s"
+  done
+done
+go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestBakeoffRanking$' ./document/ || failed=1
+exit "$failed"
+'''

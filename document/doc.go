@@ -20,12 +20,15 @@
 // image, not only a rendered one.
 //
 // A Generator is the one method the package needs of spike-ai-pipeline-client, Generate, which
-// *client.Client satisfies.
+// *client.Client satisfies. TranscribeInstructions is the text of a request for a page's
+// transcription, sent in one user message beside the page's image.
 //
 // Its exported identifiers:
 //
 //   - [Generator] sends one request to a model and returns its response; *client.Client
 //     satisfies it.
+//   - [TranscribeInstructions] asks a vision model for every word on a page, in reading order,
+//     as plain text.
 //   - [Renderer] counts a PDF's pages and renders one page as PNG at a DPI.
 //   - [CheckRender] makes a Renderer's refusals of a DPI and a page.
 //   - [ErrDPI] and [ErrPageRange] are the refusals' causes: a DPI of zero or less, and a page

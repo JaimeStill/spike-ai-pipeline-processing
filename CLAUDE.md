@@ -5,7 +5,9 @@ workflow; start from `context/README.md`.
 
 - **Standards:** `STANDARDS.md`, with pointers into the architecture repository.
 - **Check:** `mise run check` (hermetic). `mise run integration` runs the integration-tagged
-  tests against the router `SPIKE_ROUTER_URL` names, gb10-2's by default.
+  tests against the router `SPIKE_ROUTER_URL` names, gb10-2's by default. `mise run bakeoff`
+  runs the renderer bake-off, the bakeoff-tagged tests, against the same router: about an hour,
+  never in CI.
 - **Currency:** `mise run currency`.
 - **Goals:** the spike's tasks live in the coordinator's roadmap,
   `standards-lab/context/roadmap.toml`, under `experiment.ai.spike-ai-pipeline`. Its goal record
