@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-29
+
 ### Added
 
 - `tool`, which runs mature system tools behind one contract, on Linux and the standard library
@@ -22,17 +24,30 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The exec runner: `NewExec` runs a program directly, and `NewScript` runs a script through its
   interpreter.
 - Cancellation: a cancelled run's process group gets SIGTERM, then SIGKILL once the spec's
-  `KillAfter` period passes, 10 s when unset, and `Run` returns an error matching the context's.
-  The group's SIGKILL lands before its leader is reaped, and a cancelled run never waits on the
-  caller's stdin.
+  `KillAfter` period passes, 10 s when unset. The group's SIGKILL lands before its leader is
+  reaped, so no child outlives it. `Run` returns an error matching the context's
+  (`errors.Is` `context.Canceled` or `context.DeadlineExceeded`), never an `*ExitError`; it
+  names the program, the context's error, and the program's own outcome once each, such as
+  `tool: ffprobe: context canceled (exit status 143)`.
+- Stdin ownership: an `*os.File` stdin passes straight to the program; any other reader is
+  copied into a pipe `Run` owns. Once the program has exited, `Run` waits for that copy at most
+  the `KillAfter` period through the exec runner and 2 s through the container runner, and a
+  cancelled run doesn't wait for it, so a caller's reader held open never keeps `Run` from
+  returning. A program that exits without reading all of stdin is no error, and a failed Read
+  of stdin is `Run`'s error only when the program otherwise succeeds. The cost: after `Run`
+  returns, the copy may make one more Read of the caller's reader.
 - The container runner: `NewContainer` runs a program inside an `Image` pinned by digest,
   `repo:tag@sha256:` and 64 hex digits, through the docker CLI, pulling the image when it isn't
   present and checking the program's version inside it. A run is locked down (no network, no
   capabilities, the caller's uid:gid, `--rm`, `--init`, `--pull=never`), the image's `Network`
   and `CapAdd` its only relaxations, and it mounts the working directory at the same path, so
   the same arguments name the same files through either runner. A cancelled run's container is
-  stopped by `docker stop` on its name, given the `KillAfter` period.
+  stopped by `docker stop` on its name, given the `KillAfter` period rounded up to whole seconds,
+  under a context of its own, and removed by `docker rm --force`; the CLI's own signal
+  forwarding is never relied on. A known limit: if processing itself is SIGKILLed, a running
+  container runs on until its tool exits, and `--rm` removes it then.
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/commits/main
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.1.0

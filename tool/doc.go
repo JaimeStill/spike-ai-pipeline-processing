@@ -2,8 +2,40 @@
 
 // Package tool runs mature system tools behind one contract: a Tool bound to one program, built by
 // a runner's constructor, which finds the program and checks its version so a missing or outdated
-// tool fails at startup. An adapter written against Tool runs the same code whichever runner built
-// it. The package builds on Linux only.
+// tool fails at startup. Tool.Run runs one Invocation, arguments, a working directory the caller
+// owns, and optional standard streams, under the caller's context. An Invocation names nothing
+// about the runner, so an adapter written against Tool runs the same code whichever runner built
+// it. The package builds on Linux only, on the standard library alone.
+//
+// The exec runner runs a program directly: NewExec looks a name up on PATH and takes a path with a
+// separator as given, and NewScript runs a script through its interpreter, which it finds and
+// checks as NewExec does a binary. The container runner, NewContainer, runs the program inside an
+// Image through the docker CLI, the only runtime, which itself runs through the exec runner,
+// checked against the server's version, minimum 20.10. The image's reference is pinned by digest;
+// construction pulls it when it isn't present and runs the version command inside it. Every run
+// is locked down, --rm, --init, --network=none, the caller's uid:gid, --cap-drop=ALL, and
+// --pull=never, and the Image's Network and CapAdd are its only relaxations. A run mounts its
+// working directory at the same absolute path and works in it, so the same arguments name the same
+// files through either runner.
+//
+// A Spec declares the version check: arguments that print the version, a pattern whose first
+// capture group is it, and a minimum. A Version is dotted numbers compared as numbers, a missing
+// component counting as zero, and the check is a minimum, never an exact version.
+//
+// Cancelling a run's context stops its tool. Through the exec runner the program's process group
+// gets SIGTERM, then SIGKILL once the Spec's KillAfter period passes, 10 s when unset; through the
+// container runner, docker stop on the run's container, given the KillAfter period, stops it, the
+// CLI's own signal forwarding never relied on. Either way Run returns an error matching the
+// context's, errors.Is context.Canceled or context.DeadlineExceeded, which names the program's own
+// outcome once, as in "tool: ffprobe: context canceled (exit status 143)", and is never an
+// ExitError. If the process running the package is itself SIGKILLed, a running container runs on
+// until its tool exits, and --rm removes it then.
+//
+// A program that exits nonzero is an *ExitError, which keeps the last 4 KiB of the program's
+// standard error when the caller passed no writer for it; a constructor's refusal over the version
+// is a *VersionError. An Invocation's Stdin, when it isn't an *os.File, is copied through a pipe
+// Run owns, so a reader the caller holds open never keeps Run from returning; the cost is that the
+// copy may make one more Read of it after Run returns.
 //
 // Its exported identifiers:
 //

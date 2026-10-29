@@ -6,7 +6,8 @@ express; the spike's question and evidence live in the root repository's `contex
 
 ## Capability map
 
-- **tools**: the tool contract, its exec and container runners, and the version checks.
+- **tools**: the Tool contract, its exec runner and locked-down docker runner for digest-pinned
+  images, the minimum version check, and cancellation by process group and docker stop.
 - **documents**: PDF pages to images through the chosen renderer, and image correction.
 - **office**: the adapter over spike-ai-pipeline-office's CLI, and legacy conversion through
   LibreOffice in a container.

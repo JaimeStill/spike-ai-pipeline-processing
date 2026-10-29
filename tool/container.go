@@ -78,8 +78,10 @@ const cliKillAfter = 2 * time.Second
 //
 // A cancelled run's container is stopped by docker stop on its name, under a context of its own,
 // given spec's KillAfter period rounded up to whole seconds; the CLI's own signal forwarding is
-// never relied on. Run then waits for the CLI, and returns an error matching ctx's. A tool that exits nonzero gives an *ExitError naming spec's program;
-// docker's own failures exit 125, and an entrypoint it can't run, 126 or 127.
+// never relied on. Run then waits for the CLI, and returns an error matching ctx's, which names
+// the CLI's outcome once, as the exec runner's names the program's. A tool that exits nonzero
+// gives an *ExitError naming spec's program; docker's own failures exit 125, and an entrypoint it
+// can't run, 126 or 127.
 func NewContainer(ctx context.Context, docker string, image Image, spec Spec) (*Tool, error) {
 	name := filepath.Base(spec.Program)
 	if spec.Program == "" {

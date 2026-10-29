@@ -82,7 +82,8 @@ func (t *Tool) Version() Version { return t.version }
 
 // Run runs the program once, under ctx. A program that exits nonzero gives an *ExitError. When ctx
 // ends the run, the error matches ctx's (errors.Is context.Canceled or
-// context.DeadlineExceeded), and is never an *ExitError.
+// context.DeadlineExceeded), and is never an *ExitError; it names the program, ctx's error, and
+// the program's own outcome once each, as in "tool: ffprobe: context canceled (exit status 143)".
 func (t *Tool) Run(ctx context.Context, inv Invocation) error { return t.run(ctx, inv) }
 
 // stderrTail is how much of a program's standard error an ExitError keeps.
