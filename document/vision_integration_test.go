@@ -26,7 +26,9 @@ import (
 // Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, which set A loads, and Document's final
 // request to gpt-oss-120b for a digest for search under a JSON schema. Each test records its wall
 // time and the pages' character error rate against their ground truth, and asserts only
-// completion, page order, and the digest's schema; Document runs on scanned.pdf too.
+// completion, page order, and the digest's schema; Document runs on scanned.pdf too. A page is
+// sent again once when its response isn't completed, and a recorded line names every page that
+// needed it.
 
 const (
 	// visionModel transcribes the pages, as in the renderer bake-off.
@@ -35,6 +37,13 @@ const (
 	digestModel = "ggml-org/gpt-oss-120b-GGUF:MXFP4"
 	// visionConcurrency is the pages in flight, the router's parallel slots for the model.
 	visionConcurrency = 4
+	// pageOutputCap is a page's output limit. The fixtures' transcripts run 80 to 1,100 tokens,
+	// and a page whose model loops on its text runs to the cap: scanned.pdf's page 7 looped on
+	// its seal's text to 8192 tokens, about 148 s, on about 1 run in 4. 2048 ends a loop sooner.
+	pageOutputCap = 2048
+	// pageRetries is the times a page is sent again when its response isn't completed: once, for
+	// a loop that runs on one run and not the next.
+	pageRetries = 1
 )
 
 // routerClient returns a Client of the router SPIKE_ROUTER_URL names, speaking Chat Completions,
@@ -60,7 +69,8 @@ func routerClient(t *testing.T) *client.Client {
 
 // hostVision builds a Vision over the router's Client and the host's gs, with no corrections
 // stage, and a request for a PDF: each page transcribed as the bake-off transcribes, greedy and
-// with reasoning off, at 150 dpi and 4 pages at once, and a final request for a digest.
+// with reasoning off, at 150 dpi and 4 pages at once, capped at pageOutputCap and retried
+// pageRetries times, and a final request for a digest.
 func hostVision(t *testing.T) (*document.Vision, document.Request) {
 	t.Helper()
 	c := routerClient(t)
@@ -75,10 +85,11 @@ func hostVision(t *testing.T) (*document.Vision, document.Request) {
 			Model:           visionModel,
 			Instructions:    document.TranscribeInstructions,
 			Reasoning:       protocol.ReasoningParam{Effort: protocol.ReasoningEffortNone},
-			MaxOutputTokens: 8192,
+			MaxOutputTokens: pageOutputCap,
 			Native:          jsontext.Value(`{"temperature":0}`),
 		},
 		Concurrency: visionConcurrency,
+		PageRetries: pageRetries,
 		Final: &protocol.Request{
 			Model:        digestModel,
 			Instructions: digestInstructions,
@@ -159,6 +170,37 @@ func checkDigest(t *testing.T, final *protocol.Response) string {
 	return compact.String()
 }
 
+// recordRetries logs a recorded line for every page of a run that was sent more than once, with
+// its attempts and its last response's status, and returns how many pages that is.
+func recordRetries(t *testing.T, run string, pages []document.Page) int {
+	t.Helper()
+	retried := 0
+	for _, p := range pages {
+		if p.Attempts <= 1 {
+			continue
+		}
+		retried++
+		state := "no response"
+		if p.Response != nil {
+			state = fmt.Sprintf("%s, %d output tokens", p.Response.Status, p.Response.Usage.OutputTokens)
+		}
+		t.Logf("recorded: %s page %d of %d retried: %d attempts, last %s", run, p.Number, p.Count, p.Attempts, state)
+	}
+	return retried
+}
+
+// resultPages returns a Document result's pages, for recordRetries, or none for a nil result.
+func resultPages(res *document.Result) []document.Page {
+	if res == nil {
+		return nil
+	}
+	pages := make([]document.Page, 0, len(res.Pages))
+	for _, p := range res.Pages {
+		pages = append(pages, p.Page)
+	}
+	return pages
+}
+
 // heading matches the "Page N of M:" heading lines Result.Text gives each page.
 var heading = regexp.MustCompile(`(?m)^Page \d+ of \d+:$`)
 
@@ -212,8 +254,10 @@ func TestVisionPagesHost(t *testing.T) {
 	truth := cleanTruth(t)
 	start := time.Now()
 	var edits, chars int
+	var pages []document.Page
 	next := 1
 	for p, err := range v.Pages(t.Context(), openClean(t), req) {
+		pages = append(pages, p)
 		if err != nil {
 			t.Fatalf("page %d: %v", p.Number, err)
 		}
@@ -225,14 +269,15 @@ func TestVisionPagesHost(t *testing.T) {
 		}
 		e, n := charErrors(truth[p.Number-1], text(p.Response))
 		edits, chars = edits+e, chars+n
-		t.Logf("recorded: vision Pages clean page %d of %d: CER %.4f, %d output tokens", p.Number, p.Count, rate(e, n), p.Response.Usage.OutputTokens)
+		t.Logf("recorded: vision Pages clean page %d of %d: CER %.4f, %d output tokens, %d attempts", p.Number, p.Count, rate(e, n), p.Response.Usage.OutputTokens, p.Attempts)
 		next++
 	}
 	if next-1 != len(truth) {
 		t.Errorf("the stream yielded %d pages, want %d", next-1, len(truth))
 	}
-	t.Logf("recorded: vision Pages clean.pdf, %d pages at concurrency %d: %v wall, CER %.4f",
-		next-1, req.Concurrency, time.Since(start).Round(time.Millisecond), rate(edits, chars))
+	retried := recordRetries(t, "vision Pages clean.pdf", pages)
+	t.Logf("recorded: vision Pages clean.pdf, %d pages at concurrency %d: %v wall, CER %.4f, %d pages retried",
+		next-1, req.Concurrency, time.Since(start).Round(time.Millisecond), rate(edits, chars), retried)
 }
 
 // TestVisionDocumentHost checks Document on clean.pdf completes every page, in page order, and
@@ -245,6 +290,7 @@ func TestVisionDocumentHost(t *testing.T) {
 	start := time.Now()
 	res, err := v.Document(t.Context(), openClean(t), req)
 	elapsed := time.Since(start)
+	retried := recordRetries(t, "vision Document clean.pdf", resultPages(res))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -263,9 +309,9 @@ func TestVisionDocumentHost(t *testing.T) {
 	out := checkDigest(t, res.Final)
 	joined := strings.Join(truth, "\n\n")
 	te, tn := charErrors(joined, stripHeadings(res.Text()))
-	t.Logf("recorded: vision Document clean.pdf, %d pages at concurrency %d and a %s digest: %v wall, CER %.4f, digest %d output tokens (%d reasoning)",
+	t.Logf("recorded: vision Document clean.pdf, %d pages at concurrency %d and a %s digest: %v wall, CER %.4f, digest %d output tokens (%d reasoning), %d pages retried",
 		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond), rate(edits, chars),
-		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens)
+		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens, retried)
 	t.Logf("recorded: vision Document clean.pdf Text: %d bytes against the joined ground truth's %d, CER %.4f with headings stripped, whitespace collapsed",
 		len(res.Text()), len(joined), rate(te, tn))
 	t.Logf("recorded: vision Document clean.pdf digest: %s", out)
@@ -280,6 +326,7 @@ func TestVisionDocumentScannedHost(t *testing.T) {
 	start := time.Now()
 	res, err := v.Document(t.Context(), openSet(t, "scanned"), req)
 	elapsed := time.Since(start)
+	retried := recordRetries(t, "vision Document scanned.pdf", resultPages(res))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -287,8 +334,8 @@ func TestVisionDocumentScannedHost(t *testing.T) {
 		t.Fatalf("the result holds %d pages, want %d", len(res.Pages), len(truth))
 	}
 	out := checkDigest(t, res.Final)
-	t.Logf("recorded: vision Document scanned.pdf, %d pages at concurrency %d and a %s digest: %v wall, digest %d output tokens (%d reasoning)",
+	t.Logf("recorded: vision Document scanned.pdf, %d pages at concurrency %d and a %s digest: %v wall, digest %d output tokens (%d reasoning), %d pages retried",
 		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond),
-		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens)
+		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens, retried)
 	t.Logf("recorded: vision Document scanned.pdf digest: %s", out)
 }

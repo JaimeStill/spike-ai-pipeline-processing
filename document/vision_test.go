@@ -122,7 +122,8 @@ func (r *renderer) rendered() (pages, dpi []int) {
 
 // generator is the stand-in Generator. It records every request, then answers with respond,
 // which gets the page the request's image is, 0 for a request with no image, such as Document's
-// final request. A page's request leaves flight when respond returns.
+// final request. A page's request leaves flight when respond returns, every attempt of it, so a
+// test that retries a page doesn't read the flight log.
 type generator struct {
 	flight  *flightLog
 	respond func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error)
@@ -392,6 +393,200 @@ func TestPagesFailedPage(t *testing.T) {
 	}
 }
 
+// incomplete is a response cut off at its output cap, holding the text it reached.
+func incomplete(text string) *protocol.Response {
+	r := answer(text)
+	r.Status = protocol.StatusIncomplete
+	r.IncompleteDetails = &protocol.IncompleteDetails{Reason: protocol.ReasonMaxOutputTokens}
+	return r
+}
+
+// cutOff answers page cut times incomplete and then completed, with pageAnswer, and every other
+// page and the final request with pageAnswer; a negative cut answers the page incomplete every
+// time. It counts the page's attempts, which sent returns.
+func cutOff(page, cut int) (respond func(context.Context, int, *protocol.Request) (*protocol.Response, error), sent func() int) {
+	var mu sync.Mutex
+	n := 0
+	respond = func(ctx context.Context, p int, req *protocol.Request) (*protocol.Response, error) {
+		if p != page {
+			return pageAnswer(ctx, p, req)
+		}
+		mu.Lock()
+		n++
+		attempt := n
+		mu.Unlock()
+		if cut < 0 || attempt <= cut {
+			return incomplete(fmt.Sprintf("seal seal seal %d", attempt)), nil
+		}
+		return pageAnswer(ctx, p, req)
+	}
+	sent = func() int {
+		mu.Lock()
+		defer mu.Unlock()
+		return n
+	}
+	return respond, sent
+}
+
+// TestPagesRetries checks a page whose response isn't completed is sent again, up to the
+// request's PageRetries, with the image already rendered, and yielded with its last response and
+// its attempts, completed or not, with no error; the other pages are sent once.
+func TestPagesRetries(t *testing.T) {
+	cases := []struct {
+		name          string
+		retries, cut  int
+		attempts      int
+		wantCompleted bool
+	}{
+		{"completed on a retry", 3, 2, 3, true},
+		{"completed on the last retry", 2, 2, 3, true},
+		{"retries exhausted", 2, -1, 3, false},
+		{"no retries", 0, -1, 1, false},
+		{"completed first", 2, 0, 1, true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			f := newFixture(t, 3)
+			f.req.Concurrency = 3
+			f.req.PageRetries = tc.retries
+			var sent func() int
+			f.gen.respond, sent = cutOff(2, tc.cut)
+			pages, errs := f.pages(t.Context())
+			if len(pages) != 3 || errors.Join(errs...) != nil {
+				t.Fatalf("the stream yielded %d pages, %v, want 3 and no error", len(pages), errors.Join(errs...))
+			}
+			for _, p := range pages {
+				want := 1
+				if p.Number == 2 {
+					want = tc.attempts
+				}
+				if p.Attempts != want {
+					t.Errorf("page %d reports %d attempts, want %d", p.Number, p.Attempts, want)
+				}
+			}
+			if got := sent(); got != tc.attempts {
+				t.Errorf("page 2 was sent %d times, want %d", got, tc.attempts)
+			}
+			p := pages[1]
+			if completed := p.Response.Status == protocol.StatusCompleted; completed != tc.wantCompleted {
+				t.Errorf("page 2's response is %s, want completed %v", p.Response.Status, tc.wantCompleted)
+			}
+			if !tc.wantCompleted && text(p.Response) != fmt.Sprintf("seal seal seal %d", tc.attempts) {
+				t.Errorf("page 2's response holds %q, want the last attempt's", text(p.Response))
+			}
+			// The page is rendered once, and every attempt sends its image.
+			if r, _ := f.render.rendered(); len(r) != 3 {
+				t.Errorf("rendered pages %v, want each page once", r)
+			}
+			for _, r := range f.gen.requests() {
+				if imagePage(r) == 0 {
+					t.Errorf("request %+v holds no page image", r)
+				}
+			}
+		})
+	}
+}
+
+// TestPagesRetryCorrectsOnce checks a retried page's image goes through its corrections once, the
+// corrected image re-sent.
+func TestPagesRetryCorrectsOnce(t *testing.T) {
+	f := newFixture(t, 1)
+	corrector, runs := standinCorrector(t)
+	vision, err := document.NewVision(f.gen, f.render, corrector)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.req.Corrections = []document.Correction{document.Deskew}
+	f.req.PageRetries = 2
+	f.gen.respond, _ = cutOff(1, 2)
+	for p, err := range vision.Pages(t.Context(), bytes.NewReader(f.pdf), f.req) {
+		if err != nil || p.Attempts != 3 {
+			t.Fatalf("page %d: %v, %d attempts, want no error and 3 attempts", p.Number, err, p.Attempts)
+		}
+	}
+	if got := runs(); len(got) != 1 {
+		t.Errorf("magick ran %d times for a page sent 3 times, want once", len(got))
+	}
+	reqs := f.gen.requests()
+	if len(reqs) != 3 || !reflect.DeepEqual(reqs[0].Input, reqs[2].Input) {
+		t.Errorf("sent %d requests, want 3 of the same image", len(reqs))
+	}
+}
+
+// TestPagesRetryNotOnError checks a page whose Generate fails is never re-sent, its attempts 1,
+// and a page that fails in rendering reports no attempts.
+func TestPagesRetryNotOnError(t *testing.T) {
+	f := newFixture(t, 3)
+	f.req.PageRetries = 3
+	tooLarge := &client.APIError{Status: http.StatusRequestEntityTooLarge, Message: "request body too large"}
+	f.render.fail = map[int]error{3: errors.New("gs: page 3 is damaged")}
+	f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
+		if page == 2 {
+			return nil, tooLarge
+		}
+		return pageAnswer(ctx, page, req)
+	}
+	pages, errs := f.pages(t.Context())
+	if len(pages) != 3 {
+		t.Fatalf("the stream yielded %d pages, want 3", len(pages))
+	}
+	var api *client.APIError
+	if !errors.As(errs[1], &api) || pages[1].Attempts != 1 {
+		t.Errorf("page 2: %v, %d attempts, want the 413 after 1 attempt", errs[1], pages[1].Attempts)
+	}
+	if errs[2] == nil || pages[2].Attempts != 0 {
+		t.Errorf("page 3: %v, %d attempts, want the render's error and no attempts", errs[2], pages[2].Attempts)
+	}
+	sent := 0
+	for _, r := range f.gen.requests() {
+		if imagePage(r) == 2 {
+			sent++
+		}
+	}
+	if sent != 1 {
+		t.Errorf("page 2 was sent %d times, want once", sent)
+	}
+}
+
+// TestPagesRetryHoldsSlot checks a page's retries hold its concurrency slot: at a concurrency of
+// 1, every attempt of page 1 is sent before page 2 is.
+func TestPagesRetryHoldsSlot(t *testing.T) {
+	f := newFixture(t, 2)
+	f.req.PageRetries = 2
+	f.gen.respond, _ = cutOff(1, 2)
+	if _, errs := f.pages(t.Context()); errors.Join(errs...) != nil {
+		t.Fatal(errors.Join(errs...))
+	}
+	var order []int
+	for _, r := range f.gen.requests() {
+		order = append(order, imagePage(r))
+	}
+	if !slices.Equal(order, []int{1, 1, 1, 2}) {
+		t.Errorf("pages sent in the order %v, want page 1's three attempts and then page 2", order)
+	}
+}
+
+// TestPagesRetryContextEnds checks a ctx that ends stops a page's retries: the stream yields
+// ctx's error, and the page isn't sent again.
+func TestPagesRetryContextEnds(t *testing.T) {
+	f := newFixture(t, 1)
+	f.req.PageRetries = 5
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	f.gen.respond = func(context.Context, int, *protocol.Request) (*protocol.Response, error) {
+		cancel()
+		return incomplete("seal seal"), nil
+	}
+	pages, errs := f.pages(ctx)
+	if len(pages) != 1 || !errors.Is(errs[0], context.Canceled) {
+		t.Errorf("the stream yielded %v, %v, want context.Canceled once", pages, errs)
+	}
+	if got := len(f.gen.requests()); got != 1 {
+		t.Errorf("the page was sent %d times after ctx ended, want once", got)
+	}
+	assertEmpty(t, f.req.Dir)
+}
+
 // TestPagesTooLarge checks that the package sends a page however large, and the server's 413 is
 // the page's error, matchable with errors.As.
 func TestPagesTooLarge(t *testing.T) {
@@ -584,6 +779,7 @@ func TestPagesRefusals(t *testing.T) {
 		"no model":           func(r *document.Request) { r.Template.Model = "" },
 		"negative dpi":       func(r *document.Request) { r.DPI = -1 },
 		"negative workers":   func(r *document.Request) { r.Concurrency = -2 },
+		"negative retries":   func(r *document.Request) { r.PageRetries = -1 },
 		"no corrector":       func(r *document.Request) { r.Corrections = []document.Correction{document.Deskew} },
 		"unknown correction": func(r *document.Request) { r.Corrections = []document.Correction{0} },
 	}
@@ -843,6 +1039,68 @@ func TestDocumentFailedPages(t *testing.T) {
 			t.Error("the final request was sent after a page failed")
 		}
 	}
+}
+
+// TestDocumentRetries checks Document's pages are retried as Pages's are: a page completed on a
+// retry succeeds, its attempts in the result, and a page incomplete after its retries fails
+// Document before the final request, naming the page, its response kept. The final request is
+// sent once.
+func TestDocumentRetries(t *testing.T) {
+	t.Run("completed", func(t *testing.T) {
+		f := newFixture(t, 3)
+		f.req.PageRetries = 1
+		f.gen.respond, _ = cutOff(2, 1)
+		res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, p := range res.Pages {
+			want := 1
+			if p.Number == 2 {
+				want = 2
+			}
+			if p.Attempts != want || p.Err != nil {
+				t.Errorf("result page %d: %v, %d attempts, want no error and %d", p.Number, p.Err, p.Attempts, want)
+			}
+		}
+		if res.Final == nil || text(res.Final) != "summary" || text(res.Pages[1].Response) != "text of page 2" {
+			t.Errorf("the result is %+v, want page 2's completed text and the summary", res)
+		}
+	})
+	t.Run("exhausted", func(t *testing.T) {
+		f := newFixture(t, 3)
+		f.req.PageRetries = 2
+		f.gen.respond, _ = cutOff(2, -1)
+		res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
+		if err == nil || !strings.Contains(err.Error(), "[2]") || !strings.Contains(err.Error(), "attempts 3") {
+			t.Errorf("Document returned %v, want an error naming page 2 and its 3 attempts", err)
+		}
+		if res == nil || len(res.Pages) != 3 || res.Pages[1].Err == nil || res.Pages[1].Attempts != 3 ||
+			res.Pages[1].Response == nil || res.Final != nil {
+			t.Fatalf("the result is %+v, want page 2 failed after 3 attempts, its response kept, and no final", res)
+		}
+		for _, r := range f.gen.requests() {
+			if r.Model == "final" {
+				t.Error("the final request was sent after a page failed")
+			}
+		}
+	})
+	t.Run("final not retried", func(t *testing.T) {
+		f := newFixture(t, 1)
+		f.req.PageRetries = 3
+		f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
+			if page == 0 {
+				return incomplete("sum"), nil
+			}
+			return pageAnswer(ctx, page, req)
+		}
+		if _, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req); err == nil {
+			t.Error("Document with an incomplete final response succeeded, want an error")
+		}
+		if got := len(f.gen.requests()); got != 2 {
+			t.Errorf("%d requests sent, want the page and the final, once each", got)
+		}
+	})
 }
 
 // TestDocumentFinalIncomplete checks a final response that isn't completed is an error, the

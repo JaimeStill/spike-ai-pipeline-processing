@@ -35,19 +35,22 @@
 // A Vision puts the stages together, built at the composition root from a Generator, a Renderer,
 // and, optionally, a Corrector. Pages streams a PDF's pages through the model: it spools the PDF,
 // read from an io.Reader, into the working directory the Request names, which the caller owns,
-// counts its pages, and renders, corrects, and sends each page in a copy of the request's
-// template with one user message appended, the page's PNG as a data URL. At most the request's
-// concurrency of pages are in flight, and pages come back in page order, a failed page as its
-// error, the stream carrying on. The stream is lazy, breaking out of it cancels the work in
-// flight and returns once that work has ended, and the spooled PDF is removed when it ends.
-// Document digitizes, then digests: it runs the pages, whose transcriptions are the document's
-// digitized content, and then one final request, a copy of the request's final template with
-// each page's output text appended as "Page N of M:" parts, and a failed page fails it before
-// the final request. The final response derives from the transcriptions and never replaces
-// them: the caller's final template asks for what it wants of them, such as a digest for
-// search under a JSON schema, and the package imposes no schema. The result's Text joins the
-// transcriptions under the same headings. The package sets no size limit on a page's image; the server's
-// refusal of one is that page's error.
+// counts its pages, and renders, corrects, and sends each page in a copy of the request's template
+// with one user message appended, the page's PNG as a data URL. A page whose response isn't
+// completed, such as one a looping model ran to its output cap, is sent again with the same image,
+// up to the request's page retries, holding its slot, and comes back with its last response and its
+// attempts; a page whose request fails is never re-sent, transport retry being the client's own
+// opt-in policy. At most the request's concurrency of pages are in flight, and pages come back in
+// page order, a failed page as its error, the stream carrying on. The stream is lazy, breaking out
+// of it cancels the work in flight and returns once that work has ended, and the spooled PDF is
+// removed when it ends. Document digitizes, then digests: it runs the pages, whose transcriptions
+// are the document's digitized content, and then one final request, a copy of the request's final
+// template with each page's output text appended as "Page N of M:" parts, and a failed page, or one
+// still incomplete after its retries, fails it before the final request. The final response derives
+// from the transcriptions and never replaces them: the caller's final template asks for what it
+// wants of them, such as a digest for search under a JSON schema, and the package imposes no
+// schema. The result's Text joins the transcriptions under the same headings. The package sets no
+// size limit on a page's image; the server's refusal of one is that page's error.
 //
 // Its exported identifiers:
 //
@@ -76,8 +79,8 @@
 //   - [Vision] runs a PDF's pages through a model's vision.
 //   - [NewVision] builds a Vision over a Generator, a Renderer, and an optional Corrector.
 //   - [Request] is one PDF's run through a Vision: its working directory, page template, DPI,
-//     corrections, concurrency, and Document's final template.
-//   - [Page] is one page's number, the page count, and the model's response.
+//     corrections, concurrency, page retries, and Document's final template.
+//   - [Page] is one page's number, the page count, the model's response, and its attempts.
 //   - [Vision.Pages] streams a PDF's pages through the model, in page order.
 //   - [Vision.Document] runs a PDF's pages and then one final request over their text.
 //   - [Result] is a Document's pages and its final response.

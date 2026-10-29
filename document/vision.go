@@ -62,18 +62,32 @@ type Request struct {
 	// Concurrency is how many pages are in flight at once, from rendering to the model's
 	// response. Zero means 1; a negative concurrency is refused.
 	Concurrency int
+	// PageRetries is how many more times a page is sent when its response isn't completed, such
+	// as one incomplete at its output cap, a model looping on a page's text running it there on
+	// one run and not the next. The page is re-sent with the image already rendered and
+	// corrected, holding its concurrency slot, until a response is completed or the retries run
+	// out, and the page then comes back with its last response, as it would with no retries. A page
+	// whose Generate fails, such as a refused request or a transport error, is never re-sent: its
+	// error is the page's, and retrying a transport is the Generator's, as the client's opt-in
+	// Config.Retry policy does. Zero sends each page once; a negative count is refused.
+	PageRetries int
 	// Final is Document's final request: its model, instructions, text format, and output
 	// limit. Document appends one user message to a copy of it, a text part per page, and
 	// requires it. Pages ignores it.
 	Final *protocol.Request
 }
 
-// Page is one page's outcome: its number, 1-based, the PDF's page count, and the model's
-// response to the page. Response is nil for a page that failed.
+// Page is one page's outcome: its number, 1-based, the PDF's page count, the model's response to
+// the page, and how many times the page was sent. Response is nil for a page that failed.
 type Page struct {
 	Number   int
 	Count    int
 	Response *protocol.Response
+	// Attempts is how many times the page was sent to the Generator: 1 for a page sent once, up
+	// to 1 plus the request's PageRetries for a page re-sent because its response wasn't
+	// completed, and 0 for a page that failed before it was sent, in rendering or correcting.
+	// A caller records a page's retries from it.
+	Attempts int
 }
 
 // Pages returns the stream of a PDF's pages through the model, read from pdf, as req says. The
@@ -83,8 +97,11 @@ type Page struct {
 // and then, for every page from 1 to the count, renders the page at req.DPI, corrects it when
 // req names corrections, and sends it to the Generator in a copy of req.Template with one user
 // message appended: the page's PNG as an InputImage data URL, its detail left to the endpoint.
-// At most req.Concurrency pages are in flight at once, rendering included. Pages are yielded in
-// page order, a page that finishes early held until the pages before it are yielded.
+// A page whose response isn't completed is sent again, up to req.PageRetries times, as Request
+// says, and is yielded with its last response, completed or not: Pages never fails a page for
+// its status, which the caller reads. At most req.Concurrency pages are in flight at once,
+// rendering and retries included. Pages are yielded in page order, a page that finishes early
+// held until the pages before it are yielded.
 //
 // A page that fails, in rendering, correcting, or sending, yields the Page's number and count
 // with the error, which names the page and wraps its cause, such as the Generator's
@@ -119,10 +136,12 @@ func (v *Vision) Pages(ctx context.Context, pdf io.Reader, req Request) iter.Seq
 	}
 }
 
-// outcome is one page's response or error, as its worker hands it to the stream.
+// outcome is one page's response or error, and its attempts, as its worker hands it to the
+// stream.
 type outcome struct {
-	resp *protocol.Response
-	err  error
+	resp     *protocol.Response
+	attempts int
+	err      error
 }
 
 // pages counts the pages of the PDF at path and runs them, yielding each in page order, req
@@ -161,8 +180,8 @@ func (v *Vision) pages(ctx context.Context, path string, req Request, yield func
 			}
 			wg.Go(func() {
 				defer func() { <-slots }()
-				resp, err := v.page(work, path, i+1, n, req)
-				done[i] <- outcome{resp, err}
+				resp, attempts, err := v.page(work, path, i+1, n, req)
+				done[i] <- outcome{resp, attempts, err}
 			})
 		}
 	})
@@ -176,7 +195,7 @@ func (v *Vision) pages(ctx context.Context, path string, req Request, yield func
 		if err := ctx.Err(); err != nil {
 			return yield(Page{}, err)
 		}
-		if !yield(Page{Number: i + 1, Count: n, Response: o.resp}, o.err) {
+		if !yield(Page{Number: i + 1, Count: n, Response: o.resp, Attempts: o.attempts}, o.err) {
 			return false
 		}
 	}
@@ -184,24 +203,36 @@ func (v *Vision) pages(ctx context.Context, path string, req Request, yield func
 }
 
 // page renders page of the n pages of the PDF at path, corrects it when req names corrections,
-// and sends it to the Generator in a copy of req.Template. Its error names the page.
-func (v *Vision) page(ctx context.Context, path string, page, n int, req Request) (*protocol.Response, error) {
+// and sends it to the Generator in a copy of req.Template, again with the same image while its
+// response isn't completed and req.PageRetries allows, returning the last response and the
+// times it was sent. A Generate error ends the page without a retry, and so does ctx ending,
+// which leaves the last response. Its error names the page.
+func (v *Vision) page(ctx context.Context, path string, page, n int, req Request) (*protocol.Response, int, error) {
 	var png bytes.Buffer
 	if err := v.render.Render(ctx, path, page, req.DPI, &png); err != nil {
-		return nil, fmt.Errorf("document: page %d of %d: render: %w", page, n, err)
+		return nil, 0, fmt.Errorf("document: page %d of %d: render: %w", page, n, err)
 	}
 	if len(req.Corrections) > 0 {
 		var corrected bytes.Buffer
 		if err := v.correct.Correct(ctx, req.Corrections, &png, &corrected); err != nil {
-			return nil, fmt.Errorf("document: page %d of %d: correct: %w", page, n, err)
+			return nil, 0, fmt.Errorf("document: page %d of %d: correct: %w", page, n, err)
 		}
 		png = corrected
 	}
-	resp, err := v.gen.Generate(ctx, withImage(req.Template, png.Bytes()))
-	if err != nil {
-		return nil, fmt.Errorf("document: page %d of %d: generate: %w", page, n, err)
+	var resp *protocol.Response
+	attempts := 0
+	for {
+		// Each attempt is a request of its own, so no two share an input array.
+		var err error
+		resp, err = v.gen.Generate(ctx, withImage(req.Template, png.Bytes()))
+		attempts++
+		if err != nil {
+			return nil, attempts, fmt.Errorf("document: page %d of %d: generate: %w", page, n, err)
+		}
+		if (resp != nil && resp.Status == protocol.StatusCompleted) || attempts > req.PageRetries || ctx.Err() != nil {
+			return resp, attempts, nil
+		}
 	}
-	return resp, nil
 }
 
 // check refuses a request Pages can't run, before anything runs, and sets its defaults: a DPI
@@ -218,6 +249,8 @@ func (v *Vision) check(req *Request) error {
 		return fmt.Errorf("document: request's %d dpi: %w", req.DPI, ErrDPI)
 	case req.Concurrency < 0:
 		return fmt.Errorf("document: request's concurrency %d is negative", req.Concurrency)
+	case req.PageRetries < 0:
+		return fmt.Errorf("document: request's page retries %d is negative", req.PageRetries)
 	case len(req.Corrections) > 0 && v.correct == nil:
 		return errors.New("document: request names corrections, and the vision has no corrections stage")
 	}
@@ -308,10 +341,11 @@ type PageResult struct {
 // final template's to ask, and the package imposes no schema. It sets no cap on the page count.
 //
 // A missing req.Final is refused before anything runs, as Pages refuses a request. A page that
-// fails, or whose response's status isn't completed, fails Document before the final request,
-// with an error naming each such page and wrapping each page's error, so errors.As finds a
-// page's *client.APIError; the result holds every page's entry then. A final response whose
-// status isn't completed is an error, and the result keeps the response. A stream that ends with
+// fails, or whose response's status isn't completed after req.PageRetries, fails Document before
+// the final request, with an error naming each such page and wrapping each page's error, so
+// errors.As finds a page's *client.APIError; the result holds every page's entry then, each with
+// its attempts. A final response whose status isn't completed is an error, and the result keeps
+// the response; the final request is sent once, never retried. A stream that ends with
 // an error of its own, a refused request, a failed spool or count, or an ended ctx, is
 // Document's error, the result holding the pages yielded before it.
 func (v *Vision) Document(ctx context.Context, pdf io.Reader, req Request) (*Result, error) {
@@ -337,7 +371,7 @@ func (v *Vision) Document(ctx context.Context, pdf io.Reader, req Request) (*Res
 		case p.Response == nil:
 			err = fmt.Errorf("document: page %d of %d: no response", p.Number, p.Count)
 		case p.Response.Status != protocol.StatusCompleted:
-			err = fmt.Errorf("document: page %d of %d: response is %s", p.Number, p.Count, status(p.Response))
+			err = fmt.Errorf("document: page %d of %d: response is %s, attempts %d", p.Number, p.Count, status(p.Response), p.Attempts)
 		}
 		res.Pages = append(res.Pages, PageResult{Page: p, Err: err})
 		if err != nil {
