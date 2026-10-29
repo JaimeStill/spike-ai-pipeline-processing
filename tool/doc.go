@@ -37,11 +37,19 @@
 // Run owns, so a reader the caller holds open never keeps Run from returning; the cost is that the
 // copy may make one more Read of it after Run returns.
 //
+// An Invocation's Usage, when not nil, asks for the run's resource usage, which Run sets whatever
+// the run's outcome. The exec runner fills it once the program is reaped, from the program's
+// rusage: peak resident memory in bytes, and user and system CPU time, the children the program
+// itself reaped included. The container runner leaves it zero, since the docker CLI's usage isn't
+// the container's.
+//
 // Its exported identifiers:
 //
 //   - [Spec] declares a tool: its program, its version command and pattern, its minimum version,
 //     and a cancelled run's KillAfter period.
-//   - [Invocation] is one run of a tool: arguments, working directory, and standard streams.
+//   - [Invocation] is one run of a tool: arguments, working directory, standard streams, and
+//     where to report its usage.
+//   - [Usage] is a run's resource usage: peak resident memory, and user and system CPU time.
 //   - [Tool] is one program, found and version-checked by the runner's constructor that built it.
 //   - [NewExec] builds a Tool that runs a program directly, the exec runner.
 //   - [NewScript] builds a Tool that runs a script through its interpreter, on the exec runner.

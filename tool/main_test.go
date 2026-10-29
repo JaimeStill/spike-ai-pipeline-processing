@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"syscall"
 	"testing"
@@ -53,6 +54,8 @@ func TestMain(m *testing.M) {
 //	                  sleeps D and exits 1
 //	spawn FILE [held] starts a stubborn child, which writes its pid to FILE, then acts as
 //	                  sleep 1m; the child has no streams, or with held, holds stdout and stderr
+//	alloc MIB CMD...  allocates MIB MiB and writes every page of it, spins the CPU for 50 ms,
+//	                  then, the memory still held, does CMD as the stand-in would
 func standin(args []string) int {
 	if len(args) == 0 {
 		fmt.Fprintln(os.Stderr, "standin: no command")
@@ -101,9 +104,29 @@ func standin(args []string) int {
 		return 1
 	case "spawn":
 		return spawn(args[1], len(args) > 2 && args[2] == "held")
+	case "alloc":
+		held := alloc(atoi(args[1]))
+		code := standin(args[2:])
+		runtime.KeepAlive(held)
+		return code
 	}
 	fmt.Fprintf(os.Stderr, "standin: unknown command %q\n", args[0])
 	return 2
+}
+
+// alloc returns mib MiB with every page written, so all of it is resident, after spinning the CPU
+// for 50 ms of wall time.
+func alloc(mib int) []byte {
+	b := make([]byte, mib<<20)
+	for i := 0; i < len(b); i += 4096 {
+		b[i] = 1
+	}
+	var n uint64
+	for start := time.Now(); time.Since(start) < 50*time.Millisecond; {
+		n++
+	}
+	b[0] = byte(n)
+	return b
 }
 
 // sleep waits for SIGTERM and exits 0 on it, or exits 1 after d.

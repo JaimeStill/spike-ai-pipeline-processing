@@ -6,6 +6,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `tool.Usage` and `Invocation.Usage`: a run's resource usage, peak resident memory in bytes and
+  user and system CPU time, which `Run` sets when the pointer isn't nil, whether the program
+  exited zero, exited nonzero, or was cancelled. The exec runner fills it from the program's
+  rusage, which on Linux counts the children the program reaped; the container runner leaves it
+  zero, since the docker CLI's usage isn't the container's. A nil `Usage` asks for nothing.
+
 ## [v0.1.0] - 2026-10-29
 
 ### Added

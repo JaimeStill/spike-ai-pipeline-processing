@@ -62,6 +62,25 @@ type Invocation struct {
 	// Stderr receives all of the program's standard error; nil keeps its last 4 KiB for the
 	// ExitError instead.
 	Stderr io.Writer
+	// Usage, when not nil, receives the run's resource usage. Run sets it whatever the run's
+	// outcome: once the program has been reaped, whether it exited zero, exited nonzero, or was
+	// cancelled, the exec runner fills it from the program's rusage; a program that never
+	// started leaves it zero. The container runner always leaves it zero: the only process it
+	// reaps is the docker CLI, whose usage isn't the container's. nil asks for nothing.
+	Usage *Usage
+}
+
+// Usage is a run's resource usage, as the kernel accounts it for the program once it is reaped.
+// On Linux that accounting covers the children the program itself waited for, such as a
+// converter's delegate, but not a child it left unreaped.
+type Usage struct {
+	// PeakRSS is the peak resident memory in bytes: the largest of the program's own and its
+	// reaped children's, never their sum.
+	PeakRSS int64
+	// UserCPU is the CPU time spent in user mode, the program's and its reaped children's.
+	UserCPU time.Duration
+	// SystemCPU is the CPU time spent in the kernel on their behalf.
+	SystemCPU time.Duration
 }
 
 // runFunc runs one invocation of a bound program; each runner supplies its own.
