@@ -24,7 +24,7 @@ PDF. The clean and degraded sets are generated from `clean.typ`; the scanned set
 
   A rotated page is cropped back to letter size around its center (`-gravity center -extent
   1275x1650`) on white.
-- `scanned.pdf` is six pages of a real scan, described below.
+- `scanned.pdf` is seven pages of a real scan, described below.
 - `clean/page-N.txt`, `degraded/page-N.txt`, and `scanned/page-N.txt` are each page's ground
   truth: its plain text in reading order. Blocks are separated by a blank line; two columns read
   left column first, a table reads row by row with its cells joined by single spaces, and a form
@@ -69,10 +69,11 @@ de0904965c6dafe979524fa693cf8d5b01a0c7fe16ee9296574589c8d40e4e24  degraded/page-
 
 ## The scanned set
 
-`scanned.pdf` is six pages of herald's `_project/marked-documents/marked-documents.pdf`, at herald
-commit `bdacbb699c7979ff41ff29f6c32c8a6962b94c2c` (the last to touch `_project/marked-documents`):
-27 pages a Lexmark CX725 scanned at 300 dpi, each page one JPEG image with no text layer. They are
-redacted documents; the six chosen carry the most legible text outside the redactions:
+`scanned.pdf` is seven pages of herald's `_project/marked-documents/marked-documents.pdf`, at
+herald commit `bdacbb699c7979ff41ff29f6c32c8a6962b94c2c` (the last to touch
+`_project/marked-documents`): 27 pages a Lexmark CX725 scanned at 300 dpi, each page one JPEG image
+with no text layer. They are redacted documents; the first six chosen carry the most legible text
+outside the redactions, and the seventh carries faded markings that herald read inconsistently:
 
 | Page | Source page | What it shows |
 | ---- | ----------- | ------------- |
@@ -80,30 +81,38 @@ redacted documents; the six chosen carry the most legible text outside the redac
 | 2 | 3 | classification banners, a red EXPEDITE stamp, and a date |
 | 3 | 12 | a name and three classification blocks in a sans face |
 | 4 | 13 | a printed message: header, a name, two classification blocks, a date |
-| 5 | 16 | a letterhead: banners, a city line, and a date |
+| 5 | 16 | a letterhead: a seal, banners, a city line, handwritten initials, and a date |
 | 6 | 25 | an email's header labels and two classification blocks in a typewriter face |
+| 7 | 19 | a letterhead: a stamped SECRET, two seals, a reply line, and faded SECRET and NOFORN at its foot |
 
 qpdf 12.4.2 copied the pages without re-encoding their scans, so each page keeps its source
-JPEG byte for byte; `--deterministic-id` makes the output reproducible:
+JPEG byte for byte; `--deterministic-id` makes the output reproducible. Source page 19 was added
+after the first six, so it comes last rather than in source order:
 
 ```sh
 qpdf --deterministic-id --empty \
-  --pages ~/code/herald/_project/marked-documents/marked-documents.pdf 2,3,12,13,16,25 -- \
+  --pages ~/code/herald/_project/marked-documents/marked-documents.pdf 2,3,12,13,16,25,19 -- \
   document/testdata/scanned.pdf
 ```
 
 Each page's truth was transcribed by reading the source page's image
 (`_project/marked-documents/images/marked-document.N.png`): the legible text in reading order, in
-the conventions above. Redacted text is left out, as are seals, stray marks, and handwritten
-initials; a stamp is kept when its text is clearly legible, as page 2's EXPEDITE is. A label whose
-value is redacted reads as the label alone. Their SHA-256 sums:
+the conventions above. Redacted text and stray marks are left out. A stamp, a seal's legend, or a
+handwritten mark is kept where its text is legible, as page 2's EXPEDITE, page 5's M.M., and
+page 7's faded SECRET and NOFORN are; the part of a seal too blurred to read is left out, as page
+5's UNITED STATES OF AMERICA is, and so is a seal the scan clips, as page 7's left one is. A
+seal's legible text sits in reading order where the seal does: page 5's beside the first banner,
+page 7's right seal after HEADQUARTERS, one line per line of the seal, its blurred ring of years
+and its redaction-touched COMMEMORATION left out. A label whose value is redacted reads as the
+label alone. Their SHA-256 sums:
 
 ```
-fa8e3ac6aa9143be621c18e998a9791bf991f7f381718abab081b4003e1f4e9d  scanned.pdf
+6eced800de1d92e81f0c5901e2a563e1ae0676ecb883f8f0ba60eff2e17fdfc2  scanned.pdf
 9ef621af40c6bacd04b62367d2f333230907d8bba4e799a88e899111292d6937  scanned/page-1.txt
 ed03efd95ea4fbb919dcfe228b85da9af702e012f96c7f3873ddfc4f04216a84  scanned/page-2.txt
 80a17e23d142dc1ffb7e99d5635b7a904e1e2e13400d649344194efee68098a6  scanned/page-3.txt
 c78b22d17c06925c3ed829a4d3cf163b61fa4f741ad33625df302aa039321b53  scanned/page-4.txt
-24a234d6f2ee02d763a5858ed594519d1acae0f0daf9cccb2c548051352f6df1  scanned/page-5.txt
+114405efbf857a531f2c0cc4868cab9996e60808be48903ff2a18c7328728680  scanned/page-5.txt
 75184a354cef398e536a1953112aa930879cafd6a99260fe325f8960e8188f59  scanned/page-6.txt
+3697cea8fba85a5696ee7dd941854ee7edc3e998fb02ec1ff74f404b2be8b573  scanned/page-7.txt
 ```
