@@ -7,7 +7,7 @@ through vision, whether the payload is a whole blob or a stream.
 Go builds only what the layer must own. Mature system tools do the specialized work behind the
 tool contract this layer defines in its `tool` package, as herald's processing layer did: an exec
 runner for binaries and scripts, and a container runner for pinned images. The tools the layer's
-adapters run are a PDF renderer (chosen by bake-off), ImageMagick for images and image
+adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
 correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
 office documents, and LibreOffice in a container for legacy office formats only.
 
@@ -98,11 +98,119 @@ without reading all of stdin is no error, and a failed Read of stdin is Run's er
 program otherwise succeeds. The cost: after Run returns, the copy may make one more Read of the
 caller's reader, and it ends when that Read returns.
 
+An Invocation's `Usage`, when not nil, asks for the run's resource usage, which Run sets whatever
+the run's outcome: `UserCPU` and `SystemCPU`, the program's CPU time. The exec runner fills it
+from the program's rusage once it is reaped, which on Linux counts the children the program itself
+reaped, such as a converter's delegate. The container runner leaves it zero, since the docker
+CLI's usage isn't the container's. It reports no peak memory: Go starts a program with a
+vfork-style clone, so Linux records the Go parent's resident memory in the program's peak, and the
+figure reads the caller's size rather than the program's whenever the caller is the larger.
+
 A known limit: if processing itself is SIGKILLed, a running container runs on until its tool
 exits, and `--rm` removes it then.
 
-The layer will take spike-ai-pipeline-client by tag once a stage first needs it. It is released by
-tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer are in the root
+`document` prepares a PDF's pages for a model's vision, on Linux, the standard library, and
+`tool`. It provides pre-inference preparation only: a layer above sends the prepared pages to a
+model and owns the requests, retries, and any final step. Every system tool it runs is a
+`tool.Tool` the caller built, through either runner.
+
+A `Renderer` counts a PDF's pages and renders one page, 1-based, as PNG at a DPI, one process per
+page; `CheckRender` makes its refusals, a DPI of zero or less (`ErrDPI`) and a page below 1
+(`ErrPageRange`). The released renderer is `Ghostscript`, over gs, built by `NewGhostscript` from
+a gs Tool that `GhostscriptSpec` declares, minimum `GhostscriptMinimum`, 10.0. gs won the
+renderer bake-off against pdftoppm, pdftocairo, vips, and magick: it led on accuracy, was the
+fastest at about 0.126 s a page, used the least memory, 27 MiB, and needs a single program.
+Ghostscript is AGPL-licensed, so the package runs gs as a separate program and never links it.
+
+`Ghostscript.Text` reads a page's text layer with gs's txtwrite device, and the optional
+`TextExtractor` interface names it; `HasText` is the rule for a page having one, its text not
+empty once whitespace is trimmed. `Ghostscript.RenderRegion` renders a `Region` of a page, a band
+in fractions of the page such as a header or footer, cropped in gs's own PostScript at the whole
+page's pixels; the optional `RegionRenderer` interface names it, and `CheckRegion` refuses a region
+out of range (`ErrRegion`).
+
+The corrections stage, a `Corrector` built by `NewCorrector` over a magick Tool that `MagickSpec`
+declares, minimum `MagickMinimum`, 7.1, runs a page image through ImageMagick for the corrections a
+request names: `Deskew`, `Despeckle`, `ContrastStretch`, `Unsharp`, and `Grayscale`, always in that
+order, one magick run a page. None is applied by default: the measurements found no correction
+that helps without hurting elsewhere. `Corrections`, `Correction.Description`, and
+`ParseCorrection` are the catalog for a prompt that lets a model choose corrections, and
+`Corrector.Assess` measures a page image, in one magick run, for the defects they fix: an
+`Assessment` of its size, skew, contrast, noise, sharpness, and color.
+
+A `Preparer`, built by `NewPreparer` from a Renderer and an optional Corrector, puts the stages
+together. `Preparer.Images` streams a PDF's prepared pages as a lazy `iter.Seq2[PageImage, error]`:
+it spools the PDF, read from an `io.Reader`, into the working directory the `ImagesRequest` names,
+counts its pages, and renders and corrects each page at the request's DPI (150 by default) and
+concurrency, yielding each `PageImage`, its number, the page count, its PNG, and its text layer, in
+page order. A request may read each page's text layer (`Text`), skip rendering the pages that have
+one (`SkipText`), for the flow of text layer first, vision only for the pages without one, and
+render one `Region` of every page. A failed page yields its error and the stream carries on;
+breaking out of the range cancels the work in flight.
+
+```go
+gs, err := tool.NewExec(ctx, document.GhostscriptSpec())
+if err != nil {
+	return err
+}
+render, err := document.NewGhostscript(gs)
+if err != nil {
+	return err
+}
+prep, err := document.NewPreparer(render, nil)
+if err != nil {
+	return err
+}
+for page, err := range prep.Images(ctx, pdf, document.ImagesRequest{Dir: dir, SkipText: true}) {
+	if err != nil {
+		return err
+	}
+	// page.Text when HasText(page.Text), page.PNG otherwise
+}
+```
+
+What the measurements behind these choices found, which renderer, whether to reason while
+transcribing, whether corrections help, where the instructions go, the staged two-pass flow, and
+what a page costs in image tokens, is in [docs/findings/documents.md](docs/findings/documents.md).
+
+Known limits:
+
+- Page 7 of the scanned fixtures carries a faded "NOFORN" marking at its foot that the vision
+  model never reads, at any DPI, correction, band, or tile measured; a marking that faded can't
+  be left to vision.
+- A text layer keeps gs's physical layout, so a multi-column page or a form reads out of reading
+  order; restore the order, or send such pages to vision.
+- Ghostscript is AGPL-licensed; the package runs gs as a separate program, never linked.
+- The container runner's limit above: a SIGKILLed processing leaves a running container to its
+  tool's exit.
+
+The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
+under the race detector, and lint, the integration and bakeoff tags included. `mise run
+integration` runs the integration-tagged tests against this machine's tools and docker, and the
+vision tests against the llama.cpp router `SPIKE_ROUTER_URL` names, gb10-2's by default. The
+bake-off tier, bakeoff-tagged tests, sends pages to Gemma 4 26B-A4B on the same router and never
+runs in CI; each task is a series of runs capped at 10 minutes each, and takes tens of minutes
+or more:
+
+- `mise run bakeoff`: the renderer bake-off, five renderers over the clean, degraded, and scanned
+  sets.
+- `mise run bakeoff-corrections`: the corrections matrix, each correction alone, none, and all
+  five, at 150 and 72 dpi.
+- `mise run bakeoff-placement`: the transcription instructions beside the image against the
+  request's instructions.
+- `mise run bakeoff-flow`: the staged two-pass flow, text layer first, against its baselines.
+- `mise run bakeoff-tiles`: tile shape, near-square tiles against a full-width band.
+
+The tests' vision harness, the bake-offs, and the staged flow are test code, not released.
+
+Host prerequisites: gs 10.0 or later and ImageMagick's magick 7.1 or later on PATH for `document`,
+and docker, server 20.10 or later, for the container runner. The renderer bake-off also runs
+poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to regenerate the
+fixtures in `document/testdata`, whose README says how.
+
+The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
+integration and bake-off tiers run on; no released file imports it. It is released by tag,
+`vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer are in the root
 repository's README.
 
 Apache-2.0.

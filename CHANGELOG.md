@@ -6,18 +6,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.2.0] - 2026-10-30
+
 ### Added
 
-- `tool.Usage` and `Invocation.Usage`: a run's resource usage, user and system CPU time, which
-  `Run` sets when the pointer isn't nil, whether the program exited zero, exited nonzero, or was
-  cancelled. The exec runner fills it from the program's rusage, which on Linux counts the
-  children the program reaped; the container runner leaves it zero, since the docker CLI's usage
-  isn't the container's. A nil `Usage` asks for nothing. It reports no peak memory: Go starts a
-  program with a vfork-style clone, so the program's rusage peak starts at the Go parent's
-  resident memory.
 - `document`, which prepares a PDF's pages for a model's vision, on Linux, the standard library,
-  and `tool`. It provides pre-inference preparation only: a layer above sends the prepared pages
-  to a model. The module requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the
+  and `tool`. It provides pre-inference preparation only: rendering, correction, text layers, and
+  regions; a layer above sends the prepared pages to a model and owns the requests, retries, and
+  any final step. The module requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the
   vision harness the integration and bake-off tiers run on; no released file imports it.
 - The page-renderer interface, `Renderer`: `Count` returns a PDF's page count, and `Render`
   writes one page, 1-based, as PNG at a DPI to a writer, one process per page.
@@ -25,46 +21,36 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`ErrDPI`) and a page below 1 (`ErrPageRange`). It doesn't count the pages, so a `Render` past
   the last page gives its rendering tool's own error; a caller walking a PDF's pages refuses one
   past the last against its own count.
+- The released renderer, `Ghostscript`, the renderer bake-off's winner on accuracy, speed, and
+  memory: `NewGhostscript` builds it over a gs `Tool` from either runner, refusing one older than
+  `GhostscriptMinimum`, 10.0, and `GhostscriptSpec` declares gs for the constructors. `Count`
+  counts a PDF's pages with gs's own PDF interpreter; `Render` renders one page per gs run with
+  the png16m device, text and graphics anti-aliased, at the DPI, to PNG on stdout. gs reads the
+  PDF by its absolute path, in the PDF's directory, so the container runner's mount holds it. gs
+  past the last page exits zero with a message in place of a PNG; `Render` returns that message
+  as its error and writes nothing. Ghostscript is AGPL-licensed, and the renderer runs it as a
+  separate program, never linked.
+- Text layers: `Ghostscript.Text` reads a page's text layer with gs's txtwrite device, one gs
+  run, gs's messages sent to stderr so stdout is the text alone, gs's physical layout kept; a
+  page past the last is an error wrapping `ErrPageRange`. `HasText` is the rule for a page having
+  a text layer: its text not empty once whitespace is trimmed. The optional `TextExtractor`
+  interface names `Text`, which `Ghostscript` satisfies.
+- Regions: a `Region` is a band of a page in fractions of the page as rendered, top, bottom,
+  left, and right, each 0 to 1, which `CheckRegion` refuses out of range or inverted
+  (`ErrRegion`). `Ghostscript.RenderRegion` renders one in a single gs run that crops in gs's
+  own PostScript, the region's pixels the whole page's; the optional `RegionRenderer` interface
+  names it, and `Renderer` is unchanged.
 - The corrections stage: `Correction` values `Deskew`, `Despeckle`, `ContrastStretch`, `Unsharp`,
   and `Grayscale`, each one ImageMagick operator, applied in that fixed order however a request
   lists them. `NewCorrector` builds the stage over a magick `Tool` from either runner, refusing
   one older than `MagickMinimum`, 7.1, and `MagickSpec` declares magick for the constructors.
   `Corrector.Correct` runs one magick per page image, PNG on stdin to PNG on stdout, and no
-  corrections copies the image without running magick.
-- The released renderer, `Ghostscript`, the renderer bake-off's winner: `NewGhostscript` builds
-  it over a gs `Tool` from either runner, refusing one older than `GhostscriptMinimum`, 10.0,
-  and `GhostscriptSpec` declares gs for the constructors. `Count` counts a PDF's pages with gs's
-  own PDF interpreter; `Render` renders one page per gs run with the png16m device, text and
-  graphics anti-aliased, at the DPI, to PNG on stdout. gs reads the PDF by its absolute path,
-  in the PDF's directory, so the container runner's mount holds it. gs past the last page exits
-  zero with a message in place of a PNG; `Render` returns that message as its error and writes
-  nothing. Ghostscript is AGPL-licensed, and the renderer runs it as a separate program, never
-  linked. The renderer bake-off's gs entry runs it.
-- `Preparer`, the prepared-page stream over the stages, built by `NewPreparer` from a `Renderer`
-  and an optional `*Corrector`, refusing a nil renderer. An `ImagesRequest` names the working
-  directory the caller owns, the DPI (zero means 150), the corrections, which a preparer with no
-  corrections stage refuses, and the concurrency (zero means 1); it is refused before anything
-  runs. `Preparer.Images` returns a lazy `iter.Seq2[PageImage, error]`: it spools the PDF, read
-  from an `io.Reader`, into the request's directory, counts its pages, and renders and corrects
-  each page, yielding a `PageImage` of its number, the page count, and its PNG, with at most the
-  request's concurrency of pages being prepared at once. Pages come back in page order; a failed
-  page yields its number and count with its error, and the stream carries on; a refused request,
-  a failed spool or count, or an ended context yields one error and ends the stream. Breaking out
-  of the range cancels the work in flight and returns once it has ended, and the spooled PDF is
-  removed when the stream ends. The package sets no size limit on a page's image.
+  corrections copies the image without running magick. None is applied by default.
 - The correction catalog, for a prompt that lets a model choose corrections: `Corrections`
   lists every `Correction` in the fixed order, `Correction.Description` gives each a one-line
   description of what it fixes and when to use it, beside its name from `String`, and
   `ParseCorrection` reads a name back, without regard to case, an unknown name an error naming
   it. The stage's one table of corrections holds all of it.
-- Text layers: `Ghostscript.Text` reads a page's text layer with gs's txtwrite device, one gs
-  run, gs's messages sent to stderr so stdout is the text alone, gs's layout kept; a page past
-  the last is an error wrapping `ErrPageRange`. `HasText` is the rule for a page having a text
-  layer: its text not empty once whitespace is trimmed. The optional `TextExtractor` interface
-  names `Text`, which `Ghostscript` satisfies. An `ImagesRequest` with `Text` reads each page's
-  text layer into its `PageImage`'s new `Text`; with `SkipText` it also renders no page that has
-  one, yielding the page with its text and no PNG, for the flow of text layer first, vision only
-  for the pages without one. A preparer whose renderer is no `TextExtractor` refuses either.
 - `Corrector.Assess` measures a page image for the defects the corrections fix, in one magick
   run, returning an `Assessment`: the image's size, its skew in degrees (`-deskew 40%`'s
   `%[deskew:angle]`), contrast (the standard deviation of its luminance), noise (its mean
@@ -72,18 +58,39 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   fraction of its pixels that are colored, and whether it is effectively gray, below
   `GrayscaleColored` of its pixels colored. Output missing a measure, or one that isn't a
   number, is an error.
-- Regions: a `Region` is a band of a page in fractions of the page as rendered, top, bottom,
-  left, and right, each 0 to 1, which `CheckRegion` refuses out of range or inverted
-  (`ErrRegion`). `Ghostscript.RenderRegion` renders one in a single gs run that crops in gs's
-  own PostScript, the region's pixels the whole page's; the optional `RegionRenderer` interface
-  names it, and `Renderer` is unchanged. An `ImagesRequest`'s optional `Region` renders that band
-  of every page, such as a header or footer, which a preparer whose renderer is no
-  `RegionRenderer` refuses.
+- `Preparer`, the prepared-page stream over the stages, built by `NewPreparer` from a `Renderer`
+  and an optional `*Corrector`, refusing a nil renderer. An `ImagesRequest` names the working
+  directory the caller owns, the DPI (zero means 150), the corrections, which a preparer with no
+  corrections stage refuses, and the concurrency (zero means 1); with `Text` it reads each page's
+  text layer into its `PageImage`, and with `SkipText` it also renders no page that has one, for
+  the flow of text layer first, vision only for the pages without one; its optional `Region`
+  renders that band of every page, such as a header or footer. A preparer whose renderer is no
+  `TextExtractor` refuses `Text` and `SkipText`, and one whose renderer is no `RegionRenderer`
+  refuses a `Region`. A request is refused before anything runs. `Preparer.Images` returns a
+  lazy `iter.Seq2[PageImage, error]`: it spools the PDF, read from an `io.Reader`, into the
+  request's directory, counts its pages, and renders and corrects each page, yielding a
+  `PageImage` of its number, the page count, its PNG, and its text layer, with at most the
+  request's concurrency of pages being prepared at once. Pages come back in page order; a failed
+  page yields its number and count with its error, and the stream carries on; a refused request,
+  a failed spool or count, or an ended context yields one error and ends the stream. Breaking out
+  of the range cancels the work in flight and returns once it has ended, and the spooled PDF is
+  removed when the stream ends. The package sets no size limit on a page's image.
+- `tool.Usage` and `Invocation.Usage`: a run's resource usage, user and system CPU time
+  (`UserCPU`, `SystemCPU`), which `Run` sets when the pointer isn't nil, whether the program
+  exited zero, exited nonzero, or was cancelled. The exec runner fills it from the program's
+  rusage, which on Linux counts the children the program reaped; the container runner leaves it
+  zero, since the docker CLI's usage isn't the container's. It reports no peak memory: Go starts
+  a program with a vfork-style clone, so the program's rusage peak starts at the Go parent's
+  resident memory.
 - The document fixtures in `document/testdata`, letter size, with each page's ground truth: a
   six-page clean PDF and a nine-page degraded PDF, regenerated byte for byte from a typst source
   by `generate.sh`, whose pages carry skew, fade, speckle, and blur each at a moderate and a
   severe level and all four on one page; and a seven-page scanned PDF, real 300-dpi scans copied
   without re-encoding from herald's marked documents, whose truth is transcribed by hand.
+- The bake-off tier, bakeoff-tagged tests that send pages to Gemma 4 26B-A4B and never run in CI,
+  with its tasks: `bakeoff` (the renderer bake-off), `bakeoff-corrections` (the corrections
+  matrix), `bakeoff-placement` (instruction placement), `bakeoff-flow` (the staged two-pass flow),
+  and `bakeoff-tiles` (tile shape). What they measured is in `docs/findings/documents.md`.
 
 ## [v0.1.0] - 2026-10-29
 
@@ -132,5 +139,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.2.0...HEAD
+[v0.2.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.1.0

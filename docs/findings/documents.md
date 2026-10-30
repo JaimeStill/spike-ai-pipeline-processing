@@ -469,8 +469,10 @@ marking as faded as page 7's isn't recovered by tiling, so the layer can't rely 
 - **Keep the first pass's text unless the second is clearly better.** Scoring the second pass in
   place of the first lost page 5's seal; the inference layer has no ground truth, so it can't
   tell, which argues for one pass.
-- **Bands at a higher DPI don't add detail here:** the model's image budget scales a wide band
-  down, and they read nothing a full page missed, NOFORN included.
+- **For detail, tile a known spot rather than band the page:** image tokens follow a region's
+  area, not its shape, so a wide band isn't scaled down, yet it read nothing a full page missed.
+  A small tile on a seal or a printed line read what the page and its band missed, for about a
+  fifth of a page's tokens. Nothing recovered page 7's faded NOFORN.
 
 ## The scanned set's lessons
 

@@ -21,10 +21,10 @@
 // that crops in gs's own PostScript; the optional RegionRenderer interface names it, so the
 // Renderer interface stays as it is. Text reads a page's text layer with gs's txtwrite device,
 // and the optional TextExtractor interface names it; HasText is the rule for a page having a text
-// layer, its text not empty once whitespace is trimmed. NewGhostscript takes a gs
-// Tool built through either runner, GhostscriptSpec declaring it, and refuses one older than
-// 10.0. Ghostscript is AGPL-licensed, and the package runs it as a separate program, never
-// linked.
+// layer, its text not empty once whitespace is trimmed. Text keeps gs's physical layout, so a
+// multi-column page or a form reads out of reading order. NewGhostscript takes a gs Tool built
+// through either runner, GhostscriptSpec declaring it, and refuses one older than 10.0.
+// Ghostscript is AGPL-licensed, and the package runs it as a separate program, never linked.
 //
 // The corrections stage, a Corrector, runs a page image through ImageMagick's operators for the
 // corrections a request names: Deskew (-deskew 40%), Despeckle (-despeckle), ContrastStretch
@@ -44,12 +44,12 @@
 // pages, and renders and corrects each page, yielding a PageImage of its number, the page count,
 // and its PNG. A request may read each page's text layer into its PageImage, and skip rendering
 // the pages that have one, for the flow of text layer first, vision only for the pages without
-// one; and it may render one Region of every page. At most the request's concurrency of pages are being prepared at once, and pages
-// come back in page order, a failed page as its number and count with its error, the stream
-// carrying on. A refused request, a failed spool or count, or an ended context is the stream's one
-// error. The stream is lazy, breaking out of it cancels the work in flight and returns once that
-// work has ended, and the spooled PDF is removed when it ends. The package sets no size limit on a
-// page's image.
+// one; and it may render one Region of every page. At most the request's concurrency of pages
+// are being prepared at once, and pages come back in page order, a failed page as its number and
+// count with its error, the stream carrying on. A refused request, a failed spool or count, or an
+// ended context is the stream's one error. The stream is lazy, breaking out of it cancels the work
+// in flight and returns once that work has ended, and the spooled PDF is removed when it ends. The
+// package sets no size limit on a page's image.
 //
 // Its exported identifiers:
 //
@@ -70,7 +70,7 @@
 //   - [GhostscriptSpec] declares Ghostscript's gs for either runner's constructor.
 //   - [GhostscriptMinimum] is the oldest gs the renderer accepts, 10.0.
 //   - [ErrDPI] and [ErrPageRange] are the refusals' causes: a DPI of zero or less, and a page
-//     below 1, or past the last for a caller that holds the count.
+//     below 1, or past the last for Text and for a caller that holds the count.
 //   - [Correction] is one scan correction: [Deskew], [Despeckle], [ContrastStretch], [Unsharp],
 //     or [Grayscale].
 //   - [Correction.String] returns a correction's name.
