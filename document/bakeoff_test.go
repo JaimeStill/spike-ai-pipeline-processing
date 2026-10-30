@@ -586,24 +586,34 @@ type criterion struct {
 	compare func(a, b ranked) int
 }
 
-// ranked is a renderer with its measures over every set.
+// rankedSets are the sets the ranking's accuracy criteria score: the pages with a text or vector
+// layer, which each renderer rasterizes itself. The scanned set is left out: its pages are an
+// embedded scan every renderer decodes the same, so their differences are the model's sensitivity
+// to tiny pixel differences, not rendering quality. On the QAT build at 512 image tokens, scanned
+// page 7 alone ranked vips first and gs fourth when it counted. Its table is still logged.
+var rankedSets = []string{"clean", "degraded"}
+
+// ranked is a renderer with its measures: its accuracy over rankedSets, and its cost over every
+// set.
 type ranked struct {
-	res  result
-	all  summary
-	wins int
+	res      result
+	accuracy summary
+	all      summary
+	wins     int
 }
 
 // criteria are the ranking's criteria in the order they decide: the character error rate over
-// the completed transcriptions, tied inside the run-to-run spread; then the incomplete
-// transcriptions, fewer first; then render time and peak memory, each tied inside the spread;
-// then streaming, the license, the PNG's size, and the number of tools.
+// the completed transcriptions of rankedSets, tied inside the run-to-run spread; then the
+// incomplete transcriptions of rankedSets, fewer first; then render time and peak memory over
+// every set, each tied inside the spread; then streaming, the license, the PNG's size, and the
+// number of tools.
 //
-// The incomplete transcriptions are a count over every page of every run, and any difference
+// The incomplete transcriptions are a count over every ranked page of every run, and any difference
 // decides, with no spread: every renderer has the same pages and runs, and an incomplete page is
 // a failure its error rate doesn't see.
 var criteria = []criterion{
-	{"CER", func(a, b ranked) int { return a.all.cer.compare(b.all.cer) }},
-	{"incomplete", func(a, b ranked) int { return cmp.Compare(a.all.incomplete, b.all.incomplete) }},
+	{"CER", func(a, b ranked) int { return a.accuracy.cer.compare(b.accuracy.cer) }},
+	{"incomplete", func(a, b ranked) int { return cmp.Compare(a.accuracy.incomplete, b.accuracy.incomplete) }},
 	{"time", func(a, b ranked) int { return a.all.renderTime.compare(b.all.renderTime) }},
 	{"memory", func(a, b ranked) int { return a.all.peakRSS.compare(b.all.peakRSS) }},
 	{"streaming", func(a, b ranked) int {
@@ -638,8 +648,8 @@ func decide(a, b ranked) (int, string) {
 	return 0, "none"
 }
 
-// TestBakeoffRanking ranks the renderers TestBakeoff ran, over all three sets together, and logs
-// each set's results and the ranking as recorded lines. A tie inside the spread isn't
+// TestBakeoffRanking ranks the renderers TestBakeoff ran, their accuracy over rankedSets and their
+// cost over all three sets, and logs each set's results and the ranking as recorded lines. A tie inside the spread isn't
 // transitive, so the ranking is by pairwise wins: each pair is decided by the first criterion
 // that separates them, and a renderer ranks by how many others it beats, then by its mean CER.
 func TestBakeoffRanking(t *testing.T) {
@@ -670,13 +680,17 @@ func TestBakeoffRanking(t *testing.T) {
 			rows = append(rows, fmt.Sprintf("%s\t%.4f\t%.4f..%.4f\t%.4f\t%.4f..%.4f\t%s\t",
 				res.Name, s.cer.mean, s.cer.lo, s.cer.hi, s.wer.mean, s.wer.lo, s.wer.hi, s.incompleteRate()))
 		}
+		label := set
+		if !slices.Contains(rankedSets, set) {
+			label += " (not ranked)"
+		}
 		for _, line := range table(rows) {
-			t.Logf("recorded: bakeoff %s: %s", set, line)
+			t.Logf("recorded: bakeoff %s: %s", label, line)
 		}
 	}
 	var rank []ranked
 	for _, res := range rs {
-		rank = append(rank, ranked{res: res, all: summarize(res, setNames...)})
+		rank = append(rank, ranked{res: res, accuracy: summarize(res, rankedSets...), all: summarize(res, setNames...)})
 	}
 	for i := range rank {
 		for j := i + 1; j < len(rank); j++ {
@@ -691,18 +705,18 @@ func TestBakeoffRanking(t *testing.T) {
 		}
 	}
 	slices.SortStableFunc(rank, func(a, b ranked) int {
-		return cmp.Or(-cmp.Compare(a.wins, b.wins), cmp.Compare(a.all.cer.mean, b.all.cer.mean))
+		return cmp.Or(-cmp.Compare(a.wins, b.wins), cmp.Compare(a.accuracy.cer.mean, b.accuracy.cer.mean))
 	})
 	rows := []string{"rank\trenderer\twins\tCER mean\tCER min..max\tWER mean\tWER min..max\tincomplete\t" +
 		"render s/page\ts min..max\tpeak MiB\tMiB min..max\tPNG KiB/page\tstreams\tlicense\ttools\tinstalled MiB\t"}
 	for i, r := range rank {
-		a := r.all
+		acc, a := r.accuracy, r.all
 		rows = append(rows, fmt.Sprintf("%d\t%s\t%d\t%.4f\t%.4f..%.4f\t%.4f\t%.4f..%.4f\t%s\t%.3f\t%.3f..%.3f\t%.1f\t%.1f..%.1f\t%.0f\t%v\t%s\t%s\t%.2f\t",
-			i+1, r.res.Name, r.wins, a.cer.mean, a.cer.lo, a.cer.hi, a.wer.mean, a.wer.lo, a.wer.hi, a.incompleteRate(),
+			i+1, r.res.Name, r.wins, acc.cer.mean, acc.cer.lo, acc.cer.hi, acc.wer.mean, acc.wer.lo, acc.wer.hi, acc.incompleteRate(),
 			a.renderTime.mean, a.renderTime.lo, a.renderTime.hi, a.peakRSS.mean, a.peakRSS.lo, a.peakRSS.hi,
 			a.pngBytes/1024, r.res.Streams, r.res.License, strings.Join(r.res.Tools, "+"), r.res.FootprintMiB))
 	}
-	t.Log("recorded: bakeoff ranking over clean, degraded, and scanned: a run's CER and WER are the mean of the three sets' rates over the completed transcriptions; incomplete is the transcriptions that didn't complete, of all")
+	t.Logf("recorded: bakeoff ranking: CER, WER, and incomplete over %s, a run's CER and WER the mean of their rates over the completed transcriptions, incomplete the transcriptions that didn't complete, of theirs; render time, memory, and PNG size over every set", strings.Join(rankedSets, " and "))
 	for _, line := range table(rows) {
 		t.Logf("recorded: bakeoff ranking: %s", line)
 	}

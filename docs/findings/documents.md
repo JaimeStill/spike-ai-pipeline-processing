@@ -64,9 +64,12 @@ transcription was scored against the page's ground truth. The bake-off is its ow
   sits beside it. Both are scored over the transcriptions that completed. A transcription that
   failed, wasn't `completed`, or came back empty counts as **incomplete**, a criterion of its own.
   A difference inside the run-to-run spread (the range of the three runs) is a tie.
-- **Ranking order:** CER, then incomplete transcriptions, then render time, peak memory,
-  streaming, license, PNG size, and the number of programs. Each pair of renderers is decided by
-  the first criterion that separates them, and a renderer ranks by how many others it beats.
+- **Ranking order:** CER and incomplete transcriptions over the clean and degraded sets, then
+  render time and peak memory over every set, then streaming, license, PNG size, and the number
+  of programs. Each pair of renderers is decided by the first criterion that separates them, and
+  a renderer ranks by how many others it beats. The scanned set is reported apart and not ranked
+  (ruling Q): its pages are an embedded scan every renderer decodes the same, so its differences
+  are the model's sensitivity to tiny pixel differences, not rendering quality.
 
 The bake-off ran as 15 `go test` runs, one per renderer and set, each capped at 10 minutes. They
 took 26 to 65 s each, about 11 minutes in all (the log's `bakeoff: <renderer> <set> took` lines).
@@ -76,10 +79,11 @@ An earlier attempt with one run per renderer had overrun 10 minutes.
 
 Source: the reasoning-off run's JSON, 15 files in
 [`documents-results/renderers/`](documents-results/renderers/), ranked again for this page by
-`TestBakeoffRanking`. The tables match the run's own log line for line.
+`TestBakeoffRanking` with ruling Q's method. Its per-set tables match the run's own log line for
+line.
 
-The clean and degraded sets scored a CER of 0 for every renderer on every run, so the scanned set
-decided accuracy:
+The clean and degraded sets scored a CER of 0 for every renderer on every run, with no incomplete
+transcription, so accuracy tied every pair. The scanned set, reported apart and not ranked:
 
 | Renderer | Scanned CER (min..max) | Scanned WER | Incomplete |
 |---|---|---|---|
@@ -89,26 +93,36 @@ decided accuracy:
 | pdftocairo | 0.1091 (0.1091..0.1091) | 0.1607 | 0/21 |
 | vips | 0.1242 (0.1091..0.1544) | 0.1786 | 0/21 |
 
-The ranking over all three sets, each run's CER being the mean of the three sets' rates:
+The ranking, CER and incomplete over the clean and degraded sets, render time and memory over
+every set:
 
 | Rank | Renderer | Wins | CER (min..max) | Incomplete | Render s/page | Peak MiB | PNG KiB/page | License | Programs | Installed MiB |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **gs** | 4 | 0.0268 (0.0234..0.0288) | 0/66 | 0.126 | 27.0 | 364 | AGPL | gs | 41.08 |
-| 2 | pdftoppm | 2 | 0.0308 (0.0306..0.0310) | 0/66 | 0.457 | 30.5 | 439 | GPL (poppler) | pdftoppm, pdfinfo | 6.81 |
-| 3 | magick | 2 | 0.0331 (0.0281..0.0371) | 0/66 | 0.338 | 102.7 | 322 | AGPL (through gs) | magick, gs | 63.12 |
-| 4 | vips | 2 | 0.0414 (0.0364..0.0515) | 0/66 | 0.133 | 90.1 | 348 | GPL (its PDF loader links poppler) | vips, vipsheader | 16.09 |
-| 5 | pdftocairo | 0 | 0.0364 (0.0364..0.0364) | 0/66 | 0.415 | 58.2 | 354 | GPL (poppler) | pdftocairo, pdfinfo | 6.81 |
+| 1 | **gs** | 4 | 0.0000 (0.0000..0.0000) | 0/45 | 0.126 | 27.0 | 364 | AGPL | gs | 41.08 |
+| 2 | vips | 3 | 0.0000 (0.0000..0.0000) | 0/45 | 0.133 | 90.1 | 348 | GPL (its PDF loader links poppler) | vips, vipsheader | 16.09 |
+| 3 | magick | 2 | 0.0000 (0.0000..0.0000) | 0/45 | 0.338 | 102.7 | 322 | AGPL (through gs) | magick, gs | 63.12 |
+| 4 | pdftocairo | 1 | 0.0000 (0.0000..0.0000) | 0/45 | 0.415 | 58.2 | 354 | GPL (poppler) | pdftocairo, pdfinfo | 6.81 |
+| 5 | pdftoppm | 0 | 0.0000 (0.0000..0.0000) | 0/45 | 0.457 | 30.5 | 439 | GPL (poppler) | pdftoppm, pdfinfo | 6.81 |
 
-gs beat pdftoppm, pdftocairo, and vips on CER, and magick on time. Render time and peak memory
+Render time decided every pair: gs beat each of the others on it. Render time and peak memory
 are per page, and their spreads over the three runs were narrow: gs took 0.125 to 0.127 s and
 peaked at 27.0 MiB on every run. Installed size is `pacman -Qi` on the laptop for the packages
 each renderer needs. Every renderer could also stream, reading the PDF on stdin and writing the
 page's PNG to stdout.
 
+> **The earlier ranking.** This page first ranked the run with CER and incomplete over all three
+> sets, each run's CER the mean of the three sets' rates. Since the clean and degraded sets tied,
+> the scanned set decided accuracy: gs 4 wins (CER 0.0268), pdftoppm 2 (0.0308), magick 2
+> (0.0331), vips 2 (0.0414), pdftocairo 0 (0.0364); gs beat pdftoppm, pdftocairo, and vips on CER,
+> and magick on time. Ruling Q took the scanned set out of the ranking: every renderer decodes
+> the same embedded scan, and on Google's QAT build at 512 image tokens the old method ranked
+> vips first and gs fourth on scanned page 7 alone. gs stays the released renderer.
+
 ### The winner: gs
 
-gs is the released renderer, `document.Ghostscript`. It led on accuracy, was the fastest and the
-lightest in memory, and needs a single program. Its cost is the license: Ghostscript is
+gs is the released renderer, `document.Ghostscript`. It tied on the clean and degraded sets, had
+the lowest scanned CER in this run, was the fastest and the lightest in memory, and needs a single
+program. Its cost is the license: Ghostscript is
 AGPL-3.0-or-later, so the package runs `gs` as a separate process through the tool contract and
 never links it. vips came close on speed but used more than three times the memory, and is GPL
 through its poppler PDF loader. The bake-off's gs runs the released code, so a rerun ranks what
