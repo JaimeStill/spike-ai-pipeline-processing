@@ -42,7 +42,10 @@ type Ghostscript struct {
 	gs *tool.Tool
 }
 
-var _ Renderer = (*Ghostscript)(nil)
+var (
+	_ RegionRenderer = (*Ghostscript)(nil)
+	_ TextExtractor  = (*Ghostscript)(nil)
+)
 
 // NewGhostscript builds the released renderer over gs, which the caller built through either
 // runner, typically from GhostscriptSpec. It refuses a nil Tool, and a Tool whose version is
@@ -106,15 +109,85 @@ func (g *Ghostscript) render(ctx context.Context, pdf string, stdin io.Reader, p
 		}
 		pdf, dir = abs, filepath.Dir(abs)
 	}
-	out := &pngGuard{w: w}
-	err := g.gs.Run(ctx, tool.Invocation{Args: renderArgs(pdf, page, dpi), Dir: dir, Stdin: stdin, Stdout: out, Usage: usage})
+	return g.png(ctx, tool.Invocation{Args: renderArgs(pdf, page, dpi), Dir: dir, Stdin: stdin, Usage: usage}, pdf, page, w)
+}
+
+// RenderRegion writes the region of page, 1-based, of the PDF at pdf to w as PNG at dpi, one gs
+// run for the page, as Render writes the whole page: the same device and anti-aliasing, so the
+// region's pixels are the whole page's, cropped. It refuses what Render refuses, and a region
+// CheckRegion refuses, before gs runs. A gs that exits nonzero gives the Tool's error, and w may
+// hold part of a PNG then; a page past the last writes nothing and is an error carrying the
+// message the run prints in place of a PNG.
+//
+// gs crops in its own PostScript, run with -c, as regionArgs says: the region's size, in the
+// page's points, is the device's page size, and the page is drawn translated so the region's
+// corner is the device's.
+func (g *Ghostscript) RenderRegion(ctx context.Context, pdf string, page, dpi int, region Region, w io.Writer) error {
+	if err := CheckRender(page, dpi); err != nil {
+		return err
+	}
+	if err := CheckRegion(region); err != nil {
+		return err
+	}
+	abs, err := filepath.Abs(pdf)
 	if err != nil {
+		return fmt.Errorf("document: ghostscript: %w", err)
+	}
+	return g.png(ctx, tool.Invocation{Args: regionArgs(abs, page, dpi, region), Dir: filepath.Dir(abs)}, abs, page, w)
+}
+
+// png runs gs as inv says, its stdout a page's PNG, and writes the PNG to w, holding back a stdout
+// that doesn't begin as a PNG and returning it as the error.
+func (g *Ghostscript) png(ctx context.Context, inv tool.Invocation, pdf string, page int, w io.Writer) error {
+	out := &pngGuard{w: w}
+	inv.Stdout = out
+	if err := g.gs.Run(ctx, inv); err != nil {
 		return err
 	}
 	if !out.png {
 		return fmt.Errorf("document: ghostscript: page %d of %s: no PNG on stdout: %s", page, pdf, strings.TrimSpace(string(out.head)))
 	}
 	return nil
+}
+
+// pastLast is the start of the message gs prints for a FirstPage past a PDF's last page.
+const pastLast = "Requested FirstPage is greater than the number of pages"
+
+// textStderrLimit bounds how much of gs's stderr Text keeps, for its message and its errors.
+const textStderrLimit = 4 << 10
+
+// Text returns the text of page, 1-based, of the PDF at pdf, as its text layer holds it, one gs
+// run with the txtwrite device: the page's text laid out in lines, gs's own spacing kept. A page
+// with no text layer, such as a scanned page, returns blank text, which HasText reports as none.
+// It refuses a page below 1 before gs runs, as CheckRender does. A gs that exits nonzero gives
+// the Tool's error, a *tool.ExitError carrying gs's stderr.
+//
+// gs runs with -sstdout=%stderr, so its own messages go to stderr and stdout holds the text
+// alone. A page past the last prints gs's message there, "Requested FirstPage is greater than
+// the number of pages in the file", and exits zero; Text returns it as an error wrapping
+// ErrPageRange.
+func (g *Ghostscript) Text(ctx context.Context, pdf string, page int) (string, error) {
+	if page < 1 {
+		return "", fmt.Errorf("document: page %d: %w", page, ErrPageRange)
+	}
+	abs, err := filepath.Abs(pdf)
+	if err != nil {
+		return "", fmt.Errorf("document: ghostscript: %w", err)
+	}
+	var out strings.Builder
+	stderr := limitedBuffer{limit: textStderrLimit}
+	err = g.gs.Run(ctx, tool.Invocation{Args: textArgs(abs, page), Dir: filepath.Dir(abs), Stdout: &out, Stderr: &stderr})
+	if err != nil {
+		// Run keeps stderr for its *tool.ExitError only when the caller doesn't take it.
+		if exit, ok := errors.AsType[*tool.ExitError](err); ok && exit.Stderr == "" {
+			exit.Stderr = stderr.String()
+		}
+		return "", err
+	}
+	if msg := strings.TrimSpace(stderr.String()); strings.Contains(msg, pastLast) {
+		return "", fmt.Errorf("document: ghostscript: page %d of %s: %s: %w", page, abs, msg, ErrPageRange)
+	}
+	return out.String(), nil
 }
 
 // renderArgs returns gs's arguments for page of the PDF at pdf at dpi, as the bake-off measured
@@ -130,12 +203,55 @@ func renderArgs(pdf string, page, dpi int) []string {
 		"-dFirstPage=" + strconv.Itoa(page), "-dLastPage=" + strconv.Itoa(page), "-sOutputFile=-", pdf}
 }
 
+// textArgs returns gs's arguments for the text of page of the PDF at pdf: the txtwrite device,
+// its text to stdout, and gs's own messages to stderr.
+func textArgs(pdf string, page int) []string {
+	return []string{"-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "-sstdout=%stderr", "-sDEVICE=txtwrite",
+		"-dFirstPage=" + strconv.Itoa(page), "-dLastPage=" + strconv.Itoa(page), "-sOutputFile=-", pdf}
+}
+
+// regionArgs returns gs's arguments for region of page of the PDF at pdf at dpi, the device and
+// anti-aliasing renderArgs gives, the PNG to stdout. gs reads the PDF itself in PostScript,
+// permitted to read that one file, and draws the page as pdfshowpage does in its three steps:
+//
+//   - A page past the last prints a message in place of a PNG and quits.
+//   - pdfshowpage_setpage sets the device's page size to the page's, rotation applied, and the
+//     CTM to place the page on it. The page's own transform is taken out of that CTM, against
+//     the device's default matrix.
+//   - setpagedevice sets the device's page size to the region's, its width and height the page's
+//     times the region's fractions, and resets the CTM to the new default. The page is then
+//     translated left by the region's left edge and down by the band below its bottom edge, in
+//     the page's points, and its own transform applied again, so the region alone lands on the
+//     device.
+//   - pdfshowpage_finish draws the page and shows it.
+//
+// The path is a PostScript string, escaped as countArgs escapes it, and the fractions are
+// decimals, CheckRegion having refused any that isn't a number.
+func regionArgs(pdf string, page, dpi int, r Region) []string {
+	n := strconv.Itoa(page)
+	f := func(v float64) string { return strconv.FormatFloat(v, 'f', -1, 64) }
+	ps := "(" + psString(pdf) + ") (r) file runpdfbegin " +
+		n + " pdfpagecount gt { (Requested page " + n + " is greater than the number of pages in the file) = quit } if " +
+		n + " pdfgetpage pdfshowpage_setpage " +
+		"matrix currentmatrix matrix defaultmatrix matrix invertmatrix matrix concatmatrix " +
+		"currentpagedevice /PageSize get aload pop /ph exch def /pw exch def " +
+		"<< /PageSize [pw " + f(r.Right) + " " + f(r.Left) + " sub mul ph " + f(r.Bottom) + " " + f(r.Top) + " sub mul] >> setpagedevice " +
+		"pw " + f(r.Left) + " mul neg ph 1 " + f(r.Bottom) + " sub mul neg translate concat " +
+		"pdfshowpage_finish runpdfend quit"
+	return []string{"-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "--permit-file-read=" + pdf, "-sDEVICE=png16m",
+		"-dTextAlphaBits=4", "-dGraphicsAlphaBits=4", "-r" + strconv.Itoa(dpi), "-sOutputFile=-", "-c", ps}
+}
+
 // countArgs returns gs's arguments to print the page count of the PDF at pdf. The path is a
 // PostScript string there, whose backslashes and parentheses are escaped.
 func countArgs(pdf string) []string {
-	ps := strings.NewReplacer(`\`, `\\`, `(`, `\(`, `)`, `\)`).Replace(pdf)
 	return []string{"-q", "-dNODISPLAY", "-dSAFER", "--permit-file-read=" + pdf,
-		"-c", "(" + ps + ") (r) file runpdfbegin pdfpagecount = quit"}
+		"-c", "(" + psString(pdf) + ") (r) file runpdfbegin pdfpagecount = quit"}
+}
+
+// psString escapes s for a PostScript string: its backslashes and parentheses.
+func psString(s string) string {
+	return strings.NewReplacer(`\`, `\\`, `(`, `\(`, `)`, `\)`).Replace(s)
 }
 
 // pngSignature is the eight bytes every PNG begins with.

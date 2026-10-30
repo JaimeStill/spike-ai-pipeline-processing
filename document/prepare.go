@@ -47,25 +47,44 @@ type ImagesRequest struct {
 	// Concurrency is how many pages are prepared at once, from rendering to the end of their
 	// corrections. Zero means 1; a negative concurrency is refused.
 	Concurrency int
+	// Text reads each page's text layer, before rendering it, into its PageImage's Text. The
+	// Preparer's Renderer must be a TextExtractor, or the request is refused.
+	Text bool
+	// SkipText reads each page's text layer as Text does, and renders no page that has one, as
+	// HasText says: such a page is yielded with its Text and no PNG, and a page without one is
+	// rendered and corrected as usual. It serves the flow of text layer first, vision only for
+	// the pages without one.
+	SkipText bool
+	// Region, when not nil, renders only that band of each page, such as a header or footer
+	// band, in place of the whole page. The Preparer's Renderer must be a RegionRenderer, and the
+	// region one CheckRegion accepts, or the request is refused.
+	Region *Region
 }
 
-// PageImage is one prepared page: its number, 1-based, the PDF's page count, and the page's image
-// as PNG, corrected when the request names corrections. PNG is nil for a page that failed.
+// PageImage is one prepared page: its number, 1-based, the PDF's page count, the page's image
+// as PNG, corrected when the request names corrections, and its text layer when the request
+// reads it. PNG is nil for a page that failed, and for a page a SkipText request didn't render
+// because HasText(Text).
 type PageImage struct {
 	Number int
 	Count  int
 	PNG    []byte
+	// Text is the page's text layer, as the Renderer's TextExtractor reads it, for a request
+	// with Text or SkipText; "" otherwise. A page without a text layer has text HasText reports
+	// as none.
+	Text string
 }
 
 // Images returns the stream of a PDF's pages, read from pdf, prepared as req says. The stream is
 // lazy: nothing runs, not even the request's validation, until it is ranged over.
 //
 // Ranging over it validates req, spools pdf into req.Dir, counts the pages with the Renderer, and
-// then, for every page from 1 to the count, renders the page at req.DPI and corrects it when req
-// names corrections. At most req.Concurrency pages are being prepared at once. Pages are yielded
+// then, for every page from 1 to the count, reads its text layer when req says to, renders the
+// page, or req.Region of it, at req.DPI, unless req.SkipText and the page has a text layer, and
+// corrects it when req names corrections. At most req.Concurrency pages are being prepared at once. Pages are yielded
 // in page order, a page that finishes early held until the pages before it are yielded.
 //
-// A page that fails, in rendering or correcting, yields the PageImage's number and count with the
+// A page that fails, in reading its text, rendering, or correcting, yields the PageImage's number and count with the
 // error, which names the page and wraps its cause, and the stream carries on. A refused request,
 // a failed spool, or a failed count yields one error with a zero PageImage, and the stream ends.
 // When ctx ends, the stream yields ctx's error once, with a zero PageImage, and ends.
@@ -94,10 +113,11 @@ func (p *Preparer) Images(ctx context.Context, pdf io.Reader, req ImagesRequest)
 	}
 }
 
-// outcome is one page's image or error, as its worker hands it to the stream.
+// outcome is one page's image and text, or its error, as its worker hands it to the stream.
 type outcome struct {
-	png []byte
-	err error
+	png  []byte
+	text string
+	err  error
 }
 
 // pages counts the pages of the PDF at path and prepares them, yielding each in page order, req
@@ -136,8 +156,8 @@ func (p *Preparer) pages(ctx context.Context, path string, req ImagesRequest, yi
 			}
 			wg.Go(func() {
 				defer func() { <-slots }()
-				png, err := p.page(work, path, i+1, n, req)
-				done[i] <- outcome{png, err}
+				png, text, err := p.page(work, path, i+1, n, req)
+				done[i] <- outcome{png, text, err}
 			})
 		}
 	})
@@ -151,32 +171,50 @@ func (p *Preparer) pages(ctx context.Context, path string, req ImagesRequest, yi
 		if err := ctx.Err(); err != nil {
 			return yield(PageImage{}, err)
 		}
-		if !yield(PageImage{Number: i + 1, Count: n, PNG: o.png}, o.err) {
+		if !yield(PageImage{Number: i + 1, Count: n, PNG: o.png, Text: o.text}, o.err) {
 			return false
 		}
 	}
 	return true
 }
 
-// page renders page of the n pages of the PDF at path and corrects it when req names
-// corrections, returning its PNG. Its error names the page.
-func (p *Preparer) page(ctx context.Context, path string, page, n int, req ImagesRequest) ([]byte, error) {
+// page prepares page of the n pages of the PDF at path, req already checked: it reads the page's
+// text when req says to, and, unless req.SkipText and the page has a text layer, renders the page,
+// or req.Region of it, and corrects it when req names corrections. It returns the PNG, nil for a
+// page it didn't render, and the text. Its error names the page.
+func (p *Preparer) page(ctx context.Context, path string, page, n int, req ImagesRequest) ([]byte, string, error) {
+	var text string
+	if req.Text || req.SkipText {
+		var err error
+		if text, err = p.render.(TextExtractor).Text(ctx, path, page); err != nil {
+			return nil, "", fmt.Errorf("document: page %d of %d: text: %w", page, n, err)
+		}
+		if req.SkipText && HasText(text) {
+			return nil, text, nil
+		}
+	}
 	var png bytes.Buffer
-	if err := p.render.Render(ctx, path, page, req.DPI, &png); err != nil {
-		return nil, fmt.Errorf("document: page %d of %d: render: %w", page, n, err)
+	var err error
+	if req.Region != nil {
+		err = p.render.(RegionRenderer).RenderRegion(ctx, path, page, req.DPI, *req.Region, &png)
+	} else {
+		err = p.render.Render(ctx, path, page, req.DPI, &png)
+	}
+	if err != nil {
+		return nil, "", fmt.Errorf("document: page %d of %d: render: %w", page, n, err)
 	}
 	if len(req.Corrections) == 0 {
-		return png.Bytes(), nil
+		return png.Bytes(), text, nil
 	}
 	var corrected bytes.Buffer
 	if err := p.correct.Correct(ctx, req.Corrections, &png, &corrected); err != nil {
-		return nil, fmt.Errorf("document: page %d of %d: correct: %w", page, n, err)
+		return nil, "", fmt.Errorf("document: page %d of %d: correct: %w", page, n, err)
 	}
-	return corrected.Bytes(), nil
+	return corrected.Bytes(), text, nil
 }
 
 // check refuses a request Images can't run, before anything runs, and sets its defaults: a DPI of
-// 150 for zero, and a concurrency of 1 for zero.
+// 150 for zero, and a concurrency of 1 for zero. It copies the request's region.
 func (p *Preparer) check(req *ImagesRequest) error {
 	switch {
 	case req.Dir == "":
@@ -187,6 +225,22 @@ func (p *Preparer) check(req *ImagesRequest) error {
 		return fmt.Errorf("document: request's concurrency %d is negative", req.Concurrency)
 	case len(req.Corrections) > 0 && p.correct == nil:
 		return errors.New("document: request names corrections, and the preparer has no corrections stage")
+	}
+	if req.Text || req.SkipText {
+		if _, ok := p.render.(TextExtractor); !ok {
+			return errors.New("document: request reads pages' text, and the preparer's renderer is no TextExtractor")
+		}
+	}
+	if req.Region != nil {
+		if _, ok := p.render.(RegionRenderer); !ok {
+			return errors.New("document: request names a region, and the preparer's renderer is no RegionRenderer")
+		}
+		if err := CheckRegion(*req.Region); err != nil {
+			return fmt.Errorf("document: request's region: %w", err)
+		}
+		// The pages read the request's own copy, which the caller can't change under them.
+		region := *req.Region
+		req.Region = &region
 	}
 	for _, corr := range req.Corrections {
 		if _, ok := known[corr]; !ok {

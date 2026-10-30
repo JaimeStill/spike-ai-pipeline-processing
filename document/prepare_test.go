@@ -51,16 +51,19 @@ func (f *flightLog) counts() (now, most int) {
 	return f.now, f.max
 }
 
-// renderer is the stand-in Renderer. Count reads the spooled PDF and returns pages, or countErr.
-// Render calls wait for the page when it is set, failing with its error, then writes
-// pagePNG(page), or fails with fail's error for the page. Each Render is in flight from its call
-// to its return.
+// renderer is the stand-in Renderer, a RegionRenderer and a TextExtractor too. Count reads the
+// spooled PDF and returns pages, or countErr. Render calls wait for the page when it is set,
+// failing with its error, then writes pagePNG(page), or fails with fail's error for the page.
+// Each Render is in flight from its call to its return. RenderRegion logs the region and renders
+// as Render does. Text returns texts' text for the page, or textErr's error for it.
 type renderer struct {
 	pages    int
 	countErr error
 	fail     map[int]error
 	wait     func(ctx context.Context, page int) error
 	flight   *flightLog
+	texts    map[int]string
+	textErr  map[int]error
 
 	mu       sync.Mutex
 	spooled  []string
@@ -68,6 +71,8 @@ type renderer struct {
 	renders  []int
 	finished []int
 	dpi      []int
+	regions  []document.Region
+	read     []int
 }
 
 func (r *renderer) Count(ctx context.Context, pdf string) (int, error) {
@@ -108,6 +113,34 @@ func (r *renderer) Render(ctx context.Context, pdf string, page, dpi int, w io.W
 	_, err := w.Write(pagePNG(page))
 	return err
 }
+
+func (r *renderer) RenderRegion(ctx context.Context, pdf string, page, dpi int, region document.Region, w io.Writer) error {
+	r.mu.Lock()
+	r.regions = append(r.regions, region)
+	r.mu.Unlock()
+	return r.Render(ctx, pdf, page, dpi, w)
+}
+
+func (r *renderer) Text(ctx context.Context, pdf string, page int) (string, error) {
+	r.mu.Lock()
+	r.read = append(r.read, page)
+	r.mu.Unlock()
+	if err := r.textErr[page]; err != nil {
+		return "", err
+	}
+	return r.texts[page], nil
+}
+
+// textRead returns the pages Text was asked for, sorted, and the regions RenderRegion was given.
+func (r *renderer) textRead() (pages []int, regions []document.Region) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return slices.Sorted(slices.Values(r.read)), slices.Clone(r.regions)
+}
+
+// plain is a Renderer that is neither a RegionRenderer nor a TextExtractor: embedding the
+// interface hides the stand-in's other methods.
+type plain struct{ document.Renderer }
 
 // rendered returns the pages Render was asked for, in the order asked, and the DPIs.
 func (r *renderer) rendered() (pages, dpi []int) {
@@ -570,5 +603,150 @@ func assertEmpty(t *testing.T, dir string) {
 	}
 	for _, e := range entries {
 		t.Errorf("%s left behind in the caller's directory", e.Name())
+	}
+}
+
+// TestImagesText checks a request with Text reads every page's text layer into its PageImage,
+// blank or not, and renders every page as usual.
+func TestImagesText(t *testing.T) {
+	f := newFixture(t, 3)
+	f.req.Concurrency = 2
+	f.req.Text = true
+	f.render.texts = map[int]string{1: "page one\n", 3: " \n\f"}
+	pages, errs := f.images(t.Context())
+	if err := errors.Join(errs...); err != nil || len(pages) != 3 {
+		t.Fatalf("the stream yielded %d pages, %v, want 3 and no error", len(pages), err)
+	}
+	for _, p := range pages {
+		if p.Text != f.render.texts[p.Number] || !bytes.Equal(p.PNG, pagePNG(p.Number)) {
+			t.Errorf("page %d is %q with %q, want %q with its image", p.Number, p.Text, p.PNG, f.render.texts[p.Number])
+		}
+	}
+	if read, _ := f.render.textRead(); !slices.Equal(read, []int{1, 2, 3}) {
+		t.Errorf("read the text of pages %v, want 1 to 3", read)
+	}
+	if r, _ := f.render.rendered(); len(r) != 3 {
+		t.Errorf("rendered pages %v, want all 3", r)
+	}
+}
+
+// TestImagesSkipText checks a request with SkipText yields a page with a text layer with its text
+// and no image, unrendered and uncorrected, and renders and corrects a page without one.
+func TestImagesSkipText(t *testing.T) {
+	f := newFixture(t, 4)
+	runs := f.withCorrector(t)
+	f.req.Concurrency = 2
+	f.req.SkipText = true
+	f.req.Corrections = []document.Correction{document.Deskew}
+	f.render.texts = map[int]string{1: "The Harbor Survey\n", 2: "  \n\n", 4: "Page 4"}
+	pages, errs := f.images(t.Context())
+	if err := errors.Join(errs...); err != nil || len(pages) != 4 {
+		t.Fatalf("the stream yielded %d pages, %v, want 4 and no error", len(pages), err)
+	}
+	for _, p := range pages {
+		text := f.render.texts[p.Number]
+		if p.Text != text {
+			t.Errorf("page %d's text is %q, want %q", p.Number, p.Text, text)
+		}
+		if document.HasText(text) && p.PNG != nil {
+			t.Errorf("page %d has a text layer and an image %q, want none", p.Number, p.PNG)
+		}
+		if !document.HasText(text) && !bytes.Equal(p.PNG, pagePNG(p.Number)) {
+			t.Errorf("page %d has no text layer and image %q, want its corrected image", p.Number, p.PNG)
+		}
+	}
+	r, _ := f.render.rendered()
+	if slices.Sort(r); !slices.Equal(r, []int{2, 3}) {
+		t.Errorf("rendered pages %v, want those without a text layer, 2 and 3", r)
+	}
+	if got := len(runs()); got != 2 {
+		t.Errorf("magick ran %d times, want once for each of the 2 rendered pages", got)
+	}
+}
+
+// TestImagesTextFails checks that a page whose text fails yields its number and count with an
+// error naming the page, unrendered, and the stream carries on.
+func TestImagesTextFails(t *testing.T) {
+	f := newFixture(t, 3)
+	f.req.Text = true
+	textErr := errors.New("gs: /undefined in --runpdf--")
+	f.render.textErr = map[int]error{2: textErr}
+	pages, errs := f.images(t.Context())
+	if len(pages) != 3 {
+		t.Fatalf("the stream yielded %d pages, want 3", len(pages))
+	}
+	if p := pages[1]; p.Number != 2 || p.Count != 3 || p.PNG != nil || p.Text != "" ||
+		!errors.Is(errs[1], textErr) || !strings.Contains(errs[1].Error(), "page 2 of 3: text") {
+		t.Errorf("page 2 is %+v, %v, want its text's error naming the page", p, errs[1])
+	}
+	for _, i := range []int{0, 2} {
+		if errs[i] != nil || pages[i].PNG == nil {
+			t.Errorf("page %d: %v, want its image", i+1, errs[i])
+		}
+	}
+	if r, _ := f.render.rendered(); slices.Contains(r, 2) {
+		t.Errorf("rendered page 2 after its text failed")
+	}
+}
+
+// TestImagesRegion checks a request with a Region renders that region of every page through
+// RenderRegion, and that the stream reads its own copy of the region.
+func TestImagesRegion(t *testing.T) {
+	f := newFixture(t, 3)
+	region := document.Region{Top: 0.9, Bottom: 1, Left: 0, Right: 1}
+	f.req.Region = &region
+	// The caller changes its region as page 1 renders, one page at a time, so pages 2 and 3
+	// would render the change if the stream read the caller's region.
+	f.render.wait = func(ctx context.Context, page int) error {
+		region.Top = 0.5
+		return nil
+	}
+	pages, errs := f.images(t.Context())
+	if err := errors.Join(errs...); err != nil || len(pages) != 3 {
+		t.Fatalf("the stream yielded %d pages, %v, want 3 and no error", len(pages), err)
+	}
+	want := document.Region{Top: 0.9, Bottom: 1, Left: 0, Right: 1}
+	_, regions := f.render.textRead()
+	if len(regions) != 3 || regions[0] != want || regions[1] != want || regions[2] != want {
+		t.Errorf("RenderRegion was given %v, want %+v for each of 3 pages", regions, want)
+	}
+}
+
+// TestImagesRefusesCapabilities checks the requests a Preparer refuses for what its Renderer
+// can't do, before anything runs: a Region from a renderer that is no RegionRenderer, a region out
+// of range, and Text or SkipText from one that is no TextExtractor.
+func TestImagesRefusesCapabilities(t *testing.T) {
+	bad := document.Region{Top: 0.5, Bottom: 0.4, Left: 0, Right: 1}
+	footer := document.Region{Top: 0.9, Bottom: 1, Left: 0, Right: 1}
+	cases := []struct {
+		name   string
+		plain  bool
+		change func(*document.ImagesRequest)
+		want   error
+	}{
+		{"region out of range", false, func(r *document.ImagesRequest) { r.Region = &bad }, document.ErrRegion},
+		{"region, plain renderer", true, func(r *document.ImagesRequest) { r.Region = &footer }, nil},
+		{"text, plain renderer", true, func(r *document.ImagesRequest) { r.Text = true }, nil},
+		{"skip text, plain renderer", true, func(r *document.ImagesRequest) { r.SkipText = true }, nil},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			f := newFixture(t, 3)
+			if tc.plain {
+				var err error
+				if f.prep, err = document.NewPreparer(plain{f.render}, nil); err != nil {
+					t.Fatal(err)
+				}
+			}
+			tc.change(&f.req)
+			pages, errs := f.images(t.Context())
+			if len(errs) != 1 || errs[0] == nil || !zero(pages[0]) || (tc.want != nil && !errors.Is(errs[0], tc.want)) {
+				t.Errorf("the stream yielded %v, %v, want one refusal", pages, errs)
+			}
+			if len(f.render.spooled) != 0 {
+				t.Error("the refused request counted")
+			}
+			assertEmpty(t, f.req.Dir)
+		})
 	}
 }

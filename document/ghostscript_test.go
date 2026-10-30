@@ -249,3 +249,176 @@ func TestGhostscriptSpecRefusesOld(t *testing.T) {
 		t.Errorf("NewExec(GhostscriptSpec()) over 9.56.1 returned %v, want ErrTooOld", err)
 	}
 }
+
+// TestGhostscriptText checks Text's one gs run: its arguments, its working directory, and gs's
+// stdout passed through as the page's text, a blank one included.
+func TestGhostscriptText(t *testing.T) {
+	for _, tc := range []struct {
+		page   int
+		stdout *string
+		want   string
+	}{
+		{1, nil, standinText},
+		{7, new(""), ""},
+		{3, new("\n\n  \n"), "\n\n  \n"},
+		{2, new("ofÏce\ttoday\r\n"), "ofÏce\ttoday\r\n"},
+	} {
+		g, runs, pdf := standinRenderer(t)
+		abs, err := filepath.Abs(pdf)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if tc.stdout != nil {
+			t.Setenv(stdoutEnv, *tc.stdout)
+		}
+		got, err := g.Text(t.Context(), pdf, tc.page)
+		if err != nil || got != tc.want {
+			t.Errorf("Text(page %d) = %q, %v, want %q", tc.page, got, err, tc.want)
+		}
+		want := []string{"-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "-sstdout=%stderr", "-sDEVICE=txtwrite",
+			"-dFirstPage=" + strconv.Itoa(tc.page), "-dLastPage=" + strconv.Itoa(tc.page), "-sOutputFile=-", abs}
+		r := runs()
+		if len(r) != 1 || !slices.Equal(r[0].Args, want) || r[0].Dir != filepath.Dir(abs) {
+			t.Errorf("Text(page %d) ran gs as %q, want one run with %q in %s", tc.page, r, want, filepath.Dir(abs))
+		}
+	}
+}
+
+// TestGhostscriptTextRefuses checks that a page below 1 is refused before gs runs.
+func TestGhostscriptTextRefuses(t *testing.T) {
+	g, runs, pdf := standinRenderer(t)
+	for _, page := range []int{0, -1} {
+		if _, err := g.Text(t.Context(), pdf, page); !errors.Is(err, document.ErrPageRange) {
+			t.Errorf("Text(page %d) returned %v, want document.ErrPageRange", page, err)
+		}
+	}
+	if got := runs(); len(got) != 0 {
+		t.Errorf("gs ran %q, want no run", got)
+	}
+}
+
+// TestGhostscriptTextPastLast checks that gs's message for a page past the last, which it prints
+// to stderr and exits zero, is an error carrying it and wrapping ErrPageRange, and that other
+// stderr beside a page's text is no error.
+func TestGhostscriptTextPastLast(t *testing.T) {
+	g, _, pdf := standinRenderer(t)
+	t.Setenv(stdoutEnv, "")
+	t.Setenv(stderrEnv, "\n   Requested FirstPage is greater than the number of pages in the file: 6\n")
+	_, err := g.Text(t.Context(), pdf, 9)
+	if !errors.Is(err, document.ErrPageRange) || !strings.Contains(err.Error(), "number of pages in the file: 6") {
+		t.Errorf("Text past the last page returned %v, want document.ErrPageRange with gs's message", err)
+	}
+	t.Setenv(stdoutEnv, "text")
+	t.Setenv(stderrEnv, "   **** Warning: a font is missing\n")
+	if got, err := g.Text(t.Context(), pdf, 1); err != nil || got != "text" {
+		t.Errorf("Text with a warning on stderr = %q, %v, want the text", got, err)
+	}
+}
+
+// TestGhostscriptTextFails checks that a gs that exits nonzero is the Tool's *tool.ExitError,
+// carrying gs's stderr though Text takes it.
+func TestGhostscriptTextFails(t *testing.T) {
+	g, _, pdf := standinRenderer(t)
+	t.Setenv(failEnv, "Error: /undefined in --runpdf--")
+	_, err := g.Text(t.Context(), pdf, 1)
+	var exit *tool.ExitError
+	if !errors.As(err, &exit) || exit.Code != 1 || !strings.Contains(exit.Stderr, "/undefined") {
+		t.Errorf("Text returned %v, want a *tool.ExitError with code 1 and gs's stderr", err)
+	}
+}
+
+// regionPS is RenderRegion's PostScript for page of the PDF at abs, its fractions as written.
+func regionPS(abs string, page int, top, bottom, left, right string) string {
+	n := strconv.Itoa(page)
+	ps := strings.NewReplacer("(", `\(`, ")", `\)`).Replace(abs)
+	return "(" + ps + ") (r) file runpdfbegin " +
+		n + " pdfpagecount gt { (Requested page " + n + " is greater than the number of pages in the file) = quit } if " +
+		n + " pdfgetpage pdfshowpage_setpage " +
+		"matrix currentmatrix matrix defaultmatrix matrix invertmatrix matrix concatmatrix " +
+		"currentpagedevice /PageSize get aload pop /ph exch def /pw exch def " +
+		"<< /PageSize [pw " + right + " " + left + " sub mul ph " + bottom + " " + top + " sub mul] >> setpagedevice " +
+		"pw " + left + " mul neg ph 1 " + bottom + " sub mul neg translate concat " +
+		"pdfshowpage_finish runpdfend quit"
+}
+
+// TestGhostscriptRenderRegionArgs checks RenderRegion's one gs run: the device Render uses, the
+// PDF read in PostScript by its escaped absolute path, permitted alone, the region's fractions as
+// decimals, and the page's PNG passed through.
+func TestGhostscriptRenderRegionArgs(t *testing.T) {
+	for _, tc := range []struct {
+		page, dpi                int
+		region                   document.Region
+		top, bottom, left, right string
+	}{
+		{7, 300, document.Region{Top: 0.9, Bottom: 1, Left: 0, Right: 1}, "0.9", "1", "0", "1"},
+		{1, 150, document.Region{Top: 0, Bottom: 0.125, Left: 0.5, Right: 1}, "0", "0.125", "0.5", "1"},
+		{2, 72, document.Region{Top: 1e-7, Bottom: 1, Left: 0, Right: 0.3333333333333333}, "0.0000001", "1", "0", "0.3333333333333333"},
+	} {
+		g, runs, pdf := standinRenderer(t)
+		abs, err := filepath.Abs(pdf)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var out bytes.Buffer
+		if err := g.RenderRegion(t.Context(), pdf, tc.page, tc.dpi, tc.region, &out); err != nil {
+			t.Fatalf("RenderRegion(page %d, %+v): %v", tc.page, tc.region, err)
+		}
+		if !bytes.Equal(out.Bytes(), standinPage) {
+			t.Errorf("RenderRegion wrote %q, want the stand-in's page %q", out.Bytes(), standinPage)
+		}
+		want := []string{"-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "--permit-file-read=" + abs, "-sDEVICE=png16m",
+			"-dTextAlphaBits=4", "-dGraphicsAlphaBits=4", "-r" + strconv.Itoa(tc.dpi), "-sOutputFile=-",
+			"-c", regionPS(abs, tc.page, tc.top, tc.bottom, tc.left, tc.right)}
+		r := runs()
+		if len(r) != 1 || !slices.Equal(r[0].Args, want) || r[0].Dir != filepath.Dir(abs) {
+			t.Errorf("RenderRegion(page %d, %+v) ran gs as %q, want one run with %q in %s",
+				tc.page, tc.region, r, want, filepath.Dir(abs))
+		}
+	}
+}
+
+// TestGhostscriptRenderRegionRefuses checks that CheckRender's and CheckRegion's refusals come
+// before gs runs.
+func TestGhostscriptRenderRegionRefuses(t *testing.T) {
+	g, runs, pdf := standinRenderer(t)
+	whole := document.Region{Top: 0, Bottom: 1, Left: 0, Right: 1}
+	for _, tc := range []struct {
+		page, dpi int
+		region    document.Region
+		want      error
+	}{
+		{1, 0, whole, document.ErrDPI},
+		{0, 150, whole, document.ErrPageRange},
+		{1, 150, document.Region{}, document.ErrRegion},
+		{1, 150, document.Region{Top: 0.5, Bottom: 0.4, Left: 0, Right: 1}, document.ErrRegion},
+		{1, 150, document.Region{Top: 0, Bottom: 1, Left: 0, Right: 1.5}, document.ErrRegion},
+	} {
+		var out bytes.Buffer
+		if err := g.RenderRegion(t.Context(), pdf, tc.page, tc.dpi, tc.region, &out); !errors.Is(err, tc.want) {
+			t.Errorf("RenderRegion(page %d, %d dpi, %+v) returned %v, want %v", tc.page, tc.dpi, tc.region, err, tc.want)
+		}
+		if out.Len() != 0 {
+			t.Errorf("RenderRegion wrote %q, want nothing", out.Bytes())
+		}
+	}
+	if got := runs(); len(got) != 0 {
+		t.Errorf("gs ran %q, want no run", got)
+	}
+}
+
+// TestGhostscriptRenderRegionNotPNG checks that a run that prints a message in place of a PNG, as
+// RenderRegion's PostScript does for a page past the last, is an error carrying it, and w gets
+// none of it.
+func TestGhostscriptRenderRegionNotPNG(t *testing.T) {
+	g, _, pdf := standinRenderer(t)
+	msg := "Requested page 9 is greater than the number of pages in the file\n"
+	t.Setenv(stdoutEnv, msg)
+	var out bytes.Buffer
+	err := g.RenderRegion(t.Context(), pdf, 9, 150, document.Region{Top: 0, Bottom: 1, Left: 0, Right: 1}, &out)
+	if err == nil || !strings.Contains(err.Error(), strings.TrimSpace(msg)) {
+		t.Errorf("RenderRegion with gs writing %q returned %v, want an error carrying it", msg, err)
+	}
+	if out.Len() != 0 {
+		t.Errorf("RenderRegion wrote %q, want nothing", out.Bytes())
+	}
+}

@@ -5,6 +5,7 @@ package document_test
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 	"testing"
@@ -191,4 +192,145 @@ func names(cs []document.Correction) string {
 		n[i] = c.String()
 	}
 	return strings.Join(n, "+")
+}
+
+// TestCorrectionsCatalog checks the catalog: every correction in the fixed order, each with its
+// name and a one-line description, and a value that is no correction with neither.
+func TestCorrectionsCatalog(t *testing.T) {
+	got := document.Corrections()
+	if !slices.Equal(got, all) {
+		t.Fatalf("Corrections() = %v, want %v", got, all)
+	}
+	got[0] = 0 // The slice is the caller's own.
+	if document.Corrections()[0] != document.Deskew {
+		t.Error("changing Corrections()'s slice changed the catalog")
+	}
+	names := map[string]bool{}
+	for _, c := range all {
+		name, desc := c.String(), c.Description()
+		if name == "" || strings.HasPrefix(name, "Correction(") || names[name] {
+			t.Errorf("%d's name is %q, want a name of its own", int(c), name)
+		}
+		names[name] = true
+		if desc == "" || strings.Contains(desc, "\n") || !strings.Contains(desc, "use it when") {
+			t.Errorf("%s's description is %q, want one line saying when to use it", name, desc)
+		}
+	}
+	for _, bad := range []document.Correction{0, document.Grayscale + 1} {
+		if d := bad.Description(); d != "" {
+			t.Errorf("%v's description is %q, want none", bad, d)
+		}
+	}
+}
+
+// TestParseCorrection checks a correction's name reads back as the correction, whatever its case,
+// and an unknown name is an error naming it.
+func TestParseCorrection(t *testing.T) {
+	for _, c := range all {
+		for _, name := range []string{c.String(), strings.ToLower(c.String()), strings.ToUpper(c.String())} {
+			got, err := document.ParseCorrection(name)
+			if err != nil || got != c {
+				t.Errorf("ParseCorrection(%q) = %v, %v, want %v", name, got, err, c)
+			}
+		}
+	}
+	for _, name := range []string{"", "sharpen", "Deskew ", "Correction(1)", "contrast stretch"} {
+		got, err := document.ParseCorrection(name)
+		if err == nil || !strings.Contains(err.Error(), fmt.Sprintf("%q", name)) || got != 0 {
+			t.Errorf("ParseCorrection(%q) = %v, %v, want an error naming it", name, got, err)
+		}
+	}
+}
+
+// assessArgs are Assess's magick arguments, as the stand-in logs them.
+var assessArgs = []string{
+	"png:-", "-background", "white", "-alpha", "remove", "-alpha", "off",
+	"-format", `width=%w\nheight=%h\n`, "-write", "info:",
+	"(", "+clone", "-deskew", "40%", "-format", `skew=%[deskew:angle]\n`, "-write", "info:", "+delete", ")",
+	"(", "+clone", "-colorspace", "HCL", "-channel", "G", "-separate", "+channel", "-threshold", "20%",
+	"-format", `colored=%[fx:mean]\n`, "-write", "info:", "+delete", ")",
+	"-colorspace", "Gray", "-format", `contrast=%[fx:standard_deviation]\n`, "-write", "info:",
+	"(", "+clone", "-define", "convolve:scale=!", "-morphology", "Convolve", "Laplacian:0",
+	"-format", `sharpness=%[fx:standard_deviation]\n`, "-write", "info:", "+delete", ")",
+	"(", "+clone", "-statistic", "Median", "3x3", ")", "-compose", "Difference", "-composite",
+	"-format", `noise=%[fx:mean]\n`, "info:",
+}
+
+// assessOutput is magick's output for Assess, as the host's magick prints it for degraded.pdf's
+// page 1 at 150 dpi.
+const assessOutput = "width=1275\nheight=1650\nskew=-2.488338848312285\ncolored=0\n" +
+	"contrast=0.108651\nsharpness=0.0461152\nnoise=0.00404191\n"
+
+// TestAssess checks Assess's one magick run, its arguments, and its parsing of magick's output, a
+// page with color's included.
+func TestAssess(t *testing.T) {
+	cases := []struct {
+		name, out string
+		want      document.Assessment
+	}{
+		{"skewed", assessOutput, document.Assessment{
+			Width: 1275, Height: 1650, Skew: -2.488338848312285, Contrast: 0.108651,
+			Noise: 0.00404191, Sharpness: 0.0461152, Colored: 0, Grayscale: true,
+		}},
+		{"colored", "width=850\nheight=1100\nskew=-0\ncolored=0.00257635\ncontrast=0.49\nsharpness=0.03\nnoise=9.42593e-05\n",
+			document.Assessment{
+				Width: 850, Height: 1100, Skew: 0, Contrast: 0.49, Noise: 9.42593e-05,
+				Sharpness: 0.03, Colored: 0.00257635, Grayscale: false,
+			}},
+		{"in any order", "noise=0\nsharpness=0\ncontrast=0\ncolored=0.0009\nskew=7\nheight=2\nwidth=1\n",
+			document.Assessment{Width: 1, Height: 2, Skew: 7, Colored: 0.0009, Grayscale: true}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			c, runs := standinCorrector(t)
+			t.Setenv(stdoutEnv, tc.out)
+			got, err := c.Assess(t.Context(), bytes.NewReader(page))
+			if err != nil || got != tc.want {
+				t.Errorf("Assess with magick printing %q = %+v, %v, want %+v", tc.out, got, err, tc.want)
+			}
+			if r := runs(); len(r) != 1 || !slices.Equal(r[0], assessArgs) {
+				t.Errorf("magick ran %q, want one run of %q", r, assessArgs)
+			}
+		})
+	}
+}
+
+// TestAssessMalformed checks that magick output missing a measure, repeating one, naming one it
+// doesn't know, or giving one that isn't a number is an error quoting the output.
+func TestAssessMalformed(t *testing.T) {
+	cases := map[string]string{
+		"empty":           "",
+		"missing a value": strings.Replace(assessOutput, "noise=0.00404191\n", "", 1),
+		"repeated":        assessOutput + "noise=0.1\n",
+		"unknown":         strings.Replace(assessOutput, "noise=", "speckle=", 1),
+		"extra":           assessOutput + "speckle=0.1\n",
+		"no equals":       strings.Replace(assessOutput, "noise=", "noise ", 1),
+		"not a number":    strings.Replace(assessOutput, "skew=-2.488338848312285", "skew=", 1),
+		"not an integer":  strings.Replace(assessOutput, "width=1275", "width=1275.5", 1),
+		"NaN":             strings.Replace(assessOutput, "contrast=0.108651", "contrast=nan", 1),
+		"infinite":        strings.Replace(assessOutput, "contrast=0.108651", "contrast=inf", 1),
+		"magick's error":  "magick: no decode delegate for this image format\n",
+	}
+	for name, out := range cases {
+		t.Run(name, func(t *testing.T) {
+			c, _ := standinCorrector(t)
+			t.Setenv(stdoutEnv, out)
+			got, err := c.Assess(t.Context(), bytes.NewReader(page))
+			if err == nil || got != (document.Assessment{}) {
+				t.Errorf("Assess with magick printing %q = %+v, %v, want an error", out, got, err)
+			}
+		})
+	}
+}
+
+// TestAssessMagickFails checks that a magick that exits nonzero assessing is the Tool's
+// *tool.ExitError.
+func TestAssessMagickFails(t *testing.T) {
+	c, _ := standinCorrector(t)
+	t.Setenv(failEnv, "magick: improper image header")
+	_, err := c.Assess(t.Context(), bytes.NewReader(page))
+	var exit *tool.ExitError
+	if !errors.As(err, &exit) || exit.Code != 1 || !strings.Contains(exit.Stderr, "improper image header") {
+		t.Errorf("Assess returned %v, want a *tool.ExitError with code 1 and magick's stderr", err)
+	}
 }

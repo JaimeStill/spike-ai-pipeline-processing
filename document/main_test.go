@@ -32,9 +32,11 @@ const (
 	logEnv = "DOCUMENT_TEST_STANDIN_LOG"
 	// failEnv, when set, makes a run write its value to stderr and exit 1 after logging.
 	failEnv = "DOCUMENT_TEST_STANDIN_FAIL"
-	// stdoutEnv, when set, is what the stand-in gs writes to stdout for a run in place of its
-	// own: its page count or its page.
+	// stdoutEnv, when set, is what the stand-in writes to stdout for a run in place of its own:
+	// gs's page count or its page, or magick's copy of its stdin.
 	stdoutEnv = "DOCUMENT_TEST_STANDIN_STDOUT"
+	// stderrEnv, when set, is what the stand-in gs writes to stderr for a run that succeeds.
+	stderrEnv = "DOCUMENT_TEST_STANDIN_STDERR"
 )
 
 func TestMain(m *testing.M) {
@@ -62,7 +64,8 @@ func TestMain(m *testing.M) {
 
 // magick is the stand-in magick. With -version alone it prints a version line in magick's own
 // form. Otherwise it appends its arguments to the log file, then fails when failEnv is set, or
-// else copies stdin to stdout, so a corrected image is the image it was given.
+// else writes stdoutEnv's value to stdout when it is set, and copies stdin to stdout when it
+// isn't, so a corrected image is the image it was given.
 func magick(args []string) int {
 	if len(args) == 1 && args[0] == "-version" {
 		fmt.Printf("Version: ImageMagick %s Q16-HDRI x86_64 https://imagemagick.org\n", os.Getenv(versionEnv))
@@ -76,6 +79,13 @@ func magick(args []string) int {
 		fmt.Fprint(os.Stderr, msg)
 		return 1
 	}
+	if out, set := os.LookupEnv(stdoutEnv); set {
+		if _, err := os.Stdout.WriteString(out); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 2
+		}
+		return 0
+	}
 	if _, err := io.Copy(os.Stdout, os.Stdin); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
@@ -83,13 +93,18 @@ func magick(args []string) int {
 	return 0
 }
 
+// standinText is the stand-in gs's text layer for a page: lines as txtwrite lays them out.
+const standinText = "      The Harbor Survey\n      The harbor survey began in the spring.\n"
+
 // standinPage is the stand-in gs's page: the PNG signature and a tail that names it.
 var standinPage = []byte("\x89PNG\r\n\x1a\nstand-in gs page")
 
 // gs is the stand-in gs. With --version alone it prints the version alone, as gs does.
 // Otherwise it appends its working directory and arguments to the log file, then fails when
-// failEnv is set, or else writes stdoutEnv's value to stdout when it is set, and its own output
-// when it isn't: a page count of 6 for a run with -dNODISPLAY, and standinPage for any other.
+// failEnv is set, or else writes stderrEnv's value to stderr when it is set, and stdoutEnv's
+// value to stdout when it is set, and its own output when it isn't: a page count of 6 for a run
+// with -dNODISPLAY, a page's text for a run with the txtwrite device, and standinPage for any
+// other.
 func gs(args []string) int {
 	if len(args) == 1 && args[0] == "--version" {
 		fmt.Println(os.Getenv(versionEnv))
@@ -103,11 +118,14 @@ func gs(args []string) int {
 		fmt.Fprint(os.Stderr, msg)
 		return 1
 	}
+	fmt.Fprint(os.Stderr, os.Getenv(stderrEnv))
 	out, set := os.LookupEnv(stdoutEnv)
 	switch {
 	case set:
 	case slices.Contains(args, "-dNODISPLAY"):
 		out = "6\n"
+	case slices.Contains(args, "-sDEVICE=txtwrite"):
+		out = standinText
 	default:
 		out = string(standinPage)
 	}

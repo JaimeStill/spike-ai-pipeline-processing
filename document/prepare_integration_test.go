@@ -51,3 +51,56 @@ func TestImagesHost(t *testing.T) {
 		})
 	}
 }
+
+// TestImagesTextLayerHost checks the flow of text layer first, vision only for the pages without
+// one, on the host's gs: Images with SkipText yields every page of clean.pdf with its text and no
+// image, and every page of scanned.pdf with no text and its image. With a Region, the image is
+// that band of the page.
+func TestImagesTextLayerHost(t *testing.T) {
+	g, _ := hostGhostscript(t)
+	p, err := document.NewPreparer(g, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	footer := document.Region{Top: 0.9, Bottom: 1, Left: 0, Right: 1}
+	for _, tc := range []struct {
+		set    string
+		pages  int
+		text   bool
+		region *document.Region
+		w, h   int
+	}{
+		{"clean", 6, true, nil, 0, 0},
+		{"scanned", 7, false, nil, 1275, 1650},
+		{"scanned", 7, false, &footer, 1275, 165},
+	} {
+		req := document.ImagesRequest{Dir: t.TempDir(), SkipText: true, Region: tc.region, Concurrency: 4}
+		start := time.Now()
+		yielded := 0
+		for img, err := range p.Images(t.Context(), openSet(t, tc.set), req) {
+			if err != nil {
+				t.Fatalf("%s.pdf page %d: %v", tc.set, img.Number, err)
+			}
+			yielded++
+			if got := document.HasText(img.Text); got != tc.text {
+				t.Errorf("%s.pdf page %d has a text layer %v, want %v", tc.set, img.Number, got, tc.text)
+			}
+			if tc.text {
+				if img.PNG != nil {
+					t.Errorf("%s.pdf page %d has a text layer and an image, want no image", tc.set, img.Number)
+				}
+				continue
+			}
+			cfg, err := png.DecodeConfig(bytes.NewReader(img.PNG))
+			if err != nil || cfg.Width != tc.w || cfg.Height != tc.h {
+				t.Errorf("%s.pdf page %d is %dx%d, %v, want a PNG of %dx%d", tc.set, img.Number, cfg.Width, cfg.Height, err, tc.w, tc.h)
+			}
+		}
+		if yielded != tc.pages {
+			t.Errorf("%s.pdf: the stream yielded %d pages, want %d", tc.set, yielded, tc.pages)
+		}
+		assertEmpty(t, req.Dir)
+		t.Logf("recorded: Images %s.pdf with SkipText, region %v, %d pages at concurrency 4: %v",
+			tc.set, tc.region, tc.pages, time.Since(start).Round(time.Millisecond))
+	}
+}
