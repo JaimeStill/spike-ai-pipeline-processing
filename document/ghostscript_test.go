@@ -327,23 +327,11 @@ func TestGhostscriptTextFails(t *testing.T) {
 	}
 }
 
-// regionPS is RenderRegion's PostScript for page of the PDF at abs, its fractions as written.
-func regionPS(abs string, page int, top, bottom, left, right string) string {
-	n := strconv.Itoa(page)
-	ps := strings.NewReplacer("(", `\(`, ")", `\)`).Replace(abs)
-	return "(" + ps + ") (r) file runpdfbegin " +
-		n + " pdfpagecount gt { (Requested page " + n + " is greater than the number of pages in the file) = quit } if " +
-		n + " pdfgetpage pdfshowpage_setpage " +
-		"matrix currentmatrix matrix defaultmatrix matrix invertmatrix matrix concatmatrix " +
-		"currentpagedevice /PageSize get aload pop /ph exch def /pw exch def " +
-		"<< /PageSize [pw " + right + " " + left + " sub mul ph " + bottom + " " + top + " sub mul] >> setpagedevice " +
-		"pw " + left + " mul neg ph 1 " + bottom + " sub mul neg translate concat " +
-		"pdfshowpage_finish runpdfend quit"
-}
-
-// TestGhostscriptRenderRegionArgs checks RenderRegion's one gs run: the device Render uses, the
-// PDF read in PostScript by its escaped absolute path, permitted alone, the region's fractions as
-// decimals, and the page's PNG passed through.
+// TestGhostscriptRenderRegionArgs checks RenderRegion's one gs run, in the PDF's directory: the
+// device, anti-aliasing, and DPI Render uses, the PNG to stdout, the PDF permitted alone and read
+// in PostScript by its escaped absolute path, the page and the region's fractions as PostScript
+// decimals, and the page's PNG passed through. That the PostScript crops the page to the region
+// is the integration tier's to prove, on the host's gs.
 func TestGhostscriptRenderRegionArgs(t *testing.T) {
 	for _, tc := range []struct {
 		page, dpi                int
@@ -366,13 +354,30 @@ func TestGhostscriptRenderRegionArgs(t *testing.T) {
 		if !bytes.Equal(out.Bytes(), standinPage) {
 			t.Errorf("RenderRegion wrote %q, want the stand-in's page %q", out.Bytes(), standinPage)
 		}
-		want := []string{"-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "--permit-file-read=" + abs, "-sDEVICE=png16m",
-			"-dTextAlphaBits=4", "-dGraphicsAlphaBits=4", "-r" + strconv.Itoa(tc.dpi), "-sOutputFile=-",
-			"-c", regionPS(abs, tc.page, tc.top, tc.bottom, tc.left, tc.right)}
 		r := runs()
-		if len(r) != 1 || !slices.Equal(r[0].Args, want) || r[0].Dir != filepath.Dir(abs) {
-			t.Errorf("RenderRegion(page %d, %+v) ran gs as %q, want one run with %q in %s",
-				tc.page, tc.region, r, want, filepath.Dir(abs))
+		if len(r) != 1 || r[0].Dir != filepath.Dir(abs) {
+			t.Fatalf("RenderRegion(page %d, %+v) ran gs as %q, want one run in %s", tc.page, tc.region, r, filepath.Dir(abs))
+		}
+		args := r[0].Args
+		for _, flag := range []string{"-dSAFER", "--permit-file-read=" + abs, "-sDEVICE=png16m",
+			"-dTextAlphaBits=4", "-dGraphicsAlphaBits=4", "-r" + strconv.Itoa(tc.dpi), "-sOutputFile=-"} {
+			if !slices.Contains(args, flag) {
+				t.Errorf("RenderRegion(page %d, %+v) ran gs with %q, want %s", tc.page, tc.region, args, flag)
+			}
+		}
+		if len(args) < 2 || args[len(args)-2] != "-c" {
+			t.Fatalf("RenderRegion(page %d, %+v) ran gs with %q, want PostScript last, after -c", tc.page, tc.region, args)
+		}
+		ps := args[len(args)-1]
+		escaped := strings.NewReplacer("(", `\(`, ")", `\)`).Replace(abs)
+		if !strings.HasPrefix(ps, "("+escaped+") (r) file ") {
+			t.Errorf("RenderRegion's PostScript %q doesn't open the PDF by its escaped path %q", ps, escaped)
+		}
+		tokens := strings.Fields(ps)
+		for _, want := range []string{strconv.Itoa(tc.page), tc.top, tc.bottom, tc.left, tc.right} {
+			if !slices.Contains(tokens, want) {
+				t.Errorf("RenderRegion(page %d, %+v)'s PostScript %q has no token %s", tc.page, tc.region, ps, want)
+			}
 		}
 	}
 }

@@ -242,27 +242,14 @@ func TestParseCorrection(t *testing.T) {
 	}
 }
 
-// assessArgs are Assess's magick arguments, as the stand-in logs them.
-var assessArgs = []string{
-	"png:-", "-background", "white", "-alpha", "remove", "-alpha", "off",
-	"-format", `width=%w\nheight=%h\n`, "-write", "info:",
-	"(", "+clone", "-deskew", "40%", "-format", `skew=%[deskew:angle]\n`, "-write", "info:", "+delete", ")",
-	"(", "+clone", "-colorspace", "HCL", "-channel", "G", "-separate", "+channel", "-threshold", "20%",
-	"-format", `colored=%[fx:mean]\n`, "-write", "info:", "+delete", ")",
-	"-colorspace", "Gray", "-format", `contrast=%[fx:standard_deviation]\n`, "-write", "info:",
-	"(", "+clone", "-define", "convolve:scale=!", "-morphology", "Convolve", "Laplacian:0",
-	"-format", `sharpness=%[fx:standard_deviation]\n`, "-write", "info:", "+delete", ")",
-	"(", "+clone", "-statistic", "Median", "3x3", ")", "-compose", "Difference", "-composite",
-	"-format", `noise=%[fx:mean]\n`, "info:",
-}
-
 // assessOutput is magick's output for Assess, as the host's magick prints it for degraded.pdf's
 // page 1 at 150 dpi.
 const assessOutput = "width=1275\nheight=1650\nskew=-2.488338848312285\ncolored=0\n" +
 	"contrast=0.108651\nsharpness=0.0461152\nnoise=0.00404191\n"
 
-// TestAssess checks Assess's one magick run, its arguments, and its parsing of magick's output, a
-// page with color's included.
+// TestAssess checks Assess's one magick run, reading the page as PNG on stdin, and its parsing of
+// magick's output, a page with color's included. What magick measures is the integration tier's
+// to prove, on the host's magick.
 func TestAssess(t *testing.T) {
 	cases := []struct {
 		name, out string
@@ -288,8 +275,8 @@ func TestAssess(t *testing.T) {
 			if err != nil || got != tc.want {
 				t.Errorf("Assess with magick printing %q = %+v, %v, want %+v", tc.out, got, err, tc.want)
 			}
-			if r := runs(); len(r) != 1 || !slices.Equal(r[0], assessArgs) {
-				t.Errorf("magick ran %q, want one run of %q", r, assessArgs)
+			if r := runs(); len(r) != 1 || len(r[0]) == 0 || r[0][0] != "png:-" {
+				t.Errorf("magick ran %q, want one run reading PNG on stdin", r)
 			}
 		})
 	}
