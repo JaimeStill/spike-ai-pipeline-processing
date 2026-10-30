@@ -35,7 +35,7 @@ import (
 
 const (
 	// visionModel transcribes the pages, as in the renderer bake-off.
-	visionModel = "ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0"
+	visionModel = "google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0"
 	// digestModel writes document's digest.
 	digestModel = "ggml-org/gpt-oss-120b-GGUF:MXFP4"
 	// visionConcurrency is the pages in flight, the router's parallel slots for the model.

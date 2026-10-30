@@ -42,7 +42,7 @@ import (
 
 const (
 	// bakeoffModel is the vision model the transcriptions come from, which set A loads.
-	bakeoffModel = "ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0"
+	bakeoffModel = "google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0"
 	// bakeoffDPI is the DPI every page is rendered at.
 	bakeoffDPI = 150
 	// bakeoffRuns is how often each page is rendered and transcribed, for the run-to-run spread.
