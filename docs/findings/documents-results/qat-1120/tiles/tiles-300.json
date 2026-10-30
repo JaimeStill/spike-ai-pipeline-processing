@@ -1,0 +1,317 @@
+[
+  {
+    "tile": "p7-foot",
+    "page": 7,
+    "region": {
+      "Top": 0.68,
+      "Bottom": 1,
+      "Left": 0.35,
+      "Right": 0.81
+    },
+    "dpi": 300,
+    "width": 1173,
+    "height": 1056,
+    "png_bytes": 250679,
+    "run": 1,
+    "input_tokens": 586,
+    "text_only_tokens": 56,
+    "output_tokens": 5,
+    "status": "completed",
+    "output": "SECRET\nNOTED",
+    "request_ms": 3042
+  },
+  {
+    "tile": "p7-foot",
+    "page": 7,
+    "region": {
+      "Top": 0.68,
+      "Bottom": 1,
+      "Left": 0.35,
+      "Right": 0.81
+    },
+    "dpi": 300,
+    "width": 1173,
+    "height": 1056,
+    "png_bytes": 250679,
+    "run": 2,
+    "input_tokens": 586,
+    "text_only_tokens": 56,
+    "output_tokens": 5,
+    "status": "completed",
+    "output": "SECRET\nCONFIDENTIAL",
+    "request_ms": 3042
+  },
+  {
+    "tile": "p7-foot",
+    "page": 7,
+    "region": {
+      "Top": 0.68,
+      "Bottom": 1,
+      "Left": 0.35,
+      "Right": 0.81
+    },
+    "dpi": 300,
+    "width": 1173,
+    "height": 1056,
+    "png_bytes": 250679,
+    "run": 3,
+    "input_tokens": 586,
+    "text_only_tokens": 56,
+    "output_tokens": 5,
+    "status": "completed",
+    "output": "SECRET\nNOTED",
+    "request_ms": 3042
+  },
+  {
+    "tile": "p7-noforn",
+    "page": 7,
+    "region": {
+      "Top": 0.86,
+      "Bottom": 1,
+      "Left": 0.6,
+      "Right": 0.82
+    },
+    "dpi": 300,
+    "width": 561,
+    "height": 462,
+    "png_bytes": 77438,
+    "run": 1,
+    "input_tokens": 178,
+    "text_only_tokens": 56,
+    "output_tokens": 4,
+    "status": "completed",
+    "output": "NOORDEN",
+    "request_ms": 2950
+  },
+  {
+    "tile": "p7-noforn",
+    "page": 7,
+    "region": {
+      "Top": 0.86,
+      "Bottom": 1,
+      "Left": 0.6,
+      "Right": 0.82
+    },
+    "dpi": 300,
+    "width": 561,
+    "height": 462,
+    "png_bytes": 77438,
+    "run": 2,
+    "input_tokens": 178,
+    "text_only_tokens": 56,
+    "output_tokens": 4,
+    "status": "completed",
+    "output": "NOORDEN",
+    "request_ms": 347
+  },
+  {
+    "tile": "p7-noforn",
+    "page": 7,
+    "region": {
+      "Top": 0.86,
+      "Bottom": 1,
+      "Left": 0.6,
+      "Right": 0.82
+    },
+    "dpi": 300,
+    "width": 561,
+    "height": 462,
+    "png_bytes": 77438,
+    "run": 3,
+    "input_tokens": 178,
+    "text_only_tokens": 56,
+    "output_tokens": 4,
+    "status": "completed",
+    "output": "NOERDN",
+    "request_ms": 1872
+  },
+  {
+    "tile": "p7-footer-band",
+    "page": 7,
+    "region": {
+      "Top": 0.88,
+      "Bottom": 1,
+      "Left": 0,
+      "Right": 1
+    },
+    "dpi": 300,
+    "width": 2550,
+    "height": 396,
+    "png_bytes": 129970,
+    "run": 1,
+    "input_tokens": 482,
+    "text_only_tokens": 56,
+    "output_tokens": 8,
+    "status": "completed",
+    "output": "SPERET\nNORDEN",
+    "request_ms": 2252
+  },
+  {
+    "tile": "p7-footer-band",
+    "page": 7,
+    "region": {
+      "Top": 0.88,
+      "Bottom": 1,
+      "Left": 0,
+      "Right": 1
+    },
+    "dpi": 300,
+    "width": 2550,
+    "height": 396,
+    "png_bytes": 129970,
+    "run": 2,
+    "input_tokens": 482,
+    "text_only_tokens": 56,
+    "output_tokens": 8,
+    "status": "completed",
+    "output": "SPERET\nNORDEN",
+    "request_ms": 1987
+  },
+  {
+    "tile": "p7-footer-band",
+    "page": 7,
+    "region": {
+      "Top": 0.88,
+      "Bottom": 1,
+      "Left": 0,
+      "Right": 1
+    },
+    "dpi": 300,
+    "width": 2550,
+    "height": 396,
+    "png_bytes": 129970,
+    "run": 3,
+    "input_tokens": 482,
+    "text_only_tokens": 56,
+    "output_tokens": 8,
+    "status": "completed",
+    "output": "SPERET\nNORDEN",
+    "request_ms": 2138
+  },
+  {
+    "tile": "p5-seal",
+    "page": 5,
+    "region": {
+      "Top": 0.05,
+      "Bottom": 0.18,
+      "Left": 0.05,
+      "Right": 0.22
+    },
+    "dpi": 300,
+    "width": 434,
+    "height": 429,
+    "png_bytes": 152568,
+    "run": 1,
+    "input_tokens": 139,
+    "text_only_tokens": 56,
+    "output_tokens": 5,
+    "status": "completed",
+    "output": "DEPARTMENT OF DEFENSE",
+    "request_ms": 907
+  },
+  {
+    "tile": "p5-seal",
+    "page": 5,
+    "region": {
+      "Top": 0.05,
+      "Bottom": 0.18,
+      "Left": 0.05,
+      "Right": 0.22
+    },
+    "dpi": 300,
+    "width": 434,
+    "height": 429,
+    "png_bytes": 152568,
+    "run": 2,
+    "input_tokens": 139,
+    "text_only_tokens": 56,
+    "output_tokens": 5,
+    "status": "completed",
+    "output": "DEPARTMENT OF DEFENSE",
+    "request_ms": 885
+  },
+  {
+    "tile": "p5-seal",
+    "page": 5,
+    "region": {
+      "Top": 0.05,
+      "Bottom": 0.18,
+      "Left": 0.05,
+      "Right": 0.22
+    },
+    "dpi": 300,
+    "width": 434,
+    "height": 429,
+    "png_bytes": 152568,
+    "run": 3,
+    "input_tokens": 139,
+    "text_only_tokens": 56,
+    "output_tokens": 5,
+    "status": "completed",
+    "output": "DEPARTMENT OF DEFENSE",
+    "request_ms": 841
+  },
+  {
+    "tile": "p5-washington",
+    "page": 5,
+    "region": {
+      "Top": 0.075,
+      "Bottom": 0.205,
+      "Left": 0.39,
+      "Right": 0.6
+    },
+    "dpi": 300,
+    "width": 536,
+    "height": 429,
+    "png_bytes": 68899,
+    "run": 1,
+    "input_tokens": 157,
+    "text_only_tokens": 56,
+    "output_tokens": 13,
+    "status": "completed",
+    "output": "WASHINGTON, D.C. 20340",
+    "request_ms": 1025
+  },
+  {
+    "tile": "p5-washington",
+    "page": 5,
+    "region": {
+      "Top": 0.075,
+      "Bottom": 0.205,
+      "Left": 0.39,
+      "Right": 0.6
+    },
+    "dpi": 300,
+    "width": 536,
+    "height": 429,
+    "png_bytes": 68899,
+    "run": 2,
+    "input_tokens": 157,
+    "text_only_tokens": 56,
+    "output_tokens": 13,
+    "status": "completed",
+    "output": "WASHINGTON, D.C. 20340",
+    "request_ms": 692
+  },
+  {
+    "tile": "p5-washington",
+    "page": 5,
+    "region": {
+      "Top": 0.075,
+      "Bottom": 0.205,
+      "Left": 0.39,
+      "Right": 0.6
+    },
+    "dpi": 300,
+    "width": 536,
+    "height": 429,
+    "png_bytes": 68899,
+    "run": 3,
+    "input_tokens": 157,
+    "text_only_tokens": 56,
+    "output_tokens": 13,
+    "status": "completed",
+    "output": "WASHINGTON, D.C. 20340",
+    "request_ms": 630
+  }
+]
