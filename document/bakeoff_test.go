@@ -26,7 +26,6 @@ import (
 	client "github.com/JaimeStill/spike-ai-pipeline-client"
 	"github.com/JaimeStill/spike-ai-pipeline-client/format/completions"
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
-	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 )
 
 // The bake-off tier: `mise run bakeoff` runs TestBakeoff once per renderer, each run capped at
@@ -374,7 +373,7 @@ func transcribeAll(t *testing.T, c *client.Client, sets []fixtureSet, cells []ce
 	wg.Wait()
 }
 
-// transcribe sends cl's page to the model with TranscribeInstructions in one user message,
+// transcribe sends cl's page to the model with transcribeInstructions in one user message,
 // greedy and with reasoning off, and sets cl's output, status, and usage, or its error.
 //
 // Reasoning is off through the typed Reasoning.Effort, none, which the completions format sends
@@ -392,7 +391,7 @@ func transcribe(t *testing.T, c *client.Client, cl *cell) {
 	resp, err := c.Generate(ctx, &protocol.Request{
 		Model: bakeoffModel,
 		Input: []protocol.Item{protocol.Message{Role: protocol.RoleUser, Content: []protocol.ContentPart{
-			protocol.InputText{Text: document.TranscribeInstructions},
+			protocol.InputText{Text: transcribeInstructions},
 			protocol.InputImage{ImageURL: protocol.DataURL("image/png", cl.png)},
 		}}},
 		Reasoning:       protocol.ReasoningParam{Effort: protocol.ReasoningEffortNone},

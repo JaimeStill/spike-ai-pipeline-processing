@@ -24,10 +24,11 @@ import (
 // Evidence 11, the corrections matrix: `mise run bakeoff-corrections` runs TestCorrections once
 // per DPI, fixture set, and matrix cell, each run capped at 10 minutes, then TestCorrectionsMatrix
 // over their results. TestCorrections sends every page of the degraded and scanned sets through
-// Vision.Pages, with the released renderer, Ghostscript, and the corrections stage over the
-// host's magick, to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, three greedy runs per
-// cell, and scores each page as the renderer bake-off does; TestCorrectionsMatrix logs each DPI's
-// tables, per set and cell and per page, as recorded lines.
+// the vision harness's pages (vision_test.go), on the released Images stream, with the released
+// renderer, Ghostscript, and the corrections stage over the host's magick, to Gemma 4 26B-A4B on
+// the router SPIKE_ROUTER_URL names, three greedy runs per cell, and scores each page as the
+// renderer bake-off does; TestCorrectionsMatrix logs each DPI's tables, per set and cell and per
+// page, as recorded lines.
 //
 // BAKEOFF_DPI names the DPIs to run, BAKEOFF_SET the fixture sets, and BAKEOFF_CELL the matrix
 // cells, each comma-separated; unset runs 150 and 72 dpi, degraded and scanned, and every cell.
@@ -70,7 +71,7 @@ type correctionResult struct {
 	// Versions are the renderer's and the corrections stage's tools.
 	Versions []string `json:"versions"`
 	// Cells are its pages, one per page and run, scored. Their render measures are zero: the
-	// matrix renders through Vision, which measures nothing.
+	// matrix renders through the vision harness, which measures nothing.
 	Cells []cell `json:"cells"`
 	// RunTimes are each run's wall-clock time, from the first page's rendering to the last
 	// page's response.
@@ -122,9 +123,9 @@ func selectedCells(t *testing.T) []matrixCell {
 	return cs
 }
 
-// timedGenerator bounds each request of a Vision's to requestTimeout, as the renderer bake-off
-// bounds each of its own: a Vision's context spans every page of a run.
-type timedGenerator struct{ gen document.Generator }
+// timedGenerator bounds each request of a vision's to requestTimeout, as the renderer bake-off
+// bounds each of its own: a vision's context spans every page of a run.
+type timedGenerator struct{ gen generator }
 
 func (g timedGenerator) Generate(ctx context.Context, req *protocol.Request) (*protocol.Response, error) {
 	ctx, cancel := context.WithTimeout(ctx, requestTimeout)
@@ -133,13 +134,14 @@ func (g timedGenerator) Generate(ctx context.Context, req *protocol.Request) (*p
 }
 
 // matrixTemplate is each page's request: the renderer bake-off's model, output bound, greedy
-// sampling, and reasoning off, with TranscribeInstructions as the request's instructions, as the
-// integration tier's Vision sends them. Vision appends the page's image as a user message of its
-// own, so the instructions can't share the image's message as they do in the renderer bake-off.
+// sampling, and reasoning off, with transcribeInstructions as the request's instructions, as the
+// integration tier's vision sends them. The vision harness appends the page's image as a user
+// message of its own, so the instructions can't share the image's message as they do in the
+// renderer bake-off.
 func matrixTemplate() *protocol.Request {
 	return &protocol.Request{
 		Model:           bakeoffModel,
-		Instructions:    document.TranscribeInstructions,
+		Instructions:    transcribeInstructions,
 		Reasoning:       protocol.ReasoningParam{Effort: protocol.ReasoningEffortNone},
 		MaxOutputTokens: maxOutputTokens,
 		Native:          jsontext.Value(`{"temperature":0}`),
@@ -158,7 +160,7 @@ func TestCorrections(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := document.NewVision(timedGenerator{c}, g, corr)
+	v, err := newVision(timedGenerator{c}, g, corr)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -198,14 +200,14 @@ func TestCorrections(t *testing.T) {
 // fails is t's error, and its cell scores as an empty transcription, incomplete; so does a page
 // whose response isn't completed, as in the renderer bake-off. A stream that ends with an error
 // of its own fails t.
-func correctedRun(t *testing.T, v *document.Vision, s fixtureSet, dpi int, mc matrixCell, run int) []cell {
+func correctedRun(t *testing.T, v *vision, s fixtureSet, dpi int, mc matrixCell, run int) []cell {
 	t.Helper()
 	f, err := os.Open(s.pdf)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer func() { _ = f.Close() }()
-	req := document.Request{
+	req := visionRequest{
 		Dir:         t.TempDir(),
 		Template:    matrixTemplate(),
 		DPI:         dpi,
@@ -213,7 +215,7 @@ func correctedRun(t *testing.T, v *document.Vision, s fixtureSet, dpi int, mc ma
 		Concurrency: inFlight,
 	}
 	var cells []cell
-	for p, err := range v.Pages(t.Context(), f, req) {
+	for p, err := range v.pages(t.Context(), f, req) {
 		if p.Number == 0 {
 			t.Fatalf("%d dpi %s %s run %d: %v", dpi, s.name, mc.name, run, err)
 		}

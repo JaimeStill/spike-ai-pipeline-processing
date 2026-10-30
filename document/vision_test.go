@@ -10,16 +10,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/fs"
+	"iter"
 	"net/http"
-	"os"
-	"path/filepath"
 	"reflect"
 	"slices"
 	"strings"
 	"sync"
 	"testing"
-	"testing/iotest"
 	"time"
 
 	client "github.com/JaimeStill/spike-ai-pipeline-client"
@@ -27,127 +24,377 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 )
 
-// pagePNG is the stand-in renderer's page: the PNG signature and a tail that names the page.
-func pagePNG(page int) []byte {
-	return fmt.Appendf([]byte("\x89PNG\r\n\x1a\n"), "page %d", page)
+// This file is the vision harness: the layer above document, in test code, that sends the pages
+// the released Images stream prepares to a model, as ruling M of task documents places inference
+// above processing's libraries. The integration tier's vision tests and the corrections matrix in
+// the bake-off tier run on it, so they prove evidence 4 end to end through the released
+// preparation. It is test code, never released: the module's requirement of
+// spike-ai-pipeline-client is a test requirement. The tests below check its inference: the page
+// requests, retries, the ordered stream over the generator's concurrency, and the final request.
+
+// generator sends one request to a model and returns its response: the one method the harness
+// needs of spike-ai-pipeline-client, which *client.Client satisfies; a test passes a stand-in.
+type generator interface {
+	Generate(ctx context.Context, req *protocol.Request) (*protocol.Response, error)
 }
 
-// flightLog tracks how many pages are in flight, from a page's rendering to its response, and the
-// most there have been at once.
-type flightLog struct {
-	mu       sync.Mutex
-	now, max int
+// The integration tier passes its *client.Client as the generator; this fails to compile if the
+// Client stops satisfying it.
+var _ generator = (*client.Client)(nil)
+
+// transcribeInstructions asks a vision model for a page's text: every word on the page, in
+// reading order, as plain text, and nothing else. It asks for no layout or formatting, so the
+// answer compares with a page's ground truth as text.
+//
+// The renderer bake-off sent it to Gemma 4 26B-A4B with reasoning off, a request's
+// Reasoning.Effort of none, and a request for a transcription should too: with its reasoning on,
+// the model reasoned about a hard scanned page until the 8192-token output cap and returned no
+// text.
+const transcribeInstructions = "Transcribe every word on this page, in reading order, as plain text. " +
+	"Reply with the page's text and nothing else: no commentary, no description of the page, " +
+	"and no Markdown or other formatting."
+
+// vision sends the pages a Preparer prepares to a model's vision, each in a request of its own,
+// and, for document, one final request over their text.
+type vision struct {
+	gen     generator
+	prepare *document.Preparer
 }
 
-func (f *flightLog) enter() {
-	f.mu.Lock()
-	defer f.mu.Unlock()
-	f.now++
-	f.max = max(f.max, f.now)
-}
-
-func (f *flightLog) leave() {
-	f.mu.Lock()
-	defer f.mu.Unlock()
-	f.now--
-}
-
-func (f *flightLog) counts() (now, most int) {
-	f.mu.Lock()
-	defer f.mu.Unlock()
-	return f.now, f.max
-}
-
-// renderer is the stand-in Renderer. Count reads the spooled PDF and returns pages, or countErr.
-// Render waits delay(page) or until ctx ends, then writes pagePNG(page), or fails with fail's
-// error for the page. Each Render enters flight, and leaves it only when it fails: a page that
-// renders leaves when the generator answers it.
-type renderer struct {
-	pages    int
-	countErr error
-	fail     map[int]error
-	delay    func(page int) time.Duration
-	flight   *flightLog
-
-	mu      sync.Mutex
-	spooled []string
-	pdf     [][]byte
-	renders []int
-	dpi     []int
-}
-
-func (r *renderer) Count(ctx context.Context, pdf string) (int, error) {
-	b, err := os.ReadFile(pdf)
+// newVision builds a vision over gen and a Preparer of render and correct, correct optional.
+func newVision(gen generator, render document.Renderer, correct *document.Corrector) (*vision, error) {
+	if gen == nil {
+		return nil, errors.New("vision: no generator")
+	}
+	p, err := document.NewPreparer(render, correct)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	r.mu.Lock()
-	r.spooled = append(r.spooled, pdf)
-	r.pdf = append(r.pdf, b)
-	r.mu.Unlock()
-	if r.countErr != nil {
-		return 0, r.countErr
-	}
-	return r.pages, nil
+	return &vision{gen: gen, prepare: p}, nil
 }
 
-func (r *renderer) Render(ctx context.Context, pdf string, page, dpi int, w io.Writer) error {
-	r.flight.enter()
-	r.mu.Lock()
-	r.renders = append(r.renders, page)
-	r.dpi = append(r.dpi, dpi)
-	r.mu.Unlock()
-	if r.delay != nil {
-		select {
-		case <-time.After(r.delay(page)):
-		case <-ctx.Done():
-			r.flight.leave()
-			return ctx.Err()
+// visionRequest is one PDF's run through a vision: the preparation's fields, which Images reads
+// and validates, and inference's own. pages reads all but Final, and document all of it.
+type visionRequest struct {
+	Dir         string
+	DPI         int
+	Corrections []document.Correction
+	// Concurrency bounds both the pages Images prepares at once and the pages awaiting the model.
+	Concurrency int
+	// Template is the request for one page; each page's request is a copy of it with one user
+	// message appended, the page's image as a PNG data URL.
+	Template *protocol.Request
+	// PageRetries is how many more times a page is sent when its response isn't completed, with
+	// the image already prepared, holding its slot. A page whose Generate fails is never re-sent.
+	PageRetries int
+	// Final is document's final request, to which it appends a text part per page.
+	Final *protocol.Request
+}
+
+// images is the request's preparation, for Images.
+func (r visionRequest) images() document.ImagesRequest {
+	return document.ImagesRequest{Dir: r.Dir, DPI: r.DPI, Corrections: r.Corrections, Concurrency: r.Concurrency}
+}
+
+// visionPage is one page's outcome: its number, the page count, the model's response, nil for a
+// page that failed, and how many times it was sent, 0 for a page that failed in preparation.
+type visionPage struct {
+	Number   int
+	Count    int
+	Response *protocol.Response
+	Attempts int
+}
+
+// sent is one page's response or error, and its attempts, as its worker hands it to the stream.
+type sent struct {
+	resp     *protocol.Response
+	attempts int
+	err      error
+}
+
+// queued is a page the producer has taken from Images, in page order, and where its outcome
+// arrives. number is 0 for the Images stream's own error.
+type queued struct {
+	number, count int
+	done          chan sent
+}
+
+// pages returns the stream of a PDF's pages through the model, built on Images: each page Images
+// yields is sent in a copy of req.Template, retried as req.PageRetries says, at most
+// req.Concurrency awaiting the model at once, and yielded in page order. A page Images failed is
+// yielded with its error, never sent; the Images stream's own error, a refusal, a failed spool or
+// count, is yielded with a zero visionPage. A refused template or retry count is the stream's one
+// error. When ctx ends, the stream yields ctx's error once. Breaking out of the range cancels the
+// work in flight, Images's included, and returns once it has ended.
+func (v *vision) pages(ctx context.Context, pdf io.Reader, req visionRequest) iter.Seq2[visionPage, error] {
+	return func(yield func(visionPage, error) bool) {
+		if err := check(req); err != nil {
+			yield(visionPage{}, err)
+			return
+		}
+		work, cancel := context.WithCancel(ctx)
+		var wg sync.WaitGroup
+		defer func() {
+			cancel()
+			wg.Wait()
+		}()
+		slots := make(chan struct{}, max(req.Concurrency, 1))
+		queue := make(chan queued)
+		wg.Go(func() {
+			defer close(queue)
+			for img, err := range v.prepare.Images(work, pdf, req.images()) {
+				done := make(chan sent, 1)
+				if err != nil {
+					done <- sent{err: err}
+				} else {
+					select {
+					case slots <- struct{}{}:
+					case <-work.Done():
+						return
+					}
+					wg.Go(func() {
+						defer func() { <-slots }()
+						resp, attempts, err := v.send(work, img, req)
+						done <- sent{resp, attempts, err}
+					})
+				}
+				select {
+				case queue <- queued{img.Number, img.Count, done}:
+				case <-work.Done():
+					return
+				}
+			}
+		})
+		for q := range queue {
+			var s sent
+			select {
+			case s = <-q.done:
+			case <-ctx.Done():
+			}
+			// A page that failed because ctx ended is ctx's error, not the page's.
+			if err := ctx.Err(); err != nil {
+				yield(visionPage{}, err)
+				return
+			}
+			if !yield(visionPage{Number: q.number, Count: q.count, Response: s.resp, Attempts: s.attempts}, s.err) {
+				return
+			}
 		}
 	}
-	if err := r.fail[page]; err != nil {
-		r.flight.leave()
-		return err
+}
+
+// send sends img in a copy of req.Template, again with the same image while its response isn't
+// completed and req.PageRetries allows, returning the last response and the times it was sent. A
+// Generate error ends the page without a retry, and so does ctx ending.
+func (v *vision) send(ctx context.Context, img document.PageImage, req visionRequest) (*protocol.Response, int, error) {
+	attempts := 0
+	for {
+		// Each attempt is a request of its own, so no two share an input array.
+		resp, err := v.gen.Generate(ctx, withImage(req.Template, img.PNG))
+		attempts++
+		if err != nil {
+			return nil, attempts, fmt.Errorf("vision: page %d of %d: generate: %w", img.Number, img.Count, err)
+		}
+		if (resp != nil && resp.Status == protocol.StatusCompleted) || attempts > req.PageRetries || ctx.Err() != nil {
+			return resp, attempts, nil
+		}
 	}
-	_, err := w.Write(pagePNG(page))
-	return err
 }
 
-// rendered returns the pages Render was asked for, in the order asked, and the DPIs.
-func (r *renderer) rendered() (pages, dpi []int) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	return slices.Clone(r.renders), slices.Clone(r.dpi)
+// check refuses the inference fields of a request before anything runs, validating the template
+// by the request it makes for a page; Images refuses the preparation's.
+func check(req visionRequest) error {
+	switch {
+	case req.Template == nil:
+		return errors.New("vision: request has no template")
+	case req.PageRetries < 0:
+		return fmt.Errorf("vision: request's page retries %d is negative", req.PageRetries)
+	}
+	if err := withImage(req.Template, nil).Validate(); err != nil {
+		return fmt.Errorf("vision: request's template: %w", err)
+	}
+	return nil
 }
 
-// generator is the stand-in Generator. It records every request, then answers with respond,
-// which gets the page the request's image is, 0 for a request with no image, such as Document's
-// final request. A page's request leaves flight when respond returns, every attempt of it, so a
-// test that retries a page doesn't read the flight log.
-type generator struct {
-	flight  *flightLog
+// withImage returns a copy of tmpl with one user message appended to its Input: png as an
+// InputImage's PNG data URL, its detail unset.
+func withImage(tmpl *protocol.Request, png []byte) *protocol.Request {
+	return withMessage(tmpl, protocol.Message{Role: protocol.RoleUser, Content: []protocol.ContentPart{
+		protocol.InputImage{ImageURL: protocol.DataURL("image/png", png)},
+	}})
+}
+
+// withMessage returns a copy of tmpl with msg appended to its Input. The copy's slices are its
+// own, Input, Tools, and Native, so no two requests built from one template share a backing array
+// and tmpl is never changed.
+func withMessage(tmpl *protocol.Request, msg protocol.Message) *protocol.Request {
+	r := *tmpl
+	r.Input = slices.Concat(tmpl.Input, []protocol.Item{msg})
+	r.Tools = slices.Clone(tmpl.Tools)
+	r.Native = slices.Clone(tmpl.Native)
+	return &r
+}
+
+// docResult is a document's outcome: every page's, in page order, and the final response, nil
+// when document failed before the final request or the request itself failed.
+type docResult struct {
+	Pages []pageResult
+	Final *protocol.Response
+}
+
+// pageResult is one page of a document with its error, nil for a page that succeeded.
+type pageResult struct {
+	visionPage
+	Err error
+}
+
+// Text returns the document's digitized content: every page's output text, in page order, each
+// under its "Page N of M:" heading, the heading document's final request gives each page's part,
+// the pages joined by a blank line. A page with no response is its heading alone. A nil result
+// returns "".
+func (r *docResult) Text() string {
+	if r == nil {
+		return ""
+	}
+	parts := make([]string, 0, len(r.Pages))
+	for _, p := range r.Pages {
+		parts = append(parts, pageText(p.Number, p.Count, text(p.Response)))
+	}
+	return strings.Join(parts, "\n\n")
+}
+
+// document digitizes a PDF and then digests it: it runs the pages as pages does, and then one
+// final request, a copy of req.Final with one user message of a "Page N of M:" text part per
+// page. A page that fails, or whose response isn't completed after its retries, fails it before
+// the final request, with an error naming each such page and wrapping each page's error; a final
+// response that isn't completed is an error, kept in the result. The stream's own error is
+// document's, the result holding the pages yielded before it.
+func (v *vision) document(ctx context.Context, pdf io.Reader, req visionRequest) (*docResult, error) {
+	if req.Final == nil {
+		return nil, errors.New("vision: request has no final template")
+	}
+	probe := withMessage(req.Final, protocol.Message{Role: protocol.RoleUser, Content: []protocol.ContentPart{
+		protocol.InputText{Text: pageText(1, 1, "")},
+	}})
+	if err := probe.Validate(); err != nil {
+		return nil, fmt.Errorf("vision: request's final template: %w", err)
+	}
+	res := &docResult{}
+	var failed []int
+	var errs []error
+	for p, err := range v.pages(ctx, pdf, req) {
+		if p.Number == 0 {
+			return res, err
+		}
+		switch {
+		case err != nil:
+		case p.Response == nil:
+			err = fmt.Errorf("vision: page %d of %d: no response", p.Number, p.Count)
+		case p.Response.Status != protocol.StatusCompleted:
+			err = fmt.Errorf("vision: page %d of %d: response is %s, attempts %d", p.Number, p.Count, status(p.Response), p.Attempts)
+		}
+		res.Pages = append(res.Pages, pageResult{visionPage: p, Err: err})
+		if err != nil {
+			failed = append(failed, p.Number)
+			errs = append(errs, err)
+		}
+	}
+	if len(failed) > 0 {
+		return res, fmt.Errorf("vision: %d of %d pages failed, %v: %w", len(failed), len(res.Pages), failed, errors.Join(errs...))
+	}
+	if len(res.Pages) == 0 {
+		return res, errors.New("vision: the PDF has no pages")
+	}
+	parts := make([]protocol.ContentPart, 0, len(res.Pages))
+	for _, p := range res.Pages {
+		parts = append(parts, protocol.InputText{Text: pageText(p.Number, p.Count, text(p.Response))})
+	}
+	final, err := v.gen.Generate(ctx, withMessage(req.Final, protocol.Message{Role: protocol.RoleUser, Content: parts}))
+	if err != nil {
+		return res, fmt.Errorf("vision: final request: %w", err)
+	}
+	if final == nil {
+		return res, errors.New("vision: final request: no response")
+	}
+	res.Final = final
+	if final.Status != protocol.StatusCompleted {
+		return res, fmt.Errorf("vision: final response is %s", status(final))
+	}
+	return res, nil
+}
+
+// pageText is a page's part of the final request and of docResult.Text: "Page N of M:", a
+// newline, and its text.
+func pageText(page, n int, text string) string {
+	return fmt.Sprintf("Page %d of %d:\n%s", page, n, text)
+}
+
+// status describes a response's status, with why it is incomplete or failed when it says.
+func status(r *protocol.Response) string {
+	switch {
+	case r.IncompleteDetails != nil:
+		return fmt.Sprintf("%s (%s)", r.Status, r.IncompleteDetails.Reason)
+	case r.Error != nil:
+		return fmt.Sprintf("%s (%s: %s)", r.Status, r.Error.Code, r.Error.Message)
+	}
+	return string(r.Status)
+}
+
+// text returns a response's output text, the text of every OutputText part of its messages, in
+// order, joined, or "" for nil.
+func text(r *protocol.Response) string {
+	if r == nil {
+		return ""
+	}
+	var s strings.Builder
+	for _, it := range r.Output {
+		if m, ok := it.(protocol.Message); ok {
+			for _, p := range m.Content {
+				if o, ok := p.(protocol.OutputText); ok {
+					s.WriteString(o.Text)
+				}
+			}
+		}
+	}
+	return s.String()
+}
+
+// standinGenerator is the stand-in generator. It records every request, then answers with
+// respond, which gets the page the request's image is, 0 for a request with no image, such as
+// document's final request. It counts the requests awaiting respond.
+type standinGenerator struct {
 	respond func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error)
 
-	mu   sync.Mutex
-	reqs []*protocol.Request
+	mu     sync.Mutex
+	reqs   []*protocol.Request
+	active int
 }
 
-func (g *generator) Generate(ctx context.Context, req *protocol.Request) (*protocol.Response, error) {
+func (g *standinGenerator) Generate(ctx context.Context, req *protocol.Request) (*protocol.Response, error) {
 	g.mu.Lock()
 	g.reqs = append(g.reqs, req)
+	g.active++
 	g.mu.Unlock()
-	page := imagePage(req)
-	if page > 0 {
-		defer g.flight.leave()
-	}
-	return g.respond(ctx, page, req)
+	defer func() {
+		g.mu.Lock()
+		g.active--
+		g.mu.Unlock()
+	}()
+	return g.respond(ctx, imagePage(req), req)
 }
 
 // requests returns the requests the generator was sent, in the order sent.
-func (g *generator) requests() []*protocol.Request {
+func (g *standinGenerator) requests() []*protocol.Request {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 	return slices.Clone(g.reqs)
+}
+
+// awaiting returns how many requests are awaiting respond.
+func (g *standinGenerator) awaiting() int {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	return g.active
 }
 
 // imagePage returns the page whose image the request's last message holds, decoded from the data
@@ -193,32 +440,30 @@ func pageAnswer(_ context.Context, page int, _ *protocol.Request) (*protocol.Res
 	return answer(fmt.Sprintf("text of page %d", page)), nil
 }
 
-// fixture is a Vision over the stand-ins, the PDF it reads, and a request for it.
-type fixture struct {
+// visionFixture is a vision over the stand-in renderer and generator, the PDF it reads, and a
+// request for it.
+type visionFixture struct {
 	render *renderer
-	gen    *generator
-	flight *flightLog
-	vision *document.Vision
+	gen    *standinGenerator
+	vision *vision
 	pdf    []byte
-	req    document.Request
+	req    visionRequest
 }
 
-// newFixture builds a Vision over a stand-in renderer of pages pages and a stand-in generator
-// answering with pageAnswer, and a request for the PDF with its own working directory, a
-// template with a developer message, and a final template.
-func newFixture(t *testing.T, pages int) *fixture {
+// newVisionFixture builds a vision over a stand-in renderer of pages pages and a stand-in
+// generator answering with pageAnswer, and a request for the PDF with its own working directory,
+// a template with a developer message, and a final template.
+func newVisionFixture(t *testing.T, pages int) *visionFixture {
 	t.Helper()
-	flight := &flightLog{}
-	f := &fixture{
-		render: &renderer{pages: pages, flight: flight},
-		gen:    &generator{flight: flight, respond: pageAnswer},
-		flight: flight,
+	f := &visionFixture{
+		render: &renderer{pages: pages, flight: &flightLog{}},
+		gen:    &standinGenerator{respond: pageAnswer},
 		pdf:    []byte("%PDF-1.7 stand-in"),
-		req: document.Request{
+		req: visionRequest{
 			Dir: t.TempDir(),
 			Template: &protocol.Request{
 				Model:        "vision",
-				Instructions: document.TranscribeInstructions,
+				Instructions: transcribeInstructions,
 				Input: []protocol.Item{protocol.Message{Role: protocol.RoleDeveloper, Content: []protocol.ContentPart{
 					protocol.InputText{Text: "be exact"},
 				}}},
@@ -227,142 +472,39 @@ func newFixture(t *testing.T, pages int) *fixture {
 			Final: &protocol.Request{Model: "final", Instructions: "Summarize the document."},
 		},
 	}
-	var err error
-	f.vision, err = document.NewVision(f.gen, f.render, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	f.build(t, nil)
 	return f
 }
 
+// build rebuilds f's vision with correct as its corrections stage.
+func (f *visionFixture) build(t *testing.T, correct *document.Corrector) {
+	t.Helper()
+	var err error
+	f.vision, err = newVision(f.gen, f.render, correct)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 // pages ranges over f's stream to its end and returns what it yielded.
-func (f *fixture) pages(ctx context.Context) ([]document.Page, []error) {
-	var pages []document.Page
+func (f *visionFixture) pages(ctx context.Context) ([]visionPage, []error) {
+	var pages []visionPage
 	var errs []error
-	for p, err := range f.vision.Pages(ctx, bytes.NewReader(f.pdf), f.req) {
+	for p, err := range f.vision.pages(ctx, bytes.NewReader(f.pdf), f.req) {
 		pages = append(pages, p)
 		errs = append(errs, err)
 	}
 	return pages, errs
 }
 
-func TestNewVisionRefusals(t *testing.T) {
-	if _, err := document.NewVision(nil, &renderer{}, nil); err == nil {
-		t.Error("NewVision with no generator succeeded, want an error")
-	}
-	if _, err := document.NewVision(&generator{}, nil, nil); err == nil {
-		t.Error("NewVision with no renderer succeeded, want an error")
-	}
-}
-
-// TestPagesLazy checks that nothing runs until the stream is ranged over: no read of the PDF, no
-// spool, no count, no render, no request.
-func TestPagesLazy(t *testing.T) {
-	f := newFixture(t, 3)
-	read := false
-	pdf := readFunc(func(p []byte) (int, error) { read = true; return 0, io.EOF })
-	pages := f.vision.Pages(t.Context(), pdf, f.req)
-	if read {
-		t.Error("Pages read the PDF before the stream was ranged over")
-	}
-	assertEmpty(t, f.req.Dir)
-	if r, _ := f.render.rendered(); len(r) != 0 || len(f.render.spooled) != 0 {
-		t.Errorf("Pages counted or rendered before the stream was ranged over")
-	}
-	if got := f.gen.requests(); len(got) != 0 {
-		t.Errorf("Pages sent %d requests before the stream was ranged over", len(got))
-	}
-	for _, err := range pages {
-		if err != nil {
-			t.Error(err)
-		}
-	}
-	if !read {
-		t.Error("ranging over the stream didn't read the PDF")
-	}
-}
-
-// readFunc is an io.Reader of a function.
-type readFunc func([]byte) (int, error)
-
-func (r readFunc) Read(p []byte) (int, error) { return r(p) }
-
-// TestPagesOrder checks that pages are yielded in page order when later pages finish first: page
-// 1 is the slowest to render and page 6 the fastest.
-func TestPagesOrder(t *testing.T) {
-	f := newFixture(t, 6)
-	f.req.Concurrency = 6
-	f.render.delay = func(page int) time.Duration { return time.Duration(7-page) * 15 * time.Millisecond }
-	pages, errs := f.pages(t.Context())
-	if len(pages) != 6 {
-		t.Fatalf("the stream yielded %d pages, want 6", len(pages))
-	}
-	for i, p := range pages {
-		if errs[i] != nil {
-			t.Errorf("page %d: %v", i+1, errs[i])
-			continue
-		}
-		want := fmt.Sprintf("text of page %d", i+1)
-		if p.Number != i+1 || p.Count != 6 || p.Response == nil || text(p.Response) != want {
-			t.Errorf("yield %d is page %d of %d answered %q, want page %d of 6 answered %q",
-				i+1, p.Number, p.Count, text(p.Response), i+1, want)
-		}
-	}
-	// The renders finished out of order, so the order held is the stream's.
-	if got := f.gen.requests(); imagePage(got[0]) == 1 {
-		t.Errorf("page 1 was sent first, want a later page first: the delays didn't reorder the work")
-	}
-}
-
-// TestPagesConcurrency checks the request's concurrency bounds the pages in flight, rendering
-// included, and that zero means 1.
-func TestPagesConcurrency(t *testing.T) {
-	for _, tc := range []struct{ concurrency, want int }{{0, 1}, {1, 1}, {3, 3}} {
-		t.Run(fmt.Sprint(tc.concurrency), func(t *testing.T) {
-			f := newFixture(t, 10)
-			f.req.Concurrency = tc.concurrency
-			f.render.delay = func(int) time.Duration { return 5 * time.Millisecond }
-			f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
-				time.Sleep(5 * time.Millisecond)
-				return pageAnswer(ctx, page, req)
-			}
-			pages, errs := f.pages(t.Context())
-			if len(pages) != 10 || errors.Join(errs...) != nil {
-				t.Fatalf("the stream yielded %d pages, errors %v, want 10 and none", len(pages), errors.Join(errs...))
-			}
-			if _, most := f.flight.counts(); most != tc.want {
-				t.Errorf("%d pages were in flight at most, want %d", most, tc.want)
-			}
-		})
-	}
-}
-
-// TestPagesDPI checks the request's DPI reaches the renderer, and zero means 150.
-func TestPagesDPI(t *testing.T) {
-	for dpi, want := range map[int]int{0: 150, 300: 300} {
-		f := newFixture(t, 2)
-		f.req.DPI = dpi
-		f.pages(t.Context())
-		if _, got := f.render.rendered(); !slices.Equal(got, []int{want, want}) {
-			t.Errorf("DPI %d rendered at %v, want %d for each page", dpi, got, want)
-		}
-	}
-}
-
-// TestPagesFailedPage checks that a page that fails in rendering or in sending yields its number,
-// the count, and its error, and the stream carries on.
-func TestPagesFailedPage(t *testing.T) {
-	f := newFixture(t, 5)
-	f.req.Concurrency = 2
-	renderErr := errors.New("gs: page 2 is damaged")
-	sendErr := errors.New("connection reset")
-	f.render.fail = map[int]error{2: renderErr}
-	f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
-		if page == 4 {
-			return nil, sendErr
-		}
-		return pageAnswer(ctx, page, req)
-	}
+// TestVisionPages checks the harness sends each page Images yields, in page order when later pages
+// render first, and yields its response, a page Images failed with its error and never sent.
+func TestVisionPages(t *testing.T) {
+	f := newVisionFixture(t, 5)
+	f.req.Concurrency = 5
+	renderErr := errors.New("gs: page 3 is damaged")
+	f.render.fail = map[int]error{3: renderErr}
+	f.render.wait = delays(func(page int) time.Duration { return time.Duration(6-page) * 10 * time.Millisecond })
 	pages, errs := f.pages(t.Context())
 	if len(pages) != 5 {
 		t.Fatalf("the stream yielded %d pages, want 5", len(pages))
@@ -371,24 +513,19 @@ func TestPagesFailedPage(t *testing.T) {
 		if p.Number != i+1 || p.Count != 5 {
 			t.Errorf("yield %d is page %d of %d, want page %d of 5", i+1, p.Number, p.Count, i+1)
 		}
-		var want error
-		switch p.Number {
-		case 2:
-			want = renderErr
-		case 4:
-			want = sendErr
-		}
-		if want == nil {
-			if errs[i] != nil || p.Response == nil {
-				t.Errorf("page %d: %v, response %v, want a response", p.Number, errs[i], p.Response)
+		if p.Number == 3 {
+			if !errors.Is(errs[i], renderErr) || p.Response != nil || p.Attempts != 0 {
+				t.Errorf("page 3: %v, %v, %d attempts, want the render's error, unsent", errs[i], p.Response, p.Attempts)
 			}
 			continue
 		}
-		if !errors.Is(errs[i], want) || !strings.Contains(errs[i].Error(), fmt.Sprintf("page %d of 5", p.Number)) {
-			t.Errorf("page %d: %v, want an error naming the page and wrapping %v", p.Number, errs[i], want)
+		if want := fmt.Sprintf("text of page %d", p.Number); errs[i] != nil || text(p.Response) != want || p.Attempts != 1 {
+			t.Errorf("page %d: %v, %q, %d attempts, want %q after 1", p.Number, errs[i], text(p.Response), p.Attempts, want)
 		}
-		if p.Response != nil {
-			t.Errorf("page %d failed and has a response", p.Number)
+	}
+	for _, r := range f.gen.requests() {
+		if imagePage(r) == 3 {
+			t.Error("page 3 failed in rendering and was sent")
 		}
 	}
 }
@@ -428,10 +565,10 @@ func cutOff(page, cut int) (respond func(context.Context, int, *protocol.Request
 	return respond, sent
 }
 
-// TestPagesRetries checks a page whose response isn't completed is sent again, up to the
-// request's PageRetries, with the image already rendered, and yielded with its last response and
+// TestVisionRetries checks a page whose response isn't completed is sent again, up to the
+// request's PageRetries, with the image already prepared, and yielded with its last response and
 // its attempts, completed or not, with no error; the other pages are sent once.
-func TestPagesRetries(t *testing.T) {
+func TestVisionRetries(t *testing.T) {
 	cases := []struct {
 		name          string
 		retries, cut  int
@@ -446,7 +583,7 @@ func TestPagesRetries(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			f := newFixture(t, 3)
+			f := newVisionFixture(t, 3)
 			f.req.Concurrency = 3
 			f.req.PageRetries = tc.retries
 			var sent func() int
@@ -487,19 +624,16 @@ func TestPagesRetries(t *testing.T) {
 	}
 }
 
-// TestPagesRetryCorrectsOnce checks a retried page's image goes through its corrections once, the
+// TestVisionRetryCorrectsOnce checks a retried page's image goes through its corrections once, the
 // corrected image re-sent.
-func TestPagesRetryCorrectsOnce(t *testing.T) {
-	f := newFixture(t, 1)
+func TestVisionRetryCorrectsOnce(t *testing.T) {
+	f := newVisionFixture(t, 1)
 	corrector, runs := standinCorrector(t)
-	vision, err := document.NewVision(f.gen, f.render, corrector)
-	if err != nil {
-		t.Fatal(err)
-	}
+	f.build(t, corrector)
 	f.req.Corrections = []document.Correction{document.Deskew}
 	f.req.PageRetries = 2
 	f.gen.respond, _ = cutOff(1, 2)
-	for p, err := range vision.Pages(t.Context(), bytes.NewReader(f.pdf), f.req) {
+	for p, err := range f.vision.pages(t.Context(), bytes.NewReader(f.pdf), f.req) {
 		if err != nil || p.Attempts != 3 {
 			t.Fatalf("page %d: %v, %d attempts, want no error and 3 attempts", p.Number, err, p.Attempts)
 		}
@@ -513,13 +647,12 @@ func TestPagesRetryCorrectsOnce(t *testing.T) {
 	}
 }
 
-// TestPagesRetryNotOnError checks a page whose Generate fails is never re-sent, its attempts 1,
-// and a page that fails in rendering reports no attempts.
-func TestPagesRetryNotOnError(t *testing.T) {
-	f := newFixture(t, 3)
+// TestVisionRetryNotOnError checks a page whose Generate fails is never re-sent, its attempts 1,
+// its error naming the page and matchable with errors.As, and the stream carries on.
+func TestVisionRetryNotOnError(t *testing.T) {
+	f := newVisionFixture(t, 3)
 	f.req.PageRetries = 3
 	tooLarge := &client.APIError{Status: http.StatusRequestEntityTooLarge, Message: "request body too large"}
-	f.render.fail = map[int]error{3: errors.New("gs: page 3 is damaged")}
 	f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
 		if page == 2 {
 			return nil, tooLarge
@@ -531,11 +664,12 @@ func TestPagesRetryNotOnError(t *testing.T) {
 		t.Fatalf("the stream yielded %d pages, want 3", len(pages))
 	}
 	var api *client.APIError
-	if !errors.As(errs[1], &api) || pages[1].Attempts != 1 {
-		t.Errorf("page 2: %v, %d attempts, want the 413 after 1 attempt", errs[1], pages[1].Attempts)
+	if !errors.As(errs[1], &api) || api.Status != http.StatusRequestEntityTooLarge || pages[1].Attempts != 1 ||
+		!strings.Contains(errs[1].Error(), "page 2 of 3") {
+		t.Errorf("page 2: %v, %d attempts, want the 413 naming the page after 1 attempt", errs[1], pages[1].Attempts)
 	}
-	if errs[2] == nil || pages[2].Attempts != 0 {
-		t.Errorf("page 3: %v, %d attempts, want the render's error and no attempts", errs[2], pages[2].Attempts)
+	if errs[0] != nil || errs[2] != nil {
+		t.Errorf("pages 1 and 3: %v, %v, want no errors", errs[0], errs[2])
 	}
 	sent := 0
 	for _, r := range f.gen.requests() {
@@ -548,10 +682,10 @@ func TestPagesRetryNotOnError(t *testing.T) {
 	}
 }
 
-// TestPagesRetryHoldsSlot checks a page's retries hold its concurrency slot: at a concurrency of
+// TestVisionRetryHoldsSlot checks a page's retries hold its concurrency slot: at a concurrency of
 // 1, every attempt of page 1 is sent before page 2 is.
-func TestPagesRetryHoldsSlot(t *testing.T) {
-	f := newFixture(t, 2)
+func TestVisionRetryHoldsSlot(t *testing.T) {
+	f := newVisionFixture(t, 2)
 	f.req.PageRetries = 2
 	f.gen.respond, _ = cutOff(1, 2)
 	if _, errs := f.pages(t.Context()); errors.Join(errs...) != nil {
@@ -566,10 +700,10 @@ func TestPagesRetryHoldsSlot(t *testing.T) {
 	}
 }
 
-// TestPagesRetryContextEnds checks a ctx that ends stops a page's retries: the stream yields
+// TestVisionRetryContextEnds checks a ctx that ends stops a page's retries: the stream yields
 // ctx's error, and the page isn't sent again.
-func TestPagesRetryContextEnds(t *testing.T) {
-	f := newFixture(t, 1)
+func TestVisionRetryContextEnds(t *testing.T) {
+	f := newVisionFixture(t, 1)
 	f.req.PageRetries = 5
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
@@ -587,119 +721,39 @@ func TestPagesRetryContextEnds(t *testing.T) {
 	assertEmpty(t, f.req.Dir)
 }
 
-// TestPagesTooLarge checks that the package sends a page however large, and the server's 413 is
-// the page's error, matchable with errors.As.
-func TestPagesTooLarge(t *testing.T) {
-	f := newFixture(t, 3)
-	f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
-		if page == 2 {
-			return nil, &client.APIError{Status: http.StatusRequestEntityTooLarge, Message: "request body too large"}
-		}
-		return pageAnswer(ctx, page, req)
-	}
-	pages, errs := f.pages(t.Context())
-	if len(pages) != 3 {
-		t.Fatalf("the stream yielded %d pages, want 3", len(pages))
-	}
-	var api *client.APIError
-	if !errors.As(errs[1], &api) || api.Status != http.StatusRequestEntityTooLarge {
-		t.Errorf("page 2: %v, want a *client.APIError with status 413", errs[1])
-	}
-	if errs[0] != nil || errs[2] != nil {
-		t.Errorf("pages 1 and 3: %v, %v, want no errors", errs[0], errs[2])
-	}
-}
-
-// TestPagesCountFails checks that a failed count yields one error and ends the stream, having
-// rendered nothing and removed the spooled PDF.
-func TestPagesCountFails(t *testing.T) {
-	f := newFixture(t, 3)
-	f.render.countErr = errors.New("gs: not a PDF")
-	pages, errs := f.pages(t.Context())
-	if len(pages) != 1 || pages[0] != (document.Page{}) || !errors.Is(errs[0], f.render.countErr) {
-		t.Errorf("the stream yielded %v, %v, want one zero page with the count's error", pages, errs)
-	}
-	if r, _ := f.render.rendered(); len(r) != 0 {
-		t.Errorf("rendered %v after a failed count, want nothing", r)
-	}
-	assertEmpty(t, f.req.Dir)
-}
-
-// TestPagesBreak checks that breaking out of the range cancels the pages in flight and returns
-// once their work has ended, with the spooled PDF removed.
-func TestPagesBreak(t *testing.T) {
-	f := newFixture(t, 8)
+// TestVisionBreak checks that breaking out of the harness's range cancels the requests in flight
+// and returns once they and Images's work have ended, with the spooled PDF removed.
+func TestVisionBreak(t *testing.T) {
+	f := newVisionFixture(t, 8)
 	f.req.Concurrency = 3
 	f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
 		if page == 1 {
 			return pageAnswer(ctx, page, req)
 		}
-		<-ctx.Done() // The later pages wait for the break to cancel them.
+		<-ctx.Done()
 		time.Sleep(20 * time.Millisecond)
 		return nil, ctx.Err()
 	}
-	for p, err := range f.vision.Pages(t.Context(), bytes.NewReader(f.pdf), f.req) {
+	for p, err := range f.vision.pages(t.Context(), bytes.NewReader(f.pdf), f.req) {
 		if err != nil || p.Number != 1 {
 			t.Fatalf("first yield is page %d, %v, want page 1", p.Number, err)
 		}
 		break
 	}
-	if now, _ := f.flight.counts(); now != 0 {
-		t.Errorf("%d pages still in flight after the range returned, want none", now)
+	if n := f.gen.awaiting(); n != 0 {
+		t.Errorf("%d requests still in flight after the range returned, want none", n)
 	}
-	if r, _ := f.render.rendered(); len(r) > 4 {
-		t.Errorf("rendered pages %v after the break, want at most the 4 started before it", r)
+	if now, _ := f.render.flight.counts(); now != 0 {
+		t.Errorf("%d renders still in flight after the range returned, want none", now)
 	}
 	assertEmpty(t, f.req.Dir)
 }
 
-// TestPagesContextEnds checks that a ctx that ends stops the stream with ctx's error, yielded
-// once, whether it ended before the stream began or while pages were in flight.
-func TestPagesContextEnds(t *testing.T) {
-	t.Run("before", func(t *testing.T) {
-		f := newFixture(t, 3)
-		ctx, cancel := context.WithCancel(t.Context())
-		cancel()
-		pages, errs := f.pages(ctx)
-		if len(pages) != 1 || !errors.Is(errs[0], context.Canceled) {
-			t.Errorf("the stream yielded %v, %v, want context.Canceled once", pages, errs)
-		}
-		assertEmpty(t, f.req.Dir)
-	})
-	t.Run("during", func(t *testing.T) {
-		f := newFixture(t, 6)
-		f.req.Concurrency = 2
-		ctx, cancel := context.WithCancel(t.Context())
-		defer cancel()
-		f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
-			if page == 1 {
-				return pageAnswer(ctx, page, req)
-			}
-			<-ctx.Done()
-			return nil, ctx.Err()
-		}
-		var pages []document.Page
-		var errs []error
-		for p, err := range f.vision.Pages(ctx, bytes.NewReader(f.pdf), f.req) {
-			pages = append(pages, p)
-			errs = append(errs, err)
-			cancel()
-		}
-		if len(pages) != 2 || errs[0] != nil || pages[1] != (document.Page{}) || !errors.Is(errs[1], context.Canceled) {
-			t.Errorf("the stream yielded %v, %v, want page 1, then context.Canceled once with a zero page", pages, errs)
-		}
-		if now, _ := f.flight.counts(); now != 0 {
-			t.Errorf("%d pages still in flight after the stream ended, want none", now)
-		}
-		assertEmpty(t, f.req.Dir)
-	})
-}
-
-// TestPagesRequestCopy checks each page's request is a copy of the template with one user
-// message appended, the page's PNG as a data URL with its detail unset, and that the template
-// is unchanged and no two requests share an input array.
-func TestPagesRequestCopy(t *testing.T) {
-	f := newFixture(t, 3)
+// TestVisionRequestCopy checks each page's request is a copy of the template with one user message
+// appended, the page's PNG as a data URL with its detail unset, and that the template is unchanged
+// and no two requests share an input array.
+func TestVisionRequestCopy(t *testing.T) {
+	f := newVisionFixture(t, 3)
 	f.req.Concurrency = 3
 	// Spare capacity in the template's input would let an append share it.
 	f.req.Template.Input = slices.Grow(f.req.Template.Input, 4)
@@ -718,7 +772,7 @@ func TestPagesRequestCopy(t *testing.T) {
 	}
 	for _, r := range reqs {
 		page := imagePage(r)
-		if r == f.req.Template || r.Model != "vision" || r.Instructions != document.TranscribeInstructions ||
+		if r == f.req.Template || r.Model != "vision" || r.Instructions != transcribeInstructions ||
 			string(r.Native) != `{"temperature":0}` {
 			t.Errorf("page %d's request %+v isn't a copy of the template", page, r)
 		}
@@ -740,56 +794,24 @@ func TestPagesRequestCopy(t *testing.T) {
 	}
 }
 
-// TestPagesCorrections checks a request's corrections run on each page's image before it is
-// sent, one magick run a page.
-func TestPagesCorrections(t *testing.T) {
-	f := newFixture(t, 2)
-	corrector, runs := standinCorrector(t)
-	vision, err := document.NewVision(f.gen, f.render, corrector)
-	if err != nil {
-		t.Fatal(err)
-	}
-	f.req.Corrections = []document.Correction{document.Grayscale, document.Deskew}
-	var errs []error
-	for _, err := range vision.Pages(t.Context(), bytes.NewReader(f.pdf), f.req) {
-		errs = append(errs, err)
-	}
-	if err := errors.Join(errs...); err != nil || len(errs) != 2 {
-		t.Fatalf("the stream yielded %d pages, %v, want 2 and no error", len(errs), err)
-	}
-	want := []string{"png:-", "-deskew", "40%", "-colorspace", "Gray", "png:-"}
-	got := runs()
-	if len(got) != 2 || !slices.Equal(got[0], want) || !slices.Equal(got[1], want) {
-		t.Errorf("magick ran %q, want two runs of %q", got, want)
-	}
-	// The stand-in magick copies its image through, so each page is sent as rendered.
-	for _, r := range f.gen.requests() {
-		if imagePage(r) == 0 {
-			t.Errorf("request %+v holds no page image", r)
-		}
-	}
-}
-
-// TestPagesRefusals checks the requests Pages refuses before anything runs: the refusal is the
-// stream's one error, and nothing is read, spooled, rendered, or sent.
-func TestPagesRefusals(t *testing.T) {
-	cases := map[string]func(*document.Request){
-		"no directory":       func(r *document.Request) { r.Dir = "" },
-		"no template":        func(r *document.Request) { r.Template = nil },
-		"no model":           func(r *document.Request) { r.Template.Model = "" },
-		"negative dpi":       func(r *document.Request) { r.DPI = -1 },
-		"negative workers":   func(r *document.Request) { r.Concurrency = -2 },
-		"negative retries":   func(r *document.Request) { r.PageRetries = -1 },
-		"no corrector":       func(r *document.Request) { r.Corrections = []document.Correction{document.Deskew} },
-		"unknown correction": func(r *document.Request) { r.Corrections = []document.Correction{0} },
+// TestVisionRefusals checks the harness refuses a request with no template, an invalid one, or a
+// negative retry count before anything runs, and passes Images's refusal on as the stream's one
+// error.
+func TestVisionRefusals(t *testing.T) {
+	cases := map[string]func(*visionRequest){
+		"no template":      func(r *visionRequest) { r.Template = nil },
+		"no model":         func(r *visionRequest) { r.Template.Model = "" },
+		"negative retries": func(r *visionRequest) { r.PageRetries = -1 },
+		"no directory":     func(r *visionRequest) { r.Dir = "" },
+		"negative workers": func(r *visionRequest) { r.Concurrency = -2 },
 	}
 	for name, change := range cases {
 		t.Run(name, func(t *testing.T) {
-			f := newFixture(t, 3)
+			f := newVisionFixture(t, 3)
 			dir := f.req.Dir
 			change(&f.req)
 			pages, errs := f.pages(t.Context())
-			if len(errs) != 1 || errs[0] == nil || pages[0] != (document.Page{}) {
+			if len(errs) != 1 || errs[0] == nil || pages[0] != (visionPage{}) {
 				t.Errorf("the stream yielded %v, %v, want one refusal", pages, errs)
 			}
 			if len(f.render.spooled) != 0 || len(f.gen.requests()) != 0 {
@@ -798,108 +820,17 @@ func TestPagesRefusals(t *testing.T) {
 			assertEmpty(t, dir)
 		})
 	}
-	// A negative DPI is a refusal of its DPI.
-	f := newFixture(t, 1)
-	f.req.DPI = -1
-	if _, errs := f.pages(t.Context()); !errors.Is(errs[0], document.ErrDPI) {
-		t.Errorf("negative DPI: %v, want document.ErrDPI", errs[0])
-	}
 }
 
-// run is one of the entry points, run over f to its end, returning its errors.
-type run func(t *testing.T, f *fixture, pdf io.Reader) error
-
-// entries are Pages and Document, for the spool's tests, which hold for both.
-var entries = map[string]run{
-	"Pages": func(t *testing.T, f *fixture, pdf io.Reader) error {
-		var errs []error
-		for _, err := range f.vision.Pages(t.Context(), pdf, f.req) {
-			errs = append(errs, err)
-		}
-		return errors.Join(errs...)
-	},
-	"Document": func(t *testing.T, f *fixture, pdf io.Reader) error {
-		_, err := f.vision.Document(t.Context(), pdf, f.req)
-		return err
-	},
-}
-
-// TestSpool checks that the PDF is spooled into the caller's directory with the reader's content,
-// a file of each call's own, and removed when the call ends.
-func TestSpool(t *testing.T) {
-	for name, entry := range entries {
-		t.Run(name, func(t *testing.T) {
-			f := newFixture(t, 2)
-			pdf, err := os.ReadFile(filepath.Join("testdata", "clean.pdf"))
-			if err != nil {
-				t.Fatal(err)
-			}
-			for range 2 {
-				if err := entry(t, f, bytes.NewReader(pdf)); err != nil {
-					t.Fatal(err)
-				}
-			}
-			if len(f.render.spooled) != 2 || f.render.spooled[0] == f.render.spooled[1] {
-				t.Errorf("spooled to %v, want two files", f.render.spooled)
-			}
-			for i, path := range f.render.spooled {
-				if got := filepath.Dir(path); got != f.req.Dir {
-					t.Errorf("spooled into %s, want the caller's %s", got, f.req.Dir)
-				}
-				if !bytes.Equal(f.render.pdf[i], pdf) {
-					t.Errorf("spooled %d bytes, want the reader's %d, equal", len(f.render.pdf[i]), len(pdf))
-				}
-			}
-			assertEmpty(t, f.req.Dir)
-		})
-	}
-}
-
-// TestSpoolFailedRead checks that a reader that fails part way is the call's error, and leaves
-// nothing in the caller's directory, nothing counted.
-func TestSpoolFailedRead(t *testing.T) {
-	for name, entry := range entries {
-		t.Run(name, func(t *testing.T) {
-			f := newFixture(t, 2)
-			readErr := errors.New("connection reset")
-			pdf := io.MultiReader(bytes.NewReader([]byte("%PDF-1.7")), iotest.ErrReader(readErr))
-			if err := entry(t, f, pdf); !errors.Is(err, readErr) {
-				t.Errorf("returned %v, want the reader's %v", err, readErr)
-			}
-			if len(f.render.spooled) != 0 {
-				t.Error("counted pages after a failed read")
-			}
-			assertEmpty(t, f.req.Dir)
-		})
-	}
-}
-
-// TestSpoolNoDirectory checks that the call needs the caller's directory: an empty one is
-// refused, not taken as the system's temporary directory, and a missing one fails.
-func TestSpoolNoDirectory(t *testing.T) {
-	for name, entry := range entries {
-		t.Run(name, func(t *testing.T) {
-			f := newFixture(t, 2)
-			f.req.Dir = ""
-			if err := entry(t, f, bytes.NewReader(f.pdf)); err == nil {
-				t.Error("ran with no directory, want an error")
-			}
-			f.req.Dir = filepath.Join(t.TempDir(), "missing")
-			if err := entry(t, f, bytes.NewReader(f.pdf)); !errors.Is(err, fs.ErrNotExist) {
-				t.Errorf("ran in a missing directory: %v, want fs.ErrNotExist", err)
-			}
-		})
-	}
-}
-
-// TestDocument checks Document's final request: a copy of the final template with one user
-// message, a "Page N of M:" text part per page in page order, and its result.
-func TestDocument(t *testing.T) {
-	f := newFixture(t, 4)
+// TestVisionDocument checks document's final request: a copy of the final template with one user
+// message, a "Page N of M:" text part per page in page order, and its result, whose Text joins the
+// same parts.
+func TestVisionDocument(t *testing.T) {
+	f := newVisionFixture(t, 4)
 	f.req.Concurrency = 4
-	f.render.delay = func(page int) time.Duration { return time.Duration(5-page) * 5 * time.Millisecond }
+	f.render.wait = delays(func(page int) time.Duration { return time.Duration(5-page) * 5 * time.Millisecond })
 	finalBefore := *f.req.Final
-	res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
+	res, err := f.vision.document(t.Context(), bytes.NewReader(f.pdf), f.req)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -938,64 +869,20 @@ func TestDocument(t *testing.T) {
 	if got := res.Text(); got != wantText {
 		t.Errorf("the result's text is %q, want %q", got, wantText)
 	}
-}
-
-// TestDocumentTextSharesHeadings checks the result's Text is the final request's parts, the same
-// "Page N of M:" headings over the same text, joined by a blank line, for a page's text with
-// line breaks of its own.
-func TestDocumentTextSharesHeadings(t *testing.T) {
-	f := newFixture(t, 3)
-	f.gen.respond = func(_ context.Context, page int, _ *protocol.Request) (*protocol.Response, error) {
-		if page == 0 {
-			return answer("summary"), nil
-		}
-		return answer(fmt.Sprintf("line one of page %d\nline two\n", page)), nil
-	}
-	res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
-	if err != nil {
-		t.Fatal(err)
-	}
-	reqs := f.gen.requests()
-	msg := reqs[len(reqs)-1].Input[0].(protocol.Message)
-	var parts []string
-	for _, p := range msg.Content {
-		parts = append(parts, p.(protocol.InputText).Text)
-	}
-	if got, want := res.Text(), strings.Join(parts, "\n\n"); got != want {
-		t.Errorf("the result's text is %q, want the final request's parts joined, %q", got, want)
-	}
-}
-
-// TestResultText checks Text on a Result Document returned with an error: every page, in page
-// order, a page with no response as its heading alone and a page whose response isn't completed
-// with the text it holds. A nil Result and one with no pages return "".
-func TestResultText(t *testing.T) {
-	partial := answer("half of page 3")
-	partial.Status = protocol.StatusIncomplete
-	res := &document.Result{Pages: []document.PageResult{
-		{Number: 1, Count: 3, Response: answer("text of page 1")},
-		{Number: 2, Count: 3, Err: errors.New("gs: page 2 is damaged")},
-		{Number: 3, Count: 3, Response: partial, Err: errors.New("incomplete")},
-	}}
-	want := "Page 1 of 3:\ntext of page 1\n\nPage 2 of 3:\n\n\nPage 3 of 3:\nhalf of page 3"
-	if got := res.Text(); got != want {
-		t.Errorf("Text is %q, want %q", got, want)
-	}
-	var none *document.Result
+	var none *docResult
 	if got := none.Text(); got != "" {
-		t.Errorf("a nil Result's text is %q, want empty", got)
-	}
-	if got := (&document.Result{}).Text(); got != "" {
-		t.Errorf("an empty Result's text is %q, want empty", got)
+		t.Errorf("a nil result's text is %q, want empty", got)
 	}
 }
 
-// TestDocumentFailedPages checks a failed page fails Document before the final request, with an
-// error naming each failed page, a 413 among them matchable with errors.As, and every page's
-// entry in the result. A page whose response isn't completed fails too.
-func TestDocumentFailedPages(t *testing.T) {
-	f := newFixture(t, 5)
+// TestVisionDocumentFailedPages checks a failed page fails document before the final request, with
+// an error naming each failed page, a 413 among them matchable with errors.As, and every page's
+// entry in the result. A page whose response isn't completed after its retries fails too, its
+// response kept.
+func TestVisionDocumentFailedPages(t *testing.T) {
+	f := newVisionFixture(t, 5)
 	f.req.Concurrency = 2
+	f.req.PageRetries = 1
 	tooLarge := &client.APIError{Status: http.StatusRequestEntityTooLarge, Message: "request body too large"}
 	f.render.fail = map[int]error{2: errors.New("gs: page 2 is damaged")}
 	f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
@@ -1003,21 +890,17 @@ func TestDocumentFailedPages(t *testing.T) {
 		case 4:
 			return nil, tooLarge
 		case 5:
-			return &protocol.Response{Status: protocol.StatusIncomplete,
-				IncompleteDetails: &protocol.IncompleteDetails{Reason: protocol.ReasonMaxOutputTokens}}, nil
+			return incomplete("seal seal"), nil
 		}
 		return pageAnswer(ctx, page, req)
 	}
-	res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
-	if err == nil {
-		t.Fatal("Document with failed pages succeeded, want an error")
-	}
-	if !strings.Contains(err.Error(), "[2 4 5]") {
-		t.Errorf("Document returned %v, want an error naming pages 2, 4, and 5", err)
+	res, err := f.vision.document(t.Context(), bytes.NewReader(f.pdf), f.req)
+	if err == nil || !strings.Contains(err.Error(), "[2 4 5]") || !strings.Contains(err.Error(), "attempts 2") {
+		t.Errorf("document returned %v, want an error naming pages 2, 4, and 5, and page 5's 2 attempts", err)
 	}
 	var api *client.APIError
 	if !errors.As(err, &api) || api != tooLarge {
-		t.Errorf("Document returned %v, want page 4's *client.APIError matchable with errors.As", err)
+		t.Errorf("document returned %v, want page 4's *client.APIError matchable with errors.As", err)
 	}
 	if len(res.Pages) != 5 {
 		t.Fatalf("the result holds %d pages, want 5", len(res.Pages))
@@ -1041,139 +924,44 @@ func TestDocumentFailedPages(t *testing.T) {
 	}
 }
 
-// TestDocumentRetries checks Document's pages are retried as Pages's are: a page completed on a
-// retry succeeds, its attempts in the result, and a page incomplete after its retries fails
-// Document before the final request, naming the page, its response kept. The final request is
-// sent once.
-func TestDocumentRetries(t *testing.T) {
-	t.Run("completed", func(t *testing.T) {
-		f := newFixture(t, 3)
-		f.req.PageRetries = 1
-		f.gen.respond, _ = cutOff(2, 1)
-		res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
-		if err != nil {
-			t.Fatal(err)
-		}
-		for _, p := range res.Pages {
-			want := 1
-			if p.Number == 2 {
-				want = 2
-			}
-			if p.Attempts != want || p.Err != nil {
-				t.Errorf("result page %d: %v, %d attempts, want no error and %d", p.Number, p.Err, p.Attempts, want)
-			}
-		}
-		if res.Final == nil || text(res.Final) != "summary" || text(res.Pages[1].Response) != "text of page 2" {
-			t.Errorf("the result is %+v, want page 2's completed text and the summary", res)
-		}
-	})
-	t.Run("exhausted", func(t *testing.T) {
-		f := newFixture(t, 3)
-		f.req.PageRetries = 2
-		f.gen.respond, _ = cutOff(2, -1)
-		res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
-		if err == nil || !strings.Contains(err.Error(), "[2]") || !strings.Contains(err.Error(), "attempts 3") {
-			t.Errorf("Document returned %v, want an error naming page 2 and its 3 attempts", err)
-		}
-		if res == nil || len(res.Pages) != 3 || res.Pages[1].Err == nil || res.Pages[1].Attempts != 3 ||
-			res.Pages[1].Response == nil || res.Final != nil {
-			t.Fatalf("the result is %+v, want page 2 failed after 3 attempts, its response kept, and no final", res)
-		}
-		for _, r := range f.gen.requests() {
-			if r.Model == "final" {
-				t.Error("the final request was sent after a page failed")
-			}
-		}
-	})
-	t.Run("final not retried", func(t *testing.T) {
-		f := newFixture(t, 1)
+// TestVisionDocumentFinal checks a final response that isn't completed is an error, sent once and
+// never retried, the response kept in the result, and that document refuses a request with no
+// final template, or an invalid one, before anything runs.
+func TestVisionDocumentFinal(t *testing.T) {
+	t.Run("incomplete", func(t *testing.T) {
+		f := newVisionFixture(t, 2)
 		f.req.PageRetries = 3
+		cut := incomplete("sum")
 		f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
 			if page == 0 {
-				return incomplete("sum"), nil
+				return cut, nil
 			}
 			return pageAnswer(ctx, page, req)
 		}
-		if _, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req); err == nil {
-			t.Error("Document with an incomplete final response succeeded, want an error")
+		res, err := f.vision.document(t.Context(), bytes.NewReader(f.pdf), f.req)
+		if err == nil || !strings.Contains(err.Error(), "incomplete") {
+			t.Errorf("document returned %v, want an error for the incomplete final response", err)
 		}
-		if got := len(f.gen.requests()); got != 2 {
-			t.Errorf("%d requests sent, want the page and the final, once each", got)
+		if res == nil || res.Final != cut || len(res.Pages) != 2 {
+			t.Errorf("the result is %+v, want both pages and the incomplete final response", res)
+		}
+		if got := len(f.gen.requests()); got != 3 {
+			t.Errorf("%d requests sent, want the two pages and the final, once each", got)
 		}
 	})
-}
-
-// TestDocumentFinalIncomplete checks a final response that isn't completed is an error, the
-// response kept in the result.
-func TestDocumentFinalIncomplete(t *testing.T) {
-	f := newFixture(t, 2)
-	incomplete := &protocol.Response{Status: protocol.StatusIncomplete,
-		IncompleteDetails: &protocol.IncompleteDetails{Reason: protocol.ReasonMaxOutputTokens}}
-	f.gen.respond = func(ctx context.Context, page int, req *protocol.Request) (*protocol.Response, error) {
-		if page == 0 {
-			return incomplete, nil
-		}
-		return pageAnswer(ctx, page, req)
-	}
-	res, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req)
-	if err == nil || !strings.Contains(err.Error(), "incomplete") {
-		t.Errorf("Document returned %v, want an error for the incomplete final response", err)
-	}
-	if res == nil || res.Final != incomplete || len(res.Pages) != 2 {
-		t.Errorf("the result is %+v, want both pages and the incomplete final response", res)
-	}
-}
-
-// TestDocumentRefusals checks Document refuses a request with no final template, or an invalid
-// one, before anything runs, and a request Pages refuses.
-func TestDocumentRefusals(t *testing.T) {
-	cases := map[string]func(*document.Request){
-		"no final":       func(r *document.Request) { r.Final = nil },
-		"no final model": func(r *document.Request) { r.Final.Model = "" },
-		"no template":    func(r *document.Request) { r.Template = nil },
-	}
-	for name, change := range cases {
+	for name, change := range map[string]func(*visionRequest){
+		"no final":       func(r *visionRequest) { r.Final = nil },
+		"no final model": func(r *visionRequest) { r.Final.Model = "" },
+	} {
 		t.Run(name, func(t *testing.T) {
-			f := newFixture(t, 2)
-			dir := f.req.Dir
+			f := newVisionFixture(t, 2)
 			change(&f.req)
-			if _, err := f.vision.Document(t.Context(), bytes.NewReader(f.pdf), f.req); err == nil {
-				t.Error("Document succeeded, want a refusal")
+			if _, err := f.vision.document(t.Context(), bytes.NewReader(f.pdf), f.req); err == nil {
+				t.Error("document succeeded, want a refusal")
 			}
 			if len(f.render.spooled) != 0 || len(f.gen.requests()) != 0 {
 				t.Error("the refused request counted or sent")
 			}
-			assertEmpty(t, dir)
 		})
-	}
-}
-
-// text returns a response's output text, or "" for nil.
-func text(r *protocol.Response) string {
-	if r == nil {
-		return ""
-	}
-	var s strings.Builder
-	for _, it := range r.Output {
-		if m, ok := it.(protocol.Message); ok {
-			for _, p := range m.Content {
-				if o, ok := p.(protocol.OutputText); ok {
-					s.WriteString(o.Text)
-				}
-			}
-		}
-	}
-	return s.String()
-}
-
-// assertEmpty fails the test when dir holds anything.
-func assertEmpty(t *testing.T, dir string) {
-	t.Helper()
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, e := range entries {
-		t.Errorf("%s left behind in the caller's directory", e.Name())
 	}
 }

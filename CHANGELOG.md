@@ -16,19 +16,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   program with a vfork-style clone, so the program's rusage peak starts at the Go parent's
   resident memory.
 - `document`, which prepares a PDF's pages for a model's vision, on Linux, the standard library,
-  `tool`, and spike-ai-pipeline-client, which the module now requires at v0.4.0. `Generator` is
-  the one method it needs of the client, `Generate`, which `*client.Client` satisfies.
+  and `tool`. It provides pre-inference preparation only: a layer above sends the prepared pages
+  to a model. The module requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the
+  vision harness the integration and bake-off tiers run on; no released file imports it.
 - The page-renderer interface, `Renderer`: `Count` returns a PDF's page count, and `Render`
   writes one page, 1-based, as PNG at a DPI to a writer, one process per page.
   `CheckRender(page, dpi)` makes a renderer's refusals, running no tool: a DPI of zero or less
   (`ErrDPI`) and a page below 1 (`ErrPageRange`). It doesn't count the pages, so a `Render` past
   the last page gives its rendering tool's own error; a caller walking a PDF's pages refuses one
   past the last against its own count.
-- `TranscribeInstructions`, the text of a request for a page's transcription: every word on the
-  page, in reading order, as plain text, and nothing else, sent in one user message beside the
-  page's image. The bake-off sent it with reasoning off, a `Reasoning.Effort` of none, as a
-  request for a transcription should: Gemma 4 26B-A4B, reasoning, ran a hard scanned page to
-  its output cap with no text.
 - The corrections stage: `Correction` values `Deskew`, `Despeckle`, `ContrastStretch`, `Unsharp`,
   and `Grayscale`, each one ImageMagick operator, applied in that fixed order however a request
   lists them. `NewCorrector` builds the stage over a magick `Tool` from either runner, refusing
@@ -44,42 +40,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   zero with a message in place of a PNG; `Render` returns that message as its error and writes
   nothing. Ghostscript is AGPL-licensed, and the renderer runs it as a separate program, never
   linked. The renderer bake-off's gs entry runs it.
-- `Vision`, the pages and the document over the stages, built by `NewVision` from a `Generator`,
-  a `Renderer`, and an optional `*Corrector`, refusing a nil generator or renderer. A `Request`
-  names the working directory the caller owns, the per-page template, the DPI (zero means 150),
-  the corrections, which a vision with no corrections stage refuses, the concurrency (zero means
-  1), and, for `Document`, the final template; it is refused before anything runs.
-  `Vision.Pages` returns a lazy `iter.Seq2[Page, error]`: it spools the PDF, read from an
-  `io.Reader`, into the request's directory, counts its pages, and renders, corrects, and sends
-  each page in a copy of the template with one user message appended, the page's PNG as a data
-  URL, with at most the request's concurrency of pages in flight, rendering included. Pages come
-  back in page order; a failed page yields its number and its error, and the stream carries on;
-  a failed spool or count, or an ended context, yields one error and ends the stream. Breaking
-  out of the range cancels the work in flight and returns once it has ended, and the spooled PDF
-  is removed when the stream ends. `Vision.Document` runs the pages and then one final request,
-  a copy of the final template with a `Page N of M:` text part per page; a page that failed or
-  whose response isn't completed fails it before the final request, with an error naming the
-  pages, and a final response that isn't completed is an error, the `Result` keeping it. The
-  package sets no size limit on a page's image: the server's 413 is that page's error, a
-  `*client.APIError` matchable with `errors.As`.
-- `Result.Text`, a `Document`'s digitized content: every page's output text, in page order,
-  each under the same `Page N of M:` heading the final request gives its part, one helper making
-  both, the pages joined by a blank line. A result returned with an error keeps every page in
-  it, a page with no response as its heading alone and an incomplete page with the text it
-  holds; a nil result's text is empty. `Document` digitizes, then digests: the final response
-  derives from the transcriptions and never replaces them, and what it holds, such as a digest
-  for search under a JSON schema, is the caller's final template's to ask; the package imposes
-  no schema.
-- `Request.PageRetries` and `Page.Attempts`: a page whose response isn't completed, such as one
-  incomplete at its output cap because the model looped on the page's text, is sent again, up
-  to `PageRetries` times, with the image already rendered and corrected, holding its
-  concurrency slot, in `Pages` and `Document` alike. Zero sends each page once; a negative count
-  is refused. A page whose `Generate` fails is never re-sent: transport retry is the client's
-  opt-in `Config.Retry`. An ended context stops the retries. `Pages` yields a page incomplete
-  after its retries with its last response, as before; `Document` fails on it, naming its
-  attempts. `Attempts` is how many times the page was sent, 0 for a page that failed before it
-  was sent. `Document`'s final request is sent once. The vision integration tests cap a page at
-  2048 output tokens, retry a page once, and record each page that needed a retry.
+- `Preparer`, the prepared-page stream over the stages, built by `NewPreparer` from a `Renderer`
+  and an optional `*Corrector`, refusing a nil renderer. An `ImagesRequest` names the working
+  directory the caller owns, the DPI (zero means 150), the corrections, which a preparer with no
+  corrections stage refuses, and the concurrency (zero means 1); it is refused before anything
+  runs. `Preparer.Images` returns a lazy `iter.Seq2[PageImage, error]`: it spools the PDF, read
+  from an `io.Reader`, into the request's directory, counts its pages, and renders and corrects
+  each page, yielding a `PageImage` of its number, the page count, and its PNG, with at most the
+  request's concurrency of pages being prepared at once. Pages come back in page order; a failed
+  page yields its number and count with its error, and the stream carries on; a refused request,
+  a failed spool or count, or an ended context yields one error and ends the stream. Breaking out
+  of the range cancels the work in flight and returns once it has ended, and the spooled PDF is
+  removed when the stream ends. The package sets no size limit on a page's image.
 - The document fixtures in `document/testdata`, letter size, with each page's ground truth: a
   six-page clean PDF and a nine-page degraded PDF, regenerated byte for byte from a typst source
   by `generate.sh`, whose pages carry skew, fade, speckle, and blur each at a moderate and a

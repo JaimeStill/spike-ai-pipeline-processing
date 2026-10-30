@@ -20,23 +20,23 @@ import (
 	client "github.com/JaimeStill/spike-ai-pipeline-client"
 	"github.com/JaimeStill/spike-ai-pipeline-client/format/completions"
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
-	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 )
 
-// The vision tier: Pages and Document on clean.pdf through the host's gs, each page sent to
-// Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, which set A loads, and Document's final
+// The vision tier: the vision harness's pages and document (vision_test.go), on the released
+// Images stream, on clean.pdf through the host's gs, each page sent to Gemma 4 26B-A4B on the
+// router SPIKE_ROUTER_URL names, which set A loads, and document's final
 // request to gpt-oss-120b for a digest for search under a JSON schema. Each test records its wall
 // time and the pages' character error rate against their ground truth, and asserts only
-// completion, page order, and the digest's schema; Document runs on scanned.pdf too. A page is
+// completion, page order, and the digest's schema; document runs on scanned.pdf too. A page is
 // sent again once when its response isn't completed, and a recorded line names every page that
-// needed it. Document's tests record the final request's input tokens against the context of one
+// needed it. document's tests record the final request's input tokens against the context of one
 // of the digest model's slots, and TestVisionImageTokensHost records how many tokens a letter
 // page's image costs at each DPI.
 
 const (
 	// visionModel transcribes the pages, as in the renderer bake-off.
 	visionModel = "ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0"
-	// digestModel writes Document's digest.
+	// digestModel writes document's digest.
 	digestModel = "ggml-org/gpt-oss-120b-GGUF:MXFP4"
 	// visionConcurrency is the pages in flight, the router's parallel slots for the model.
 	visionConcurrency = 4
@@ -70,23 +70,23 @@ func routerClient(t *testing.T) *client.Client {
 	return c
 }
 
-// hostVision builds a Vision over the router's Client and the host's gs, with no corrections
+// hostVision builds a vision over the router's Client and the host's gs, with no corrections
 // stage, and a request for a PDF: each page transcribed as the bake-off transcribes, greedy and
 // with reasoning off, at 150 dpi and 4 pages at once, capped at pageOutputCap and retried
 // pageRetries times, and a final request for a digest.
-func hostVision(t *testing.T) (*document.Vision, document.Request) {
+func hostVision(t *testing.T) (*vision, visionRequest) {
 	t.Helper()
 	c := routerClient(t)
 	g, _ := hostGhostscript(t)
-	v, err := document.NewVision(c, g, nil)
+	v, err := newVision(c, g, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	return v, document.Request{
+	return v, visionRequest{
 		Dir: t.TempDir(),
 		Template: &protocol.Request{
 			Model:           visionModel,
-			Instructions:    document.TranscribeInstructions,
+			Instructions:    transcribeInstructions,
 			Reasoning:       protocol.ReasoningParam{Effort: protocol.ReasoningEffortNone},
 			MaxOutputTokens: pageOutputCap,
 			Native:          jsontext.Value(`{"temperature":0}`),
@@ -175,7 +175,7 @@ func checkDigest(t *testing.T, final *protocol.Response) string {
 
 // recordRetries logs a recorded line for every page of a run that was sent more than once, with
 // its attempts and its last response's status, and returns how many pages that is.
-func recordRetries(t *testing.T, run string, pages []document.Page) int {
+func recordRetries(t *testing.T, run string, pages []visionPage) int {
 	t.Helper()
 	retried := 0
 	for _, p := range pages {
@@ -192,22 +192,22 @@ func recordRetries(t *testing.T, run string, pages []document.Page) int {
 	return retried
 }
 
-// resultPages returns a Document result's pages, for recordRetries, or none for a nil result.
-func resultPages(res *document.Result) []document.Page {
+// resultPages returns a document result's pages, for recordRetries, or none for a nil result.
+func resultPages(res *docResult) []visionPage {
 	if res == nil {
 		return nil
 	}
-	pages := make([]document.Page, 0, len(res.Pages))
+	pages := make([]visionPage, 0, len(res.Pages))
 	for _, p := range res.Pages {
-		pages = append(pages, p.Page)
+		pages = append(pages, p.visionPage)
 	}
 	return pages
 }
 
-// heading matches the "Page N of M:" heading lines Result.Text gives each page.
+// heading matches the "Page N of M:" heading lines docResult.Text gives each page.
 var heading = regexp.MustCompile(`(?m)^Page \d+ of \d+:$`)
 
-// stripHeadings returns a Result's Text with its page headings removed, for scoring against the
+// stripHeadings returns a docResult's Text with its page headings removed, for scoring against the
 // ground truth, which has none.
 func stripHeadings(s string) string { return heading.ReplaceAllString(s, "") }
 
@@ -277,7 +277,7 @@ func slotContext(t *testing.T, model string) int {
 	return props.Settings.NCtx
 }
 
-// recordFinal logs a recorded line with Document's final request's input tokens against the
+// recordFinal logs a recorded line with document's final request's input tokens against the
 // context of one of the digest model's slots, and fails t when the request filled it.
 func recordFinal(t *testing.T, run string, final *protocol.Response) {
 	t.Helper()
@@ -297,9 +297,9 @@ func TestVisionPagesHost(t *testing.T) {
 	truth := cleanTruth(t)
 	start := time.Now()
 	var edits, chars int
-	var pages []document.Page
+	var pages []visionPage
 	next := 1
-	for p, err := range v.Pages(t.Context(), openClean(t), req) {
+	for p, err := range v.pages(t.Context(), openClean(t), req) {
 		pages = append(pages, p)
 		if err != nil {
 			t.Fatalf("page %d: %v", p.Number, err)
@@ -323,7 +323,7 @@ func TestVisionPagesHost(t *testing.T) {
 		next-1, req.Concurrency, time.Since(start).Round(time.Millisecond), rate(edits, chars), retried)
 }
 
-// TestVisionDocumentHost checks Document on clean.pdf completes every page, in page order, and
+// TestVisionDocumentHost checks document on clean.pdf completes every page, in page order, and
 // a digest that decodes as the schema's object, and records its wall time, the pages' character
 // error rate, the digest in full, and the result's Text against the joined ground truth: its
 // length, and its character error rate with its page headings stripped.
@@ -331,7 +331,7 @@ func TestVisionDocumentHost(t *testing.T) {
 	v, req := hostVision(t)
 	truth := cleanTruth(t)
 	start := time.Now()
-	res, err := v.Document(t.Context(), openClean(t), req)
+	res, err := v.document(t.Context(), openClean(t), req)
 	elapsed := time.Since(start)
 	retried := recordRetries(t, "vision Document clean.pdf", resultPages(res))
 	if err != nil {
@@ -361,7 +361,7 @@ func TestVisionDocumentHost(t *testing.T) {
 	t.Logf("recorded: vision Document clean.pdf digest: %s", out)
 }
 
-// TestVisionDocumentScannedHost checks Document on scanned.pdf, real scans of marked documents,
+// TestVisionDocumentScannedHost checks document on scanned.pdf, real scans of marked documents,
 // completes every page and a digest that decodes as the schema's object, and records its wall
 // time, the pages' character error rate, the final request's input tokens, and the digest in
 // full.
@@ -369,7 +369,7 @@ func TestVisionDocumentScannedHost(t *testing.T) {
 	v, req := hostVision(t)
 	truth := truthOf(t, "scanned")
 	start := time.Now()
-	res, err := v.Document(t.Context(), openSet(t, "scanned"), req)
+	res, err := v.document(t.Context(), openSet(t, "scanned"), req)
 	elapsed := time.Since(start)
 	retried := recordRetries(t, "vision Document scanned.pdf", resultPages(res))
 	if err != nil {

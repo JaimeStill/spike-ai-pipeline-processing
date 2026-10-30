@@ -1,9 +1,10 @@
 //go:build linux
 
-// Package document prepares a PDF's pages for a model's vision: a page rendered to PNG, and the
-// page image corrected for scan defects, for a model reached through spike-ai-pipeline-client. The
-// package builds on Linux only, on the standard library, this module's tool package, and
-// spike-ai-pipeline-client; every system tool it runs is a tool.Tool the caller built.
+// Package document prepares a PDF's pages for a model's vision: each page rendered to PNG, and
+// the page image corrected for scan defects. It provides pre-inference preparation only; a layer
+// above sends the prepared pages to a model and owns the requests, retries, and any final step.
+// The package builds on Linux only, on the standard library and this module's tool package; every
+// system tool it runs is a tool.Tool the caller built.
 //
 // A Renderer works per page. Count returns a PDF's page count, and Render writes one page, 1-based,
 // as PNG at a DPI to a writer, one process per page. A renderer counts pages with a tool from its
@@ -28,36 +29,19 @@
 // runner, MagickSpec declaring it, and refuses one older than 7.1. The stage works on any page
 // image, not only a rendered one.
 //
-// A Generator is the one method the package needs of spike-ai-pipeline-client, Generate, which
-// *client.Client satisfies. TranscribeInstructions is the text of a request for a page's
-// transcription, sent in one user message beside the page's image.
-//
-// A Vision puts the stages together, built at the composition root from a Generator, a Renderer,
-// and, optionally, a Corrector. Pages streams a PDF's pages through the model: it spools the PDF,
-// read from an io.Reader, into the working directory the Request names, which the caller owns,
-// counts its pages, and renders, corrects, and sends each page in a copy of the request's template
-// with one user message appended, the page's PNG as a data URL. A page whose response isn't
-// completed, such as one a looping model ran to its output cap, is sent again with the same image,
-// up to the request's page retries, holding its slot, and comes back with its last response and its
-// attempts; a page whose request fails is never re-sent, transport retry being the client's own
-// opt-in policy. At most the request's concurrency of pages are in flight, and pages come back in
-// page order, a failed page as its error, the stream carrying on. The stream is lazy, breaking out
-// of it cancels the work in flight and returns once that work has ended, and the spooled PDF is
-// removed when it ends. Document digitizes, then digests: it runs the pages, whose transcriptions
-// are the document's digitized content, and then one final request, a copy of the request's final
-// template with each page's output text appended as "Page N of M:" parts, and a failed page, or one
-// still incomplete after its retries, fails it before the final request. The final response derives
-// from the transcriptions and never replaces them: the caller's final template asks for what it
-// wants of them, such as a digest for search under a JSON schema, and the package imposes no
-// schema. The result's Text joins the transcriptions under the same headings. The package sets no
-// size limit on a page's image; the server's refusal of one is that page's error.
+// A Preparer puts the stages together, built at the composition root from a Renderer and,
+// optionally, a Corrector. Images streams a PDF's prepared pages: it spools the PDF, read from an
+// io.Reader, into the working directory the ImagesRequest names, which the caller owns, counts its
+// pages, and renders and corrects each page, yielding a PageImage of its number, the page count,
+// and its PNG. At most the request's concurrency of pages are being prepared at once, and pages
+// come back in page order, a failed page as its number and count with its error, the stream
+// carrying on. A refused request, a failed spool or count, or an ended context is the stream's one
+// error. The stream is lazy, breaking out of it cancels the work in flight and returns once that
+// work has ended, and the spooled PDF is removed when it ends. The package sets no size limit on a
+// page's image.
 //
 // Its exported identifiers:
 //
-//   - [Generator] sends one request to a model and returns its response; *client.Client
-//     satisfies it.
-//   - [TranscribeInstructions] asks a vision model for every word on a page, in reading order,
-//     as plain text.
 //   - [Renderer] counts a PDF's pages and renders one page as PNG at a DPI.
 //   - [CheckRender] makes a Renderer's refusals of a DPI and a page.
 //   - [Ghostscript] is the released Renderer, over Ghostscript's gs.
@@ -76,14 +60,10 @@
 //   - [Corrector.Correct] runs a page image through the corrections a request names.
 //   - [MagickSpec] declares ImageMagick's magick for either runner's constructor.
 //   - [MagickMinimum] is the oldest magick the stage accepts, 7.1.
-//   - [Vision] runs a PDF's pages through a model's vision.
-//   - [NewVision] builds a Vision over a Generator, a Renderer, and an optional Corrector.
-//   - [Request] is one PDF's run through a Vision: its working directory, page template, DPI,
-//     corrections, concurrency, page retries, and Document's final template.
-//   - [Page] is one page's number, the page count, the model's response, and its attempts.
-//   - [Vision.Pages] streams a PDF's pages through the model, in page order.
-//   - [Vision.Document] runs a PDF's pages and then one final request over their text.
-//   - [Result] is a Document's pages and its final response.
-//   - [Result.Text] returns a Document's digitized content, its pages' text under their headings.
-//   - [PageResult] is one page of a Document with its error.
+//   - [Preparer] prepares a PDF's pages for a model's vision.
+//   - [NewPreparer] builds a Preparer over a Renderer and an optional Corrector.
+//   - [ImagesRequest] is one PDF's run through Images: its working directory, DPI, corrections,
+//     and concurrency.
+//   - [PageImage] is one prepared page's number, the page count, and its PNG.
+//   - [Preparer.Images] streams a PDF's prepared pages, in page order.
 package document

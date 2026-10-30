@@ -9,6 +9,12 @@ image, can clean the image up first, and asks a vision model to transcribe it. T
 what the measurements behind those choices found: which renderer to ship, whether the model should
 reason while it reads, whether image corrections help, and what a whole document costs.
 
+Since ruling M of task `documents`, the package releases only the preparation: `Preparer.Images`, the rendered and
+corrected pages. The inference these measurements ran, `Vision` with its `Pages` and `Document`,
+`Request.PageRetries`, `Page.Attempts`, `Result.Text`, and `TranscribeInstructions`, moved into
+test code, `document/vision_test.go`, as the vision harness the integration and bake-off tiers run
+on, built on `Images`. The names below are those the runs used.
+
 Two models do the work. Gemma 4 26B-A4B (`ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0`) reads the
 pages. gpt-oss-120b (`ggml-org/gpt-oss-120b-GGUF:MXFP4`) writes the document's digest. Every
 number here comes from a recorded run: a test's `recorded:` log line, or the JSON results a run
@@ -30,7 +36,7 @@ kept. Each section says which run.
 ### Method
 
 Five renderers each turned every fixture page into a PNG at 150 dpi. Each PNG went to Gemma 4
-26B-A4B with `TranscribeInstructions`, and the transcription was scored against the page's ground
+26B-A4B with `TranscribeInstructions` (now the test code's `transcribeInstructions`), and the transcription was scored against the page's ground
 truth. The bake-off is its own test tier, `mise run bakeoff` (`-tags bakeoff`;
 `document/bakeoff_test.go` and `document/renderers_bakeoff_test.go`). It isn't CI.
 
@@ -132,7 +138,7 @@ no incomplete pages in either run, so its numbers compare directly: its scanned 
 ### Method
 
 The corrections matrix runs the degraded set (9 pages) and the scanned set (7 pages) through
-`Vision.Pages`, with the released renderer and the corrections stage on the laptop's ImageMagick
+`Vision.Pages` (now the vision harness's `pages`, over `Images`), with the released renderer and the corrections stage on the laptop's ImageMagick
 7.1.2-34. It has seven cells: no correction (`none`); each of the five alone (Deskew
 `-deskew 40%`, Despeckle `-despeckle`, ContrastStretch `-contrast-stretch 0.5%x0.5%`, Unsharp
 `-unsharp 0x1`, Grayscale `-colorspace Gray`); and all five together (`all`). Each cell had 3
@@ -259,7 +265,8 @@ results support.
 
 ## Pages and Document on gb10-2
 
-The integration tier (`document/vision_integration_test.go`) runs both entry points against
+The integration tier (`document/vision_integration_test.go`) runs both entry points, now the
+vision harness's `pages` and `document` over `Images`, against
 gb10-2: each page through Gemma 4 26B-A4B as the bake-off transcribes it, 4 pages in flight, a
 2048-token page cap, and one page retry, and Document's final request to gpt-oss-120b at low
 reasoning effort for a digest under a JSON schema (summary, title, kind, dates, markings,
