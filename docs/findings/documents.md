@@ -2,7 +2,8 @@
 
 Task `documents`, evidence 4 and 11 and behaviors 11 to 14 (the root's goal record,
 `context/goals/experiment.ai.spike-ai-pipeline.md`, "Task brief · experiment.ai.spike-ai-pipeline ·
-documents"). Measured 2026-10-29 from the laptop, against gb10-2's llama.cpp router serving set A.
+documents"). Measured 2026-10-29 from the laptop, against gb10-2's llama.cpp router serving set A;
+the instruction placement and the staged flow, rulings L and N, on 2026-10-30.
 
 The `document` package turns a PDF into text a model can work with. It renders each page to an
 image, can clean the image up first, and asks a vision model to transcribe it. This page records
@@ -29,6 +30,8 @@ kept. Each section says which run.
 | Do image corrections help? | **Not reliably.** At 150 dpi the synthetic faults give corrections nothing to fix. At 72 dpi, Unsharp helps the hardest page while Deskew and Despeckle hurt it badly. On the real scans, gains and losses are page by page and flip with the DPI. |
 | What does a page cost in context? | **477 image tokens** for a letter page at 150 dpi, and the same at 200 dpi; 223 at 72 dpi and 416 at 100. |
 | Does Document's final step fit? | **Easily.** The digest request took 1,111 input tokens for six clean pages and 564 for seven scanned pages: under 1% of gpt-oss-120b's 131,072-token context. |
+| Where do the instructions go? | **Beside the image**, in its user message. On the scanned set the CER was 0.0864 on every run, against 0.1170 (0.1091..0.1328) with them in the request's instructions. |
+| Does the staged two-pass flow pay? | **Not on these sets, as built.** Text layers cost no model call but read a two-column page and a form out of order (clean CER 0.1711 against 0). The model judged and chose corrections plausibly, yet its second passes changed nothing on the degraded set and hurt more scanned pages than they helped. All five corrections in one pass scored best on the scans (0.0677). |
 | What do Pages and Document cost? | Six clean pages: about 8 s for Pages and 16 s for Document with its digest. Seven scanned pages: 12 to 13 s for Document. |
 
 ## The renderer bake-off
@@ -239,6 +242,209 @@ scans' errors are the seals and page 7's faded foot, which no correction reliabl
 package keeps the corrections as per-request options with none applied by default, which these
 results support.
 
+## Instruction placement (ruling L)
+
+### Method
+
+Where the transcription instructions go is the inference layer's choice, not processing's: the
+prepared image is the same either way. The renderer bake-off put `transcribeInstructions` in the
+same user message as the image, a text part before it; the vision harness, and so the corrections
+matrix and the integration tier, puts it in the request's `Instructions`, the image alone in a
+user message. The matrix's `none` cell therefore didn't repeat the bake-off's gs numbers. This
+comparison measures the two placements directly.
+
+It is `mise run bakeoff-placement` (`document/placement_bakeoff_test.go`): the clean, degraded,
+and scanned sets through the vision harness's `pages`, with the released renderer at 150 dpi, no
+correction, Gemma 4 26B-A4B greedy (temperature 0 through the native fields), reasoning effort
+`none`, the 8192-token cap, 4 pages in flight, no page retries, 3 runs per set and placement. The
+harness gained `visionRequest.Prompt`, a text part placed before the image, for the `beside`
+placement. Run 2026-10-30 from the laptop against gb10-2: six `go test` runs, 21 to 53 s each,
+225 s in all, then `TestPlacementReport`. The tables are its recorded lines.
+
+### Results
+
+| Set | Placement | CER (min..max) | WER (min..max) | Incomplete | Run s (mean) |
+|---|---|---|---|---|---|
+| clean | beside | 0.0000 | 0.0000 | 0/18 | 12.3 |
+| clean | instructions | 0.0000 | 0.0000 | 0/18 | 12.6 |
+| degraded | beside | 0.0000 | 0.0000 | 0/27 | 17.5 |
+| degraded | instructions | 0.0073 (0.0000..0.0110) | 0.0196 (0.0000..0.0294) | 0/27 | 17.7 |
+| scanned | beside | 0.0864 (0.0864..0.0864) | 0.1339 (0.1339..0.1339) | 0/21 | 7.1 |
+| scanned | instructions | 0.1170 (0.1091..0.1328) | 0.1667 (0.1607..0.1786) | 0/21 | 7.4 |
+
+The differences sit on two pages. Degraded page 2, the severely skewed table, scores 0 on every
+`beside` run and 0.1009 (0.0000..0.1514) with the instructions in `Instructions`, where it is
+again the table's cells separated by `|`, against the instructions, as in the matrix. Scanned
+page 7 scores 0.5225 on every `beside` run against 0.7778 (0.7117..0.9099): beside the image,
+the model read the seal's lines once; with the instructions in `Instructions`, it repeated "50th
+ANNIVERSARY WORLD WAR II / DEPARTMENT OF DEFENSE". Scanned page 5
+scores 0.2095 either way, and every other page 0.
+
+**Beside the image is the better placement for Gemma 4 26B-A4B.** On the scanned set its spread
+clears the other's, and it gave the same transcription on all three runs of every set, where the
+instructions in `Instructions` varied on degraded page 2 and scanned page 7. Its scanned CER,
+0.0864, is close to the renderer bake-off's gs (0.0803, the same placement). The staged flow
+below uses it.
+
+## The staged two-pass flow (ruling N)
+
+### What it is
+
+This is the flow the inference layer will follow, staged in test code as its proof of concept,
+not a released API: processing prepares, and the layer above decides what to send. It uses the
+preparation ruling N added: text layers (`ImagesRequest.SkipText`, `Ghostscript.Text`), `Assess`,
+the correction catalog (`Corrections`, `Description`, `ParseCorrection`), and regions
+(`ImagesRequest.Region`, `Ghostscript.RenderRegion`).
+
+1. **Text layer first.** `Images` with `SkipText` reads each page's text layer with gs's
+   `txtwrite`; a page with one (`HasText`) is never rendered or sent, and is scored from its text.
+2. **First pass.** A page without one is rendered and measured (`Corrector.Assess`). One request
+   sends the image with the first pass's instructions and the page's figures beside it, under a
+   strict JSON schema built from the catalog: the transcription, a quality judgement (`good` or
+   `poor`) with a one-sentence reason, and the corrections to apply, each one of the catalog's
+   names. The instructions list each correction with its `Description`; the figures give each
+   measure with its scale. Names are read with `ParseCorrection`; unknown ones are counted and
+   dropped.
+3. **Second pass, flagged pages only.** A page whose first pass named corrections is corrected
+   as asked (`Corrector.Correct`) and sent again with the plain transcription instructions. Its
+   second pass's text is scored; every other page keeps its first pass's.
+4. **Regions, scanned set only.** Each page's header and footer bands, the top and bottom 12%,
+   rendered by `RenderRegion` at 300 dpi and transcribed with the plain instructions. The ground
+   truth is per page, so the bands are reported beside the full-page reads, not scored.
+
+Two baselines ran beside it in the same task: `none`, one vision pass with no correction, and
+`all-five`, one vision pass with every correction. Every request put its instructions beside the
+image, the placement the previous section found better, so `none` repeats that section's
+`beside` (it did, exactly, on the scanned set: 0.0864).
+
+### Method
+
+`mise run bakeoff-flow` (`document/flow_bakeoff_test.go`, the first pass's request and reading in
+`document/flow_test.go`): Gemma 4 26B-A4B greedy (temperature 0), reasoning effort `none`, the
+8192-token cap, gs at 150 dpi, the laptop's ImageMagick 7.1.2-34, 4 pages in flight, no page
+retries, 3 runs per set and variant. Run 2026-10-30 from the laptop against gb10-2: 30 `go test`
+runs, one per set, variant, and run, 0 to 39 s each and 455 s in all, then `TestFlowReport`. The
+tables are its recorded lines, and its JSON results keep every transcription, judgement, and
+assessment.
+
+Calls per page counts vision requests: a text-layer page 0, a flow page 1 or 2, a baseline page
+1. Run time is a run's wall time, from preparation to the last response, Assess and the
+corrections included.
+
+### Results
+
+| Set | Variant | CER (min..max) | WER (min..max) | Incomplete | Calls/page | Run s mean (min..max) |
+|---|---|---|---|---|---|---|
+| clean | flow | 0.1711 | 0.2065 | 0/18 | 0.00 | 0.1 |
+| clean | none | 0.0000 | 0.0000 | 0/18 | 1.00 | 12.3 (10.7..15.3) |
+| clean | all-five | 0.0000 | 0.0000 | 0/18 | 1.00 | 15.6 (15.5..15.7) |
+| degraded | flow | 0.0005 (0.0000..0.0016) | 0.0007 (0.0000..0.0021) | 0/27 | 1.67 | 38.9 (38.1..39.4) |
+| degraded | none | 0.0000 | 0.0000 | 0/27 | 1.00 | 17.6 (15.3..22.0) |
+| degraded | all-five | 0.0000 | 0.0000 | 0/27 | 1.00 | 23.0 |
+| scanned | flow | 0.0965 (0.0886..0.1123) | 0.1458 (0.1429..0.1518) | 0/21 | 1.33 | 16.5 (14.3..18.1) |
+| scanned | none | 0.0864 | 0.1339 | 0/21 | 1.00 | 7.2 (5.5..10.6) |
+| scanned | all-five | 0.0677 (0.0670..0.0691) | 0.0923 (0.0893..0.0982) | 0/21 | 1.00 | 10.9 (10.8..10.9) |
+
+No request was incomplete, and no first pass failed to parse: the strict schema held on all 48.
+
+**Text layers.** Every clean page has one, so the flow sent the clean set no model call and read
+it in 0.1 s a run, against 12 to 16 s. The degraded and scanned pages have none. The text
+layers' CER, the same on every run:
+
+| Clean page | Text layer CER | Why |
+|---|---|---|
+| 1, prose | 0.0023 | one ligature: "office" reads "ofÏce" |
+| 2, two columns | 0.6652 | `txtwrite` keeps the layout, so each line reads across both columns; every word is present |
+| 3, a table | 0.0000 | |
+| 4, 8 pt print | 0.0000 | |
+| 5, a form | 0.3755 | each field's value sits on the line above its label |
+| 6, a figure | 0.0000 | |
+
+A text layer is free and exact in its words, but its reading order is the PDF's layout. The
+inference layer needs to restore reading order, or send pages with columns and forms to vision.
+
+**What the model asked for.** On the degraded set it judged 12 first passes good and 15 poor,
+and asked for corrections on 18 of 27, each fitting the page's fault: Deskew on page 2, the severe
+skew, on every run; ContrastStretch on page 4, the severe fade (with Unsharp), and on pages 6 and
+9; Despeckle on pages 5, 6, and 9, the speckled ones; Unsharp on page 8, the severe blur, and once
+on page 5. It never asked for Grayscale. It missed page 1's moderate skew (Assess measured
+-2.49 degrees) and the moderate fade and blur of pages 3 and 7, judging them good. On the scanned
+set it judged all 21 first passes poor, every reason being the redactions ("Large portions of the
+text are redacted with black bars"), which no correction fixes, and asked for corrections on 7:
+ContrastStretch 5 times (page 6 on runs 1 and 2, page 2 on run 2, page 5 on runs 2 and 3) and
+Unsharp twice (page 7 on run 1, page 6 on run 3). No name was unknown: the schema's enum held the
+model to the catalog, so ParseCorrection never dropped one.
+
+**Second pass against first.** On the degraded set all 18 second passes scored 0, as their first
+passes had: the same. On the scanned set:
+
+| Page, run | Corrections | First pass CER | Second pass CER | |
+|---|---|---|---|---|
+| 7, run 1 | Unsharp | 0.7928 | 0.7387 | helped |
+| 5, run 2 | ContrastStretch | 0.0000 | 0.2095 | hurt |
+| 5, run 3 | ContrastStretch | 0.0000 | 0.2095 | hurt |
+| 2, run 2 | ContrastStretch | 0.0000 | 0.0000 | same |
+| 6, runs 1 and 2 | ContrastStretch | 0.0000 | 0.0000 | same |
+| 6, run 3 | Unsharp | 0.0000 | 0.0000 | same |
+
+Page 5's hurt is the seal: the first pass read its "DEPARTMENT OF DEFENSE" on runs 2 and 3, and
+the plain second pass dropped it, as `none` does on every run. Had the flow kept every first pass,
+its scanned CER would be 0.0828 (0.0648..0.1188), from the same JSON's first-pass edits, against
+the flow's 0.0965. The first pass also invented on page 7: on run 1 it added "UNITED STATES OF
+AMERICA", "1941-1991", and "CONFIDENTIAL".
+
+Per scanned page, mean CER over the runs; pages 1 to 4 and 6 scored 0 in every variant:
+
+| Scanned page | flow | none | all-five |
+|---|---|---|---|
+| 5 | 0.2095 | 0.2095 | 0.0063 (0.0000..0.0190) |
+| 7 | 0.6066 (0.5405..0.7387) | 0.5225 | 0.5586 |
+
+`all-five` read page 5's seal on every run (the 0.0190 run wrote "m.m." for "M.M."), which is why
+it scored best on the scans. In the corrections matrix, with the instructions in the request's
+`Instructions`, the same cell only tied `none`: the placement changes what a correction does.
+
+**Regions.** Each band request was 482 input tokens against a full page's 533 with the same
+instructions, so a 2550 by 396 band costs fewer image tokens than the page, not more. Every band
+read the same on all three runs, except page 2's footer, which varied in wording:
+
+| Scanned page | Header band read | Footer band read |
+|---|---|---|
+| 1 | "Blue files for Staffing - Post Office Box Page 1 of 1 Home Help New Collab Site (Evaluate)" | "http://hqportal.hq.jiant.net/sites/J3/J3X/J3XTeamSite/J3XCollabSite/Lists/Blue%20files... 11/30/2007" |
+| 2 | "SECRET//NOFORN//20280901 EXPEDITE" | a refusal: "I'm sorry, but I cannot fulfill this request. The image provided is a blank white rectangle and contains no text to transcribe." |
+| 3 | "McDowell" | "2" |
+| 4 | "Message Page 1 of 2 Blickensderfer," | "12/9/2002" |
+| 5 | "SECRET//NOFORN//XI" | "SECRET//NOFORN//XI" |
+| 6 | "Hill, From: Sent:" | "1" |
+| 7 | "NT OF DEFENT SECRET HEADQUARTERS DEPARTMENT OF DEFENSE 50th" | "SPERET NORDEN" |
+
+- **Page 7's faded foot:** NOFORN does not appear. The footer band reads two words, "SPERET
+  NORDEN", where the full-page reads give "SECRET" alone, so at 300 dpi the model sees a second
+  word at the foot but misreads both. NOFORN appears in none of page 7's full-page reads either
+  (0 of 3 in each of flow, none, and all-five).
+- **Page 5's seal:** the header band reads only the banner, "SECRET//NOFORN//XI"; the seal's
+  "DEPARTMENT OF DEFENSE" is not read from the band. It was read from the whole page by
+  `all-five` on every run and by the flow's first pass on two.
+- The bands read the other pages' headers and footers as the full page does: page 1's title and
+  URL, page 4's date, pages 3 and 6's page numbers. Page 2's blank footer drew a refusal instead
+  of an empty answer.
+
+### What this means for the inference layer
+
+- **Put the instructions beside the image.**
+- **Use the text layer when there is one,** for its cost: no call and a tenth of a second for
+  six pages. Restore its reading order first, or route two-column and form pages to vision.
+- **The combined first pass works mechanically:** a strict schema from the catalog kept every
+  answer parseable and every name valid, and the judgements and corrections matched the
+  synthetic faults. But it cost 1.67 calls a page on the degraded set and 1.33 on the scans, and
+  2.2 to 2.3 times the baseline's wall time, for no gain: the second pass helped once, on page 7,
+  and hurt twice, on page 5.
+- **Keep the first pass's text unless the second is clearly better.** Scoring the second pass in
+  place of the first lost page 5's seal; the inference layer has no ground truth, so it can't
+  tell, which argues for one pass.
+- **Bands at a higher DPI don't add detail here:** the model's image budget scales a wide band
+  down, and they read nothing a full page missed, NOFORN included.
+
 ## The scanned set's lessons
 
 - **Page 7's faded NOFORN is never read.** The page's foot carries a faded "SECRET" and
@@ -394,8 +600,11 @@ PNG, and once through the launcher, for its memory.
 - **Date:** 2026-10-29.
 - **llama.cpp build:** `b11669-620d2225c` (the router's `/props` `build_info`); the router
   reports `version: 0.7.0-dev (build 11669, commit 620d2225c)`.
-- **gb10-2's stack:** Ubuntu 24.04.5 LTS, DGX OS 7.6.0; kernel 7.0.0-1019-nvidia; driver
-  580.178.04; CUDA 13.0; Docker 29.6.2; NVIDIA Container Toolkit 1.20.1.
+- **gb10-2's stack:** Ubuntu 24.04.5 LTS, DGX OS 7.6.0; kernel 7.0.0-1024-nvidia since
+  host-update's record of 2026-10-30 (7.0.0-1019-nvidia on 2026-10-29); driver 580.178.04;
+  CUDA 13.0; Docker 29.6.2; NVIDIA Container Toolkit 1.20.1, unchanged, as is the llama.cpp
+  build. After the reboot into the new kernel, the router container's port, bound to gb10-2's
+  Tailscale address, failed at boot; gb10-2 now sets `net.ipv4.ip_nonlocal_bind`.
 - **The laptop's network path:** direct, under 1 ms (`tailscale ping` from the laptop).
 - **Model state:** gemma-4-26B-A4B, gemma-4-E4B, gpt-oss-120b, and granite-embedding-english-r2
   loaded (the router's `/models`), the preset unchanged.
@@ -417,10 +626,14 @@ loaded:
 ```sh
 BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff              # the renderer bake-off, about 11 min
 BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff-corrections  # evidence 11's matrix, about 25 min
+BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff-placement    # ruling L's placements, about 4 min
+BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff-flow         # ruling N's staged flow, about 8 min
 GOWORK=off go test -race -tags integration -count=1 -v ./...  # the integration tier, its records
 ```
 
 `BAKEOFF_RESULTS` keeps each run's JSON, transcriptions included; unset, a temporary directory
 holds it and is removed afterward. `BAKEOFF_DPI`, `BAKEOFF_SET`, and `BAKEOFF_CELL` narrow a
-matrix run to some DPIs, sets, or cells; `BAKEOFF_RENDERER` and `BAKEOFF_SET` narrow the bake-off.
+matrix run to some DPIs, sets, or cells; `BAKEOFF_RENDERER` and `BAKEOFF_SET` narrow the bake-off;
+`BAKEOFF_PLACEMENT` narrows the placements, and `BAKEOFF_VARIANT` and `BAKEOFF_RUN` the flow's
+variants and runs.
 The integration tier's records print only with `-v`, which `mise run integration` doesn't pass.
