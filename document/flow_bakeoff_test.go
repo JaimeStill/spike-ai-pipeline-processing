@@ -355,8 +355,9 @@ func flowPage(t *testing.T, v *vision, corr *document.Corrector, img document.Pa
 }
 
 // regionRun reads every page of s's header and footer bands through v's pages, at regionDPI with
-// the plain transcription request, its instructions beside the image, and returns each band's cell of run, its Source the band's
-// name. A band's cell is scored against its whole page's truth, which the report doesn't use.
+// the plain transcription request, its instructions beside the image, and returns each band's
+// cell of run, its Source the band's name. A band's cell is scored against its whole page's
+// truth, which the report doesn't use.
 func regionRun(t *testing.T, v *vision, s fixtureSet, run int) []flowCell {
 	t.Helper()
 	var cells []flowCell

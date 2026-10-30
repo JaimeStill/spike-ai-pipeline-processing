@@ -81,12 +81,14 @@ type PageImage struct {
 // Ranging over it validates req, spools pdf into req.Dir, counts the pages with the Renderer, and
 // then, for every page from 1 to the count, reads its text layer when req says to, renders the
 // page, or req.Region of it, at req.DPI, unless req.SkipText and the page has a text layer, and
-// corrects it when req names corrections. At most req.Concurrency pages are being prepared at once. Pages are yielded
-// in page order, a page that finishes early held until the pages before it are yielded.
+// corrects it when req names corrections. At most req.Concurrency pages are being prepared at
+// once. Pages are yielded in page order, a page that finishes early held until the pages before
+// it are yielded.
 //
-// A page that fails, in reading its text, rendering, or correcting, yields the PageImage's number and count with the
-// error, which names the page and wraps its cause, and the stream carries on. A refused request,
-// a failed spool, or a failed count yields one error with a zero PageImage, and the stream ends.
+// A page that fails, in reading its text, rendering, or correcting, yields the PageImage's number
+// and count with the error, which names the page and wraps its cause, and the stream carries on.
+// A refused request, a failed spool, or a failed count yields one error with a zero PageImage,
+// and the stream ends.
 // When ctx ends, the stream yields ctx's error once, with a zero PageImage, and ends.
 //
 // Breaking out of the range cancels the pages in flight, and the loop returns once their work has

@@ -11,8 +11,8 @@ import (
 )
 
 // Renderer renders a PDF's pages, one page per process. A renderer counts pages with a tool from
-// its own package, as the poppler renderers use pdfinfo, so its count and its rendering read the
-// PDF the same way.
+// its own package, as Ghostscript counts them with gs's own PDF interpreter, so its count and its
+// rendering read the PDF the same way.
 type Renderer interface {
 	// Count returns the number of pages in the PDF at pdf.
 	Count(ctx context.Context, pdf string) (int, error)

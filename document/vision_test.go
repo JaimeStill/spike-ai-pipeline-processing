@@ -28,9 +28,10 @@ import (
 // the released Images stream prepares to a model, as ruling M of task documents places inference
 // above processing's libraries. The integration tier's vision tests, and the corrections matrix,
 // the instruction placement comparison, and the staged flow in the bake-off tier, run on it, so
-// they prove evidence 4 end to end through the released preparation. It is test code, never released: the module's requirement of
-// spike-ai-pipeline-client is a test requirement. The tests below check its inference: the page
-// requests, retries, the ordered stream over the generator's concurrency, and the final request.
+// they prove evidence 4 end to end through the released preparation. It is test code, never
+// released: the module's requirement of spike-ai-pipeline-client is a test requirement. The tests
+// below check its inference: the page requests, retries, the ordered stream over the generator's
+// concurrency, and the final request.
 
 // generator sends one request to a model and returns its response: the one method the harness
 // needs of spike-ai-pipeline-client, which *client.Client satisfies; a test passes a stand-in.
@@ -191,9 +192,10 @@ func (v *vision) pages(ctx context.Context, pdf io.Reader, req visionRequest) it
 	}
 }
 
-// send sends img in a copy of req.Template, beside req.Prompt when it is set, again with the same image while its response isn't
-// completed and req.PageRetries allows, returning the last response and the times it was sent. A
-// Generate error ends the page without a retry, and so does ctx ending.
+// send sends img in a copy of req.Template, beside req.Prompt when it is set, again with the same
+// image while its response isn't completed and req.PageRetries allows, returning the last
+// response and the times it was sent. A Generate error ends the page without a retry, and so does
+// ctx ending.
 func (v *vision) send(ctx context.Context, img document.PageImage, req visionRequest) (*protocol.Response, int, error) {
 	attempts := 0
 	for {

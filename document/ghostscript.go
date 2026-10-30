@@ -192,8 +192,8 @@ func (g *Ghostscript) Text(ctx context.Context, pdf string, page int) (string, e
 
 // renderArgs returns gs's arguments for page of the PDF at pdf at dpi, as the bake-off measured
 // them, reading stdin when pdf is "". png16m is 24-bit RGB; the alpha bits anti-alias text and
-// graphics, as the poppler renderers do by default and gs doesn't. -sOutputFile=- writes the
-// PNG to stdout.
+// graphics, as poppler's pdftoppm and pdftocairo do by default and gs doesn't. -sOutputFile=-
+// writes the PNG to stdout.
 func renderArgs(pdf string, page, dpi int) []string {
 	if pdf == "" {
 		pdf = "-"
@@ -212,7 +212,8 @@ func textArgs(pdf string, page int) []string {
 
 // regionArgs returns gs's arguments for region of page of the PDF at pdf at dpi, the device and
 // anti-aliasing renderArgs gives, the PNG to stdout. gs reads the PDF itself in PostScript,
-// permitted to read that one file, and draws the page as pdfshowpage does in its three steps:
+// permitted to read that one file, checks the page, and draws it in pdfshowpage's steps, the
+// region set between them:
 //
 //   - A page past the last prints a message in place of a PNG and quits.
 //   - pdfshowpage_setpage sets the device's page size to the page's, rotation applied, and the
