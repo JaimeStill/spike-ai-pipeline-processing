@@ -118,8 +118,9 @@ A `Renderer` counts a PDF's pages and renders one page, 1-based, as PNG at a DPI
 page; `CheckRender` makes its refusals, a DPI of zero or less (`ErrDPI`) and a page below 1
 (`ErrPageRange`). The released renderer is `Ghostscript`, over gs, built by `NewGhostscript` from
 a gs Tool that `GhostscriptSpec` declares, minimum `GhostscriptMinimum`, 10.0. gs won the
-renderer bake-off against pdftoppm, pdftocairo, vips, and magick: it led on accuracy, was the
-fastest at about 0.126 s a page, used the least memory, 27 MiB, and needs a single program.
+renderer bake-off against pdftoppm, pdftocairo, vips, and magick: it tied them on accuracy, and
+won as the fastest, at about 0.126 s a page, and the lightest in memory, 27 MiB, with a single
+program.
 Ghostscript is AGPL-licensed, so the package runs gs as a separate program and never links it.
 
 `Ghostscript.Text` reads a page's text layer with gs's txtwrite device, and the optional

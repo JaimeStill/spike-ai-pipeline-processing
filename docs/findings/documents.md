@@ -15,24 +15,318 @@ page to an image and can correct it first. The inference these measurements ran 
 `Images`: `Vision` with its `Pages` and `Document`, `Request.PageRetries`, `Page.Attempts`,
 `Result.Text`, and `TranscribeInstructions`. The names below are those the runs used.
 
-Two models do the work. Gemma 4 26B-A4B (`ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0`) reads the
-pages. gpt-oss-120b (`ggml-org/gpt-oss-120b-GGUF:MXFP4`) writes the document's digest. Every
+Two models do the work. Gemma 4 26B-A4B reads the pages: gb10-2 now serves Google's QAT Q4_0
+(`google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0`) at 1,120 image tokens, and the next section
+records its reruns. The sections after it record the runs on ggml-org's post-training Q4_0
+(`ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0`) at 512 image tokens, which they name as before.
+gpt-oss-120b (`ggml-org/gpt-oss-120b-GGUF:MXFP4`) writes the document's digest. Every
 number here comes from a recorded run: a test's `recorded:` log line, or the JSON a bake-off-tier
 run kept, committed in [`documents-results/`](documents-results/README.md). Each section says
 which run.
 
 ## At a glance
 
+"QAT 1,120" is what gb10-2 serves now; "post-training" is the build the earlier runs used, at 512
+image tokens. A row that names neither is from the post-training runs and wasn't rerun.
+
 | Question | Answer |
 |---|---|
-| Which renderer ships? | **Ghostscript (`gs`).** It led on accuracy, was the fastest (0.126 s a page), used the least memory (27 MiB), and needs one program. It is AGPL, so the package runs it as a separate program and never links it. |
+| What reads the pages on gb10-2? | **Google's QAT Q4_0 of Gemma 4 26B-A4B** (`google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0`, its own projector) at the projector's full 1,120 image tokens (`ub = 1120`). It replaced ggml-org's post-training Q4_0, which fails the workspace's quantization floor. |
+| Which renderer ships? | **Ghostscript (`gs`).** It ties the others on accuracy over the clean and degraded sets, and wins on time (0.126 s a page) and memory (27 MiB), with one program, on all three builds measured: post-training 512, QAT 512, and QAT 1,120. It is AGPL, so the package runs it as a separate program and never links it. |
 | Should the model reason while it transcribes? | **No.** With reasoning on, 8 of 105 scanned-page transcriptions reasoned until the 8192-token cap and came back empty, and the model invented seal text. With reasoning off, every transcription completed. |
-| Do image corrections help? | **Not reliably.** At 150 dpi the synthetic faults give corrections nothing to fix. At 72 dpi, Unsharp helps the hardest page while Deskew and Despeckle hurt it badly. On the real scans, gains and losses are page by page and flip with the DPI. |
-| What does a page cost in context? | **477 image tokens** for a letter page at 150 dpi, and the same at 200 dpi; 223 at 72 dpi and 416 at 100. |
+| Do image corrections help? | **Not reliably, on either build.** At 150 dpi the synthetic faults give corrections nothing to fix (QAT 1,120 reads every degraded page exactly in every cell). At 72 dpi, Unsharp helps the hardest page while Deskew and Despeckle hurt it. On the real scans, which corrections help and hurt flips with the DPI and with the build. |
+| What does a page cost in context? | **920 image tokens** for a letter page at 150 dpi on QAT 1,120, and 1,104 at 200 dpi and up; 223 at 72 dpi and 416 at 100. At the old 512 cap, 150 and 200 dpi both cost 477. A page request is 976 input tokens of Gemma's 32,768, against 533. |
 | Does Document's final step fit? | **Easily.** The digest request took 1,111 to 1,134 input tokens for six clean pages and 564 to 570 for seven scanned pages: under 1% of gpt-oss-120b's 131,072-token context. |
-| Where do the instructions go? | **Beside the image**, in its user message. On the scanned set the CER was 0.0864 on every run, against 0.1170 (0.1091..0.1328) with them in the request's instructions. |
-| Does the staged two-pass flow pay? | **Not on these sets, as built.** Text layers cost no model call but read a two-column page and a form out of order (clean CER 0.1711 against 0). The model judged and chose corrections plausibly, yet its second passes changed nothing on the degraded set and hurt more scanned pages than they helped. All five corrections in one pass scored best on the scans (0.0677). |
+| Where do the instructions go? | **Beside the image**, in its user message. On post-training it was better on the scans (CER 0.0864 against 0.1170, 0.1091..0.1328, in the request's instructions); on QAT 1,120 the two tie (0.1332 against 0.1317). |
+| Does the staged two-pass flow pay? | **Not as built.** Text layers cost no model call but read a two-column page and a form out of order (clean CER 0.1711 against 0). On QAT 1,120 the model's judgements and corrections fit the faults more closely, and its second passes changed nothing; its scanned CER (0.1109) beat one plain pass (0.1339) through the first pass's read of page 7, at 1.29 calls a page. On post-training the second passes hurt more scanned pages than they helped. |
+| Is a larger image budget better on the scans? | **Not on these pages.** On QAT, 920 image tokens instead of 477 made every renderer's scanned CER worse (gs 0.1188 to 0.1325), on page 7, whose seal it reads further and invents on. Page 7's NOFORN is read on no build at any budget. Its requests took about 2 s longer on average, 4 in flight. |
 | What do Pages and Document cost? | Six clean pages: 7.8 to 11.2 s for Pages and 15.5 to 18.1 s for Document with its digest. Seven scanned pages: 11.7 to 13.0 s for Document. The times vary from run to run. |
+
+## Google's QAT Q4_0 and the full image-token budget
+
+On 2026-10-30, task `vision-qat` changed what gb10-2 serves for the pages twice, and every
+bake-off ran again. This section records those reruns beside the runs the rest of the page
+describes, which were on the earlier build. The decisions are the `vision-qat` lines of the root's
+goal record, rulings Q and R among them.
+
+### Why the build changed
+
+Set A is held to the workspace's quantization floor (`standards-lab/context/ai-hosting.md`): a
+post-training Q4_0 fails it, and a quantization-aware-trained (QAT) Q4_0 passes. So Gemma 4
+26B-A4B moved from ggml-org's post-training Q4_0 to Google's QAT Q4_0, which needs the same memory.
+Source: the root's `docs/findings/host.md`, "2026-10-30: set A's vision model is Google's QAT Q4_0",
+and its `host/llama-preset/models.ini`.
+
+| | Before: post-training | Now: QAT |
+|---|---|---|
+| Repository and tag | `ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0` | `google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0` |
+| Model file | `gemma-4-26B-A4B-it-Q4_0.gguf` | `gemma-4-26B_q4_0-it.gguf`, 14,439,363,584 bytes |
+| Projector | `mmproj-gemma-4-26B-A4B-it-Q8_0.gguf`, a Q8_0 | `gemma-4-26B-it-mmproj.gguf`, 1,194,828,160 bytes, the repository's own |
+| Provenance | ggml-org quantized Google's weights after training | Google trained the weights for the Q4_0 quantization and published the file |
+| llama-server GPU memory at 512 image tokens | 16,972 MiB | 16,960 MiB |
+
+### Why the budget changed
+
+The QAT projector allows 1,120 image tokens per image, but llama-server b11669 caps an image's
+tokens at n_ubatch, 512 by default, since the model attends over an image non-causally. Both
+builds logged the cap at load, and a letter page cost 477 image tokens at 150 dpi and at 200. The
+preset's vision section now sets `ub = 1120`. `b` stays at 2048, and `mtmd-batch-max-tokens` at
+512, so each image still encodes in a batch of its own. With set A loaded, the vision instance grew
+about 800 MiB, from 17,346 to 18,143 MiB, with about 16 GiB still available (the goal record's
+`vision-qat` line on the vision section).
+
+`TestVisionImageTokensHost`, rerun on 2026-10-30 against the QAT build at 1,120, recorded
+clean.pdf's page 1 rendered by gs:
+
+| DPI | Pixels | Image tokens at 512 | Image tokens at 1,120 |
+|---|---|---|---|
+| 72 | 612 × 792 | 223 | 223 |
+| 100 | 850 × 1100 | 416 | 416 |
+| 150 | 1275 × 1650 | 477 | 920 |
+| 200 | 1700 × 2200 | 477 | 1,104 |
+
+1,104 is the count from 200 dpi up. A whole page with the instructions beside it is now 976 input
+tokens, against 533 at 512 (the bake-offs' JSON), and Gemma's context is still 32,768.
+
+### What ran, and what each comparison can tell
+
+Ruling R kept three columns for the renderers alone: post-training at 512, QAT at 512, and QAT at
+1,120. The other four tasks ran on QAT at 1,120 only, so against their post-training runs **the
+build and the budget changed together**, and a difference there can't be put on either one. Two
+things isolate the build: pages at 72 dpi (223 image tokens) and every tile but one are under both
+caps. The QAT 512 and QAT 1,120 renderer runs isolate the budget.
+
+Every run went from the laptop to gb10-2 on 2026-10-30, with the same settings as before: greedy,
+reasoning effort `none`, the 8192-token cap, 4 requests in flight, no page retries, gs 10.08.0 and
+ImageMagick 7.1.2-34 on the laptop. Their JSON is in
+[`documents-results/qat-1120/`](documents-results/qat-1120/). No `go test` run came near its
+10-minute cap:
+
+| Task | Wall clock | `go test` runs, each |
+|---|---|---|
+| `mise run bakeoff` | 872 s | 36 to 99 s |
+| `mise run bakeoff-corrections` | 1,560 s | 15 to 104 s |
+| `mise run bakeoff-placement` | 294 s | 33 to 68 s |
+| `mise run bakeoff-flow` | 627 s | 0 to 65 s |
+| `mise run bakeoff-tiles` | 12 s | 5 and 7 s |
+
+### Renderers
+
+Sources: [`documents-results/renderers/`](documents-results/renderers/),
+[`documents-results/qat-512/renderers/`](documents-results/qat-512/renderers/), and
+[`documents-results/qat-1120/renderers/`](documents-results/qat-1120/renderers/), each ranked by
+`TestBakeoffRanking` with ruling Q's method: accuracy over the clean and degraded sets, the
+scanned set reported apart.
+
+| Rank | Renderer | Clean + degraded CER: post-training 512 | QAT 512 | QAT 1,120 | Render s/page (1,120) | Peak MiB (1,120) |
+|---|---|---|---|---|---|---|
+| 1 | **gs** | 0.0000 | 0.0001 (0.0000..0.0003) | 0.0000 | 0.127 | 27.0 |
+| 2 | vips | 0.0000 | 0.0001 (0.0000..0.0002) | 0.0000 | 0.133 | 90.3 |
+| 3 | magick | 0.0000 | 0.0000 | 0.0000 | 0.340 | 102.6 |
+| 4 | pdftocairo | 0.0000 | 0.0000 (0.0000..0.0001) | 0.0000 | 0.415 | 58.1 |
+| 5 | pdftoppm | 0.0000 | 0.0000 | 0.0000 | 0.459 | 30.6 |
+
+The ranking is the same in all three columns, gs first with 4 wins, and in each, render time
+decided all 10 pairs: accuracy tied every pair. No clean or degraded transcription was incomplete
+in any column (0/45 per renderer). QAT 512's small degraded errors were inside the run-to-run
+spread; at 1,120 every clean and degraded transcription scored 0.
+
+Scanned, reported apart and not ranked (CER mean (min..max), incomplete of 21):
+
+| Renderer | Post-training 512 | QAT 512 | QAT 1,120 |
+|---|---|---|---|
+| gs | 0.0803 (0.0702..0.0864), 0 | 0.1188, 0 | 0.1325 (0.1296..0.1339), 0 |
+| vips | 0.1242 (0.1091..0.1544), 0 | 0.0896, 0 | 0.1317, 0 |
+| magick | 0.0994 (0.0842..0.1112), 0 | 0.0576 (0.0270..0.1188), 2 | 0.1343 (0.1339..0.1350), 0 |
+| pdftocairo | 0.1091, 0 | 0.0896, 0 | 0.1317, 0 |
+| pdftoppm | 0.0925 (0.0918..0.0929), 0 | 0.1033 (0.1026..0.1048), 0 | 0.1152 (0.1123..0.1166), 0 |
+
+A rate with no range was the same on all three runs. magick's QAT 512 mean is over its 19 completed
+transcriptions: its two incomplete ones were page 7 looping to the cap, which leaves page 7's two
+worst reads out of its mean. Pages 1 to 4 and 6 score 0 in every column but for one magick read
+of page 1 at 1,120 (0.0052); the scanned differences are pages 5 and 7. Raising the budget from
+512 to 1,120 on the same build made every renderer's scanned CER worse, on page 7: gs's page 7
+went from 0.7928 on every run to 0.9069 (0.8829..0.9189).
+
+Request time grew with the budget, not the build. The gs runs' mean request time, 4 in flight:
+
+| Set | Post-training 512 | QAT 512 | QAT 1,120 |
+|---|---|---|---|
+| clean | 5.73 s | 5.70 s | 7.83 s |
+| degraded | 5.30 s | 5.34 s | 7.45 s |
+| scanned | 3.07 s | 3.03 s | 5.06 s |
+
+The 15 renderer and set runs' elapsed times summed to 638 s, 805 s (magick's two loops took 180
+and 173 s), and 867 s. The first run of each set, from a cold cache, is now the slow one: in the
+placement runs below, a scanned run took 19.1 s first and 6.5 s after, against 10.4 and 5.6 s
+before.
+
+### Corrections
+
+Sources: [`documents-results/corrections/`](documents-results/corrections/) and
+[`documents-results/qat-1120/corrections/`](documents-results/qat-1120/corrections/), each
+`TestCorrectionsMatrix`'s report: CER mean, its spread where the runs differed, and "vs none" as
+the matrix judges it. The instructions are in the request's `Instructions`, as before. At 150 dpi
+the build and the budget changed together:
+
+| Cell | Degraded, post-training 512 | Degraded, QAT 1,120 | Scanned, post-training 512 | Scanned, QAT 1,120 |
+|---|---|---|---|---|
+| none | 0.0037 (0.0000..0.0110) | 0.0000 | 0.1098 (0.1091..0.1112) | 0.1310 (0.1296..0.1317) |
+| Deskew | 0.0000, tie | 0.0000, tie | 0.1199, hurts | 0.1213 (0.1199..0.1220), helps |
+| Despeckle | 0.0110, tie | 0.0000, tie | 0.0907, helps | 0.1292 (0.1285..0.1296), tie |
+| ContrastStretch | 0.0000, tie | 0.0000, tie | 0.1091, tie | 0.1317 (0.1296..0.1339), tie |
+| Unsharp | 0.0000, tie | 0.0000, tie | 0.1325 (0.1307..0.1361), hurts | 0.1159 (0.0918..0.1285), helps |
+| Grayscale | 0.0110, tie | 0.0000, tie | 0.0961 (0.0270..0.1490), 1 incomplete, tie | 0.1310 (0.1296..0.1339), tie |
+| all | 0.0000, tie | 0.0000, tie | 0.1094 (0.1080..0.1123), tie | 0.1199 (0.0918..0.1728), tie |
+
+The degraded set is a null result at 150 dpi on both: the QAT build at 1,120 read every page
+exactly in every cell, where the post-training build had broken page 2's table with `|` on some
+runs. On the scans the cells that help flipped: Despeckle helped before and ties now; Deskew and
+Unsharp hurt before and help now, on page 7 alone. Page 7's mean per cell at 1,120 is 0.8949 for
+none, 0.5586 for all five, and 0.7688 to 0.9009 for the others. Deskew no longer reads page 5's
+seal (0.2222, against 0.0000 before), and all five put a new error on page 6 (0.1860).
+
+At 72 dpi a page is 223 image tokens, under both caps, so this table **changes only the build**:
+
+| Cell | Degraded, post-training | Degraded, QAT | Scanned, post-training | Scanned, QAT |
+|---|---|---|---|---|
+| none | 0.0708 (0.0038..0.1050), 1 incomplete | 0.0923 (0.0785..0.1073) | 0.1022 (0.0994..0.1080) | 0.0904 (0.0842..0.1004) |
+| Deskew | 0.1974, hurts | 0.2177, hurts | 0.0922, helps | 0.1015, tie |
+| Despeckle | 0.2012, hurts | 0.1598, hurts | 0.1058, tie | 0.0659, helps |
+| ContrastStretch | 0.0589, 1 incomplete, tie | 0.0754, helps | 0.0994, tie | 0.1004, tie |
+| Unsharp | 0.0205, tie | 0.0177, helps | 0.1080, tie | 0.1246, hurts |
+| Grayscale | 0.0564, 1 incomplete, tie | 0.0749, helps | 0.1008, tie | 0.0864, tie |
+| all | 0.1669, hurts | 0.1815, hurts | 0.1120, hurts | 0.1091, hurts |
+
+(Spreads are left out where the cell's own runs were close; the JSON has them.) The QAT build reads
+the severely skewed table, degraded page 2, at 72 dpi (0.0009 against 0.2883), but page 9, all four
+faults, worse (0.5078 against 0.3984); Unsharp is still the one correction that fixes page 9
+(0.0848). Its runs agree with each other more: the QAT cells' spreads are narrower. On the scans,
+Despeckle now helps (page 6 falls from 0.0700 to 0.0072, page 7 from 0.4505 to 0.3153) and
+Unsharp hurts. The conclusion stands on both builds: each correction that helps somewhere hurts
+somewhere else, and which ones do flips with the DPI and now with the build too.
+
+None of the matrix's 672 transcriptions on the QAT build was incomplete, against 4 on the
+post-training build.
+
+### Instruction placement
+
+Sources: [`documents-results/placement/`](documents-results/placement/) and
+[`documents-results/qat-1120/placement/`](documents-results/qat-1120/placement/),
+`TestPlacementReport`'s tables. The build and the budget changed together.
+
+| Set | Placement | CER, post-training 512 | CER, QAT 1,120 | Run s mean, post-training | Run s mean, QAT 1,120 |
+|---|---|---|---|---|---|
+| clean | beside | 0.0000 | 0.0000 | 12.3 | 15.3 |
+| clean | instructions | 0.0000 | 0.0000 | 12.6 | 15.8 |
+| degraded | beside | 0.0000 | 0.0000 | 17.5 | 21.8 |
+| degraded | instructions | 0.0073 (0.0000..0.0110) | 0.0000 | 17.7 | 22.6 |
+| scanned | beside | 0.0864 | 0.1332 (0.1317..0.1339) | 7.1 | 10.8 |
+| scanned | instructions | 0.1170 (0.1091..0.1328) | 0.1317 (0.1296..0.1339) | 7.4 | 11.0 |
+
+**On the QAT build at 1,120 the placements tie.** Both read the degraded set exactly, and on the
+scans their spreads overlap: page 7 scores 0.9129 beside the image and 0.9009 in `Instructions`,
+page 5 0.2095 either way. Beside the image still costs 5 input tokens fewer (976 against 981) and
+ran a little faster.
+
+### The staged flow
+
+Sources: [`documents-results/flow/`](documents-results/flow/) and
+[`documents-results/qat-1120/flow/`](documents-results/qat-1120/flow/), `TestFlowReport`'s
+tables. The build and the budget changed together.
+
+| Set | Variant | CER, post-training 512 | CER, QAT 1,120 | Calls/page | Run s mean, post-training | Run s mean, QAT 1,120 |
+|---|---|---|---|---|---|---|
+| clean | flow | 0.1711 | 0.1711 | 0.00 | 0.1 | 0.1 |
+| clean | none | 0.0000 | 0.0000 | 1.00 | 12.3 | 15.5 |
+| clean | all-five | 0.0000 | 0.0000 | 1.00 | 15.6 | 23.1 |
+| degraded | flow | 0.0005 (0.0000..0.0016) | 0.0000 | 1.67, then 1.89 | 38.9 | 53.9 |
+| degraded | none | 0.0000 | 0.0000 | 1.00 | 17.6 | 22.1 |
+| degraded | all-five | 0.0000 | 0.0000 | 1.00 | 23.0 | 34.4 |
+| scanned | flow | 0.0965 (0.0886..0.1123) | 0.1109 (0.0929..0.1199) | 1.33, then 1.29 | 16.5 | 19.5 |
+| scanned | none | 0.0864 | 0.1339 | 1.00 | 7.2 | 11.0 |
+| scanned | all-five | 0.0677 (0.0670..0.0691) | 0.1001 (0.0745..0.1188) | 1.00 | 10.9 | 19.7 |
+
+The text layers are the same on both, as they don't involve the model. No first pass failed to
+parse on either, and no correction name was unknown.
+
+| First pass | Post-training 512 | QAT 1,120 |
+|---|---|---|
+| Degraded judgements | 12 good, 15 poor | 9 good, 18 poor |
+| Degraded pages flagged | 18 of 27 | 24 of 27 |
+| Degraded corrections chosen | Deskew on page 2; ContrastStretch on 4, 6, 9; Despeckle on 5, 6, 9; Unsharp on 8 and once 5; never Grayscale | Deskew on 1 and 2; ContrastStretch on 4, 5, 6, 9 and once 8; Despeckle on 5, 6, 9; Unsharp on 4, 7, 8, 9; never Grayscale |
+| Scanned judgements | 21 poor | 18 poor, page 3 good on every run |
+| Scanned pages flagged | 7 of 21: ContrastStretch 5 times, Unsharp twice | 6 of 21: ContrastStretch on pages 5 and 6, every run |
+| Second pass against first | degraded: 18 the same; scanned: 1 helped (page 7), 2 hurt (page 5's seal lost), 4 the same | degraded: 24 the same; scanned: 6 the same |
+
+The QAT build's choices fit the faults more closely: it caught page 1's moderate skew and page 7's
+moderate blur, which the post-training build had judged good, and missed only page 3's moderate
+fade. Its reasons on the scans are still the redactions. Its second passes changed nothing, so
+they neither helped nor hurt. On the scans the flow's spread now clears `none`'s, and the reason is
+the first pass, not a correction: page 7 was never flagged, and the first pass's request, with its
+schema and figures, read page 7 at 0.7267 (0.5766..0.8018) where `none` read 0.9189 on every run.
+`all-five` has the best scanned mean, 0.1001, but its spread overlaps the flow's.
+
+**Regions:** each band request is still 482 input tokens (426 image tokens, under both caps). The
+bands read as before, page 2's blank footer again drawing a refusal. Page 7's footer band read
+"SPERET NORDEN" on run 1 and "SPEREDT NORDEN" on runs 2 and 3; its header band read "SECRET
+HEADQUARTERS NT OF DEF DEPARTMENT OF DEFENSE 50th". Page 5's header band read only
+"SECRET//NOFORN//XI".
+
+### Tiles
+
+Sources: [`documents-results/tiles/`](documents-results/tiles/) and
+[`documents-results/qat-1120/tiles/`](documents-results/qat-1120/tiles/). Image tokens, then the
+reads of three runs; one read means all three agreed.
+
+| Tile | DPI | Post-training 512 | QAT 1,120 |
+|---|---|---|---|
+| 7, foot marking | 300 | 485: a refusal | 530: "SECRET / NOTED" on runs 1 and 3, "SECRET / CONFIDENTIAL" on run 2 |
+| 7, foot marking | 200 | 242: "SECRET" | 242: a refusal on runs 1 and 2, "SECRET" on run 3 |
+| 7, NOFORN alone | 300 | 122: "NOURAN", "NOORDEN", "NOORDEN" | 122: "NOORDEN", "NOORDEN", "NOERDN" |
+| 7, NOFORN alone | 200 | 82: "NOKEDOUI" | 82: "NO REASON", "NOKEDOU", "NOKEDOU" |
+| 7, footer band | 300 | 426: "SPERET NORDEN" | 426: "SPERET / NORDEN" |
+| 7, footer band | 200 | 212: "SPERET MÅLFORSLAG", "SPERET MÅLFORLØB", "SPERET MÅLFORSLAG" | 212: "SPERRET / MÅLFORLØB", "SPERRET / MÅLFORSLAG", "SPERRET / MÅLFORLØB" |
+| 5, seal | 300 | 83: "DEPARTMENT OF DEFENSE UNITED STATES OF AMERICA" on runs 1 and 3, "DEPARTMENT OF DEFENSE" on run 2 | 83: "DEPARTMENT OF DEFENSE" |
+| 5, seal | 200 | 83: "DEPARTMENT OF DEFENSE UNITED STATES OF AMERICA" | 83: "DEPARTMENT OF DEFENSE / UNITED STATES OF AMERICA" |
+| 5, control | 300 and 200 | 101 and 82: "WASHINGTON, D.C. 20340" | the same |
+
+The 300-dpi foot tile is the only one the 512 cap clipped (485 tokens then, 530 now); every other
+tile changed only the build. The conclusion stands: a small tile on page 5's seal reads it on
+every run, and nothing reads page 7's NOFORN.
+
+### The scanned pages on the QAT build at 1,120
+
+- **Page 7's NOFORN is never read.** 0 of 15 renderer reads, 0 of 42 in the matrix, 0 of 6 in
+  placement, 0 of 9 full-page reads in the flow, 0 of 3 footer bands, and 0 of 18 tiles of the
+  page's foot. As before, the model reads the foot's "SECRET" and not the word beside it.
+- **Page 7's seal is read more fully, and invented on.** With 920 image tokens the model reads
+  more of the seal's lines ("NT OF DEFENSE", "REPLY TO / ATTENTION OF:") and adds what isn't on
+  the page in all 15 renderer reads: "UNITED STATES OF AMERICA", "COMMISSION" or "COMMEMORATION",
+  a span of years ("1917-1967" with gs and magick, "1941-1991" with vips, pdftocairo, and once
+  pdftoppm), and a stamped date ("MAR 22 1968", "MAR 22 1992", "MAR 28 1992", "MAR 28 1993"). At
+  512 the same build added "UNITED STATES OF AMERICA" with three renderers and a date with one;
+  the post-training build's reasoning-off renderer run added no "UNITED STATES OF AMERICA" and a
+  date twice, both with pdftoppm. The flow's first pass and `all-five` invent the same way.
+- **Page 5's seal isn't read from the whole page.** Its "DEPARTMENT OF DEFENSE" appears in none
+  of the full-page reads at 1,120: renderers 0 of 15, the matrix 0 of 42 (Deskew read it on every
+  run before), placement 0 of 6, the flow 0 of 9 (`all-five` read it on every run before). A tile
+  on the seal reads it on all 6 runs. At 512 the QAT build read it with pdftoppm alone, 3 of 3.
+- **No loops.** No transcription in any of the five runs was incomplete: 0 of 330 renderer reads,
+  0 of 672 in the matrix, 0 of 126 in placement, none in the flow or the tiles. The longest page 7
+  answer was 102 output tokens. At 512 the QAT build looped on page 7 twice (magick, 8192 tokens,
+  173 and 180 s), and the post-training build 4 times in its matrix.
+
+### 150 dpi and 200 dpi on the scans
+
+None of these runs sent a whole page at 200 dpi, so they can't say whether 1,104 image tokens read
+the scans better than 920. What they show is near it. The tiles are regions: at 300 against 200
+dpi, page 5's seal reads exactly at 300 and adds "UNITED STATES OF AMERICA" at 200, and neither DPI
+reads page 7's NOFORN. And on whole pages, raising the image tokens at 150 dpi from 477 to 920 on
+the same build made the scanned set worse for every renderer, all on page 7, by reading and
+inventing more of its seal. The 150-dpi default's recorded reason, that 150 dpi costs no more
+context than any higher DPI, no longer holds: 200 dpi now costs 1,104 tokens against 920. This page
+doesn't re-decide the default.
 
 ## The renderer bake-off
 
@@ -64,9 +358,12 @@ transcription was scored against the page's ground truth. The bake-off is its ow
   sits beside it. Both are scored over the transcriptions that completed. A transcription that
   failed, wasn't `completed`, or came back empty counts as **incomplete**, a criterion of its own.
   A difference inside the run-to-run spread (the range of the three runs) is a tie.
-- **Ranking order:** CER, then incomplete transcriptions, then render time, peak memory,
-  streaming, license, PNG size, and the number of programs. Each pair of renderers is decided by
-  the first criterion that separates them, and a renderer ranks by how many others it beats.
+- **Ranking order:** CER and incomplete transcriptions over the clean and degraded sets, then
+  render time and peak memory over every set, then streaming, license, PNG size, and the number
+  of programs. Each pair of renderers is decided by the first criterion that separates them, and
+  a renderer ranks by how many others it beats. The scanned set is reported apart and not ranked
+  (ruling Q): its pages are an embedded scan every renderer decodes the same, so its differences
+  are the model's sensitivity to tiny pixel differences, not rendering quality.
 
 The bake-off ran as 15 `go test` runs, one per renderer and set, each capped at 10 minutes. They
 took 26 to 65 s each, about 11 minutes in all (the log's `bakeoff: <renderer> <set> took` lines).
@@ -76,10 +373,11 @@ An earlier attempt with one run per renderer had overrun 10 minutes.
 
 Source: the reasoning-off run's JSON, 15 files in
 [`documents-results/renderers/`](documents-results/renderers/), ranked again for this page by
-`TestBakeoffRanking`. The tables match the run's own log line for line.
+`TestBakeoffRanking` with ruling Q's method. Its per-set tables match the run's own log line for
+line.
 
-The clean and degraded sets scored a CER of 0 for every renderer on every run, so the scanned set
-decided accuracy:
+The clean and degraded sets scored a CER of 0 for every renderer on every run, with no incomplete
+transcription, so accuracy tied every pair. The scanned set, reported apart and not ranked:
 
 | Renderer | Scanned CER (min..max) | Scanned WER | Incomplete |
 |---|---|---|---|
@@ -89,30 +387,41 @@ decided accuracy:
 | pdftocairo | 0.1091 (0.1091..0.1091) | 0.1607 | 0/21 |
 | vips | 0.1242 (0.1091..0.1544) | 0.1786 | 0/21 |
 
-The ranking over all three sets, each run's CER being the mean of the three sets' rates:
+The ranking, CER and incomplete over the clean and degraded sets, render time and memory over
+every set:
 
 | Rank | Renderer | Wins | CER (min..max) | Incomplete | Render s/page | Peak MiB | PNG KiB/page | License | Programs | Installed MiB |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **gs** | 4 | 0.0268 (0.0234..0.0288) | 0/66 | 0.126 | 27.0 | 364 | AGPL | gs | 41.08 |
-| 2 | pdftoppm | 2 | 0.0308 (0.0306..0.0310) | 0/66 | 0.457 | 30.5 | 439 | GPL (poppler) | pdftoppm, pdfinfo | 6.81 |
-| 3 | magick | 2 | 0.0331 (0.0281..0.0371) | 0/66 | 0.338 | 102.7 | 322 | AGPL (through gs) | magick, gs | 63.12 |
-| 4 | vips | 2 | 0.0414 (0.0364..0.0515) | 0/66 | 0.133 | 90.1 | 348 | GPL (its PDF loader links poppler) | vips, vipsheader | 16.09 |
-| 5 | pdftocairo | 0 | 0.0364 (0.0364..0.0364) | 0/66 | 0.415 | 58.2 | 354 | GPL (poppler) | pdftocairo, pdfinfo | 6.81 |
+| 1 | **gs** | 4 | 0.0000 (0.0000..0.0000) | 0/45 | 0.126 | 27.0 | 364 | AGPL | gs | 41.08 |
+| 2 | vips | 3 | 0.0000 (0.0000..0.0000) | 0/45 | 0.133 | 90.1 | 348 | GPL (its PDF loader links poppler) | vips, vipsheader | 16.09 |
+| 3 | magick | 2 | 0.0000 (0.0000..0.0000) | 0/45 | 0.338 | 102.7 | 322 | AGPL (through gs) | magick, gs | 63.12 |
+| 4 | pdftocairo | 1 | 0.0000 (0.0000..0.0000) | 0/45 | 0.415 | 58.2 | 354 | GPL (poppler) | pdftocairo, pdfinfo | 6.81 |
+| 5 | pdftoppm | 0 | 0.0000 (0.0000..0.0000) | 0/45 | 0.457 | 30.5 | 439 | GPL (poppler) | pdftoppm, pdfinfo | 6.81 |
 
-gs beat pdftoppm, pdftocairo, and vips on CER, and magick on time. Render time and peak memory
+Render time decided every pair: gs beat each of the others on it. Render time and peak memory
 are per page, and their spreads over the three runs were narrow: gs took 0.125 to 0.127 s and
 peaked at 27.0 MiB on every run. Installed size is `pacman -Qi` on the laptop for the packages
 each renderer needs. Every renderer could also stream, reading the PDF on stdin and writing the
 page's PNG to stdout.
 
+> **The earlier ranking.** This page first ranked the run with CER and incomplete over all three
+> sets, each run's CER the mean of the three sets' rates. Since the clean and degraded sets tied,
+> the scanned set decided accuracy: gs 4 wins (CER 0.0268), pdftoppm 2 (0.0308), magick 2
+> (0.0331), vips 2 (0.0414), pdftocairo 0 (0.0364); gs beat pdftoppm, pdftocairo, and vips on CER,
+> and magick on time. Ruling Q took the scanned set out of the ranking: every renderer decodes
+> the same embedded scan, and on Google's QAT build at 512 image tokens the old method ranked
+> vips first and gs fourth on scanned page 7 alone. gs stays the released renderer.
+
 ### The winner: gs
 
-gs is the released renderer, `document.Ghostscript`. It led on accuracy, was the fastest and the
-lightest in memory, and needs a single program. Its cost is the license: Ghostscript is
+gs is the released renderer, `document.Ghostscript`. It tied on the clean and degraded sets, had
+the lowest scanned CER in this run, was the fastest and the lightest in memory, and needs a single
+program. Its cost is the license: Ghostscript is
 AGPL-3.0-or-later, so the package runs `gs` as a separate process through the tool contract and
 never links it. vips came close on speed but used more than three times the memory, and is GPL
 through its poppler PDF loader. The bake-off's gs runs the released code, so a rerun ranks what
-ships.
+ships. On Google's QAT build, at 512 and at 1,120 image tokens, it ranked first the same way, by
+time, though its scanned CER was no longer the lowest (the "Google's QAT Q4_0" section).
 
 ## What reasoning did
 
@@ -481,6 +790,32 @@ isn't recovered by tiling, so the layer can't rely on vision for it.
   A small tile on a seal or a printed line read what the page and its band missed, for about a
   fifth of a page's tokens. Nothing recovered page 7's faded NOFORN.
 
+On the QAT build at 1,120 image tokens (the "Google's QAT Q4_0" section above), these held:
+
+- **Use the text layer when there is one,** and restore its reading order: unchanged, as it
+  involves no model.
+- **One pass, not two:** the second passes changed nothing on either set, 30 of 30 the same, so
+  they cost calls (1.89 a page on the degraded set, 1.29 on the scans) and 1.8 to 2.4 times the
+  plain pass's wall time for no change.
+- **A tile on a known spot reads what the page misses:** page 5's seal on every tile read and on
+  none of the 72 whole-page reads that could have shown it. Nothing recovered page 7's NOFORN.
+- **No correction is a safe default.**
+
+And these changed:
+
+- **Instruction placement no longer matters on the scans:** the two placements tie. Beside the
+  image stays the choice, as it was better on the post-training build and costs 5 tokens fewer.
+- **The first pass's request reads page 7 better than a plain one** (0.7267 against 0.9189), so
+  the flow beat one plain pass on the scans; on post-training it didn't. The schema's request, not
+  a correction, made the difference, which says the wording around the image moves page 7, a
+  page the model can't read reliably either way.
+- **A page costs about twice the context it did:** 976 input tokens at 150 dpi, against 533, and
+  about 2 s more a request. Gemma's 32,768-token context still holds a page many times over, but
+  the layer's batching and timeouts should budget for it.
+- **More image tokens invent more on a seal.** Page 7's whole-page reads now add a span of years
+  and a stamped date that aren't on the page, on every renderer. The layer should treat seal and
+  stamp text from a whole-page read as unconfirmed.
+
 ## The scanned set's lessons
 
 - **Page 7's faded NOFORN is never read.** The page's foot carries a faded "SECRET" and
@@ -593,8 +928,11 @@ ends.
 | 150 | 1275 × 1650 | 54,237 | 477 |
 | 200 | 1700 × 2200 | 80,122 | 477 |
 
-Gemma 4 26B-A4B's image budget saturates between 100 and 150 dpi: 150 and 200 dpi cost the same
-477 tokens. That is why the default is 150 dpi: it costs no more context than any higher DPI.
+Gemma 4 26B-A4B's image budget saturated between 100 and 150 dpi: 150 and 200 dpi cost the same
+477 tokens. That is why the default is 150 dpi: it cost no more context than any higher DPI. The
+saturation was llama.cpp's 512-token cap on an image, which gb10-2's preset has since lifted to
+the projector's 1,120: on the QAT build a page now costs 920 tokens at 150 dpi and 1,104 from 200
+dpi up (the "Google's QAT Q4_0" section), so that reason no longer holds.
 These match the plan's measurements (about 223, 416, and 477). A whole page request at 150 dpi,
 image and instructions, is 538 input tokens (the matrix's records), against Gemma's 32,768-token
 context.
