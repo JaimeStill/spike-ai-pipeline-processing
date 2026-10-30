@@ -1,0 +1,317 @@
+[
+  {
+    "tile": "p7-foot",
+    "page": 7,
+    "region": {
+      "Top": 0.68,
+      "Bottom": 1,
+      "Left": 0.35,
+      "Right": 0.81
+    },
+    "dpi": 200,
+    "width": 782,
+    "height": 704,
+    "png_bytes": 130662,
+    "run": 1,
+    "input_tokens": 298,
+    "text_only_tokens": 56,
+    "output_tokens": 2,
+    "status": "completed",
+    "output": "SECRET",
+    "request_ms": 1301
+  },
+  {
+    "tile": "p7-foot",
+    "page": 7,
+    "region": {
+      "Top": 0.68,
+      "Bottom": 1,
+      "Left": 0.35,
+      "Right": 0.81
+    },
+    "dpi": 200,
+    "width": 782,
+    "height": 704,
+    "png_bytes": 130662,
+    "run": 2,
+    "input_tokens": 298,
+    "text_only_tokens": 56,
+    "output_tokens": 2,
+    "status": "completed",
+    "output": "SECRET",
+    "request_ms": 1301
+  },
+  {
+    "tile": "p7-foot",
+    "page": 7,
+    "region": {
+      "Top": 0.68,
+      "Bottom": 1,
+      "Left": 0.35,
+      "Right": 0.81
+    },
+    "dpi": 200,
+    "width": 782,
+    "height": 704,
+    "png_bytes": 130662,
+    "run": 3,
+    "input_tokens": 298,
+    "text_only_tokens": 56,
+    "output_tokens": 2,
+    "status": "completed",
+    "output": "SECRET",
+    "request_ms": 1319
+  },
+  {
+    "tile": "p7-noforn",
+    "page": 7,
+    "region": {
+      "Top": 0.86,
+      "Bottom": 1,
+      "Left": 0.6,
+      "Right": 0.82
+    },
+    "dpi": 200,
+    "width": 374,
+    "height": 308,
+    "png_bytes": 39691,
+    "run": 1,
+    "input_tokens": 138,
+    "text_only_tokens": 56,
+    "output_tokens": 6,
+    "status": "completed",
+    "output": "NOKEDOUI",
+    "request_ms": 1581
+  },
+  {
+    "tile": "p7-noforn",
+    "page": 7,
+    "region": {
+      "Top": 0.86,
+      "Bottom": 1,
+      "Left": 0.6,
+      "Right": 0.82
+    },
+    "dpi": 200,
+    "width": 374,
+    "height": 308,
+    "png_bytes": 39691,
+    "run": 2,
+    "input_tokens": 138,
+    "text_only_tokens": 56,
+    "output_tokens": 6,
+    "status": "completed",
+    "output": "NOKEDOUI",
+    "request_ms": 1152
+  },
+  {
+    "tile": "p7-noforn",
+    "page": 7,
+    "region": {
+      "Top": 0.86,
+      "Bottom": 1,
+      "Left": 0.6,
+      "Right": 0.82
+    },
+    "dpi": 200,
+    "width": 374,
+    "height": 308,
+    "png_bytes": 39691,
+    "run": 3,
+    "input_tokens": 138,
+    "text_only_tokens": 56,
+    "output_tokens": 6,
+    "status": "completed",
+    "output": "NOKEDOUI",
+    "request_ms": 1173
+  },
+  {
+    "tile": "p7-footer-band",
+    "page": 7,
+    "region": {
+      "Top": 0.88,
+      "Bottom": 1,
+      "Left": 0,
+      "Right": 1
+    },
+    "dpi": 200,
+    "width": 1700,
+    "height": 264,
+    "png_bytes": 66840,
+    "run": 1,
+    "input_tokens": 268,
+    "text_only_tokens": 56,
+    "output_tokens": 11,
+    "status": "completed",
+    "output": "SPERET\nMÅLFORSLAG",
+    "request_ms": 1721
+  },
+  {
+    "tile": "p7-footer-band",
+    "page": 7,
+    "region": {
+      "Top": 0.88,
+      "Bottom": 1,
+      "Left": 0,
+      "Right": 1
+    },
+    "dpi": 200,
+    "width": 1700,
+    "height": 264,
+    "png_bytes": 66840,
+    "run": 2,
+    "input_tokens": 268,
+    "text_only_tokens": 56,
+    "output_tokens": 12,
+    "status": "completed",
+    "output": "SPERET\nMÅLFORLØB",
+    "request_ms": 1708
+  },
+  {
+    "tile": "p7-footer-band",
+    "page": 7,
+    "region": {
+      "Top": 0.88,
+      "Bottom": 1,
+      "Left": 0,
+      "Right": 1
+    },
+    "dpi": 200,
+    "width": 1700,
+    "height": 264,
+    "png_bytes": 66840,
+    "run": 3,
+    "input_tokens": 268,
+    "text_only_tokens": 56,
+    "output_tokens": 11,
+    "status": "completed",
+    "output": "SPERET\nMÅLFORSLAG",
+    "request_ms": 1163
+  },
+  {
+    "tile": "p5-seal",
+    "page": 5,
+    "region": {
+      "Top": 0.05,
+      "Bottom": 0.18,
+      "Left": 0.05,
+      "Right": 0.22
+    },
+    "dpi": 200,
+    "width": 289,
+    "height": 286,
+    "png_bytes": 74889,
+    "run": 1,
+    "input_tokens": 139,
+    "text_only_tokens": 56,
+    "output_tokens": 10,
+    "status": "completed",
+    "output": "DEPARTMENT OF DEFENSE\nUNITED STATES OF AMERICA",
+    "request_ms": 1122
+  },
+  {
+    "tile": "p5-seal",
+    "page": 5,
+    "region": {
+      "Top": 0.05,
+      "Bottom": 0.18,
+      "Left": 0.05,
+      "Right": 0.22
+    },
+    "dpi": 200,
+    "width": 289,
+    "height": 286,
+    "png_bytes": 74889,
+    "run": 2,
+    "input_tokens": 139,
+    "text_only_tokens": 56,
+    "output_tokens": 10,
+    "status": "completed",
+    "output": "DEPARTMENT OF DEFENSE\nUNITED STATES OF AMERICA",
+    "request_ms": 980
+  },
+  {
+    "tile": "p5-seal",
+    "page": 5,
+    "region": {
+      "Top": 0.05,
+      "Bottom": 0.18,
+      "Left": 0.05,
+      "Right": 0.22
+    },
+    "dpi": 200,
+    "width": 289,
+    "height": 286,
+    "png_bytes": 74889,
+    "run": 3,
+    "input_tokens": 139,
+    "text_only_tokens": 56,
+    "output_tokens": 10,
+    "status": "completed",
+    "output": "DEPARTMENT OF DEFENSE\nUNITED STATES OF AMERICA",
+    "request_ms": 958
+  },
+  {
+    "tile": "p5-washington",
+    "page": 5,
+    "region": {
+      "Top": 0.075,
+      "Bottom": 0.205,
+      "Left": 0.39,
+      "Right": 0.6
+    },
+    "dpi": 200,
+    "width": 357,
+    "height": 286,
+    "png_bytes": 35008,
+    "run": 1,
+    "input_tokens": 138,
+    "text_only_tokens": 56,
+    "output_tokens": 13,
+    "status": "completed",
+    "output": "WASHINGTON, D.C. 20340",
+    "request_ms": 806
+  },
+  {
+    "tile": "p5-washington",
+    "page": 5,
+    "region": {
+      "Top": 0.075,
+      "Bottom": 0.205,
+      "Left": 0.39,
+      "Right": 0.6
+    },
+    "dpi": 200,
+    "width": 357,
+    "height": 286,
+    "png_bytes": 35008,
+    "run": 2,
+    "input_tokens": 138,
+    "text_only_tokens": 56,
+    "output_tokens": 13,
+    "status": "completed",
+    "output": "WASHINGTON, D.C. 20340",
+    "request_ms": 786
+  },
+  {
+    "tile": "p5-washington",
+    "page": 5,
+    "region": {
+      "Top": 0.075,
+      "Bottom": 0.205,
+      "Left": 0.39,
+      "Right": 0.6
+    },
+    "dpi": 200,
+    "width": 357,
+    "height": 286,
+    "png_bytes": 35008,
+    "run": 3,
+    "input_tokens": 138,
+    "text_only_tokens": 56,
+    "output_tokens": 13,
+    "status": "completed",
+    "output": "WASHINGTON, D.C. 20340",
+    "request_ms": 459
+  }
+]

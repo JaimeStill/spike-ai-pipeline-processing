@@ -169,9 +169,10 @@ for page, err := range prep.Images(ctx, pdf, document.ImagesRequest{Dir: dir, Sk
 }
 ```
 
-What the measurements behind these choices found, which renderer, whether to reason while
-transcribing, whether corrections help, where the instructions go, the staged two-pass flow, and
-what a page costs in image tokens, is in [docs/findings/documents.md](docs/findings/documents.md).
+[docs/findings/documents.md](docs/findings/documents.md) records what the measurements behind
+these choices found: which renderer, whether to reason while transcribing, whether corrections
+help, where the instructions go, whether the staged two-pass flow pays, and what a page costs in
+image tokens. The run results it cites are in `docs/findings/documents-results/`.
 
 Known limits:
 
@@ -189,8 +190,8 @@ under the race detector, and lint, the integration and bakeoff tags included. `m
 integration` runs the integration-tagged tests against this machine's tools and docker, and the
 vision tests against the llama.cpp router `SPIKE_ROUTER_URL` names, gb10-2's by default. The
 bake-off tier, bakeoff-tagged tests, sends pages to Gemma 4 26B-A4B on the same router and never
-runs in CI; each task is a series of runs capped at 10 minutes each, and takes tens of minutes
-or more:
+runs in CI. Each task is a series of `go test` runs, each capped at 10 minutes, and takes from a
+few minutes to about 25:
 
 - `mise run bakeoff`: the renderer bake-off, five renderers over the clean, degraded, and scanned
   sets.

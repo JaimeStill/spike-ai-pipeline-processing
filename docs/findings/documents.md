@@ -1,25 +1,25 @@
 # Finding: PDF pages through a model's vision
 
-Task `documents`, evidence 4 and 11 and behaviors 11 to 14 (the root's goal record,
+This page records what the measurements behind the `document` package found: which renderer
+ships, whether the model should reason while it reads, whether image corrections help, where the
+transcription instructions go, whether a staged two-pass flow pays, and what a whole document
+costs. They answer evidence 4 and 11 of task `documents` (the root's goal record,
 `context/goals/experiment.ai.spike-ai-pipeline.md`, "Task brief · experiment.ai.spike-ai-pipeline ·
-documents"). Measured 2026-10-29 from the laptop, against gb10-2's llama.cpp router serving set A;
-the instruction placement and the staged flow, rulings L and N, on 2026-10-30.
+documents"). Rulings L, M, N, and O are the architect's decisions in that record's Decisions
+section, on the lines labelled with those letters. Every run went from the laptop to gb10-2's
+llama.cpp router serving set A, on 2026-10-29 and 2026-10-30.
 
-The `document` package turns a PDF into text a model can work with. It renders each page to an
-image, can clean the image up first, and asks a vision model to transcribe it. This page records
-what the measurements behind those choices found: which renderer to ship, whether the model should
-reason while it reads, whether image corrections help, and what a whole document costs.
-
-Since ruling M of task `documents`, the package releases only the preparation: `Preparer.Images`, the rendered and
-corrected pages. The inference these measurements ran, `Vision` with its `Pages` and `Document`,
-`Request.PageRetries`, `Page.Attempts`, `Result.Text`, and `TranscribeInstructions`, moved into
-test code, `document/vision_test.go`, as the vision harness the integration and bake-off tiers run
-on, built on `Images`. The names below are those the runs used.
+The `document` package releases pre-inference preparation only: `Preparer.Images` renders each
+page to an image and can correct it first. The inference these measurements ran is test code in
+`document/vision_test.go`, the vision harness the integration and bake-off tiers run on, built on
+`Images`: `Vision` with its `Pages` and `Document`, `Request.PageRetries`, `Page.Attempts`,
+`Result.Text`, and `TranscribeInstructions`. The names below are those the runs used.
 
 Two models do the work. Gemma 4 26B-A4B (`ggml-org/gemma-4-26B-A4B-it-GGUF:Q4_0`) reads the
 pages. gpt-oss-120b (`ggml-org/gpt-oss-120b-GGUF:MXFP4`) writes the document's digest. Every
-number here comes from a recorded run: a test's `recorded:` log line, or the JSON results a run
-kept. Each section says which run.
+number here comes from a recorded run: a test's `recorded:` log line, or the JSON a bake-off-tier
+run kept, committed in [`documents-results/`](documents-results/README.md). Each section says
+which run.
 
 ## At a glance
 
@@ -29,19 +29,20 @@ kept. Each section says which run.
 | Should the model reason while it transcribes? | **No.** With reasoning on, 8 of 105 scanned-page transcriptions reasoned until the 8192-token cap and came back empty, and the model invented seal text. With reasoning off, every transcription completed. |
 | Do image corrections help? | **Not reliably.** At 150 dpi the synthetic faults give corrections nothing to fix. At 72 dpi, Unsharp helps the hardest page while Deskew and Despeckle hurt it badly. On the real scans, gains and losses are page by page and flip with the DPI. |
 | What does a page cost in context? | **477 image tokens** for a letter page at 150 dpi, and the same at 200 dpi; 223 at 72 dpi and 416 at 100. |
-| Does Document's final step fit? | **Easily.** The digest request took 1,111 input tokens for six clean pages and 564 for seven scanned pages: under 1% of gpt-oss-120b's 131,072-token context. |
+| Does Document's final step fit? | **Easily.** The digest request took 1,111 to 1,134 input tokens for six clean pages and 564 to 570 for seven scanned pages: under 1% of gpt-oss-120b's 131,072-token context. |
 | Where do the instructions go? | **Beside the image**, in its user message. On the scanned set the CER was 0.0864 on every run, against 0.1170 (0.1091..0.1328) with them in the request's instructions. |
 | Does the staged two-pass flow pay? | **Not on these sets, as built.** Text layers cost no model call but read a two-column page and a form out of order (clean CER 0.1711 against 0). The model judged and chose corrections plausibly, yet its second passes changed nothing on the degraded set and hurt more scanned pages than they helped. All five corrections in one pass scored best on the scans (0.0677). |
-| What do Pages and Document cost? | Six clean pages: about 8 s for Pages and 16 s for Document with its digest. Seven scanned pages: 12 to 13 s for Document. |
+| What do Pages and Document cost? | Six clean pages: 7.8 to 11.2 s for Pages and 15.5 to 18.1 s for Document with its digest. Seven scanned pages: 11.7 to 13.0 s for Document. The times vary from run to run. |
 
 ## The renderer bake-off
 
 ### Method
 
 Five renderers each turned every fixture page into a PNG at 150 dpi. Each PNG went to Gemma 4
-26B-A4B with `TranscribeInstructions` (now the test code's `transcribeInstructions`), and the transcription was scored against the page's ground
-truth. The bake-off is its own test tier, `mise run bakeoff` (`-tags bakeoff`;
-`document/bakeoff_test.go` and `document/renderers_bakeoff_test.go`). It isn't CI.
+26B-A4B with `TranscribeInstructions` (now the test code's `transcribeInstructions`), and the
+transcription was scored against the page's ground truth. The bake-off is its own test tier,
+`mise run bakeoff` (`-tags bakeoff`; `document/bakeoff_test.go` and
+`document/renderers_bakeoff_test.go`). It isn't CI.
 
 - **Renderers:** `pdftoppm` and `pdftocairo` (poppler 26.10.0), `gs` (Ghostscript 10.08.0),
   `vips` (libvips 8.18.7, through poppler-glib), and `magick` (ImageMagick 7.1.2-34, which renders
@@ -73,7 +74,8 @@ An earlier attempt with one run per renderer had overrun 10 minutes.
 
 ### Results
 
-Source: the reasoning-off run's JSON (15 files), ranked again for this page by
+Source: the reasoning-off run's JSON, 15 files in
+[`documents-results/renderers/`](documents-results/renderers/), ranked again for this page by
 `TestBakeoffRanking`. The tables match the run's own log line for line.
 
 The clean and degraded sets scored a CER of 0 for every renderer on every run, so the scanned set
@@ -115,12 +117,13 @@ ships.
 ## What reasoning did
 
 The first bake-off ran with the model's reasoning on, the server's default. Source: that run's
-scanned-set JSON (7 pages per renderer) and its ranking log.
+scanned-set JSON (7 pages per renderer), in
+[`documents-results/renderers-reasoning-on/`](documents-results/renderers-reasoning-on/), and its
+ranking log.
 
 - **Empty transcriptions.** 8 of the 105 scanned transcriptions (5 renderers, 7 pages, 3 runs)
   reasoned until the 8192-token cap and returned no text: page 7 six times and page 5 twice,
-  across pdftocairo (3), vips (3), and pdftoppm (2). Each took 197 to 253 s. (The goal record says
-  7; the JSON holds 8.)
+  across pdftocairo (3), vips (3), and pdftoppm (2). Each took 197 to 253 s.
 - **Invented text.** Where it did answer, the model wrote seal text the page doesn't show. On
   page 7 it added "UNITED STATES OF AMERICA", "1941-1991 COMBAT OPERATIONS", "MEMORANDUM", and once
   "NATIONAL SECURITY". On page 5 it read "UNITED STATES OF AMERICA" into a part of the seal too
@@ -141,39 +144,42 @@ no incomplete pages in either run, so its numbers compare directly: its scanned 
 ### Method
 
 The corrections matrix runs the degraded set (9 pages) and the scanned set (7 pages) through
-`Vision.Pages` (now the vision harness's `pages`, over `Images`), with the released renderer and the corrections stage on the laptop's ImageMagick
-7.1.2-34. It has seven cells: no correction (`none`); each of the five alone (Deskew
-`-deskew 40%`, Despeckle `-despeckle`, ContrastStretch `-contrast-stretch 0.5%x0.5%`, Unsharp
-`-unsharp 0x1`, Grayscale `-colorspace Gray`); and all five together (`all`). Each cell had 3
-greedy runs, reasoning off, the 8192-token cap, 4 pages in flight, and no page retries, scored as
-the bake-off scores.
+`Vision.Pages` (now the vision harness's `pages`, over `Images`), with the released renderer and the
+corrections stage on the laptop's ImageMagick 7.1.2-34. It has seven cells: no correction (`none`);
+each of the five alone (Deskew `-deskew 40%`, Despeckle `-despeckle`, ContrastStretch
+`-contrast-stretch 0.5%x0.5%`, Unsharp `-unsharp 0x1`, Grayscale `-colorspace Gray`); and all five
+together (`all`). Each cell had 3 greedy runs, reasoning off, the 8192-token cap, 4 pages in flight,
+and no page retries, scored as the bake-off scores.
 
-The whole matrix ran at 150 dpi and again at 72 dpi, since every synthetic fault scored 0 at
-150 dpi in the bake-off. It is `mise run bakeoff-corrections` (`document/corrections_bakeoff_test.go`):
-28 `go test` runs, one per DPI, set, and cell, 13 to 183 s each and 25 minutes in all, then
-`TestCorrectionsMatrix` over their JSON. The tables below are its recorded lines.
+The whole matrix ran at 150 dpi and again at 72 dpi, since every synthetic fault scored 0 at 150 dpi
+in the bake-off. It is `mise run bakeoff-corrections` (`document/corrections_bakeoff_test.go`): 28
+`go test` runs, one per DPI, set, and cell, 13 to 183 s each and 25 minutes in all, then
+`TestCorrectionsMatrix` over their JSON, in
+[`documents-results/corrections/`](documents-results/corrections/). The tables below are its
+recorded lines.
 
 One difference from the bake-off: `Vision` sends the page's image in a user message of its own,
 so `TranscribeInstructions` goes in the request's instructions rather than beside the image. The
 `none` cells therefore don't repeat the bake-off's gs numbers (scanned CER 0.1098 here against
 0.0803 there), and the matrix compares its cells only with its own `none`.
 
-"vs none" is a tie when the two cells' spreads over the three runs overlap.
+"vs none" compares CER, and is a tie when the two cells' spreads over the three runs overlap.
 
 ### At 150 dpi
 
-| Cell | Degraded CER (min..max) | Inc. | vs none | Scanned CER (min..max) | Inc. | vs none |
-|---|---|---|---|---|---|---|
-| none | 0.0037 (0.0000..0.0110) | 0/27 | | 0.1098 (0.1091..0.1112) | 0/21 | |
-| Deskew | 0.0000 | 0/27 | tie | 0.1199 | 0/21 | hurts |
-| Despeckle | 0.0110 | 0/27 | tie | 0.0907 | 0/21 | helps |
-| ContrastStretch | 0.0000 | 0/27 | tie | 0.1091 | 0/21 | tie |
-| Unsharp | 0.0000 | 0/27 | tie | 0.1325 (0.1307..0.1361) | 0/21 | hurts |
-| Grayscale | 0.0110 | 0/27 | tie | 0.0961 (0.0270..0.1490) | 1/21 | tie |
-| all | 0.0000 | 0/27 | tie | 0.1094 (0.1080..0.1123) | 0/21 | tie |
+| Cell | Degraded CER (min..max) | Degraded WER (min..max) | Inc. | vs none | Scanned CER (min..max) | Scanned WER (min..max) | Inc. | vs none |
+|---|---|---|---|---|---|---|---|---|
+| none | 0.0037 (0.0000..0.0110) | 0.0098 (0.0000..0.0294) | 0/27 | | 0.1098 (0.1091..0.1112) | 0.1637 (0.1607..0.1696) | 0/21 | |
+| Deskew | 0.0000 | 0.0000 | 0/27 | tie | 0.1199 | 0.1964 | 0/21 | hurts |
+| Despeckle | 0.0110 | 0.0294 | 0/27 | tie | 0.0907 | 0.1161 | 0/21 | helps |
+| ContrastStretch | 0.0000 | 0.0000 | 0/27 | tie | 0.1091 | 0.1607 | 0/21 | tie |
+| Unsharp | 0.0000 | 0.0000 | 0/27 | tie | 0.1325 (0.1307..0.1361) | 0.1548 (0.1518..0.1607) | 0/21 | hurts |
+| Grayscale | 0.0110 | 0.0294 | 0/27 | tie | 0.0961 (0.0270..0.1490) | 0.1296 (0.0316..0.1875) | 1/21 | tie |
+| all | 0.0000 | 0.0000 | 0/27 | tie | 0.1094 (0.1080..0.1123) | 0.1101 (0.1071..0.1161) | 0/21 | tie |
 
-A CER with no range was the same on all three runs. WER moves with CER in every cell; the recorded
-lines carry it.
+A rate with no range was the same on all three runs. WER mostly moves with CER, but not in two
+scanned cells: Unsharp's CER is worse than none's while its WER is better, and `all` ties none on
+CER while its WER, 0.1101 against 0.1637, is the lowest of any cell.
 
 On the degraded set, the only page that ever scores above 0 is page 2, the severely skewed table,
 and its errors are formatting, not reading: the model separated the table's cells with `|`
@@ -198,15 +204,15 @@ looping on "50th ANNIVERSARY / WORLD WAR II" to the 8192-token cap.
 
 ### At 72 dpi
 
-| Cell | Degraded CER (min..max) | Inc. | vs none | Scanned CER (min..max) | Inc. | vs none |
-|---|---|---|---|---|---|---|
-| none | 0.0708 (0.0038..0.1050) | 1/27 | | 0.1022 (0.0994..0.1080) | 0/21 | |
-| Deskew | 0.1974 (0.1807..0.2058) | 0/27 | hurts | 0.0922 (0.0842..0.0961) | 0/21 | helps |
-| Despeckle | 0.2012 (0.1840..0.2231) | 0/27 | hurts | 0.1058 (0.1048..0.1080) | 0/21 | tie |
-| ContrastStretch | 0.0589 (0.0036..0.0938) | 1/27 | tie | 0.0994 | 0/21 | tie |
-| Unsharp | 0.0205 (0.0167..0.0267) | 0/27 | tie | 0.1080 | 0/21 | tie |
-| Grayscale | 0.0564 (0.0038..0.0848) | 1/27 | tie | 0.1008 (0.0994..0.1015) | 0/21 | tie |
-| all | 0.1669 (0.1171..0.2231) | 0/27 | hurts | 0.1120 (0.1112..0.1134) | 0/21 | hurts |
+| Cell | Degraded CER (min..max) | Degraded WER (min..max) | Inc. | vs none | Scanned CER (min..max) | Scanned WER (min..max) | Inc. | vs none |
+|---|---|---|---|---|---|---|---|---|
+| none | 0.0708 (0.0038..0.1050) | 0.1049 (0.0102..0.1544) | 1/27 | | 0.1022 (0.0994..0.1080) | 0.1637 (0.1607..0.1696) | 0/21 | |
+| Deskew | 0.1974 (0.1807..0.2058) | 0.2535 (0.2269..0.2668) | 0/27 | hurts | 0.0922 (0.0842..0.0961) | 0.1458 (0.1429..0.1518) | 0/21 | helps |
+| Despeckle | 0.2012 (0.1840..0.2231) | 0.2479 (0.2227..0.2731) | 0/27 | hurts | 0.1058 (0.1048..0.1080) | 0.1696 | 0/21 | tie |
+| ContrastStretch | 0.0589 (0.0036..0.0938) | 0.0821 (0.0089..0.1282) | 1/27 | tie | 0.0994 | 0.1607 | 0/21 | tie |
+| Unsharp | 0.0205 (0.0167..0.0267) | 0.0319 (0.0273..0.0389) | 0/27 | tie | 0.1080 | 0.1607 | 0/21 | tie |
+| Grayscale | 0.0564 (0.0038..0.0848) | 0.0836 (0.0102..0.1261) | 1/27 | tie | 0.1008 (0.0994..0.1015) | 0.1607 | 0/21 | tie |
+| all | 0.1669 (0.1171..0.2231) | 0.2300 (0.1607..0.2983) | 0/27 | hurts | 0.1120 (0.1112..0.1134) | 0.1696 | 0/21 | hurts |
 
 At 72 dpi a letter page is 612 by 792 pixels, and the synthetic faults start to matter. Most of
 the degraded set's error is on three pages:
@@ -250,8 +256,7 @@ Where the transcription instructions go is the inference layer's choice, not pro
 prepared image is the same either way. The renderer bake-off put `transcribeInstructions` in the
 same user message as the image, a text part before it; the vision harness, and so the corrections
 matrix and the integration tier, puts it in the request's `Instructions`, the image alone in a
-user message. The matrix's `none` cell therefore didn't repeat the bake-off's gs numbers. This
-comparison measures the two placements directly.
+user message. This comparison measures the two placements directly.
 
 It is `mise run bakeoff-placement` (`document/placement_bakeoff_test.go`): the clean, degraded,
 and scanned sets through the vision harness's `pages`, with the released renderer at 150 dpi, no
@@ -259,7 +264,8 @@ correction, Gemma 4 26B-A4B greedy (temperature 0 through the native fields), re
 `none`, the 8192-token cap, 4 pages in flight, no page retries, 3 runs per set and placement. The
 harness gained `visionRequest.Prompt`, a text part placed before the image, for the `beside`
 placement. Run 2026-10-30 from the laptop against gb10-2: six `go test` runs, 21 to 53 s each,
-225 s in all, then `TestPlacementReport`. The tables are its recorded lines.
+225 s in all, then `TestPlacementReport` over their JSON, in
+[`documents-results/placement/`](documents-results/placement/). The tables are its recorded lines.
 
 ### Results
 
@@ -277,8 +283,8 @@ The differences sit on two pages. Degraded page 2, the severely skewed table, sc
 again the table's cells separated by `|`, against the instructions, as in the matrix. Scanned
 page 7 scores 0.5225 on every `beside` run against 0.7778 (0.7117..0.9099): beside the image,
 the model read the seal's lines once; with the instructions in `Instructions`, it repeated "50th
-ANNIVERSARY WORLD WAR II / DEPARTMENT OF DEFENSE". Scanned page 5
-scores 0.2095 either way, and every other page 0.
+ANNIVERSARY WORLD WAR II / DEPARTMENT OF DEFENSE". Scanned page 5 scores 0.2095 either way, and
+every other page 0.
 
 **Beside the image is the better placement for Gemma 4 26B-A4B.** On the scanned set its spread
 clears the other's, and it gave the same transcription on all three runs of every set, where the
@@ -324,8 +330,8 @@ image, the placement the previous section found better, so `none` repeats that s
 8192-token cap, gs at 150 dpi, the laptop's ImageMagick 7.1.2-34, 4 pages in flight, no page
 retries, 3 runs per set and variant. Run 2026-10-30 from the laptop against gb10-2: 30 `go test`
 runs, one per set, variant, and run, 0 to 39 s each and 455 s in all, then `TestFlowReport`. The
-tables are its recorded lines, and its JSON results keep every transcription, judgement, and
-assessment.
+tables are its recorded lines. Its JSON, in [`documents-results/flow/`](documents-results/flow/),
+keeps every transcription, judgement, and assessment.
 
 Calls per page counts vision requests: a text-layer page 0, a flow page 1 or 2, a baseline page
 1. Run time is a run's wall time, from preparation to the last response, Assess and the
@@ -429,11 +435,12 @@ read the same on all three runs, except page 2's footer, which varied in wording
   URL, page 4's date, pages 3 and 6's page numbers. Page 2's blank footer drew a refusal instead
   of an empty answer.
 
-**Tiles (ruling O).** `mise run bakeoff-tiles` sent near-square tiles, and page 7's footer band
-for comparison, through `RenderRegion` three times each with the plain instructions beside the
-image, greedy and with reasoning off. Image tokens are each request's input tokens less the 56
-of the same text without the image. All three runs of a tile cost the same, and all three read
-the same unless the cell says otherwise:
+**Tiles (ruling O).** `mise run bakeoff-tiles` sent near-square tiles, and page 7's footer band for
+comparison, through `RenderRegion` three times each with the plain instructions beside the image,
+greedy and with reasoning off, on 2026-10-30. Its JSON is in
+[`documents-results/tiles/`](documents-results/tiles/). Image tokens are each request's input tokens
+less the 56 of the same text without the image. All three runs of a tile cost the same, and all
+three read the same unless the cell says otherwise:
 
 | Tile (page, region top..bottom × left..right) | 300 dpi: pixels, image tokens, read | 200 dpi: pixels, image tokens, read |
 |---|---|---|
@@ -443,18 +450,18 @@ the same unless the cell says otherwise:
 | 5, seal, 0.05..0.18 × 0.05..0.22 | 434×429, 83: "DEPARTMENT OF DEFENSE UNITED STATES OF AMERICA" on runs 1 and 3, "DEPARTMENT OF DEFENSE" on run 2 | 289×286, 83: "DEPARTMENT OF DEFENSE UNITED STATES OF AMERICA" |
 | 5, control, 0.075..0.205 × 0.39..0.60 | 536×429, 101: "WASHINGTON, D.C. 20340" | 357×286, 82: "WASHINGTON, D.C. 20340" |
 
-The tokens follow the image's area, not its shape: about 2,100 to 2,400 pixels a token for the
-bands and the tiles alike, above a floor of 82 to 83 for the smallest tiles. The largest, the
-foot tile at 300 dpi, is 2,550 pixels a token at 485, near a whole page's 477 at 150 dpi (the
-533 above, less the 56), where the count stops growing. The band was not squashed more than a square tile is, so the hypothesis doesn't hold here.
-What a tile changes is what is in it. Page 5's seal reads "DEPARTMENT OF DEFENSE" on all six
-tile reads, where the header band never did, and the control reads exactly at both DPIs, at 82
-to 101 image tokens a tile. Page 7's NOFORN still does not appear: NOFORN alone at 300 dpi reads
-as a word of its shape, "NOORDEN", and the tile holding both words, with the redaction above
-them, drew a refusal at 300 dpi and "SECRET" alone at 200. For the inference layer: a small tile
-on a known spot, a seal or a printed line, reads text the page and its band miss, for about a
-fifth of a page's image tokens; detail follows the DPI and the tile's area, not its shape. A
-marking as faded as page 7's isn't recovered by tiling, so the layer can't rely on vision for it.
+The tokens follow the image's area, not its shape: about 2,100 to 2,400 pixels a token for the bands
+and the tiles alike, above a floor of 82 to 83 for the smallest tiles. The largest, the foot tile at
+300 dpi, is 2,550 pixels a token at 485, near a whole page's 477 at 150 dpi (the 533 above, less the
+56), where the count stops growing. A wide band is therefore not scaled down more than a square tile
+is. What a tile changes is what is in it. Page 5's seal reads "DEPARTMENT OF DEFENSE" on all six
+tile reads, where the header band never did, and the control reads exactly at both DPIs, at 82 to
+101 image tokens a tile. Page 7's NOFORN still does not appear: NOFORN alone at 300 dpi reads as a
+word of its shape, "NOORDEN", and the tile holding both words, with the redaction above them, drew a
+refusal at 300 dpi and "SECRET" alone at 200. For the inference layer: a small tile on a known spot,
+a seal or a printed line, reads text the page and its band miss, for about a fifth of a page's image
+tokens; detail follows the DPI and the tile's area, not its shape. A marking as faded as page 7's
+isn't recovered by tiling, so the layer can't rely on vision for it.
 
 ### What this means for the inference layer
 
@@ -487,33 +494,36 @@ marking as faded as page 7's isn't recovered by tiling, so the layer can't rely 
   all renderers). On some runs it doesn't stop repeating: in the integration tier, with an
   8192-token cap, page 7 looped to the cap on about 1 run in 4, taking about 148 s (the decision
   that added `PageRetries`, in the goal record).
-- **Page 5's seal is read only once deskewed.** With no correction, the model skips the seal's
+- **Page 5's seal is read only with help.** With no correction, the model skips the seal's
   "DEPARTMENT OF DEFENSE" on every run and reads the rest of the page, the handwritten initials
-  included. Deskew at 150 dpi reads it on every run.
+  included. Deskew at 150 dpi reads it on every run, as do all five corrections with the
+  instructions beside the image and a tile on the seal; the flow's first pass read it on two runs
+  of three.
 - **The page loop and PageRetries.** A model that loops on a page runs to its output cap, which
-  costs minutes and returns no usable text, but on one run and not the next. So `Request` gained
-  `PageRetries`: a page whose response isn't `completed` is sent again with the same image, up to
-  that many times, and `Page.Attempts` says how many sends it took. The integration tier sets one
-  retry and caps a page at 2048 output tokens, so a loop ends in seconds rather than minutes. The
-  matrix sets no retries, so its loops show as incomplete pages. No page needed a retry in the four
-  integration runs below.
+  costs minutes and returns no usable text, but on one run and not the next. So the harness's
+  `Request` has `PageRetries`: a page whose response isn't `completed` is sent again with the same
+  image, up to that many times, and `Page.Attempts` says how many sends it took. The integration
+  tier sets one retry and caps a page at 2048 output tokens, so a loop ends in seconds rather than
+  minutes. The bake-off tier sets no retries, so its loops show as incomplete pages. A retry
+  doesn't always end the loop: on 2 of 5 runs of the scanned Document test, page 7 was still
+  incomplete after its retry (the next section).
 
 ## Pages and Document on gb10-2
 
-The integration tier (`document/vision_integration_test.go`) runs both entry points, now the
-vision harness's `pages` and `document` over `Images`, against
-gb10-2: each page through Gemma 4 26B-A4B as the bake-off transcribes it, 4 pages in flight, a
-2048-token page cap, and one page retry, and Document's final request to gpt-oss-120b at low
-reasoning effort for a digest under a JSON schema (summary, title, kind, dates, markings,
-keywords), capped at 4096 output tokens.
+The integration tier (`document/vision_integration_test.go`) runs the vision harness's `pages` and
+`document`, over `Images`, against gb10-2: each page through Gemma 4 26B-A4B as the bake-off
+transcribes it, 4 pages in flight, a 2048-token page cap, and one page retry, and Document's final
+request to gpt-oss-120b at low reasoning effort for a digest under a JSON schema (summary, title,
+kind, dates, markings, keywords), capped at 4096 output tokens.
 
 Document **digitizes, then digests**. The page transcriptions are the document's content, which
 `Result.Text` joins under "Page N of M:" headings. The final request derives a small digest for
-search from them and never replaces them. An earlier design asked the final model to rewrite the
-whole document as one clean text. It was rejected: a rewrite paraphrases and invents, and its
-output grows with the document.
+search from them and never replaces them. It doesn't rewrite the document as one clean text: a
+rewrite paraphrases and invents, and its output grows with the document.
 
-Four runs, the fourth for this page, gave the same results apart from the wall time:
+The harness's figures vary from run to run: the wall times, and, with what the page model writes,
+the scanned set's CER and the final request's input tokens. Runs 1 to 4 ran on 2026-10-29, before
+ruling M moved the harness into test code; run 5 is the spec review's, on 2026-10-30, after it:
 
 | Run | Pages, clean.pdf (6 pages) | Document, clean.pdf | Document, scanned.pdf (7 pages) |
 |---|---|---|---|
@@ -521,10 +531,18 @@ Four runs, the fourth for this page, gave the same results apart from the wall t
 | 2 | 8.18 s, CER 0 | 16.11 s, CER 0 | 11.78 s |
 | 3 | 8.43 s, CER 0 | 16.19 s, CER 0 | 11.70 s |
 | 4 | 7.78 s, CER 0 | 15.87 s, CER 0 | 12.99 s, CER 0.0961 |
+| 5 | 11.2 s, CER 0 | 18.1 s, CER 0 | 11.8 s, CER 0.1091 |
 
-Run 4 added the scanned pages' CER and the final step's input tokens to the recorded lines. In
-every run, `Result.Text` for clean.pdf scored a CER of 0 against the joined ground truth with its
-headings stripped.
+Runs 1 to 3 recorded no scanned CER; run 4 added it and the final step's input tokens to the
+recorded lines. No page was retried in these five runs. In every run, `Result.Text` for clean.pdf
+scored a CER of 0 against the joined ground truth with its headings stripped.
+
+A retry doesn't always save a page. After ruling M, the scanned Document test ran 5 more times.
+On 2 of them, page 7 looped on its seal's text to the 2048-token page cap on both of its
+attempts, so Document failed before its final step. The test now records such a page, its
+attempts and status, and skips the final step's assertions instead of failing: an inference
+outcome only shows the preparation is usable. The clean set still asserts that every page
+completes.
 
 The digests from run 4, as gpt-oss-120b wrote them. For clean.pdf:
 
@@ -562,10 +580,11 @@ does report NOFORN, though page 7's own NOFORN was never read.
 
 ### Image tokens per page
 
-Source: `TestVisionImageTokensHost`, integration run 4. clean.pdf's page 1 was rendered by gs at
-each DPI and sent beside a short text in a request for one output token. The image's tokens are
-the request's input tokens less those of the same request without the image (18). The difference
-includes the few tokens that mark where an image begins and ends.
+Source: `TestVisionImageTokensHost`, integration runs 4 and 5, which recorded the same counts.
+clean.pdf's page 1 was rendered by gs at each DPI and sent beside a short text in a request for one
+output token. The image's tokens are the request's input tokens less those of the same request
+without the image (18). The difference includes the few tokens that mark where an image begins and
+ends.
 
 | DPI | Pixels | PNG bytes | Image tokens |
 |---|---|---|---|
@@ -582,13 +601,13 @@ context.
 
 ### The final step against gpt-oss-120b's context
 
-Source: the integration tier's `recordFinal`, run 4, which reads a slot's context from the
+Source: the integration tier's `recordFinal`, runs 4 and 5, which reads a slot's context from the
 router's `/props`.
 
-| Document | Final request input tokens | Share of the context |
-|---|---|---|
-| clean.pdf, 6 pages | 1,111 | 0.8% of 131,072 |
-| scanned.pdf, 7 pages | 564 | 0.4% of 131,072 |
+| Document | Final request input tokens, run 4 | Run 5 | Share of the context |
+|---|---|---|---|
+| clean.pdf, 6 pages | 1,111 | 1,134 | 0.8 to 0.9% of 131,072 |
+| scanned.pdf, 7 pages | 564 | 570 | 0.4% of 131,072 |
 
 gb10-2's preset (the root's `host/llama-preset/models.ini`) gives gpt-oss-120b `c = 131072` with
 4 slots and a unified KV cache: one pool of 131,072 tokens the 4 slots share, and each slot
@@ -605,9 +624,9 @@ llama.cpp b11669 serves HTTP through its vendored cpp-httplib 0.61.0, whose
 (`vendor/cpp-httplib/httplib.h`, line 130, at tag `b11669`, commit `620d2225c`). The server's own
 sources (`tools/server/server-http.cpp` and `tools/server/server.cpp`) don't change it, so a
 larger body is refused with HTTP 413. This comes from reading the source; no request near the
-limit was sent. A page image is far smaller: 21 to 80 KB for the clean page above. The package
-sets no limit of its own. A page over the server's limit is sent anyway, and its 413 comes back as
-that page's `*client.APIError`.
+limit was sent. A page image is far smaller: 21 to 80 KB for the clean page above. Neither
+`Images` nor the vision harness sets a limit of its own: the harness sends a page over the
+server's limit anyway, and its 413 comes back as that page's `*client.APIError`.
 
 ## Measuring a tool's memory
 
@@ -626,7 +645,8 @@ PNG, and once through the launcher, for its memory.
 
 ## Build, host stack, and network path
 
-- **Date:** 2026-10-29.
+- **Dates:** 2026-10-29 for the renderer bake-offs, the corrections matrix, and integration runs 1
+  to 4; 2026-10-30 for the placement, the flow, the tiles, and integration run 5.
 - **llama.cpp build:** `b11669-620d2225c` (the router's `/props` `build_info`); the router
   reports `version: 0.7.0-dev (build 11669, commit 620d2225c)`.
 - **gb10-2's stack:** Ubuntu 24.04.5 LTS, DGX OS 7.6.0; kernel 7.0.0-1024-nvidia since
@@ -657,6 +677,7 @@ BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff              # the renderer bake-o
 BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff-corrections  # evidence 11's matrix, about 25 min
 BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff-placement    # ruling L's placements, about 4 min
 BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff-flow         # ruling N's staged flow, about 8 min
+BAKEOFF_RESULTS=$(mktemp -d) mise run bakeoff-tiles        # ruling O's tiles
 GOWORK=off go test -race -tags integration -count=1 -v ./...  # the integration tier, its records
 ```
 
@@ -664,5 +685,5 @@ GOWORK=off go test -race -tags integration -count=1 -v ./...  # the integration 
 holds it and is removed afterward. `BAKEOFF_DPI`, `BAKEOFF_SET`, and `BAKEOFF_CELL` narrow a
 matrix run to some DPIs, sets, or cells; `BAKEOFF_RENDERER` and `BAKEOFF_SET` narrow the bake-off;
 `BAKEOFF_PLACEMENT` narrows the placements, and `BAKEOFF_VARIANT` and `BAKEOFF_RUN` the flow's
-variants and runs.
-The integration tier's records print only with `-v`, which `mise run integration` doesn't pass.
+variants and runs. The integration tier's records print only with `-v`, which
+`mise run integration` doesn't pass.
