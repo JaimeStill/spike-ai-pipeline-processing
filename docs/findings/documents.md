@@ -429,6 +429,33 @@ read the same on all three runs, except page 2's footer, which varied in wording
   URL, page 4's date, pages 3 and 6's page numbers. Page 2's blank footer drew a refusal instead
   of an empty answer.
 
+**Tiles (ruling O).** `mise run bakeoff-tiles` sent near-square tiles, and page 7's footer band
+for comparison, through `RenderRegion` three times each with the plain instructions beside the
+image, greedy and with reasoning off. Image tokens are each request's input tokens less the 56
+of the same text without the image. All three runs of a tile cost the same, and all three read
+the same unless the cell says otherwise:
+
+| Tile (page, region top..bottom × left..right) | 300 dpi: pixels, image tokens, read | 200 dpi: pixels, image tokens, read |
+|---|---|---|
+| 7, foot marking, 0.68..1 × 0.35..0.81 | 1173×1056, 485: a refusal, "I cannot fulfill this request. The image provided contains large blacked-out sections…" | 782×704, 242: "SECRET" |
+| 7, NOFORN alone, 0.86..1 × 0.60..0.82 | 561×462, 122: "NOURAN", "NOORDEN", "NOORDEN" | 374×308, 82: "NOKEDOUI" |
+| 7, footer band, 0.88..1 × 0..1 | 2550×396, 426: "SPERET NORDEN" | 1700×264, 212: "SPERET MÅLFORSLAG", "SPERET MÅLFORLØB", "SPERET MÅLFORSLAG" |
+| 5, seal, 0.05..0.18 × 0.05..0.22 | 434×429, 83: "DEPARTMENT OF DEFENSE UNITED STATES OF AMERICA" on runs 1 and 3, "DEPARTMENT OF DEFENSE" on run 2 | 289×286, 83: "DEPARTMENT OF DEFENSE UNITED STATES OF AMERICA" |
+| 5, control, 0.075..0.205 × 0.39..0.60 | 536×429, 101: "WASHINGTON, D.C. 20340" | 357×286, 82: "WASHINGTON, D.C. 20340" |
+
+The tokens follow the image's area, not its shape: about 2,100 to 2,400 pixels a token for the
+bands and the tiles alike, above a floor of 82 to 83 for the smallest tiles. The largest, the
+foot tile at 300 dpi, is 2,550 pixels a token at 485, near a whole page's 477 at 150 dpi (the
+533 above, less the 56), where the count stops growing. The band was not squashed more than a square tile is, so the hypothesis doesn't hold here.
+What a tile changes is what is in it. Page 5's seal reads "DEPARTMENT OF DEFENSE" on all six
+tile reads, where the header band never did, and the control reads exactly at both DPIs, at 82
+to 101 image tokens a tile. Page 7's NOFORN still does not appear: NOFORN alone at 300 dpi reads
+as a word of its shape, "NOORDEN", and the tile holding both words, with the redaction above
+them, drew a refusal at 300 dpi and "SECRET" alone at 200. For the inference layer: a small tile
+on a known spot, a seal or a printed line, reads text the page and its band miss, for about a
+fifth of a page's image tokens; detail follows the DPI and the tile's area, not its shape. A
+marking as faded as page 7's isn't recovered by tiling, so the layer can't rely on vision for it.
+
 ### What this means for the inference layer
 
 - **Put the instructions beside the image.**

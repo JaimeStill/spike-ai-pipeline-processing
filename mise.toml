@@ -191,3 +191,24 @@ for run in 1 2 3; do flow scanned regions "$run"; done
 go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestFlowReport$' ./document/ || failed=1
 exit "$failed"
 '''
+
+# Ruling O of task documents, tile shape, in the bake-off tier: near-square tiles of the scanned
+# set's pages 5 and 7, and page 7's full-width footer band, rendered by RenderRegion at 300 and
+# 200 dpi, each sent three times to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names with the
+# plain transcription request beside it; each tile's image tokens and verbatim reads are logged.
+# Each DPI is a run of its own, capped at 10 minutes. -v keeps the recorded lines. It isn't CI.
+[tasks.bakeoff-tiles]
+description = "Run the tile shape measurement against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A failed run doesn't stop the other; the task fails at the end.
+failed=0
+for dpi in 300 200; do
+  start=$(date +%s)
+  BAKEOFF_DPI=$dpi go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestTiles$' ./document/ || failed=1
+  echo "bakeoff-tiles: $dpi dpi took $(( $(date +%s) - start )) s"
+done
+exit "$failed"
+'''

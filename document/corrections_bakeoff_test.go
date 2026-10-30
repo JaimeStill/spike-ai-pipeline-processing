@@ -85,13 +85,13 @@ var corrections struct {
 	runs []correctionResult
 }
 
-// selectedDPIs returns the DPIs BAKEOFF_DPI names, matrixDPIs when it is unset, failing t on a
-// value that isn't a positive integer.
-func selectedDPIs(t *testing.T) []int {
+// selectedDPIs returns the DPIs BAKEOFF_DPI names, all when it is unset, failing t on a value
+// that isn't a positive integer.
+func selectedDPIs(t *testing.T, all []int) []int {
 	t.Helper()
 	env := os.Getenv("BAKEOFF_DPI")
 	if env == "" {
-		return matrixDPIs
+		return all
 	}
 	var dpis []int
 	for s := range strings.SplitSeq(env, ",") {
@@ -169,7 +169,7 @@ func TestCorrections(t *testing.T) {
 		t.Setenv("BAKEOFF_SET", strings.Join(matrixSets, ","))
 	}
 	sets := loadSets(t)
-	for _, dpi := range selectedDPIs(t) {
+	for _, dpi := range selectedDPIs(t, matrixDPIs) {
 		for _, s := range sets {
 			for _, mc := range selectedCells(t) {
 				t.Run(fmt.Sprintf("%ddpi/%s/%s", dpi, s.name, mc.name), func(t *testing.T) {

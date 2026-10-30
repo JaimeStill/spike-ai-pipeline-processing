@@ -7,6 +7,7 @@ import (
 	"cmp"
 	"encoding/json/jsontext"
 	"fmt"
+	"image/png"
 	"maps"
 	"os"
 	"slices"
@@ -367,6 +368,141 @@ func regionRun(t *testing.T, v *vision, s fixtureSet, run int) []flowCell {
 		}
 	}
 	return cells
+}
+
+// Ruling O of task documents, tile shape, in the bake-off tier: `mise run bakeoff-tiles` runs
+// TestTiles once per DPI. The regions variant's full-width bands at 300 dpi, 2550 by 396 pixels,
+// cost nearly a page's image tokens and still misread page 7's faded foot marking; the hypothesis
+// is that the vision encoder resizes an image toward a fixed shape, squashing a wide one, so a
+// near-square tile keeps its detail. Each tile below is rendered once by RenderRegion and sent
+// tileRuns times, greedy, reasoning off, with the plain transcription request beside it; its
+// image tokens are its requests' input tokens less those of the same text without the image, as
+// TestVisionImageTokensHost measures a page's. Its reads are logged verbatim, not scored: a
+// page's truth is the whole page's.
+//
+// BAKEOFF_DPI names the DPIs, comma-separated, tileDPIs when unset. BAKEOFF_RESULTS names a
+// directory each DPI's result is written to as tiles-<dpi>.json.
+
+// tileDPIs are the DPIs TestTiles renders at: the regions variant's, and 200 for how a tile's
+// image tokens follow its pixels.
+var tileDPIs = []int{regionDPI, 200}
+
+// tileRuns is how many times each tile is sent.
+const tileRuns = 3
+
+// tiles are the regions TestTiles reads, placed from the scanned pages' 300-dpi images: page 7's
+// foot marking, its "SECRET" and "NOFORN" with margin, and NOFORN alone, against the regions
+// variant's footer band; page 5's seal, ringed by "DEPARTMENT OF DEFENSE"; and, the control, page
+// 5's clearly printed "WASHINGTON, D.C. 20340".
+var tiles = []struct {
+	name   string
+	page   int
+	region document.Region
+}{
+	{"p7-foot", 7, document.Region{Top: 0.68, Bottom: 1, Left: 0.35, Right: 0.81}},
+	{"p7-noforn", 7, document.Region{Top: 0.86, Bottom: 1, Left: 0.60, Right: 0.82}},
+	{"p7-footer-band", 7, bands[1].region},
+	{"p5-seal", 5, document.Region{Top: 0.05, Bottom: 0.18, Left: 0.05, Right: 0.22}},
+	{"p5-washington", 5, document.Region{Top: 0.075, Bottom: 0.205, Left: 0.39, Right: 0.60}},
+}
+
+// tileRead is one read of a tile.
+type tileRead struct {
+	Tile          string          `json:"tile"`
+	Page          int             `json:"page"`
+	Region        document.Region `json:"region"`
+	DPI           int             `json:"dpi"`
+	Width         int             `json:"width"`
+	Height        int             `json:"height"`
+	PNGBytes      int             `json:"png_bytes"`
+	Run           int             `json:"run"`
+	InputTokens   int             `json:"input_tokens"`
+	TextOnly      int             `json:"text_only_tokens"`
+	OutputTokens  int             `json:"output_tokens"`
+	Status        string          `json:"status"`
+	Output        string          `json:"output"`
+	Error         string          `json:"error,omitempty"`
+	RequestMillis int64           `json:"request_ms"`
+	// png is the tile's image, held until the read is sent.
+	png []byte
+}
+
+func TestTiles(t *testing.T) {
+	c := bakeoffClient(t)
+	gs := hostTool(t, document.GhostscriptSpec())
+	g, err := document.NewGhostscript(gs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	v, err := newVision(timedGenerator{c}, g, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pdf := fixturePDF(t, "scanned")
+	req := placementRequest(t, "beside")
+	// The text-only request is a page's without the image, bounded to one output token as the
+	// integration tier's probe bounds it.
+	textOnly := withMessage(req.Template, protocol.Message{Role: protocol.RoleUser, Content: []protocol.ContentPart{protocol.InputText{Text: req.Prompt}}})
+	textOnly.MaxOutputTokens = 0
+	textOnly.Native = jsontext.Value(`{"temperature":0,"max_completion_tokens":1}`)
+	resp, err := c.Generate(t.Context(), textOnly)
+	if err != nil {
+		t.Fatal(err)
+	}
+	without := resp.Usage.InputTokens
+	t.Logf("recorded: tiles: the plain transcription request without an image is %d input tokens", without)
+	for _, dpi := range selectedDPIs(t, tileDPIs) {
+		t.Run(strconv.Itoa(dpi), func(t *testing.T) {
+			var reads []tileRead
+			for _, tl := range tiles {
+				var img bytes.Buffer
+				if err := g.RenderRegion(t.Context(), pdf, tl.page, dpi, tl.region, &img); err != nil {
+					t.Fatal(err)
+				}
+				cfg, err := png.DecodeConfig(bytes.NewReader(img.Bytes()))
+				if err != nil {
+					t.Fatal(err)
+				}
+				for run := 1; run <= tileRuns; run++ {
+					reads = append(reads, tileRead{Tile: tl.name, Page: tl.page, Region: tl.region, DPI: dpi,
+						Width: cfg.Width, Height: cfg.Height, PNGBytes: img.Len(), Run: run, TextOnly: without,
+						png: img.Bytes()})
+				}
+			}
+			// inFlight reads are sent at once.
+			work := make(chan int)
+			var wg sync.WaitGroup
+			for range inFlight {
+				wg.Go(func() {
+					for i := range work {
+						r := &reads[i]
+						page := document.PageImage{Number: r.Page, Count: 7, PNG: r.png}
+						start := time.Now()
+						resp, _, err := v.send(t.Context(), page, req)
+						r.RequestMillis = time.Since(start).Milliseconds()
+						if err != nil {
+							r.Error = err.Error()
+							t.Errorf("tiles %s %d dpi run %d: %v", r.Tile, dpi, r.Run, err)
+							continue
+						}
+						r.Status, r.Output = string(resp.Status), text(resp)
+						r.InputTokens, r.OutputTokens = resp.Usage.InputTokens, resp.Usage.OutputTokens
+					}
+				})
+			}
+			for i := range reads {
+				work <- i
+			}
+			close(work)
+			wg.Wait()
+			for _, r := range reads {
+				t.Logf("recorded: tiles %s at %d dpi, page %d region top %g bottom %g left %g right %g, %dx%d, %d PNG bytes: run %d, %d input tokens, %d image tokens, %d output tokens, %s in %d ms: %q",
+					r.Tile, dpi, r.Page, r.Region.Top, r.Region.Bottom, r.Region.Left, r.Region.Right, r.Width, r.Height, r.PNGBytes,
+					r.Run, r.InputTokens, r.InputTokens-r.TextOnly, r.OutputTokens, r.Status, r.RequestMillis, collapse(r.Output))
+			}
+			saveJSON(t, fmt.Sprintf("tiles-%d.json", dpi), reads, func() {})
+		})
+	}
 }
 
 // TestFlowReport logs the runs TestFlow ran as recorded lines: for each set, each variant's CER
