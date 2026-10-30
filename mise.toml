@@ -119,3 +119,75 @@ done
 go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestCorrectionsMatrix$' ./document/ || failed=1
 exit "$failed"
 '''
+
+# Ruling L of task documents, instruction placement, in the bake-off tier: the clean, degraded, and
+# scanned sets through the vision harness with the released renderer at 150 dpi and no correction,
+# each page sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, three runs each, with the
+# transcription instructions beside the image in its user message and in the request's
+# Instructions. Each placement and set is a run of its own, capped at 10 minutes, and a last run
+# reports them from their results, which a temporary directory carries between the runs. -v keeps
+# the recorded lines. It isn't CI.
+[tasks.bakeoff-placement]
+description = "Run the instruction placement comparison against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A BAKEOFF_RESULTS the shell sets keeps the runs' results, transcriptions included, there.
+if [ -z "${BAKEOFF_RESULTS:-}" ]; then
+  BAKEOFF_RESULTS=$(mktemp -d)
+  trap 'rm -rf "$BAKEOFF_RESULTS"' EXIT
+fi
+export BAKEOFF_RESULTS
+# A failed run doesn't stop the others; the task fails at the end.
+failed=0
+for placement in beside instructions; do
+  for set in clean degraded scanned; do
+    start=$(date +%s)
+    BAKEOFF_PLACEMENT=$placement BAKEOFF_SET=$set \
+      go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestPlacement$' ./document/ || failed=1
+    echo "bakeoff-placement: $placement $set took $(( $(date +%s) - start )) s"
+  done
+done
+go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestPlacementReport$' ./document/ || failed=1
+exit "$failed"
+'''
+
+# Ruling N of task documents, the staged flow the inference layer will follow, in the bake-off
+# tier: text layer first, vision only for the pages without one; Assess and a first pass that
+# returns the transcription, a judgement, and corrections from the catalog under a strict schema;
+# a second pass, corrected, only for the pages the first flagged; and the scanned pages' header and
+# footer bands at 300 dpi. Each set is run as the flow and as two baselines, none and all-five,
+# three runs each, each page sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names with the
+# released renderer and this machine's magick. Each set, variant, and run is a run of its own,
+# capped at 10 minutes, and a last run reports them from their results, which a temporary
+# directory carries between the runs. -v keeps the recorded lines. It isn't CI.
+[tasks.bakeoff-flow]
+description = "Run the staged two-pass flow against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A BAKEOFF_RESULTS the shell sets keeps the runs' results, transcriptions included, there.
+if [ -z "${BAKEOFF_RESULTS:-}" ]; then
+  BAKEOFF_RESULTS=$(mktemp -d)
+  trap 'rm -rf "$BAKEOFF_RESULTS"' EXIT
+fi
+export BAKEOFF_RESULTS
+# A failed run doesn't stop the others; the task fails at the end.
+failed=0
+flow() {
+  start=$(date +%s)
+  BAKEOFF_SET=$1 BAKEOFF_VARIANT=$2 BAKEOFF_RUN=$3 \
+    go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestFlow$' ./document/ || failed=1
+  echo "bakeoff-flow: $1 $2 run $3 took $(( $(date +%s) - start )) s"
+}
+for set in clean degraded scanned; do
+  for variant in flow none all-five; do
+    for run in 1 2 3; do flow "$set" "$variant" "$run"; done
+  done
+done
+for run in 1 2 3; do flow scanned regions "$run"; done
+go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestFlowReport$' ./document/ || failed=1
+exit "$failed"
+'''

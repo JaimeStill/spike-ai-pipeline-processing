@@ -196,17 +196,10 @@ func TestCorrections(t *testing.T) {
 }
 
 // correctedRun runs every page of s through v at dpi with mc's corrections, inFlight pages at
-// once and no page retries, and returns each page's cell, scored against its truth. A page that
-// fails is t's error, and its cell scores as an empty transcription, incomplete; so does a page
-// whose response isn't completed, as in the renderer bake-off. A stream that ends with an error
-// of its own fails t.
+// once and no page retries, and returns each page's cell, scored against its truth, as harnessRun
+// does.
 func correctedRun(t *testing.T, v *vision, s fixtureSet, dpi int, mc matrixCell, run int) []cell {
 	t.Helper()
-	f, err := os.Open(s.pdf)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer func() { _ = f.Close() }()
 	req := visionRequest{
 		Dir:         t.TempDir(),
 		Template:    matrixTemplate(),
@@ -214,32 +207,56 @@ func correctedRun(t *testing.T, v *vision, s fixtureSet, dpi int, mc matrixCell,
 		Corrections: mc.corrections,
 		Concurrency: inFlight,
 	}
+	return harnessRun(t, v, s, req, fmt.Sprintf("%d dpi %s %s run %d", dpi, s.name, mc.name, run), run)
+}
+
+// harnessRun runs every page of s through v's pages as req says and returns each page's cell of
+// run, scored against its truth; label names the run in its errors. A page that fails is t's
+// error, and its cell scores as an empty transcription, incomplete; so does a page whose response
+// isn't completed, as in the renderer bake-off. A stream that ends with an error of its own fails
+// t.
+func harnessRun(t *testing.T, v *vision, s fixtureSet, req visionRequest, label string, run int) []cell {
+	t.Helper()
+	f, err := os.Open(s.pdf)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = f.Close() }()
 	var cells []cell
 	for p, err := range v.pages(t.Context(), f, req) {
 		if p.Number == 0 {
-			t.Fatalf("%d dpi %s %s run %d: %v", dpi, s.name, mc.name, run, err)
+			t.Fatalf("%s: %v", label, err)
 		}
 		cl := cell{Set: s.name, Page: p.Number, Run: run}
 		switch {
 		case err != nil:
 			cl.Error = err.Error()
-			t.Errorf("%d dpi %s %s page %d run %d: %v", dpi, s.name, mc.name, p.Number, run, err)
+			t.Errorf("%s: page %d: %v", label, p.Number, err)
 		case p.Response != nil:
-			cl.Status = string(p.Response.Status)
-			cl.Output = text(p.Response)
-			cl.InputTokens = p.Response.Usage.InputTokens
-			cl.OutputTokens = p.Response.Usage.OutputTokens
-			cl.ReasoningTokens = p.Response.Usage.OutputTokensDetails.ReasoningTokens
+			fill(&cl, p.Response)
 		}
-		truth := s.truth[p.Number-1]
-		cl.CharEdits, cl.Chars = charErrors(truth, cl.Output)
-		cl.WordEdits, cl.Words = wordErrors(truth, cl.Output)
+		score(&cl, s.truth[p.Number-1])
 		cells = append(cells, cl)
 	}
 	if len(cells) != len(s.truth) {
-		t.Fatalf("%d dpi %s %s run %d: %d pages, want %d", dpi, s.name, mc.name, run, len(cells), len(s.truth))
+		t.Fatalf("%s: %d pages, want %d", label, len(cells), len(s.truth))
 	}
 	return cells
+}
+
+// fill sets cl's status, output, and usage from resp.
+func fill(cl *cell, resp *protocol.Response) {
+	cl.Status = string(resp.Status)
+	cl.Output = text(resp)
+	cl.InputTokens = resp.Usage.InputTokens
+	cl.OutputTokens = resp.Usage.OutputTokens
+	cl.ReasoningTokens = resp.Usage.OutputTokensDetails.ReasoningTokens
+}
+
+// score sets cl's edits and lengths against truth.
+func score(cl *cell, truth string) {
+	cl.CharEdits, cl.Chars = charErrors(truth, cl.Output)
+	cl.WordEdits, cl.Words = wordErrors(truth, cl.Output)
 }
 
 // saveCorrections keeps res for the matrix: in BAKEOFF_RESULTS when it is set, else in memory.

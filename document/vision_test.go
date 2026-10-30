@@ -26,9 +26,9 @@ import (
 
 // This file is the vision harness: the layer above document, in test code, that sends the pages
 // the released Images stream prepares to a model, as ruling M of task documents places inference
-// above processing's libraries. The integration tier's vision tests and the corrections matrix in
-// the bake-off tier run on it, so they prove evidence 4 end to end through the released
-// preparation. It is test code, never released: the module's requirement of
+// above processing's libraries. The integration tier's vision tests, and the corrections matrix,
+// the instruction placement comparison, and the staged flow in the bake-off tier, run on it, so
+// they prove evidence 4 end to end through the released preparation. It is test code, never released: the module's requirement of
 // spike-ai-pipeline-client is a test requirement. The tests below check its inference: the page
 // requests, retries, the ordered stream over the generator's concurrency, and the final request.
 
@@ -84,6 +84,12 @@ type visionRequest struct {
 	// Template is the request for one page; each page's request is a copy of it with one user
 	// message appended, the page's image as a PNG data URL.
 	Template *protocol.Request
+	// Prompt, when not empty, is a text part placed before the image in each page's user
+	// message: the instructions beside the image, as the renderer bake-off sent them, where the
+	// template's Instructions put them in the request's own. Empty sends the image alone.
+	Prompt string
+	// Region, when not nil, renders only that band of each page, as Images's request does.
+	Region *document.Region
 	// PageRetries is how many more times a page is sent when its response isn't completed, with
 	// the image already prepared, holding its slot. A page whose Generate fails is never re-sent.
 	PageRetries int
@@ -93,7 +99,9 @@ type visionRequest struct {
 
 // images is the request's preparation, for Images.
 func (r visionRequest) images() document.ImagesRequest {
-	return document.ImagesRequest{Dir: r.Dir, DPI: r.DPI, Corrections: r.Corrections, Concurrency: r.Concurrency}
+	return document.ImagesRequest{
+		Dir: r.Dir, DPI: r.DPI, Corrections: r.Corrections, Concurrency: r.Concurrency, Region: r.Region,
+	}
 }
 
 // visionPage is one page's outcome: its number, the page count, the model's response, nil for a
@@ -183,14 +191,14 @@ func (v *vision) pages(ctx context.Context, pdf io.Reader, req visionRequest) it
 	}
 }
 
-// send sends img in a copy of req.Template, again with the same image while its response isn't
+// send sends img in a copy of req.Template, beside req.Prompt when it is set, again with the same image while its response isn't
 // completed and req.PageRetries allows, returning the last response and the times it was sent. A
 // Generate error ends the page without a retry, and so does ctx ending.
 func (v *vision) send(ctx context.Context, img document.PageImage, req visionRequest) (*protocol.Response, int, error) {
 	attempts := 0
 	for {
 		// Each attempt is a request of its own, so no two share an input array.
-		resp, err := v.gen.Generate(ctx, withImage(req.Template, img.PNG))
+		resp, err := v.gen.Generate(ctx, withImage(req.Template, req.Prompt, img.PNG))
 		attempts++
 		if err != nil {
 			return nil, attempts, fmt.Errorf("vision: page %d of %d: generate: %w", img.Number, img.Count, err)
@@ -210,18 +218,21 @@ func check(req visionRequest) error {
 	case req.PageRetries < 0:
 		return fmt.Errorf("vision: request's page retries %d is negative", req.PageRetries)
 	}
-	if err := withImage(req.Template, nil).Validate(); err != nil {
+	if err := withImage(req.Template, req.Prompt, nil).Validate(); err != nil {
 		return fmt.Errorf("vision: request's template: %w", err)
 	}
 	return nil
 }
 
-// withImage returns a copy of tmpl with one user message appended to its Input: png as an
-// InputImage's PNG data URL, its detail unset.
-func withImage(tmpl *protocol.Request, png []byte) *protocol.Request {
-	return withMessage(tmpl, protocol.Message{Role: protocol.RoleUser, Content: []protocol.ContentPart{
-		protocol.InputImage{ImageURL: protocol.DataURL("image/png", png)},
-	}})
+// withImage returns a copy of tmpl with one user message appended to its Input: prompt as an
+// InputText when it isn't empty, then png as an InputImage's PNG data URL, its detail unset.
+func withImage(tmpl *protocol.Request, prompt string, png []byte) *protocol.Request {
+	var parts []protocol.ContentPart
+	if prompt != "" {
+		parts = append(parts, protocol.InputText{Text: prompt})
+	}
+	parts = append(parts, protocol.InputImage{ImageURL: protocol.DataURL("image/png", png)})
+	return withMessage(tmpl, protocol.Message{Role: protocol.RoleUser, Content: parts})
 }
 
 // withMessage returns a copy of tmpl with msg appended to its Input. The copy's slices are its
@@ -404,13 +415,17 @@ func imagePage(req *protocol.Request) int {
 		return 0
 	}
 	m, ok := req.Input[len(req.Input)-1].(protocol.Message)
-	if !ok || len(m.Content) == 0 {
-		return 0
-	}
-	img, ok := m.Content[0].(protocol.InputImage)
 	if !ok {
 		return 0
 	}
+	i := slices.IndexFunc(m.Content, func(p protocol.ContentPart) bool {
+		_, ok := p.(protocol.InputImage)
+		return ok
+	})
+	if i < 0 {
+		return 0
+	}
+	img := m.Content[i].(protocol.InputImage)
 	b, err := base64.StdEncoding.DecodeString(strings.TrimPrefix(img.ImageURL, "data:image/png;base64,"))
 	if err != nil {
 		return 0
@@ -791,6 +806,48 @@ func TestVisionRequestCopy(t *testing.T) {
 	}
 	if &reqs[0].Input[0] == &reqs[1].Input[0] {
 		t.Error("two pages' requests share an input array")
+	}
+}
+
+// TestVisionPrompt checks a request's Prompt goes beside each page's image: its user message is
+// the prompt as a text part and then the image, the template's own input unchanged before it.
+func TestVisionPrompt(t *testing.T) {
+	f := newVisionFixture(t, 2)
+	f.req.Template.Instructions = ""
+	f.req.Prompt = transcribeInstructions
+	if _, errs := f.pages(t.Context()); errors.Join(errs...) != nil {
+		t.Fatal(errors.Join(errs...))
+	}
+	reqs := f.gen.requests()
+	if len(reqs) != 2 {
+		t.Fatalf("%d requests sent, want 2", len(reqs))
+	}
+	for _, r := range reqs {
+		page := imagePage(r)
+		want := protocol.Message{Role: protocol.RoleUser, Content: []protocol.ContentPart{
+			protocol.InputText{Text: transcribeInstructions},
+			protocol.InputImage{ImageURL: protocol.DataURL("image/png", pagePNG(page))},
+		}}
+		if page == 0 || r.Instructions != "" || len(r.Input) != 2 || !reflect.DeepEqual(r.Input[1], want) {
+			t.Errorf("page %d's request is %+v, want no instructions and the prompt beside the image", page, r)
+		}
+	}
+}
+
+// TestVisionRegion checks a request's Region reaches Images, so each page sent is the region's
+// render.
+func TestVisionRegion(t *testing.T) {
+	f := newVisionFixture(t, 2)
+	footer := document.Region{Top: 0.88, Bottom: 1, Left: 0, Right: 1}
+	f.req.Region = &footer
+	if _, errs := f.pages(t.Context()); errors.Join(errs...) != nil {
+		t.Fatal(errors.Join(errs...))
+	}
+	if _, regions := f.render.textRead(); !slices.Equal(regions, []document.Region{footer, footer}) {
+		t.Errorf("the renderer rendered regions %v, want the footer for each page", regions)
+	}
+	if got := len(f.gen.requests()); got != 2 {
+		t.Errorf("%d requests sent, want 2", got)
 	}
 }
 
