@@ -83,6 +83,9 @@ const cliKillAfter = 2 * time.Second
 // the CLI's outcome once, as the exec runner's names the program's. A tool that exits nonzero
 // gives an *ExitError naming spec's program; docker's own failures exit 125, and an entrypoint it
 // can't run, 126 or 127.
+//
+// A run leaves an invocation's Usage zero: the docker CLI's rusage, the only one the runner can
+// read, isn't the container's, whose processes the daemon starts and reaps.
 func NewContainer(ctx context.Context, docker string, image Image, spec Spec) (*Tool, error) {
 	name := filepath.Base(spec.Program)
 	if spec.Program == "" {
@@ -169,6 +172,11 @@ func runArgs(program string, image Image) []string {
 func containerRun(name, dpath string, drun runFunc, base []string, ref string, killAfter time.Duration) runFunc {
 	cli := execRun(name, dpath, nil, cliKillAfter)
 	return func(ctx context.Context, inv Invocation) error {
+		// The CLI's rusage isn't the container's, whose processes the daemon starts and reaps, so
+		// a run reports no usage, and the CLI's own Invocation asks for none.
+		if inv.Usage != nil {
+			*inv.Usage = Usage{}
+		}
 		// A run whose context has already ended never starts, so no container can start after
 		// the stop meant for it.
 		if err := ctx.Err(); err != nil {

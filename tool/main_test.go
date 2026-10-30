@@ -53,6 +53,8 @@ func TestMain(m *testing.M) {
 //	                  sleeps D and exits 1
 //	spawn FILE [held] starts a stubborn child, which writes its pid to FILE, then acts as
 //	                  sleep 1m; the child has no streams, or with held, holds stdout and stderr
+//	spin CMD...       spins until it has spent spinCPU of user CPU time, then does CMD as the
+//	                  stand-in would
 func standin(args []string) int {
 	if len(args) == 0 {
 		fmt.Fprintln(os.Stderr, "standin: no command")
@@ -101,9 +103,39 @@ func standin(args []string) int {
 		return 1
 	case "spawn":
 		return spawn(args[1], len(args) > 2 && args[2] == "held")
+	case "spin":
+		if err := spin(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 2
+		}
+		return standin(args[1:])
 	}
 	fmt.Fprintf(os.Stderr, "standin: unknown command %q\n", args[0])
 	return 2
+}
+
+// spinCPU is the user CPU time the spin command spends; a usage test's program has spent at
+// least this much.
+const spinCPU = 50 * time.Millisecond
+
+// spinSink keeps the spin's arithmetic from being optimized away.
+var spinSink uint64
+
+// spin busies the CPU until the process's own user CPU time, as its rusage counts it, reaches
+// spinCPU. It measures CPU time rather than wall time, so a loaded machine can't cut it short.
+func spin() error {
+	var ru syscall.Rusage
+	for {
+		if err := syscall.Getrusage(syscall.RUSAGE_SELF, &ru); err != nil {
+			return err
+		}
+		if time.Duration(ru.Utime.Nano()) >= spinCPU {
+			return nil
+		}
+		for i := range 1 << 20 {
+			spinSink += uint64(i)
+		}
+	}
 }
 
 // sleep waits for SIGTERM and exits 0 on it, or exits 1 after d.

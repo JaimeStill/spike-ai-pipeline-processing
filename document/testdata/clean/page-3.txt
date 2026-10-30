@@ -1,0 +1,17 @@
+Quarterly Rainfall by Station
+
+Station Winter Spring Summer Autumn
+
+North Ridge 212 mm 148 mm 64 mm 190 mm
+
+Mill Creek 187 mm 131 mm 58 mm 176 mm
+
+Lower Valley 143 mm 102 mm 41 mm 129 mm
+
+Harbor Point 236 mm 159 mm 77 mm 214 mm
+
+Cedar Flats 98 mm 86 mm 35 mm 91 mm
+
+East Summit 254 mm 171 mm 82 mm 233 mm
+
+Readings are totals for each quarter, rounded to the nearest millimeter.

@@ -133,6 +133,9 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 			}
 			err = cmd.Wait()
 		}
+		if inv.Usage != nil {
+			*inv.Usage = usage(cmd.ProcessState)
+		}
 		if feed != nil {
 			if ferr := feed.finish(ctx, killAfter); ferr != nil && err == nil {
 				err = fmt.Errorf("stdin: %w", ferr)
@@ -153,6 +156,23 @@ func execRun(name, path string, lead []string, killAfter time.Duration) runFunc 
 			return fmt.Errorf("tool: %s: %w", name, err)
 		}
 		return nil
+	}
+}
+
+// usage returns the CPU time of a reaped program, from its rusage; zero when state is nil, a
+// program that never started. It leaves out ru_maxrss, which holds the Go parent's resident
+// memory from the vfork-style clone that started the program (see Usage).
+func usage(state *os.ProcessState) Usage {
+	if state == nil {
+		return Usage{}
+	}
+	ru, ok := state.SysUsage().(*syscall.Rusage)
+	if !ok || ru == nil {
+		return Usage{}
+	}
+	return Usage{
+		UserCPU:   time.Duration(ru.Utime.Nano()),
+		SystemCPU: time.Duration(ru.Stime.Nano()),
 	}
 }
 

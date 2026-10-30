@@ -8,9 +8,9 @@ shellcheck = "0.11.0"
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
 GO_MODULES = "."
-# gb10-2's llama.cpp router, serving set A, named by its MagicDNS short name, for the later
-# processing tasks whose integration tests call a model; no test reads it yet. A shell may point
-# it elsewhere.
+# gb10-2's llama.cpp router, serving set A, named by its MagicDNS short name, for the tests that
+# call a model: the bake-off and the integration tier's vision tests read it. A shell may point it
+# elsewhere.
 SPIKE_ROUTER_URL = "{{ get_env(name='SPIKE_ROUTER_URL', default='http://gb10-2:8080') }}"
 
 [tasks.check]
@@ -32,14 +32,15 @@ for mod in $GO_MODULES; do
   go test -race ./...
   golangci-lint run ./...
   golangci-lint run --build-tags integration ./...
+  golangci-lint run --build-tags bakeoff ./...
 done
 '''
 
-# The integration tier runs the integration-tagged tests on this machine: real ffprobe on PATH
-# and a reachable docker daemon, which pulls the pinned ffmpeg image when it isn't present. It
-# never starts a server.
+# The integration tier runs the integration-tagged tests on this machine: real ffprobe, gs, and
+# magick on PATH, a reachable docker daemon, which pulls the pinned ffmpeg image when it isn't
+# present, and, for the vision tests, the router SPIKE_ROUTER_URL names. It never starts a server.
 [tasks.integration]
-description = "Run the integration-tagged tests against this machine's ffprobe and docker"
+description = "Run the integration-tagged tests against this machine's tools and docker, and the router"
 run = '''
 set -eu
 export GOWORK=off
@@ -51,3 +52,163 @@ done
 [tasks.currency]
 description = "Report every requirement, Go version, and tool behind its latest; writes nothing"
 run = "scripts/currency.sh"
+
+# The bake-off tier runs the bakeoff-tagged tests in package document: five PDF renderers on this
+# machine's poppler, ghostscript, libvips, and ImageMagick, each page sent to Gemma 4 26B-A4B on
+# the router SPIKE_ROUTER_URL names. The full matrix runs far longer than one 10-minute go test
+# run, and one renderer's three sets longer too, so each renderer and fixture set is a run of its
+# own, capped at 10 minutes, and a last run ranks their results, which a temporary directory
+# carries between the runs. -v keeps the recorded lines. It isn't CI.
+[tasks.bakeoff]
+description = "Run the renderer bake-off against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A BAKEOFF_RESULTS the shell sets keeps the runs' results, transcriptions included, there.
+if [ -z "${BAKEOFF_RESULTS:-}" ]; then
+  BAKEOFF_RESULTS=$(mktemp -d)
+  trap 'rm -rf "$BAKEOFF_RESULTS"' EXIT
+fi
+export BAKEOFF_RESULTS
+# A failed run doesn't stop the others; the task fails at the end.
+failed=0
+for renderer in pdftoppm pdftocairo gs vips magick; do
+  for set in clean degraded scanned; do
+    start=$(date +%s)
+    BAKEOFF_RENDERER=$renderer BAKEOFF_SET=$set \
+      go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestBakeoff$' ./document/ || failed=1
+    echo "bakeoff: $renderer $set took $(( $(date +%s) - start )) s"
+  done
+done
+go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestBakeoffRanking$' ./document/ || failed=1
+exit "$failed"
+'''
+
+# Evidence 11, the corrections matrix, in the bake-off tier: the degraded and scanned sets through
+# Vision.Pages with the released renderer, gs, and the corrections stage on this machine's magick,
+# each page sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, in seven cells (none,
+# each correction alone, all five), three runs each, at 150 dpi and again at 72. A task of its own,
+# so rerunning the matrix doesn't rerun the renderer bake-off. Each DPI, set, and cell is a run of
+# its own, capped at 10 minutes, and a last run reports the matrix from their results, which a
+# temporary directory carries between the runs. -v keeps the recorded lines. It isn't CI.
+[tasks.bakeoff-corrections]
+description = "Run the corrections matrix against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A BAKEOFF_RESULTS the shell sets keeps the runs' results, transcriptions included, there.
+if [ -z "${BAKEOFF_RESULTS:-}" ]; then
+  BAKEOFF_RESULTS=$(mktemp -d)
+  trap 'rm -rf "$BAKEOFF_RESULTS"' EXIT
+fi
+export BAKEOFF_RESULTS
+# A failed run doesn't stop the others; the task fails at the end.
+failed=0
+for dpi in 150 72; do
+  for set in degraded scanned; do
+    for cell in none Deskew Despeckle ContrastStretch Unsharp Grayscale all; do
+      start=$(date +%s)
+      BAKEOFF_DPI=$dpi BAKEOFF_SET=$set BAKEOFF_CELL=$cell \
+        go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestCorrections$' ./document/ || failed=1
+      echo "bakeoff-corrections: $dpi dpi $set $cell took $(( $(date +%s) - start )) s"
+    done
+  done
+done
+go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestCorrectionsMatrix$' ./document/ || failed=1
+exit "$failed"
+'''
+
+# Ruling L of task documents, instruction placement, in the bake-off tier: the clean, degraded, and
+# scanned sets through the vision harness with the released renderer at 150 dpi and no correction,
+# each page sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, three runs each, with the
+# transcription instructions beside the image in its user message and in the request's
+# Instructions. Each placement and set is a run of its own, capped at 10 minutes, and a last run
+# reports them from their results, which a temporary directory carries between the runs. -v keeps
+# the recorded lines. It isn't CI.
+[tasks.bakeoff-placement]
+description = "Run the instruction placement comparison against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A BAKEOFF_RESULTS the shell sets keeps the runs' results, transcriptions included, there.
+if [ -z "${BAKEOFF_RESULTS:-}" ]; then
+  BAKEOFF_RESULTS=$(mktemp -d)
+  trap 'rm -rf "$BAKEOFF_RESULTS"' EXIT
+fi
+export BAKEOFF_RESULTS
+# A failed run doesn't stop the others; the task fails at the end.
+failed=0
+for placement in beside instructions; do
+  for set in clean degraded scanned; do
+    start=$(date +%s)
+    BAKEOFF_PLACEMENT=$placement BAKEOFF_SET=$set \
+      go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestPlacement$' ./document/ || failed=1
+    echo "bakeoff-placement: $placement $set took $(( $(date +%s) - start )) s"
+  done
+done
+go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestPlacementReport$' ./document/ || failed=1
+exit "$failed"
+'''
+
+# Ruling N of task documents, the staged flow the inference layer will follow, in the bake-off
+# tier: text layer first, vision only for the pages without one; Assess and a first pass that
+# returns the transcription, a judgement, and corrections from the catalog under a strict schema;
+# a second pass, corrected, only for the pages the first flagged; and the scanned pages' header and
+# footer bands at 300 dpi. Each set is run as the flow and as two baselines, none and all-five,
+# three runs each, each page sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names with the
+# released renderer and this machine's magick. Each set, variant, and run is a run of its own,
+# capped at 10 minutes, and a last run reports them from their results, which a temporary
+# directory carries between the runs. -v keeps the recorded lines. It isn't CI.
+[tasks.bakeoff-flow]
+description = "Run the staged two-pass flow against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A BAKEOFF_RESULTS the shell sets keeps the runs' results, transcriptions included, there.
+if [ -z "${BAKEOFF_RESULTS:-}" ]; then
+  BAKEOFF_RESULTS=$(mktemp -d)
+  trap 'rm -rf "$BAKEOFF_RESULTS"' EXIT
+fi
+export BAKEOFF_RESULTS
+# A failed run doesn't stop the others; the task fails at the end.
+failed=0
+flow() {
+  start=$(date +%s)
+  BAKEOFF_SET=$1 BAKEOFF_VARIANT=$2 BAKEOFF_RUN=$3 \
+    go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestFlow$' ./document/ || failed=1
+  echo "bakeoff-flow: $1 $2 run $3 took $(( $(date +%s) - start )) s"
+}
+for set in clean degraded scanned; do
+  for variant in flow none all-five; do
+    for run in 1 2 3; do flow "$set" "$variant" "$run"; done
+  done
+done
+for run in 1 2 3; do flow scanned regions "$run"; done
+go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestFlowReport$' ./document/ || failed=1
+exit "$failed"
+'''
+
+# Ruling O of task documents, tile shape, in the bake-off tier: near-square tiles of the scanned
+# set's pages 5 and 7, and page 7's full-width footer band, rendered by RenderRegion at 300 and
+# 200 dpi, each sent three times to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names with the
+# plain transcription request beside it; each tile's image tokens and verbatim reads are logged.
+# Each DPI is a run of its own, capped at 10 minutes. -v keeps the recorded lines. It isn't CI.
+[tasks.bakeoff-tiles]
+description = "Run the tile shape measurement against the router SPIKE_ROUTER_URL names; logs recorded lines"
+run = '''
+set -eu
+export GOWORK=off
+cd "$MISE_PROJECT_ROOT"
+# A failed run doesn't stop the other; the task fails at the end.
+failed=0
+for dpi in 300 200; do
+  start=$(date +%s)
+  BAKEOFF_DPI=$dpi go test -tags bakeoff -count=1 -timeout 10m -v -run '^TestTiles$' ./document/ || failed=1
+  echo "bakeoff-tiles: $dpi dpi took $(( $(date +%s) - start )) s"
+done
+exit "$failed"
+'''
