@@ -104,13 +104,13 @@ var pngSignature = []byte("\x89PNG\r\n\x1a\n")
 // directory is in dir, the working directory, to PNG, as the picture standard says: each EMF and
 // WMF rendered at scale through the LibreOffice converter, all of them in one soffice run, and
 // trimmed to the picture through magick, one run each; and each TIFF through magick, one run
-// each. A converted picture's PNG is named by the stored name's stem, its
-// SHA-256, and .png, and written into the media directory beside the stored file, which stays;
-// its entry's File becomes the PNG and Converted true. A picture whose converter the Converter
-// wasn't given, for a metafile either of LibreOffice and magick, is left with no File. Every other picture keeps its stored file. Two stored files
-// that share a stem, the same bytes under two extensions, are converted once and handed on as the
-// same PNG. A conversion that fails, or writes no PNG, is an error, and media is then only partly
-// converted.
+// each. A converted picture's PNG is named by the stored name's stem, its SHA-256, and .png, and
+// written into the media directory beside the stored file, which stays; its entry's File becomes
+// the PNG and Converted true. A picture whose converter the Converter wasn't given, for a
+// metafile either of LibreOffice and magick, is left with no File. Every other picture keeps its
+// stored file. Two stored files that share a stem, the same bytes under two extensions, are
+// converted once and handed on as the same PNG. A conversion that fails, or writes no PNG, is an
+// error, and media is then only partly converted.
 func (c *Converter) convertPictures(ctx context.Context, dir string, scale int, media []MediaFile) error {
 	var metafiles []int
 	tiffs := map[string]string{}
@@ -161,8 +161,8 @@ func (c *Converter) metafilesToPNG(ctx context.Context, dir string, scale int, m
 	var inputs []string
 	seen := map[string]bool{}
 	for _, i := range indexes {
-		if stem := pngName(media[i].Name); !seen[stem] {
-			seen[stem] = true
+		if name := pngName(media[i].Name); !seen[name] {
+			seen[name] = true
 			inputs = append(inputs, media[i].File)
 		}
 	}
@@ -210,7 +210,8 @@ const magickOutputLimit = 64 << 10
 // tiffToPNG converts m's stored TIFF to PNG through magick, in dir, writing the PNG into the
 // media directory beside it, and hands the PNG on. It reads the stored file as TIFF whatever its
 // content and converts its first image alone, the one an Office application displays, so a
-// multi-image TIFF gives one PNG, written without the run's time, so it is reproducible. An error carries magick's own message, its first line.
+// multi-image TIFF gives one PNG, written without the run's time, so it is reproducible. An
+// error carries magick's own message, its first line.
 func (c *Converter) tiffToPNG(ctx context.Context, dir string, m *MediaFile) error {
 	png := filepath.Join(filepath.Dir(m.File), pngName(m.Name))
 	args := slices.Concat([]string{"tiff:" + m.File + "[0]"}, reproducible, []string{"png:" + png})

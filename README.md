@@ -277,9 +277,9 @@ Host prerequisites: gs 10.0 or later and ImageMagick's magick 7.1 or later on PA
 and docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice
 in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
-metafile trim. The renderer bake-off also runs
-poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to regenerate the
-fixtures in `document/testdata`, whose README says how.
+metafile trim. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and libvips.
+typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, whose README
+says how.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
 integration and bake-off tiers run on; no released file imports it. It is released by tag,

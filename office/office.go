@@ -240,10 +240,10 @@ const stderrLimit = 1 << 20
 // converted through magick. Each PNG is named by the stored name's SHA-256 and .png, and written
 // into the media directory beside the stored file, which stays. A picture whose converter the
 // Converter wasn't given, for EMF and WMF either of LibreOffice and magick, is listed with no
-// file handed onward, and the conversion still succeeds; a picture conversion that fails fails the conversion. No conversion encodes a picture
-// lossily: each writes PNG. In a Markdown result each converted picture's stored name is swapped
-// for its PNG's wherever it appears, which rewrites its links without parsing the Markdown; every
-// other link stays as office wrote it.
+// file handed onward, and the conversion still succeeds; a picture conversion that fails fails
+// the conversion. No conversion encodes a picture lossily: each writes PNG. In a Markdown result
+// each converted picture's stored name is swapped for its PNG's wherever it appears, which
+// rewrites its links without parsing the Markdown; every other link stays as office wrote it.
 //
 // A MetafileScale below zero or above MaxMetafileScale is an error before anything runs. A JSON
 // model whose schema isn't Schema is an error matching ErrSchema, naming the schema.

@@ -122,10 +122,10 @@ func (c *Converter) toOOXML(ctx context.Context, dir, path, to string) (string, 
 // export filter. It makes a directory of its own there, libreoffice-*, holding soffice's user
 // profile, so no run shares or leaves a profile elsewhere, and its output directory, which it
 // returns. A registry that isn't "" is the configuration the profile starts with, its
-// registrymodifications.xcu. soffice names each output for its input's stem. It returns a function that removes
-// the directory, which the caller runs when it is done with the output, and soffice's message,
-// for an error the caller finds in the output. A run that fails removes the directory itself,
-// and its error carries soffice's message.
+// registrymodifications.xcu. soffice names each output for its input's stem. It returns a
+// function that removes the directory, which the caller runs when it is done with the output, and
+// soffice's message, for an error the caller finds in the output. A run that fails removes the
+// directory itself, and its error carries soffice's message.
 func (c *Converter) soffice(ctx context.Context, dir, convertTo, registry string, inputs []string) (outdir string, remove func() error, msg string, err error) {
 	work, err := os.MkdirTemp(dir, "libreoffice-*")
 	if err != nil {

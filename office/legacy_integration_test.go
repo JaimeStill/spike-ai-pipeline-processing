@@ -211,8 +211,8 @@ func (t *tally) String() string {
 }
 
 // logLoss logs, for each element kind in want or got, how many of want's elements got keeps, by
-// their keys counted with multiplicity, then each element lost and each added, and adds each kind's counts to sum when it isn't nil. ref
-// names the reference in the log.
+// their keys counted with multiplicity, then each element lost and each added, and adds each
+// kind's counts to sum when it isn't nil. ref names the reference in the log.
 func logLoss(t *testing.T, file, ref string, want, got map[string][]string, sum map[string]*tally) {
 	t.Helper()
 	kinds := map[string]bool{}

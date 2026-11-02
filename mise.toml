@@ -40,8 +40,9 @@ done
 '''
 
 # The integration tier runs the integration-tagged tests on this machine: real ffprobe, gs, and
-# magick on PATH, a reachable docker daemon, which pulls the pinned ffmpeg image when it isn't
-# present, and, for the vision tests, the router SPIKE_ROUTER_URL names. It never starts a server.
+# magick on PATH, the office binary mise pins, a reachable docker daemon, which pulls the pinned
+# ffmpeg and LibreOffice images when they aren't present, and, for the vision tests, the router
+# SPIKE_ROUTER_URL names. It never starts a server.
 [tasks.integration]
 description = "Run the integration-tagged tests against this machine's tools and docker, and the router"
 run = '''

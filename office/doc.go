@@ -51,9 +51,9 @@
 // alone. MagickSpec declares magick, minimum 7.1. A converted picture's PNG is named by the
 // stored name's stem, its SHA-256, and .png, and written into the media directory beside the
 // stored file, which stays; magick writes it without the time of the run, so a picture converted
-// twice is the same bytes both times. A picture whose converter the Config didn't give, for EMF and WMF
-// either of LibreOffice and magick, is listed with no file handed onward, and the conversion
-// still succeeds; a picture conversion that fails fails the conversion.
+// twice is the same bytes both times. A picture whose converter the Config didn't give, for EMF
+// and WMF either of LibreOffice and magick, is listed with no file handed onward, and the
+// conversion still succeeds; a picture conversion that fails fails the conversion.
 //
 // Draw places a metafile at its own size, at 96 dpi, in the middle of a page, so a metafile is
 // rendered as a page at Request.MetafileScale times 96 dpi, DefaultMetafileScale, 3, when it is
@@ -62,10 +62,11 @@
 // system soffice runs on, since the run's profile gives LibreOffice a British English locale, so
 // at the default scale it is 2382x3369 pixels. The trim has two known limits: it removes a border
 // the picture itself has in the page's white, so a picture framed in white comes out without its
-// frame, and a picture that is all white comes out as a single pixel. In a Markdown result each converted
-// picture's stored name is swapped for its PNG's wherever it appears, without parsing the
-// Markdown, so its links name the PNG; a link to any other picture stays as office wrote it. Each line office writes to stderr as a
-// warning is one of the result's Warnings, and a conversion with warnings succeeds.
+// frame, and a picture that is all white comes out as a single pixel. In a Markdown result each
+// converted picture's stored name is swapped for its PNG's wherever it appears, without parsing
+// the Markdown, so its links name the PNG; a link to any other picture stays as office wrote it.
+// Each line office writes to stderr as a warning is one of the result's Warnings, and a
+// conversion with warnings succeeds.
 //
 // office's exit codes 1 to 4 are an *ExitError carrying office's message, which matches its
 // code's error through errors.Is: ErrMediaNotWritten, ErrUsage (a fault in this package),
