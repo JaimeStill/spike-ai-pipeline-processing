@@ -1,0 +1,202 @@
+# TestLegacyRoundTrip: every legacy fixture through the default image, loss and footprint
+# Run: 2026-11-02, started 14:13:51 UTC, from the laptop (Linux 7.2.15 x86_64, go 1.27.3,
+# docker server 29.9.2), at processing commit 9bf84f4 on branch office:
+#   mise exec -- env GOWORK=off go test -race -tags integration -count=1 -v ./office/
+# office 0.1.0 (mise pin); soffice 26.8.1.1 in
+#   gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054
+#   (present before the run, so no pull was timed); ImageMagick 7.1.2-34 Q16-HDRI on the host.
+# Loss is per element kind against office's model of the OOXML original (generated) or the hand truth (real).
+# The lines below are the test's -v output, verbatim.
+
+=== RUN   TestLegacyRoundTrip
+    legacy_integration_test.go:54: soffice 26.8.1.1 in gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054
+    legacy_integration_test.go:55: footprint: image on disk 1015274582 bytes
+    legacy_integration_test.go:55: footprint: image compressed 440917922 bytes (linux/amd64, 16 layers)
+=== RUN   TestLegacyRoundTrip/bullets.libreoffice.ppt
+    legacy_integration_test.go:65: footprint: bullets.libreoffice.ppt            first   834 ms  repeat   848 ms
+    legacy_integration_test.go:73: loss: bullets.libreoffice.ppt            heading      reference    1  model    1  kept    1  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: bullets.libreoffice.ppt            list         reference    9  model    9  kept    9  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: bullets.libreoffice.ppt            paragraph    reference   16  model   16  kept   16  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: bullets.libreoffice.ppt            slide        reference    2  model    2  kept    2  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/cells.libreoffice.xls
+    legacy_integration_test.go:65: footprint: cells.libreoffice.xls              first   768 ms  repeat   769 ms
+    legacy_integration_test.go:73: loss: cells.libreoffice.xls              cell         reference   46  model   46  kept   45  lost    1  added    1 against the original
+    legacy_integration_test.go:73: loss:   lost cell "Cells!C5=#DIV/0!"
+    legacy_integration_test.go:73: loss:   added cell "Cells!C5=#N/A"
+    legacy_integration_test.go:73: loss: cells.libreoffice.xls              formula      reference    4  model    4  kept    2  lost    2  added    2 against the original
+    legacy_integration_test.go:73: loss:   lost formula "Cells!B5=#N/A"
+    legacy_integration_test.go:73: loss:   lost formula "Cells!C5=#DIV/0!"
+    legacy_integration_test.go:73: loss:   added formula "Cells!B5=NA()"
+    legacy_integration_test.go:73: loss:   added formula "Cells!C5=NA()"
+    legacy_integration_test.go:73: loss: cells.libreoffice.xls              sheet        reference    1  model    1  kept    1  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: cells.libreoffice.xls              table        reference    1  model    1  kept    1  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/charts.libreoffice.doc
+    legacy_integration_test.go:65: footprint: charts.libreoffice.doc             first   944 ms  repeat   932 ms
+    legacy_integration_test.go:73: loss: charts.libreoffice.doc             chart        reference    3  model    3  kept    3  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: charts.libreoffice.doc             heading      reference    1  model    0  kept    0  lost    1  added    0 against the original
+    legacy_integration_test.go:73: loss:   lost heading "1:Charts"
+    legacy_integration_test.go:73: loss: charts.libreoffice.doc             list         reference    0  model    1  kept    0  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added list "unordered:1"
+    legacy_integration_test.go:73: loss: charts.libreoffice.doc             paragraph    reference    2  model    3  kept    2  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added paragraph "Charts"
+    legacy_integration_test.go:73: loss: charts.libreoffice.doc             series       reference    4  model    4  kept    4  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/comments.libreoffice.doc
+    legacy_integration_test.go:65: footprint: comments.libreoffice.doc           first   840 ms  repeat   843 ms
+    legacy_integration_test.go:73: loss: comments.libreoffice.doc           comment      reference    3  model    5  kept    3  lost    0  added    2 against the original
+    legacy_integration_test.go:73: loss:   added comment "Ben Author:Checked against the ledger."
+    legacy_integration_test.go:73: loss:   added comment "Ana Reviewer:Thanks."
+    legacy_integration_test.go:73: loss: comments.libreoffice.doc           comment-ref  reference    3  model    5  kept    3  lost    0  added    2 against the original
+    legacy_integration_test.go:73: loss:   added comment-ref "ref"
+    legacy_integration_test.go:73: loss:   added comment-ref "ref"
+    legacy_integration_test.go:73: loss: comments.libreoffice.doc           heading      reference    1  model    0  kept    0  lost    1  added    0 against the original
+    legacy_integration_test.go:73: loss:   lost heading "1:Comments"
+    legacy_integration_test.go:73: loss: comments.libreoffice.doc           list         reference    0  model    1  kept    0  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added list "unordered:1"
+    legacy_integration_test.go:73: loss: comments.libreoffice.doc           paragraph    reference   10  model   11  kept   10  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added paragraph "Comments"
+=== RUN   TestLegacyRoundTrip/drawings.libreoffice.xls
+    legacy_integration_test.go:65: footprint: drawings.libreoffice.xls           first   850 ms  repeat   873 ms
+    legacy_integration_test.go:73: loss: drawings.libreoffice.xls           cell         reference    9  model    9  kept    9  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: drawings.libreoffice.xls           chart        reference    1  model    1  kept    1  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: drawings.libreoffice.xls           media        reference    3  model    3  kept    3  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: drawings.libreoffice.xls           series       reference    1  model    1  kept    1  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: drawings.libreoffice.xls           sheet        reference    2  model    2  kept    2  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: drawings.libreoffice.xls           table        reference    2  model    2  kept    2  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/formulas.libreoffice.xls
+    legacy_integration_test.go:65: footprint: formulas.libreoffice.xls           first   752 ms  repeat   748 ms
+    legacy_integration_test.go:73: loss: formulas.libreoffice.xls           cell         reference   17  model   17  kept   16  lost    1  added    1 against the original
+    legacy_integration_test.go:73: loss:   lost cell "Formulas!A8=FALSE"
+    legacy_integration_test.go:73: loss:   added cell "Formulas!A8=0"
+    legacy_integration_test.go:73: loss: formulas.libreoffice.xls           formula      reference    9  model    9  kept    9  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: formulas.libreoffice.xls           sheet        reference    1  model    1  kept    1  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: formulas.libreoffice.xls           table        reference    1  model    1  kept    1  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/lists.libreoffice.doc
+    legacy_integration_test.go:65: footprint: lists.libreoffice.doc              first   871 ms  repeat   808 ms
+    legacy_integration_test.go:73: loss: lists.libreoffice.doc              list         reference   11  model   14  kept    8  lost    3  added    6 against the original
+    legacy_integration_test.go:73: loss:   lost list "ordered:2"
+    legacy_integration_test.go:73: loss:   lost list "ordered:2"
+    legacy_integration_test.go:73: loss:   lost list "ordered:2"
+    legacy_integration_test.go:73: loss:   added list "ordered:1"
+    legacy_integration_test.go:73: loss:   added list "ordered:1"
+    legacy_integration_test.go:73: loss:   added list "ordered:1"
+    legacy_integration_test.go:73: loss:   added list "ordered:1"
+    legacy_integration_test.go:73: loss:   added list "ordered:1"
+    legacy_integration_test.go:73: loss:   added list "ordered:1"
+    legacy_integration_test.go:73: loss: lists.libreoffice.doc              paragraph    reference   24  model   24  kept   24  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/media.libreoffice.doc
+    legacy_integration_test.go:65: footprint: media.libreoffice.doc              first   817 ms  repeat   819 ms
+    legacy_integration_test.go:73: loss: media.libreoffice.doc              heading      reference    1  model    0  kept    0  lost    1  added    0 against the original
+    legacy_integration_test.go:73: loss:   lost heading "1:Media"
+    legacy_integration_test.go:73: loss: media.libreoffice.doc              list         reference    0  model    1  kept    0  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added list "unordered:1"
+    legacy_integration_test.go:73: loss: media.libreoffice.doc              media        reference    8  model    8  kept    8  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: media.libreoffice.doc              paragraph    reference    5  model    6  kept    5  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added paragraph "Media"
+    legacy_integration_test.go:73: loss: media.libreoffice.doc              table        reference    1  model    1  kept    1  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/merges.libreoffice.xls
+    legacy_integration_test.go:65: footprint: merges.libreoffice.xls             first   763 ms  repeat   747 ms
+    legacy_integration_test.go:73: loss: merges.libreoffice.xls             cell         reference   20  model   20  kept   20  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: merges.libreoffice.xls             sheet        reference    1  model    1  kept    1  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: merges.libreoffice.xls             table        reference    1  model    1  kept    1  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/notes.libreoffice.doc
+    legacy_integration_test.go:65: footprint: notes.libreoffice.doc              first   816 ms  repeat   856 ms
+    legacy_integration_test.go:73: loss: notes.libreoffice.doc              endnote      reference    2  model    2  kept    2  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: notes.libreoffice.doc              endnote-ref  reference    2  model    2  kept    2  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: notes.libreoffice.doc              footnote     reference    2  model    2  kept    2  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: notes.libreoffice.doc              footnote-ref reference    2  model    2  kept    2  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: notes.libreoffice.doc              heading      reference    1  model    0  kept    0  lost    1  added    0 against the original
+    legacy_integration_test.go:73: loss:   lost heading "1:Notes"
+    legacy_integration_test.go:73: loss: notes.libreoffice.doc              list         reference    1  model    2  kept    1  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added list "unordered:1"
+    legacy_integration_test.go:73: loss: notes.libreoffice.doc              paragraph    reference    8  model    9  kept    8  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added paragraph "Notes"
+=== RUN   TestLegacyRoundTrip/sections.libreoffice.doc
+    legacy_integration_test.go:65: footprint: sections.libreoffice.doc           first   846 ms  repeat   838 ms
+    legacy_integration_test.go:73: loss: sections.libreoffice.doc           footer       reference    8  model    8  kept    8  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: sections.libreoffice.doc           header       reference    8  model    8  kept    8  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: sections.libreoffice.doc           heading      reference    3  model    0  kept    0  lost    3  added    0 against the original
+    legacy_integration_test.go:73: loss:   lost heading "1:Section one"
+    legacy_integration_test.go:73: loss:   lost heading "1:Section two"
+    legacy_integration_test.go:73: loss:   lost heading "1:Section three"
+    legacy_integration_test.go:73: loss: sections.libreoffice.doc           list         reference    3  model    6  kept    3  lost    0  added    3 against the original
+    legacy_integration_test.go:73: loss:   added list "unordered:1"
+    legacy_integration_test.go:73: loss:   added list "unordered:1"
+    legacy_integration_test.go:73: loss:   added list "unordered:1"
+    legacy_integration_test.go:73: loss: sections.libreoffice.doc           media        reference    3  model    3  kept    3  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: sections.libreoffice.doc           paragraph    reference   23  model   26  kept   23  lost    0  added    3 against the original
+    legacy_integration_test.go:73: loss:   added paragraph "Section one"
+    legacy_integration_test.go:73: loss:   added paragraph "Section two"
+    legacy_integration_test.go:73: loss:   added paragraph "Section three"
+    legacy_integration_test.go:73: loss: sections.libreoffice.doc           table        reference    4  model    4  kept    4  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/slide-objects.libreoffice.ppt
+    legacy_integration_test.go:65: footprint: slide-objects.libreoffice.ppt      first  1420 ms  repeat  1482 ms
+    legacy_integration_test.go:73: loss: slide-objects.libreoffice.ppt      chart        reference    1  model    1  kept    1  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slide-objects.libreoffice.ppt      heading      reference    2  model    2  kept    2  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slide-objects.libreoffice.ppt      media        reference    3  model    3  kept    3  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slide-objects.libreoffice.ppt      paragraph    reference    9  model    9  kept    9  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slide-objects.libreoffice.ppt      series       reference    2  model    2  kept    2  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slide-objects.libreoffice.ppt      slide        reference    4  model    4  kept    4  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slide-objects.libreoffice.ppt      table        reference    1  model    1  kept    1  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/slides.libreoffice.ppt
+    legacy_integration_test.go:65: footprint: slides.libreoffice.ppt             first   869 ms  repeat  1037 ms
+    legacy_integration_test.go:73: loss: slides.libreoffice.ppt             heading      reference    5  model    5  kept    5  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slides.libreoffice.ppt             list         reference    2  model    2  kept    2  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slides.libreoffice.ppt             paragraph    reference   10  model   10  kept   10  lost    0  added    0 against the original
+    legacy_integration_test.go:73: loss: slides.libreoffice.ppt             slide        reference    5  model    5  kept    5  lost    0  added    0 against the original
+=== RUN   TestLegacyRoundTrip/tables.libreoffice.doc
+    legacy_integration_test.go:65: footprint: tables.libreoffice.doc             first   945 ms  repeat   854 ms
+    legacy_integration_test.go:73: loss: tables.libreoffice.doc             heading      reference    1  model    0  kept    0  lost    1  added    0 against the original
+    legacy_integration_test.go:73: loss:   lost heading "1:Tables"
+    legacy_integration_test.go:73: loss: tables.libreoffice.doc             list         reference    0  model    1  kept    0  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added list "unordered:1"
+    legacy_integration_test.go:73: loss: tables.libreoffice.doc             paragraph    reference   12  model   13  kept   12  lost    0  added    1 against the original
+    legacy_integration_test.go:73: loss:   added paragraph "Tables"
+    legacy_integration_test.go:73: loss: tables.libreoffice.doc             table        reference    1  model    1  kept    1  lost    0  added    0 against the original
+=== NAME  TestLegacyRoundTrip
+    legacy_integration_test.go:78: loss: doc   chart        reference    3  model    3  kept    3  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   comment      reference    3  model    5  kept    3  lost    0  added    2
+    legacy_integration_test.go:78: loss: doc   comment-ref  reference    3  model    5  kept    3  lost    0  added    2
+    legacy_integration_test.go:78: loss: doc   endnote      reference    2  model    2  kept    2  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   endnote-ref  reference    2  model    2  kept    2  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   footer       reference    8  model    8  kept    8  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   footnote     reference    2  model    2  kept    2  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   footnote-ref reference    2  model    2  kept    2  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   header       reference    8  model    8  kept    8  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   heading      reference    8  model    0  kept    0  lost    8  added    0
+    legacy_integration_test.go:78: loss: doc   list         reference   15  model   26  kept   12  lost    3  added   14
+    legacy_integration_test.go:78: loss: doc   media        reference   11  model   11  kept   11  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   paragraph    reference   84  model   92  kept   84  lost    0  added    8
+    legacy_integration_test.go:78: loss: doc   series       reference    4  model    4  kept    4  lost    0  added    0
+    legacy_integration_test.go:78: loss: doc   table        reference    6  model    6  kept    6  lost    0  added    0
+    legacy_integration_test.go:78: loss: ppt   chart        reference    1  model    1  kept    1  lost    0  added    0
+    legacy_integration_test.go:78: loss: ppt   heading      reference    8  model    8  kept    8  lost    0  added    0
+    legacy_integration_test.go:78: loss: ppt   list         reference   11  model   11  kept   11  lost    0  added    0
+    legacy_integration_test.go:78: loss: ppt   media        reference    3  model    3  kept    3  lost    0  added    0
+    legacy_integration_test.go:78: loss: ppt   paragraph    reference   35  model   35  kept   35  lost    0  added    0
+    legacy_integration_test.go:78: loss: ppt   series       reference    2  model    2  kept    2  lost    0  added    0
+    legacy_integration_test.go:78: loss: ppt   slide        reference   11  model   11  kept   11  lost    0  added    0
+    legacy_integration_test.go:78: loss: ppt   table        reference    1  model    1  kept    1  lost    0  added    0
+    legacy_integration_test.go:78: loss: xls   cell         reference   92  model   92  kept   90  lost    2  added    2
+    legacy_integration_test.go:78: loss: xls   chart        reference    1  model    1  kept    1  lost    0  added    0
+    legacy_integration_test.go:78: loss: xls   formula      reference   13  model   13  kept   11  lost    2  added    2
+    legacy_integration_test.go:78: loss: xls   media        reference    3  model    3  kept    3  lost    0  added    0
+    legacy_integration_test.go:78: loss: xls   series       reference    1  model    1  kept    1  lost    0  added    0
+    legacy_integration_test.go:78: loss: xls   sheet        reference    5  model    5  kept    5  lost    0  added    0
+    legacy_integration_test.go:78: loss: xls   table        reference    5  model    5  kept    5  lost    0  added    0
+=== RUN   TestLegacyRoundTrip/SampleSS.xls
+    legacy_integration_test.go:99: footprint: SampleSS.xls                       first   807 ms  repeat   812 ms
+    legacy_integration_test.go:106: loss: SampleSS.xls                       cell         reference   15  model   15  kept   15  lost    0  added    0 against the truth
+    legacy_integration_test.go:106: loss: SampleSS.xls                       formula      reference    1  model    1  kept    1  lost    0  added    0 against the truth
+    legacy_integration_test.go:106: loss: SampleSS.xls                       sheet        reference    3  model    3  kept    3  lost    0  added    0 against the truth
+    legacy_integration_test.go:106: loss: SampleSS.xls                       table        reference    2  model    2  kept    2  lost    0  added    0 against the truth
+=== RUN   TestLegacyRoundTrip/basic_test_ppt_file.ppt
+    legacy_integration_test.go:99: footprint: basic_test_ppt_file.ppt            first   839 ms  repeat   849 ms
+    legacy_integration_test.go:106: loss: basic_test_ppt_file.ppt            heading      reference    2  model    2  kept    2  lost    0  added    0 against the truth
+    legacy_integration_test.go:106: loss: basic_test_ppt_file.ppt            list         reference    1  model    1  kept    1  lost    0  added    0 against the truth
+    legacy_integration_test.go:106: loss: basic_test_ppt_file.ppt            paragraph    reference    7  model    7  kept    7  lost    0  added    0 against the truth
+    legacy_integration_test.go:106: loss: basic_test_ppt_file.ppt            slide        reference    2  model    2  kept    2  lost    0  added    0 against the truth
+=== RUN   TestLegacyRoundTrip/simple-table.doc
+    legacy_integration_test.go:99: footprint: simple-table.doc                   first   846 ms  repeat   817 ms
+    legacy_integration_test.go:106: loss: simple-table.doc                   paragraph    reference    8  model    8  kept    8  lost    0  added    0 against the truth
+    legacy_integration_test.go:106: loss: simple-table.doc                   table        reference    1  model    1  kept    1  lost    0  added    0 against the truth
+--- PASS: TestLegacyRoundTrip (32.64s)
