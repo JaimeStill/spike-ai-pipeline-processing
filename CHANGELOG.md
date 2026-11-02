@@ -6,6 +6,81 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.3.0] - 2026-11-02
+
+### Added
+
+- `office`, which prepares office documents, docx, xlsx, and pptx, and the legacy doc, xls, and
+  ppt, for a model through spike-ai-pipeline-office's Open XML CLI, on Linux, the standard
+  library, and `tool`. It provides pre-inference preparation only, and every program it runs is a
+  `tool.Tool` the caller built. Additive to v0.2.0: `tool` and `document` are unchanged.
+- The `Converter`, built by `NewConverter` over a `Config`: an office Tool, required, that
+  `OfficeSpec` declares, refused when older than `OfficeMinimum`, 0.1.0; and optional LibreOffice
+  and magick Tools. `Converter.Convert` spools a document read from an `io.Reader` into the
+  working directory a `Request` names, runs office once with a media directory there, removes the
+  spooled document, and returns a `Result`. With `JSON`, the default, the result is office's model
+  decoded through encoding/json/v2 into a `Document` of typed values mirroring schema "1": a model
+  of another schema is an error matching `ErrSchema` that names it, a property left out is none,
+  an array keeps its nulls in place, and a block or inline of a kind the package doesn't know is
+  kept as an `UnknownBlock` or `UnknownInline` with its JSON. With `Markdown` it is office's
+  Markdown, unchanged but for the link rewrite below.
+- office's outcomes as errors: exit codes 1 to 4 are an `*ExitError` carrying office's message
+  that matches `ErrMediaNotWritten`, `ErrUsage`, `ErrRefused` (with office's reason), or
+  `ErrFailed` through `errors.Is`. Each warning office writes to stderr is one of the result's
+  `Warnings`, and a conversion with warnings succeeds. A cancelled conversion returns an error
+  matching the context's.
+- The media list: both results carry one `MediaFile` per file in the media directory, with
+  office's stored name, its content type (`ContentType`), the file handed onward, and whether it
+  was converted. A linked picture is no file and is never fetched.
+- The picture standard: no stage re-encodes a picture lossily, and every conversion writes PNG.
+  PNG, JPEG, GIF, and BMP are handed on exactly as stored. EMF and WMF are rendered through
+  LibreOffice's Draw PNG export, all of a document's in one soffice run, at
+  `Request.MetafileScale` times 96 dpi (`DefaultMetafileScale`, 3, when zero, at most
+  `MaxMetafileScale`, 8), on an A4 page the run's en-GB profile fixes, and each trimmed to its
+  picture through magick. TIFF is converted through magick, its first image alone. `MagickSpec`
+  declares magick, minimum `MagickMinimum`, 7.1. A converted picture's PNG is named by its
+  original's SHA-256 with `.png`, written beside the original, which stays, and magick writes it
+  without the time of the run, so a picture converted twice is the same bytes. A picture conversion
+  that fails fails the conversion.
+- The Markdown link rewrite: each converted picture's exact stored name, `<sha256>.<ext>`, is
+  swapped for its PNG's, parsing no Markdown; links to pictures handed on as stored stay as
+  office wrote them.
+- Legacy documents: a file with the OLE2 compound-file signature whose `Request.Name` has a
+  legacy extension (.doc and .dot to docx, .xls and .xlt to xlsx, .ppt, .pps, and .pot to pptx)
+  is converted to that OOXML format through soffice headless, then run through office, and the
+  result's `ConvertedFrom` names the legacy format. Without a LibreOffice Tool it is refused with
+  `ErrNoLibreOffice` before any program runs. Any other OLE2 file goes to office, which refuses
+  it. `LibreOfficeSpec` declares soffice, minimum `LibreOfficeMinimum`, 24.2.
+- The default LibreOffice image, `LibreOfficeImage`: gotenberg/gotenberg:8.39.0-libreoffice,
+  LibreOffice 26.8.1.1, pinned by its multi-arch index digest, which a caller may replace and
+  `mise run currency` scans. soffice runs in it under the container runner's full lockdown, no
+  network, the caller's uid:gid, and every capability dropped, with its user profile inside the
+  mounted working directory, removed when the conversion ends.
+- office 0.1.0 pinned in mise from its GitHub release, checked against the release's digest, and
+  reported by `mise run currency` when a newer one ships. The hermetic check runs a stand-in
+  office for exits 1 to 4, warnings, arguments, and the working directory, stand-in soffice and
+  magick for their arguments, and the real pinned office over the OOXML fixtures.
+- The office fixtures in `office/testdata`: OOXML files copied byte for byte from office
+  v0.1.0's, with a sources file; legacy files LibreOffice saved from them by `generate.sh`; three
+  Office-written Apache POI files, one per legacy format, with hand truth and their license
+  notices; and a docx holding a TIFF.
+- The office integration tier: every legacy fixture converted through the default image, with
+  the round trip's loss per element kind and the container's footprint recorded; every EMF, WMF,
+  and TIFF picture converted to a PNG that decodes, and to the same bytes twice; and every
+  distinct picture handed onward sent to Gemma 4 26B-A4B on the router `SPIKE_ROUTER_URL` names,
+  its time and image tokens recorded. What they measured is in `docs/findings/office.md`.
+- Known limits of `office`: an EMF or WMF picture needs both the LibreOffice and magick Tools,
+  and a TIFF needs magick, or no picture is handed onward. A legacy file is recognized only by
+  its OLE2 signature and a legacy extension. Legacy conversion inherits LibreOffice's losses,
+  which [the office finding](docs/findings/office.md) records. The trim removes a white border
+  the picture itself has, and a blank metafile becomes a 1x1 PNG. The package evaluates nothing
+  office doesn't: a formula's value is the one the file caches.
+
+### Changed
+
+- Currency: jdx/mise-action v5.2.4 to v5.2.5 in CI, and the README's and the ffprobe integration
+  tests' linuxserver/ffmpeg image 9.0.2-cli-ls87 to 9.0.2-cli-ls88, pinned by digest.
+
 ## [v0.2.0] - 2026-10-30
 
 ### Added
@@ -139,6 +214,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.3.0...HEAD
+[v0.3.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.3.0
 [v0.2.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.1.0
