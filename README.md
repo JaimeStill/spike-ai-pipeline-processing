@@ -62,8 +62,8 @@ and files the tool writes there belong to the caller.
 
 ```go
 probe, err := tool.NewContainer(ctx, "", tool.Image{
-	Ref: "linuxserver/ffmpeg:9.0.2-cli-ls87@sha256:" +
-		"6547359fac23a2747e606d380e10267b2923a38f68485d9cacefd039e74d3aa8",
+	Ref: "linuxserver/ffmpeg:9.0.2-cli-ls88@sha256:" +
+		"f4191c1abe18d75c49a23f7224d1403d55334f80013a47cb096f5056cf19617b",
 }, spec)
 ```
 
