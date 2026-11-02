@@ -143,7 +143,7 @@ So a legacy file costs about 0.75 to 1.04 s before office runs, and 1.4 to 1.5 s
 deck, `slide-objects` (four slides with a table, a chart, and pictures). The earlier runs during
 the task gave 0.75 to 1.0 s and 1.4 to 1.6 s; this run's one repeat above 1 s, `slides.ppt` at
 1,037 ms, is inside the spread a repeat shows. The image's one-time pull took about 18 s in an
-earlier run this session; this run found the image present and timed no pull. The container's
+earlier run; this run found the image present and timed no pull. The container's
 peak memory was out of scope and wasn't measured.
 
 ## Picture conversions
@@ -229,10 +229,10 @@ What the run shows:
   translations, the clip art (a cow, a wrench, Santa Claus, a tiger), and the TIFF's "TEST TIFF".
   The descriptions weren't scored; they are in `vision.log`.
 - **A small picture costs a floor of about 82 to 83 image tokens,** whatever its pixels: a 1x1,
-  a 2x2, a 236x193, and a 511x155 all cost 82 or 83. A tiny picture costs as much as a modest one, as
-  if the vision encoder brings every image up to a minimum size; the run doesn't show which. One picture fell below it this run,
-  `f35ded1fae0a…` at 639x200, a wide, short strip, at 77; the earlier runs this session put the
-  floor at 82 to 83 for every small picture.
+  a 2x2, a 236x193, and a 511x155 all cost 82 or 83. A tiny picture costs as much as a modest
+  one, as if the vision encoder brings every image up to a minimum size; the run doesn't show
+  whether it does. One picture fell below the floor in this run, `f35ded1fae0a…` at 639x200, a
+  wide, short strip, at 77; the earlier runs put the floor at 82 to 83 for every small picture.
 - **Cost follows area above the floor:** 539x577 costs 134, 767x535 costs 178, and 1489x566 costs
   374, the largest by far. The metafile scale sets this: at the default 3, the biggest metafile
   costs about 4.5 times the floor.

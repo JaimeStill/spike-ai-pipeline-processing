@@ -1,10 +1,11 @@
 //go:build linux
 
-// Package office prepares office documents, docx, xlsx, and pptx, for a model through office,
-// spike-ai-pipeline-office: a document in, office's JSON model or its Markdown out, with the
-// pictures the document embeds. It provides pre-inference preparation only; a layer above sends
-// what it returns to a model. The package builds on Linux only, on the standard library and this
-// module's tool package; every program it runs is a tool.Tool the caller built.
+// Package office prepares office documents, docx, xlsx, and pptx, and the legacy doc, xls, and
+// ppt, for a model through office, spike-ai-pipeline-office: a document in, office's JSON model or
+// its Markdown out, with the pictures the document embeds. It provides pre-inference preparation
+// only; a layer above sends what it returns to a model. The package builds on Linux only, on the
+// standard library and this module's tool package; every program it runs is a tool.Tool the
+// caller built.
 //
 // A Converter is built at the composition root over an office Tool, OfficeSpec declaring it.
 // NewConverter refuses one older than 0.1.0, and the Tool's own construction a missing one, so a
@@ -62,16 +63,18 @@
 // system soffice runs on, since the run's profile gives LibreOffice a British English locale, so
 // at the default scale it is 2382x3369 pixels. The trim has two known limits: it removes a border
 // the picture itself has in the page's white, so a picture framed in white comes out without its
-// frame, and a picture that is all white comes out as a single pixel. In a Markdown result each
-// converted picture's stored name is swapped for its PNG's wherever it appears, without parsing
-// the Markdown, so its links name the PNG; a link to any other picture stays as office wrote it.
-// Each line office writes to stderr as a warning is one of the result's Warnings, and a
-// conversion with warnings succeeds.
+// frame, and a picture that is all white comes out as a single pixel.
 //
-// office's exit codes 1 to 4 are an *ExitError carrying office's message, which matches its
-// code's error through errors.Is: ErrMediaNotWritten, ErrUsage (a fault in this package),
-// ErrRefused (with office's reason), or ErrFailed (a fault of office's). A conversion whose
-// context ends returns an error matching the context's, as every Tool run does.
+// In a Markdown result each converted picture's stored name is swapped for its PNG's wherever it
+// appears, without parsing the Markdown, so its links name the PNG; a link to any other picture
+// stays as office wrote it.
+//
+// Each line office writes to stderr as a warning is one of the result's Warnings, and a
+// conversion with warnings succeeds. office's exit codes 1 to 4 are an *ExitError carrying
+// office's message, which matches its code's error through errors.Is: ErrMediaNotWritten,
+// ErrUsage (a fault in this package), ErrRefused (with office's reason), or ErrFailed (a fault of
+// office's). A conversion whose context ends returns an error matching the context's, as every
+// Tool run does.
 //
 // Its exported identifiers:
 //

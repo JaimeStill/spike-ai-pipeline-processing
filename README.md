@@ -225,8 +225,9 @@ A legacy document is one with the OLE2 compound-file signature and a legacy exte
 Given a LibreOffice Tool, `Convert` converts it to that OOXML format through soffice headless,
 then runs office on the result; without one it is refused with `ErrNoLibreOffice` before anything
 runs. `LibreOfficeSpec` declares soffice, minimum `LibreOfficeMinimum`, 24.2, and
-`LibreOfficeImage` is the default image a caller may replace: gotenberg/gotenberg:8.39.0-libreoffice,
-LibreOffice 26.8.1.1, pinned by digest, which `mise run currency` scans. soffice runs in it under
+`LibreOfficeImage` is the default image a caller may replace:
+gotenberg/gotenberg:8.39.0-libreoffice, LibreOffice 26.8.1.1, pinned by digest, which
+`mise run currency` scans. soffice runs in it under
 the container runner's full lockdown, with its user profile inside the mounted working directory.
 
 [docs/findings/office.md](docs/findings/office.md) records what the legacy round trip loses, per
