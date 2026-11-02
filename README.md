@@ -252,6 +252,10 @@ Known limits:
   1x1 PNG.
 - `office` evaluates nothing office doesn't: a formula's value is the one the file caches, or
   none, and a chart is its cached data.
+- Pictures are listed as the document holds them, in order, and their layout isn't evaluated: a
+  picture that another covers, that sits off the slide or page, or that is cropped away still
+  appears in the model and the Markdown and is handed onward to vision. In `slide-objects`'s
+  slide 3, a blue square covers a red one at the same position, and both are listed.
 - The container runner's limit above: a SIGKILLed processing leaves a running container to its
   tool's exit.
 

@@ -266,3 +266,8 @@ Not answered:
 - **The pull's time** on this run: the image was already present.
 - **How good the descriptions are.** The vision tier asserts completion only; nothing was scored
   against a hand-written description.
+- **Whether a picture is visible.** Pictures are listed and sent to vision as the document holds
+  them; office's model has no position, so one that another covers, that sits off the slide or
+  page, or that is cropped away is still sent. `slide-objects`'s slide 3 holds a red square under
+  a blue one at the same position and size: both are listed and described, though only the blue
+  one shows (found by the architect while checking the results by hand).

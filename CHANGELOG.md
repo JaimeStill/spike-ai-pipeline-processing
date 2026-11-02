@@ -74,7 +74,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   its OLE2 signature and a legacy extension. Legacy conversion inherits LibreOffice's losses,
   which [the office finding](docs/findings/office.md) records. The trim removes a white border
   the picture itself has, and a blank metafile becomes a 1x1 PNG. The package evaluates nothing
-  office doesn't: a formula's value is the one the file caches.
+  office doesn't: a formula's value is the one the file caches. Pictures are listed as the
+  document holds them, with no layout: one that another covers, off the slide or page, or cropped
+  away is still listed and handed onward.
 
 ### Changed
 

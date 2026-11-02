@@ -42,7 +42,9 @@
 // Both results carry the media list, one MediaFile per file office wrote in the media directory:
 // office's name for it, the lowercase hex SHA-256 of its bytes and its stored extension, its
 // content type by that extension, the file handed onward, and whether that file was converted. A
-// linked picture is no file, never fetched, and isn't listed.
+// linked picture is no file, never fetched, and isn't listed. Pictures are listed as the
+// document holds them, with no layout: one that another covers, that sits off the slide or page,
+// or that is cropped away is listed and handed onward like any other.
 //
 // Pictures follow one standard, and no conversion encodes a picture lossily: each writes PNG. A
 // picture vision decodes, PNG, JPEG, GIF, or BMP, is handed on exactly as stored, as is any kind
