@@ -184,7 +184,8 @@ func (c *Converter) metafilesToPNG(ctx context.Context, dir string, scale int, m
 			// -trim crops the page to the picture, the bounding box of what differs from the
 			// corners' color, and +repage drops the crop's offset from the PNG; PNG in and out,
 			// nothing is encoded lossily.
-			if err := c.runMagick(ctx, dir, m.Name, []string{"png:" + page, "-trim", "+repage", "png:" + dest}, dest); err != nil {
+			args := slices.Concat([]string{"png:" + page, "-trim", "+repage"}, reproducible, []string{"png:" + dest})
+			if err := c.runMagick(ctx, dir, m.Name, args, dest); err != nil {
 				return errors.Join(err, remove())
 			}
 			trimmed[name] = dest
@@ -197,16 +198,23 @@ func (c *Converter) metafilesToPNG(ctx context.Context, dir string, scale int, m
 	return nil
 }
 
+// reproducible is the define every magick run that writes a PNG gives before its output: it
+// leaves out the date:create, date:modify, and date:timestamp text chunks and the tIME chunk,
+// which magick otherwise writes with the time of the run, so the same picture converted twice
+// gives the same PNG, byte for byte.
+var reproducible = []string{"-define", "png:exclude-chunks=date,time"}
+
 // magickOutputLimit is the most of magick's output a conversion keeps, for its error.
 const magickOutputLimit = 64 << 10
 
 // tiffToPNG converts m's stored TIFF to PNG through magick, in dir, writing the PNG into the
 // media directory beside it, and hands the PNG on. It reads the stored file as TIFF whatever its
 // content and converts its first image alone, the one an Office application displays, so a
-// multi-image TIFF gives one PNG. An error carries magick's own message, its first line.
+// multi-image TIFF gives one PNG, written without the run's time, so it is reproducible. An error carries magick's own message, its first line.
 func (c *Converter) tiffToPNG(ctx context.Context, dir string, m *MediaFile) error {
 	png := filepath.Join(filepath.Dir(m.File), pngName(m.Name))
-	if err := c.runMagick(ctx, dir, m.Name, []string{"tiff:" + m.File + "[0]", "png:" + png}, png); err != nil {
+	args := slices.Concat([]string{"tiff:" + m.File + "[0]"}, reproducible, []string{"png:" + png})
+	if err := c.runMagick(ctx, dir, m.Name, args, png); err != nil {
 		return err
 	}
 	m.File, m.Converted = png, true

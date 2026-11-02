@@ -8,6 +8,7 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -28,8 +29,10 @@ var pictureFixtures = []string{
 // default image, and the host's magick, and asserts that each EMF, WMF, and TIFF picture is
 // converted to a PNG beside it, named by its stem, that image/png decodes, and that the Markdown
 // links the PNG in its place; an EMF or WMF, rendered at the default scale, is trimmed to its
-// picture, smaller than the A4 page it was rendered on. Between them the fixtures hold all three
-// kinds.
+// picture, smaller than the A4 page it was rendered on. Each fixture is converted twice, the
+// second run in a later second than the first wrote anything, and each converted picture's PNG is
+// the same bytes both times: the final PNG is magick's, an EMF's or WMF's too, since magick trims
+// soffice's, and magick writes no time into it. Between them the fixtures hold all three kinds.
 //
 // It logs a line per picture: its fixture, kind, stored size, and its PNG's dimensions, an EMF's
 // or WMF's as trimmed, and size, with its document's picture-conversion wall time and the
@@ -73,10 +76,10 @@ func TestPictures(t *testing.T) {
 		name := filepath.Base(path)
 		t.Run(name, func(t *testing.T) {
 			legacy := legacyTargets[filepath.Ext(path)] != ""
-			res, elapsed := convertTimed(t, full, path)
+			res, again, elapsed := convertTimed(t, full, path)
 			timing := "conversion"
 			if !legacy {
-				_, base := convertTimed(t, alone, path)
+				_, _, base := convertTimed(t, alone, path)
 				elapsed -= base
 				timing = "pictures"
 			}
@@ -102,6 +105,7 @@ func TestPictures(t *testing.T) {
 					t.Errorf("%s: the Markdown doesn't link its PNG", m.Name)
 				}
 				converted = append(converted, m)
+				samePNG(t, m, again)
 			}
 			for _, m := range converted {
 				logPicture(t, name, res.MediaDir, m, fmt.Sprintf("%s %5d ms for %d", timing, elapsed.Milliseconds(), len(converted)))
@@ -117,12 +121,17 @@ func TestPictures(t *testing.T) {
 }
 
 // convertTimed converts the fixture at path as Markdown, in a working directory of its own,
-// twice, and returns the first result and the faster run's wall time.
-func convertTimed(t *testing.T, c *office.Converter, path string) (*office.Result, time.Duration) {
+// twice, and returns both results and the faster run's wall time. The second run starts in a
+// later second than the first ended in, outside the time measured, so a PNG with the time of its
+// writing in it would differ between the two.
+func convertTimed(t *testing.T, c *office.Converter, path string) (*office.Result, *office.Result, time.Duration) {
 	t.Helper()
-	var first *office.Result
+	var results []*office.Result
 	var fastest time.Duration
-	for range 2 {
+	for i := range 2 {
+		if i > 0 {
+			time.Sleep(time.Until(time.Now().Truncate(time.Second).Add(time.Second)))
+		}
 		f, err := os.Open(path)
 		if err != nil {
 			t.Fatal(err)
@@ -134,12 +143,35 @@ func convertTimed(t *testing.T, c *office.Converter, path string) (*office.Resul
 		if err != nil {
 			t.Fatal(err)
 		}
-		if first == nil {
-			first, fastest = res, elapsed
+		if results == nil {
+			fastest = elapsed
 		}
+		results = append(results, res)
 		fastest = min(fastest, elapsed)
 	}
-	return first, fastest
+	return results[0], results[1], fastest
+}
+
+// samePNG fails the test unless m's PNG and the PNG the same picture was handed on as in again,
+// the fixture's second conversion, hold the same bytes.
+func samePNG(t *testing.T, m office.MediaFile, again *office.Result) {
+	t.Helper()
+	i := slices.IndexFunc(again.Media, func(a office.MediaFile) bool { return a.Name == m.Name })
+	if i < 0 || !again.Media[i].Converted {
+		t.Errorf("%s: not converted the second time", m.Name)
+		return
+	}
+	first, err := os.ReadFile(m.File)
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := os.ReadFile(again.Media[i].File)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(first, second) {
+		t.Errorf("%s: converted twice, its PNGs differ (%d and %d B); a conversion isn't reproducible", m.Name, len(first), len(second))
+	}
 }
 
 // logPicture fails the test unless m's PNG decodes with image/png and, for an EMF or WMF, is

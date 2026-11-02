@@ -66,9 +66,8 @@ func routerClient(t *testing.T) *client.Client {
 // handedOn is a distinct picture handed onward: the file's bytes, its content type, and the
 // fixtures and stored names it came from, the first first. Pictures are distinct by office's name
 // for the stored file, the SHA-256 of its bytes: a picture handed on as stored is that file, and
-// a converted one's PNG follows from it, its pixels the same on every conversion. Its PNG's bytes
-// aren't: magick writes the time of each run into date:create, date:modify, and date:timestamp
-// text chunks, so the bytes handed onward would count one picture once per conversion.
+// a converted one's PNG follows from it, the same bytes on every conversion, as TestPictures
+// asserts.
 type handedOn struct {
 	data        []byte
 	contentType string

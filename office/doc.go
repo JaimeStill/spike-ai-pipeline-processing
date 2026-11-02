@@ -50,7 +50,8 @@
 // trimmed to its picture through a magick Tool; TIFF is converted through magick, its first image
 // alone. MagickSpec declares magick, minimum 7.1. A converted picture's PNG is named by the
 // stored name's stem, its SHA-256, and .png, and written into the media directory beside the
-// stored file, which stays. A picture whose converter the Config didn't give, for EMF and WMF
+// stored file, which stays; magick writes it without the time of the run, so a picture converted
+// twice is the same bytes both times. A picture whose converter the Config didn't give, for EMF and WMF
 // either of LibreOffice and magick, is listed with no file handed onward, and the conversion
 // still succeeds; a picture conversion that fails fails the conversion.
 //

@@ -113,7 +113,7 @@ func TestConvertPictures(t *testing.T) {
 	for i, tiff := range []string{"c3", "h8"} {
 		mg := all[1+i]
 		ext := map[string]string{"c3": ".tiff", "h8": ".TIF"}[tiff]
-		if want := []string{"tiff:" + at(tiff+ext) + "[0]", "png:" + at(tiff+".png")}; !slices.Equal(mg.Args, want) {
+		if want := []string{"tiff:" + at(tiff+ext) + "[0]", "-define", "png:exclude-chunks=date,time", "png:" + at(tiff+".png")}; !slices.Equal(mg.Args, want) {
 			t.Errorf("magick's arguments: got %q, want %q", mg.Args, want)
 		}
 		if mg.Dir != dir {
@@ -140,7 +140,7 @@ func TestConvertPictures(t *testing.T) {
 	}
 	for i, stem := range []string{"a1", "b2", "j0"} {
 		mg := all[4+i]
-		want := []string{`png:` + work + `/out/` + stem + `\.png`, `-trim`, `\+repage`, `png:` + regexp.QuoteMeta(at(stem+".png"))}
+		want := []string{`png:` + work + `/out/` + stem + `\.png`, `-trim`, `\+repage`, `-define`, `png:exclude-chunks=date,time`, `png:` + regexp.QuoteMeta(at(stem+".png"))}
 		if !matchArgs(mg.Args, want) {
 			t.Errorf("magick's trim arguments: got %q, want %q", mg.Args, want)
 		}
