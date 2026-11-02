@@ -24,7 +24,8 @@ func convertJSON(t *testing.T, c *office.Converter, model string) (*office.Docum
 }
 
 // TestModelSchema: a model whose schema isn't "1", or that has none, is an error matching
-// ErrSchema that names the schema it found, whatever the model's shape.
+// ErrSchema that names the schema it found, whatever the model's shape; a schema "1" model with
+// a block or inline that isn't an object with a type is a decoding error, not ErrSchema.
 func TestModelSchema(t *testing.T) {
 	c, _ := standinConverter(t)
 	for model, want := range map[string]string{
@@ -36,8 +37,15 @@ func TestModelSchema(t *testing.T) {
 			t.Errorf("%s: got %v, want ErrSchema naming %s", model, err, want)
 		}
 	}
-	if _, err := convertJSON(t, c, `{"schema": "1", "format": "docx", "blocks": [{"level": 1}]}`); err == nil {
-		t.Error("a block with no type: no error")
+	for model, want := range map[string]string{
+		`{"schema": "1", "format": "docx", "blocks": [{"level": 1}]}`:                                      "a block has no type",
+		`{"schema": "1", "format": "docx", "blocks": [3]}`:                                                 "a block is number, not an object",
+		`{"schema": "1", "format": "docx", "blocks": [{"type": "paragraph", "inlines": [{"text": "x"}]}]}`: "an inline has no type",
+	} {
+		_, err := convertJSON(t, c, model)
+		if err == nil || errors.Is(err, office.ErrSchema) || !strings.Contains(err.Error(), want) {
+			t.Errorf("%s: got %v, want a decoding error saying %s", model, err, want)
+		}
 	}
 }
 

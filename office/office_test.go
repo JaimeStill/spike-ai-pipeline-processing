@@ -194,16 +194,18 @@ func TestConvertCancel(t *testing.T) {
 	t.Setenv(sleepEnv, "1")
 	dir := t.TempDir()
 	ctx, cancel := context.WithCancel(t.Context())
-	// The stand-in logs its run before it sleeps, so the log's existence says it is running.
+	defer cancel()
+	// The stand-in logs its run before it sleeps, so the log's existence says it is running. The
+	// poll ends with ctx, so it never outlives the test when office never runs.
 	log := os.Getenv(logEnv)
 	go func() {
-		for {
+		for ctx.Err() == nil {
 			if _, err := os.Stat(log); err == nil {
-				break
+				cancel()
+				return
 			}
 			time.Sleep(10 * time.Millisecond)
 		}
-		cancel()
 	}()
 	_, err := c.Convert(ctx, strings.NewReader("doc"), office.Request{Dir: dir})
 	if !errors.Is(err, context.Canceled) {
@@ -266,6 +268,20 @@ func TestConvertMedia(t *testing.T) {
 			if b, err := os.ReadFile(m.File); err != nil || string(b) != m.Name {
 				t.Errorf("%s: got %q, %v", m.File, b, err)
 			}
+		}
+	}
+}
+
+// TestExitErrorUnknownCode: an ExitError of a code office doesn't use, such as one a caller
+// builds, names its code and matches none of the exit codes' errors.
+func TestExitErrorUnknownCode(t *testing.T) {
+	err := &office.ExitError{Code: 9, Message: "m"}
+	if got, want := err.Error(), "office: exit code 9: m"; got != want {
+		t.Errorf("error: got %q, want %q", got, want)
+	}
+	for _, e := range []error{office.ErrMediaNotWritten, office.ErrUsage, office.ErrRefused, office.ErrFailed} {
+		if errors.Is(err, e) {
+			t.Errorf("matches %v", e)
 		}
 	}
 }

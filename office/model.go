@@ -338,7 +338,7 @@ type typed struct {
 // any other kind into an UnknownBlock or UnknownInline holding its JSON.
 var unmarshalers = json.JoinUnmarshalers(
 	json.UnmarshalFromFunc(func(dec *jsontext.Decoder, b *Block) error {
-		raw, kind, err := readTyped(dec, "block")
+		raw, kind, err := readTyped(dec, "a block")
 		if err != nil {
 			return err
 		}
@@ -354,7 +354,7 @@ var unmarshalers = json.JoinUnmarshalers(
 		return nil
 	}),
 	json.UnmarshalFromFunc(func(dec *jsontext.Decoder, in *Inline) error {
-		raw, kind, err := readTyped(dec, "inline")
+		raw, kind, err := readTyped(dec, "an inline")
 		if err != nil {
 			return err
 		}
@@ -371,22 +371,23 @@ var unmarshalers = json.JoinUnmarshalers(
 	}),
 )
 
-// readTyped reads the next value, a block or an inline as what says, and its "type". A value
-// that isn't an object, or has no type, is an error.
+// readTyped reads the next value, "a block" or "an inline" as what says, and its "type". A value
+// that isn't an object, or has no type, is an error; it carries no prefix of its own, since
+// decodeDocument's error wraps it.
 func readTyped(dec *jsontext.Decoder, what string) (jsontext.Value, string, error) {
 	raw, err := dec.ReadValue()
 	if err != nil {
 		return nil, "", err
 	}
 	if raw.Kind() != '{' {
-		return nil, "", fmt.Errorf("office: a %s is %s, not an object", what, raw.Kind())
+		return nil, "", fmt.Errorf("%s is %s, not an object", what, raw.Kind())
 	}
 	var t typed
 	if err := json.Unmarshal(raw, &t); err != nil {
 		return nil, "", err
 	}
 	if t.Type == "" {
-		return nil, "", fmt.Errorf("office: a %s has no type", what)
+		return nil, "", fmt.Errorf("%s has no type", what)
 	}
 	return raw.Clone(), t.Type, nil
 }

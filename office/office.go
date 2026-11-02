@@ -147,7 +147,10 @@ type ExitError struct {
 }
 
 func (e *ExitError) Error() string {
-	msg := "office: " + outcomes[e.Code].Error()
+	msg := fmt.Sprintf("office: exit code %d", e.Code)
+	if outcome, ok := outcomes[e.Code]; ok {
+		msg = "office: " + outcome.Error()
+	}
 	if e.Message != "" {
 		msg += ": " + e.Message
 	}
