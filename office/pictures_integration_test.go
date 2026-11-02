@@ -37,31 +37,12 @@ var pictureFixtures = []string{
 // It logs a line per picture: its fixture, kind, stored size, and its PNG's dimensions, an EMF's
 // or WMF's as trimmed, and size, with its document's picture-conversion wall time and the
 // pictures that shared it, since a document's EMF and WMF convert in one soffice run and are
-// trimmed one magick run each. For an OOXML fixture that time is the full
-// conversion's less office's alone, each the faster of two runs; a legacy fixture's pictures
-// can't be timed apart from its legacy conversion, so its line gives the whole conversion's.
+// trimmed one magick run each. For an OOXML fixture that time is the full conversion's less
+// office's alone, each the faster of two runs; a legacy fixture's pictures can't be timed apart
+// from its legacy conversion, so its line gives the whole conversion's.
 func TestPictures(t *testing.T) {
-	o, err := tool.NewExec(t.Context(), office.OfficeSpec())
-	if err != nil {
-		t.Fatalf("office, which mise pins, run the tier through mise run integration: %v", err)
-	}
-	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: office.LibreOfficeImage}, office.LibreOfficeSpec())
-	if err != nil {
-		t.Fatal(err)
-	}
-	mg, err := tool.NewExec(t.Context(), office.MagickSpec())
-	if err != nil {
-		t.Fatalf("magick, a host prerequisite for TIFF: %v", err)
-	}
-	t.Logf("soffice %s in %s, magick %s", lo.Version(), office.LibreOfficeImage, mg.Version())
-	full, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
-	if err != nil {
-		t.Fatal(err)
-	}
-	alone, err := office.NewConverter(office.Config{Office: o})
-	if err != nil {
-		t.Fatal(err)
-	}
+	full := fullConverter(t)
+	alone := realConverter(t)
 
 	var paths []string
 	for _, pattern := range pictureFixtures {
@@ -118,6 +99,31 @@ func TestPictures(t *testing.T) {
 			t.Errorf("no fixture holds a %s picture", kind)
 		}
 	}
+}
+
+// fullConverter builds a Converter over the real office the mise pins, soffice in the default
+// image through the container runner, and the host's magick, and logs soffice's and magick's
+// versions.
+func fullConverter(t *testing.T) *office.Converter {
+	t.Helper()
+	o, err := tool.NewExec(t.Context(), office.OfficeSpec())
+	if err != nil {
+		t.Fatalf("office, which mise pins, run the tier through mise run integration: %v", err)
+	}
+	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: office.LibreOfficeImage}, office.LibreOfficeSpec())
+	if err != nil {
+		t.Fatal(err)
+	}
+	mg, err := tool.NewExec(t.Context(), office.MagickSpec())
+	if err != nil {
+		t.Fatalf("magick, a host prerequisite for TIFF: %v", err)
+	}
+	t.Logf("soffice %s in %s, magick %s", lo.Version(), office.LibreOfficeImage, mg.Version())
+	c, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return c
 }
 
 // convertTimed converts the fixture at path as Markdown, in a working directory of its own,

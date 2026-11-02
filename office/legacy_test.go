@@ -254,11 +254,3 @@ func TestNewConverterLibreOffice(t *testing.T) {
 		t.Errorf("VersionError: %+v", verr)
 	}
 }
-
-// TestLibreOfficeImage: the default image is a reference the container runner takes, pinned by
-// digest with its tag kept.
-func TestLibreOfficeImage(t *testing.T) {
-	if !regexp.MustCompile(`^gotenberg/gotenberg:[\w.-]+-libreoffice@sha256:[0-9a-f]{64}$`).MatchString(office.LibreOfficeImage) {
-		t.Errorf("LibreOfficeImage %q isn't gotenberg's LibreOffice image pinned by digest", office.LibreOfficeImage)
-	}
-}

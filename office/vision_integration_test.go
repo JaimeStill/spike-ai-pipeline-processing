@@ -23,7 +23,6 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-client/format/completions"
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
-	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
 // The vision tier: every distinct picture the fixtures hand onward, after conversion, sent in
@@ -76,10 +75,9 @@ type handedOn struct {
 
 // TestVisionPictures converts every picture fixture as Markdown through the real office, soffice
 // in the default image, and the host's magick, and sends each distinct picture handed onward,
-// across all fixtures, to visionModel beside describePrompt: a stored PNG,
-// JPEG, GIF, or BMP as it is, an EMF, WMF, or TIFF as its PNG. The requests run one at a time,
-// so each wall time is the picture's alone. It asserts only that each response is completed with
-// text.
+// across all fixtures, to visionModel beside describePrompt: a stored PNG, JPEG, GIF, or BMP as
+// it is, an EMF, WMF, or TIFF as its PNG. The requests run one at a time, so each wall time is
+// the picture's alone. It asserts only that each response is completed with text.
 //
 // It logs a recorded line per picture: its first fixture and stored name, the others that hand
 // on the same file, its content type and pixel size, wall time, image tokens, and output tokens.
@@ -88,7 +86,7 @@ type handedOn struct {
 // that mark where an image begins and ends in the model's chat template.
 func TestVisionPictures(t *testing.T) {
 	c := routerClient(t)
-	conv := visionConverter(t)
+	conv := fullConverter(t)
 
 	var paths []string
 	for _, pattern := range pictureFixtures {
@@ -187,29 +185,6 @@ func TestVisionPictures(t *testing.T) {
 	}
 	t.Logf("recorded: vision pictures, %s, %d distinct pictures from %d fixtures, one at a time: %v wall, %d image tokens, %d output tokens, %d failed; text-only baseline %d input tokens",
 		visionModel, len(order), len(paths), wall.Round(time.Millisecond), imageTokens, outputTokens, failed, without)
-}
-
-// visionConverter builds a Converter over the real office the mise pins, soffice in the default
-// image through the container runner, and the host's magick, as TestPictures does.
-func visionConverter(t *testing.T) *office.Converter {
-	t.Helper()
-	o, err := tool.NewExec(t.Context(), office.OfficeSpec())
-	if err != nil {
-		t.Fatalf("office, which mise pins, run the tier through mise run integration: %v", err)
-	}
-	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: office.LibreOfficeImage}, office.LibreOfficeSpec())
-	if err != nil {
-		t.Fatal(err)
-	}
-	mg, err := tool.NewExec(t.Context(), office.MagickSpec())
-	if err != nil {
-		t.Fatalf("magick, a host prerequisite for TIFF: %v", err)
-	}
-	conv, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
-	if err != nil {
-		t.Fatal(err)
-	}
-	return conv
 }
 
 // pixelSize returns a picture's width and height as "WxH": a PNG's, JPEG's, or GIF's by
