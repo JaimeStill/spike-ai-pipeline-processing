@@ -3,6 +3,7 @@
 package office
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"errors"
@@ -37,30 +38,49 @@ type Config struct {
 	// Office is office's spike-ai-pipeline-office, typically built from OfficeSpec. It is
 	// required.
 	Office *tool.Tool
+	// LibreOffice is LibreOffice's soffice, typically built from LibreOfficeSpec through the
+	// container runner in LibreOfficeImage. It converts legacy documents to OOXML; nil leaves the
+	// Converter without one, and a legacy document is then refused with ErrNoLibreOffice.
+	LibreOffice *tool.Tool
 }
 
 // Converter prepares office documents for a model through office: a document in, office's JSON
 // model or its Markdown out, with the media the document embeds. It runs no inference. Its
 // methods are safe for concurrent use.
 type Converter struct {
-	office *tool.Tool
+	office      *tool.Tool
+	libreoffice *tool.Tool
 }
 
 // NewConverter builds a Converter over cfg's Tools. It refuses a nil Office, and an Office whose
-// version is older than OfficeMinimum, whatever minimum its own Spec declared, with a
-// *tool.VersionError wrapping tool.ErrTooOld.
+// version is older than OfficeMinimum, or a LibreOffice older than LibreOfficeMinimum, whatever
+// minimum the Tool's own Spec declared, with a *tool.VersionError wrapping tool.ErrTooOld.
 func NewConverter(cfg Config) (*Converter, error) {
 	if cfg.Office == nil {
 		return nil, errors.New("office: no office tool")
 	}
-	minimum, err := tool.ParseVersion(OfficeMinimum)
-	if err != nil {
+	if err := atLeast(cfg.Office, OfficeMinimum); err != nil {
 		return nil, err
 	}
-	if v := cfg.Office.Version(); v.Compare(minimum) < 0 {
-		return nil, &tool.VersionError{Program: cfg.Office.Name(), Found: v.String(), Minimum: OfficeMinimum, Err: tool.ErrTooOld}
+	if cfg.LibreOffice != nil {
+		if err := atLeast(cfg.LibreOffice, LibreOfficeMinimum); err != nil {
+			return nil, err
+		}
 	}
-	return &Converter{office: cfg.Office}, nil
+	return &Converter{office: cfg.Office, libreoffice: cfg.LibreOffice}, nil
+}
+
+// atLeast refuses t when its version is older than minimum, with a *tool.VersionError wrapping
+// tool.ErrTooOld.
+func atLeast(t *tool.Tool, minimum string) error {
+	m, err := tool.ParseVersion(minimum)
+	if err != nil {
+		return err
+	}
+	if v := t.Version(); v.Compare(m) < 0 {
+		return &tool.VersionError{Program: t.Name(), Found: v.String(), Minimum: minimum, Err: tool.ErrTooOld}
+	}
+	return nil
 }
 
 // Format is the rendering a conversion returns.
@@ -92,6 +112,11 @@ type Request struct {
 	Dir string
 	// Format is the rendering returned: JSON, the zero value, or Markdown.
 	Format Format
+	// Name is the document's file name, or a path ending in it; only its extension is read. A
+	// document with the OLE2 compound-file signature whose Name has a legacy extension, .doc or
+	// .dot, .xls or .xlt, .ppt, .pps, or .pot, in any case, is a legacy document, converted to
+	// docx, xlsx, or pptx before office runs. "" names no extension.
+	Name string
 }
 
 // Result is one document's conversion: office's model or Markdown, the media handed onward, and
@@ -109,6 +134,11 @@ type Result struct {
 	// Warnings are office's warnings, one per line it wrote to stderr: what it skipped and
 	// converted the rest without. A conversion with warnings has still succeeded.
 	Warnings []string
+	// ConvertedFrom is the legacy format a legacy document was converted from to OOXML before
+	// office ran, its extension without the dot and lowercased, such as "doc"; "" when the
+	// document went to office as it was. Document.Format, for a JSON request, is the OOXML format
+	// it was converted to.
+	ConvertedFrom string
 }
 
 // The outcomes of an office run that exits nonzero, each its exit code's; an *ExitError matches
@@ -173,6 +203,14 @@ const stderrLimit = 1 << 20
 // the media directory's files, and office's warnings. The spooled document is removed when
 // Convert returns, however it ends.
 //
+// A legacy document, as Request.Name says, is spooled with its legacy extension and converted
+// first, through the LibreOffice converter in req.Dir, to the OOXML format its extension names;
+// office runs on the converted document, which is removed with soffice's profile when Convert
+// returns, and the result's ConvertedFrom names the legacy format. Without a LibreOffice
+// converter, a legacy document is an error matching ErrNoLibreOffice, before anything is spooled
+// or run. Any other OLE2 file, such as an encrypted OOXML package, goes to office as it is, and
+// office refuses it.
+//
 // A JSON model whose schema isn't Schema is an error matching ErrSchema, naming the schema.
 // office's exit codes 1 to 4 are an *ExitError matching the code's error. When ctx ends the run,
 // the error matches ctx's, as every Tool run's does. A conversion that fails removes its media
@@ -191,11 +229,20 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 	if err != nil {
 		return nil, fmt.Errorf("office: %w", err)
 	}
-	path, remove, err := spool(dir, doc)
+	br := bufio.NewReader(doc)
+	from, to := legacyFormat(br, req.Name)
+	if from != "" && c.libreoffice == nil {
+		return nil, fmt.Errorf("office: %s is a legacy %s document: %w", filepath.Base(req.Name), from, ErrNoLibreOffice)
+	}
+	ext := ""
+	if from != "" {
+		ext = "." + from
+	}
+	path, remove, err := spool(dir, br, ext)
 	if err != nil {
 		return nil, err
 	}
-	res, err := c.convert(ctx, dir, path, req.Format)
+	res, err := c.convertLegacy(ctx, dir, path, from, to, req.Format)
 	if rerr := remove(); rerr != nil {
 		err = errors.Join(err, fmt.Errorf("office: removing the spooled document: %w", rerr))
 	}
@@ -206,6 +253,27 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 		return nil, err
 	}
 	return res, nil
+}
+
+// convertLegacy runs office on the document spooled at path, in dir, as convert does; for a
+// legacy document, from naming its format, it first converts the document to the OOXML format to
+// and runs office on that, removing the converted document and soffice's profile afterwards.
+func (c *Converter) convertLegacy(ctx context.Context, dir, path, from, to string, format Format) (*Result, error) {
+	if from == "" {
+		return c.convert(ctx, dir, path, format)
+	}
+	converted, remove, err := c.toOOXML(ctx, dir, path, to)
+	if err != nil {
+		return nil, err
+	}
+	res, err := c.convert(ctx, dir, converted, format)
+	if rerr := remove(); rerr != nil {
+		err = errors.Join(err, fmt.Errorf("office: removing the converted document: %w", rerr))
+	}
+	if res != nil {
+		res.ConvertedFrom = from
+	}
+	return res, err
 }
 
 // convert runs office on the document spooled at path, in dir, with a media directory of its own

@@ -17,6 +17,17 @@
 // directory. The spooled document is removed when Convert returns; the media directory stays,
 // the caller's, unless the conversion failed.
 //
+// A legacy document, .doc, .xls, or .ppt and their templates and shows, is one with the OLE2
+// compound-file signature whose Request.Name has a legacy extension. Given a LibreOffice Tool in
+// the Config, Convert converts it first, in the request's working directory, to the OOXML format
+// its extension names, and runs office on that; the Result's ConvertedFrom names the legacy
+// format. Without one, a legacy document is refused with ErrNoLibreOffice before anything runs.
+// Any other OLE2 file, such as an encrypted OOXML package, goes to office, which refuses it.
+// LibreOfficeSpec declares soffice, minimum 24.2, and LibreOfficeImage is the default image the
+// container runner runs it in, under its full lockdown: no network, the caller's uid:gid, every
+// capability dropped. Each conversion gives soffice a user profile of its own inside the working
+// directory, which the runner mounts, and removes it with the converted document when it ends.
+//
 // A JSON result, the default, is the model decoded through encoding/json/v2 into a Document of
 // typed values that mirror schema "1": each Block by its kind, each Inline by its kind. A model
 // of any other schema is an error matching ErrSchema that names the schema. A property the model
@@ -41,15 +52,21 @@
 //
 //   - [OfficeSpec] declares office's spike-ai-pipeline-office for either runner's constructor.
 //   - [OfficeMinimum] is the oldest office the Converter accepts, 0.1.0.
-//   - [Config] is the Tools a Converter is built over.
+//   - [LibreOfficeSpec] declares LibreOffice's soffice for either runner's constructor.
+//   - [LibreOfficeMinimum] is the oldest LibreOffice the Converter accepts, 24.2.
+//   - [LibreOfficeImage] is the default image soffice runs in through the container runner.
+//   - [ErrNoLibreOffice] is the cause of a legacy document's refusal without a LibreOffice Tool.
+//   - [Config] is the Tools a Converter is built over: office, and LibreOffice for legacy
+//     documents.
 //   - [Converter] converts office documents through office.
 //   - [NewConverter] builds a Converter over a Config.
 //   - [Converter.Convert] converts one document as a Request says.
-//   - [Request] is one document's conversion: its working directory and its format.
+//   - [Request] is one document's conversion: its working directory, its format, and its file
+//     name.
 //   - [Format] is a conversion's rendering: [JSON] or [Markdown].
 //   - [Format.String] returns a format's name, as office's --format takes it.
 //   - [Result] is one document's conversion: the model or the Markdown, the media directory, the
-//     media list, and office's warnings.
+//     media list, office's warnings, and the legacy format it was converted from.
 //   - [MediaFile] is one file of the media list: its name, content type, the file handed onward,
 //     and whether it was converted.
 //   - [ContentType] returns a media file's content type by its extension.

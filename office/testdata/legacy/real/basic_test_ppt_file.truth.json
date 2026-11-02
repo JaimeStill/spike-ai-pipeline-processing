@@ -1,0 +1,19 @@
+{
+  "file": "basic_test_ppt_file.ppt",
+  "format": "ppt",
+  "description": "PowerPoint: two slides. The first a title and a two-line subtitle; the second a title and a body of three bulleted lines. Each slide has a line of speaker notes.",
+  "elements": {
+    "slide": ["1", "2"],
+    "heading": ["1:This is a test title", "1:This is the title on page 2"],
+    "paragraph": [
+      "This is a test subtitle",
+      "This is on page 1",
+      "This is page two",
+      "It has several blocks of text",
+      "None of them have formatting",
+      "These are the notes for page 1",
+      "These are the notes on page two, again lacking formatting"
+    ],
+    "list": ["unordered:3"]
+  }
+}

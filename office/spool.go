@@ -12,9 +12,10 @@ import (
 // spool copies doc into a new file in dir, the working directory the caller owns, so office can
 // read it by path. It returns the file's path and a function that removes the file, which the
 // caller runs when its call ends. A failed copy removes what it wrote. office tells the format
-// from the content, so the file has no extension.
-func spool(dir string, doc io.Reader) (string, func() error, error) {
-	f, err := os.CreateTemp(dir, "spool-*")
+// from the content, so the file has no extension but ext, which is "" but for a legacy document,
+// whose legacy extension LibreOffice reads.
+func spool(dir string, doc io.Reader, ext string) (string, func() error, error) {
+	f, err := os.CreateTemp(dir, "spool-*"+ext)
 	if err != nil {
 		return "", nil, fmt.Errorf("office: spool: %w", err)
 	}

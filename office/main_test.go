@@ -19,8 +19,9 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
-// standinEnv marks a process as the stand-in office: the test binary, re-executed through a link
-// named spike-ai-pipeline-office, acting on its arguments as office instead of running the tests.
+// standinEnv marks a process as a stand-in: the test binary, re-executed through a link named
+// spike-ai-pipeline-office or soffice, acting on its arguments as office or LibreOffice instead
+// of running the tests.
 const standinEnv = "OFFICE_TEST_STANDIN"
 
 // The stand-in's settings, which it reads from the environment it inherits.
@@ -45,16 +46,37 @@ const (
 	sleepEnv = "OFFICE_TEST_STANDIN_SLEEP"
 )
 
+// The stand-in soffice's settings; it logs to logEnv's file too.
+const (
+	// sofficeVersionEnv is the version the stand-in soffice's --version prints, after the line
+	// of desktop-library noise the real one writes to stderr in a container.
+	sofficeVersionEnv = "OFFICE_TEST_SOFFICE_VERSION"
+	// sofficeExitEnv, when set, is the exit code of a conversion, which then writes nothing.
+	sofficeExitEnv = "OFFICE_TEST_SOFFICE_EXIT"
+	// sofficeOutputEnv, when set, is what a conversion writes to stderr.
+	sofficeOutputEnv = "OFFICE_TEST_SOFFICE_OUTPUT"
+	// sofficeNothingEnv, when set, makes a conversion exit zero having written nothing, as
+	// soffice does when it can't export what it loaded.
+	sofficeNothingEnv = "OFFICE_TEST_SOFFICE_NOTHING"
+)
+
+// convertedPrefix begins the document the stand-in soffice writes: the prefix, then its input.
+const convertedPrefix = "converted: "
+
 // standinDocument is the stand-in's JSON model when stdoutEnv isn't set: an empty docx.
 const standinDocument = `{"schema": "1", "format": "docx", "blocks": []}` + "\n"
 
 func TestMain(m *testing.M) {
 	if os.Getenv(standinEnv) == "1" {
-		if name := filepath.Base(os.Args[0]); name != "spike-ai-pipeline-office" {
+		switch name := filepath.Base(os.Args[0]); name {
+		case "spike-ai-pipeline-office":
+			os.Exit(standin(os.Args[1:]))
+		case "soffice":
+			os.Exit(sofficeStandin(os.Args[1:]))
+		default:
 			fmt.Fprintf(os.Stderr, "stand-in: no tool named %s\n", name)
 			os.Exit(2)
 		}
-		os.Exit(standin(os.Args[1:]))
 	}
 	// The stand-in inherits the environment. Under -race, GORACE's atexit_sleep_ms keeps it from
 	// sleeping a second as it exits.
@@ -86,7 +108,7 @@ func standin(args []string) int {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
-	if err := appendLog(os.Getenv(logEnv), args, string(input)); err != nil {
+	if err := appendLog(os.Getenv(logEnv), "spike-ai-pipeline-office", args, string(input)); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
@@ -131,22 +153,85 @@ func standin(args []string) int {
 	return 0
 }
 
-// standinRun is one logged run of the stand-in: its working directory, its arguments, and its
-// input file's content.
-type standinRun struct {
-	Dir   string   `json:"dir"`
-	Args  []string `json:"args"`
-	Input string   `json:"input"`
+// sofficeStandin is the stand-in soffice. With --version alone it writes a line of noise to
+// stderr and the version line to stdout, as the real one does in a container. Otherwise it
+// appends its working directory, arguments, and its input file's content (its last argument's)
+// to the log file; exits with sofficeExitEnv's code, having written sofficeOutputEnv's value to
+// stderr, when it is set; exits zero having written nothing when sofficeNothingEnv is set; and
+// else writes the converted document, convertedPrefix and its input, into the directory after
+// --outdir, named for its input with the extension --convert-to names before its colon.
+func sofficeStandin(args []string) int {
+	if len(args) == 1 && args[0] == "--version" {
+		fmt.Fprintln(os.Stderr, "(process:20): dconf-CRITICAL **: unable to create directory '/.cache/dconf'")
+		fmt.Printf("LibreOffice %s 680(Build:1)\n", os.Getenv(sofficeVersionEnv))
+		return 0
+	}
+	if len(args) == 0 {
+		fmt.Fprintln(os.Stderr, "stand-in: no input")
+		return 2
+	}
+	path := args[len(args)-1]
+	input, err := os.ReadFile(path)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	if err := appendLog(os.Getenv(logEnv), "soffice", args, string(input)); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	fmt.Fprint(os.Stderr, os.Getenv(sofficeOutputEnv))
+	if code := os.Getenv(sofficeExitEnv); code != "" {
+		n, err := strconv.Atoi(code)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 2
+		}
+		return n
+	}
+	if os.Getenv(sofficeNothingEnv) != "" {
+		return 0
+	}
+	var outdir, format string
+	for i, a := range args[:len(args)-1] {
+		switch a {
+		case "--outdir":
+			outdir = args[i+1]
+		case "--convert-to":
+			format, _, _ = strings.Cut(args[i+1], ":")
+		}
+	}
+	if err := os.MkdirAll(outdir, 0o755); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	base := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	if err := os.WriteFile(filepath.Join(outdir, base+"."+format), []byte(convertedPrefix+string(input)), 0o644); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	return 0
 }
 
-// appendLog appends the working directory, args, and input to file as one JSON object and a
-// newline.
-func appendLog(file string, args []string, input string) error {
+// standinRun is one logged run of a stand-in: its program, its working directory, its
+// arguments, and its input file's content. The log holds the content as bytes, Raw, since a
+// legacy document's isn't UTF-8; reading it sets Input from Raw.
+type standinRun struct {
+	Program string   `json:"program"`
+	Dir     string   `json:"dir"`
+	Args    []string `json:"args"`
+	Raw     []byte   `json:"input"`
+	Input   string   `json:"-"`
+}
+
+// appendLog appends program, the working directory, args, and input to file as one JSON object
+// and a newline.
+func appendLog(file, program string, args []string, input string) error {
 	dir, err := os.Getwd()
 	if err != nil {
 		return err
 	}
-	line, err := json.Marshal(standinRun{Dir: dir, Args: args, Input: input})
+	line, err := json.Marshal(standinRun{Program: program, Dir: dir, Args: args, Raw: []byte(input)})
 	if err != nil {
 		return err
 	}
@@ -158,9 +243,10 @@ func appendLog(file string, args []string, input string) error {
 	return errors.Join(err, f.Close())
 }
 
-// installStandin links the test binary as spike-ai-pipeline-office in a directory of its own,
-// makes that directory the whole PATH, and has the stand-in report version. It returns a
-// function that returns every run since, in order, the version command's left out.
+// installStandin links the test binary as spike-ai-pipeline-office and soffice in a directory of
+// its own, makes that directory the whole PATH, and has the stand-in office report version and
+// the stand-in soffice 26.8.1.1. It returns a function that returns every run of either since, in
+// order, the version commands left out.
 func installStandin(t *testing.T, version string) func() []standinRun {
 	t.Helper()
 	exe, err := os.Executable()
@@ -168,11 +254,14 @@ func installStandin(t *testing.T, version string) func() []standinRun {
 		t.Fatal(err)
 	}
 	dir := t.TempDir()
-	if err := os.Symlink(exe, filepath.Join(dir, "spike-ai-pipeline-office")); err != nil {
-		t.Fatal(err)
+	for _, name := range []string{"spike-ai-pipeline-office", "soffice"} {
+		if err := os.Symlink(exe, filepath.Join(dir, name)); err != nil {
+			t.Fatal(err)
+		}
 	}
 	t.Setenv("PATH", dir)
 	t.Setenv(versionEnv, version)
+	t.Setenv(sofficeVersionEnv, "26.8.1.1")
 	log := filepath.Join(t.TempDir(), "runs.jsonl")
 	t.Setenv(logEnv, log)
 	return func() []standinRun {
@@ -192,6 +281,7 @@ func installStandin(t *testing.T, version string) func() []standinRun {
 			if err := json.Unmarshal(lines.Bytes(), &r); err != nil {
 				t.Fatal(err)
 			}
+			r.Input = string(r.Raw)
 			runs = append(runs, r)
 		}
 		if err := lines.Err(); err != nil {
@@ -211,6 +301,27 @@ func standinConverter(t *testing.T) (*office.Converter, func() []standinRun) {
 		t.Fatal(err)
 	}
 	c, err := office.NewConverter(office.Config{Office: tl})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return c, runs
+}
+
+// legacyConverter builds a Converter over the stand-in office at 0.1.0 and the stand-in soffice
+// at 26.8.1.1, built from OfficeSpec and LibreOfficeSpec through the exec runner, and returns it
+// with the stand-ins' run log.
+func legacyConverter(t *testing.T) (*office.Converter, func() []standinRun) {
+	t.Helper()
+	runs := installStandin(t, "0.1.0")
+	o, err := tool.NewExec(t.Context(), office.OfficeSpec())
+	if err != nil {
+		t.Fatal(err)
+	}
+	lo, err := tool.NewExec(t.Context(), office.LibreOfficeSpec())
+	if err != nil {
+		t.Fatal(err)
+	}
+	c, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo})
 	if err != nil {
 		t.Fatal(err)
 	}
