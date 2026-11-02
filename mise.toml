@@ -4,6 +4,9 @@ go = "1.27.3"
 golangci-lint = "2.15.0"
 jq = "1.8.2"
 shellcheck = "0.11.0"
+# office, from its GitHub release, for the office package's tests that run the real binary; mise
+# checks the archive against the release's digest.
+"github:JaimeStill/spike-ai-pipeline-office" = "0.1.0"
 
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
