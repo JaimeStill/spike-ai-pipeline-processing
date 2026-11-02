@@ -19,8 +19,8 @@ const ole2 = "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
 // TestConvertLegacy: a document with the OLE2 signature whose name has a legacy extension, in
 // any case, is spooled with that extension, lowercased, and converted by soffice to its OOXML
-// format, in the working directory, with its profile and its output in a directory of its own
-// there; office then runs once on the converted document. The result records the legacy format,
+// format, in the working directory, with a fresh profile and its output in a directory of its
+// own there; office then runs once on the converted document. The result records the legacy format,
 // and only the media directory is left.
 func TestConvertLegacy(t *testing.T) {
 	c, runs := legacyConverter(t)
@@ -56,6 +56,9 @@ func TestConvertLegacy(t *testing.T) {
 			}
 			if so.Input != doc {
 				t.Errorf("soffice's input: got %q, want %q", so.Input, doc)
+			}
+			if so.Registry != "" {
+				t.Errorf("soffice's profile started with %q, want a fresh one", so.Registry)
 			}
 			work := regexp.QuoteMeta(dir) + `/libreoffice-[^/]+`
 			spooled := regexp.QuoteMeta(dir) + `/(spool-[^/]+)\.` + tc.from

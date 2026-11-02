@@ -5,6 +5,7 @@ package office
 import (
 	"bufio"
 	"bytes"
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -41,10 +42,12 @@ type Config struct {
 	// LibreOffice is LibreOffice's soffice, typically built from LibreOfficeSpec through the
 	// container runner in LibreOfficeImage. It converts legacy documents to OOXML; nil leaves the
 	// Converter without one, and a legacy document is then refused with ErrNoLibreOffice. It
-	// converts EMF and WMF pictures to PNG too; without one, they have no file handed onward.
+	// renders EMF and WMF pictures to PNG too, with Magick; without either, they have no file
+	// handed onward.
 	LibreOffice *tool.Tool
 	// Magick is ImageMagick's magick, typically built from MagickSpec. It converts TIFF pictures
-	// to PNG; nil leaves the Converter without one, and a TIFF then has no file handed onward.
+	// to PNG, and trims an EMF or WMF picture's rendered page to the picture; nil leaves the
+	// Converter without one, and a TIFF, EMF, or WMF then has no file handed onward.
 	Magick *tool.Tool
 }
 
@@ -128,6 +131,11 @@ type Request struct {
 	// .dot, .xls or .xlt, .ppt, .pps, or .pot, in any case, is a legacy document, converted to
 	// docx, xlsx, or pptx before office runs. "" names no extension.
 	Name string
+	// MetafileScale is the scale the document's EMF and WMF pictures are rendered at, a multiple
+	// of their size at 96 dpi: zero is DefaultMetafileScale, 3, and it may be at most
+	// MaxMetafileScale, 8. A negative scale, or one above MaxMetafileScale, is refused before
+	// anything runs.
+	MetafileScale int
 }
 
 // Result is one document's conversion: office's model or Markdown, the media handed onward, and
@@ -227,22 +235,28 @@ const stderrLimit = 1 << 20
 //
 // The media office wrote then follow the picture standard. A picture vision decodes, PNG, JPEG,
 // GIF, or BMP, is handed on as stored, as is any kind the standard names no converter for. EMF and
-// WMF are converted to PNG through the LibreOffice converter, all of a document's in one soffice
-// run, and TIFF through magick; each PNG is named by the stored name's SHA-256 and .png, and
-// written into the media directory beside the stored file, which stays. A picture whose converter
-// the Converter wasn't given is listed with no file handed onward, and the conversion still
-// succeeds; a picture conversion that fails fails the conversion. No conversion encodes a picture
+// WMF are rendered to PNG at req.MetafileScale through the LibreOffice converter, all of a
+// document's in one soffice run, and each trimmed to its picture through magick; TIFF is
+// converted through magick. Each PNG is named by the stored name's SHA-256 and .png, and written
+// into the media directory beside the stored file, which stays. A picture whose converter the
+// Converter wasn't given, for EMF and WMF either of LibreOffice and magick, is listed with no
+// file handed onward, and the conversion still succeeds; a picture conversion that fails fails the conversion. No conversion encodes a picture
 // lossily: each writes PNG. In a Markdown result each converted picture's stored name is swapped
 // for its PNG's wherever it appears, which rewrites its links without parsing the Markdown; every
 // other link stays as office wrote it.
 //
-// A JSON model whose schema isn't Schema is an error matching ErrSchema, naming the schema.
+// A MetafileScale below zero or above MaxMetafileScale is an error before anything runs. A JSON
+// model whose schema isn't Schema is an error matching ErrSchema, naming the schema.
 // office's exit codes 1 to 4 are an *ExitError matching the code's error. When ctx ends the run,
 // the error matches ctx's, as every Tool run's does. A conversion that fails removes its media
 // directory.
 func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*Result, error) {
 	if req.Format != JSON && req.Format != Markdown {
 		return nil, fmt.Errorf("office: unknown format %v", req.Format)
+	}
+	scale := cmp.Or(req.MetafileScale, DefaultMetafileScale)
+	if scale < 1 || scale > MaxMetafileScale {
+		return nil, fmt.Errorf("office: metafile scale %d isn't from 1 to %d", req.MetafileScale, MaxMetafileScale)
 	}
 	if err := ctx.Err(); err != nil {
 		return nil, err
@@ -267,7 +281,7 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 	if err != nil {
 		return nil, err
 	}
-	res, err := c.convertLegacy(ctx, dir, path, from, to, req.Format)
+	res, err := c.convertLegacy(ctx, dir, path, from, to, req.Format, scale)
 	if rerr := remove(); rerr != nil {
 		err = errors.Join(err, fmt.Errorf("office: removing the spooled document: %w", rerr))
 	}
@@ -283,15 +297,16 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 // convertLegacy runs office on the document spooled at path, in dir, as convert does; for a
 // legacy document, from naming its format, it first converts the document to the OOXML format to
 // and runs office on that, removing the converted document and soffice's profile afterwards.
-func (c *Converter) convertLegacy(ctx context.Context, dir, path, from, to string, format Format) (*Result, error) {
+// Metafiles are rendered at scale.
+func (c *Converter) convertLegacy(ctx context.Context, dir, path, from, to string, format Format, scale int) (*Result, error) {
 	if from == "" {
-		return c.convert(ctx, dir, path, format)
+		return c.convert(ctx, dir, path, format, scale)
 	}
 	converted, remove, err := c.toOOXML(ctx, dir, path, to)
 	if err != nil {
 		return nil, err
 	}
-	res, err := c.convert(ctx, dir, converted, format)
+	res, err := c.convert(ctx, dir, converted, format, scale)
 	if rerr := remove(); rerr != nil {
 		err = errors.Join(err, fmt.Errorf("office: removing the converted document: %w", rerr))
 	}
@@ -302,9 +317,10 @@ func (c *Converter) convertLegacy(ctx context.Context, dir, path, from, to strin
 }
 
 // convert runs office on the document spooled at path, in dir, with a media directory of its own
-// made there. It returns the result with its MediaDir set whenever it made the directory, with
-// its error, so the caller can remove the directory of a failed conversion.
-func (c *Converter) convert(ctx context.Context, dir, path string, format Format) (*Result, error) {
+// made there, and converts the pictures office wrote, metafiles rendered at scale. It returns the
+// result with its MediaDir set whenever it made the directory, with its error, so the caller can
+// remove the directory of a failed conversion.
+func (c *Converter) convert(ctx context.Context, dir, path string, format Format, scale int) (*Result, error) {
 	media, err := os.MkdirTemp(dir, "media-*")
 	if err != nil {
 		return nil, fmt.Errorf("office: media directory: %w", err)
@@ -340,7 +356,7 @@ func (c *Converter) convert(ctx context.Context, dir, path string, format Format
 	if res.Media, err = listMedia(media); err != nil {
 		return res, err
 	}
-	if err := c.convertPictures(ctx, dir, res.Media); err != nil {
+	if err := c.convertPictures(ctx, dir, scale, res.Media); err != nil {
 		return res, err
 	}
 	if format == Markdown {

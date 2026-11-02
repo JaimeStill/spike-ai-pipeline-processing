@@ -45,13 +45,23 @@
 //
 // Pictures follow one standard, and no conversion encodes a picture lossily: each writes PNG. A
 // picture vision decodes, PNG, JPEG, GIF, or BMP, is handed on exactly as stored, as is any kind
-// the standard names no converter for. EMF and WMF are converted to PNG through the LibreOffice
-// Tool, all of a document's in one soffice run with LibreOffice's Draw PNG export, and TIFF
-// through a magick Tool, its first image alone; MagickSpec declares magick, minimum 7.1. A
-// converted picture's PNG is named by the stored name's stem, its SHA-256, and .png, and written
-// into the media directory beside the stored file, which stays. A picture whose converter the
-// Config didn't give is listed with no file handed onward, and the conversion still succeeds; a
-// picture conversion that fails fails the conversion. In a Markdown result each converted
+// the standard names no converter for. EMF and WMF are rendered to PNG through the LibreOffice
+// Tool, all of a document's in one soffice run with LibreOffice's Draw PNG export, and each
+// trimmed to its picture through a magick Tool; TIFF is converted through magick, its first image
+// alone. MagickSpec declares magick, minimum 7.1. A converted picture's PNG is named by the
+// stored name's stem, its SHA-256, and .png, and written into the media directory beside the
+// stored file, which stays. A picture whose converter the Config didn't give, for EMF and WMF
+// either of LibreOffice and magick, is listed with no file handed onward, and the conversion
+// still succeeds; a picture conversion that fails fails the conversion.
+//
+// Draw places a metafile at its own size, at 96 dpi, in the middle of a page, so a metafile is
+// rendered as a page at Request.MetafileScale times 96 dpi, DefaultMetafileScale, 3, when it is
+// zero and at most MaxMetafileScale, 8, and magick's -trim then crops the page to the picture:
+// what differs from the color of the page's corners. The page is A4 whatever the paper of the
+// system soffice runs on, since the run's profile gives LibreOffice a British English locale, so
+// at the default scale it is 2382x3369 pixels. The trim has two known limits: it removes a border
+// the picture itself has in the page's white, so a picture framed in white comes out without its
+// frame, and a picture that is all white comes out as a single pixel. In a Markdown result each converted
 // picture's stored name is swapped for its PNG's wherever it appears, without parsing the
 // Markdown, so its links name the PNG; a link to any other picture stays as office wrote it. Each line office writes to stderr as a
 // warning is one of the result's Warnings, and a conversion with warnings succeeds.
@@ -70,14 +80,16 @@
 //   - [LibreOfficeImage] is the default image soffice runs in through the container runner.
 //   - [MagickSpec] declares ImageMagick's magick for either runner's constructor.
 //   - [MagickMinimum] is the oldest magick the Converter accepts, 7.1.
+//   - [DefaultMetafileScale] is the scale EMF and WMF pictures are rendered at by default, 3.
+//   - [MaxMetafileScale] is the largest scale a Request may render them at, 8.
 //   - [ErrNoLibreOffice] is the cause of a legacy document's refusal without a LibreOffice Tool.
 //   - [Config] is the Tools a Converter is built over: office, LibreOffice for legacy documents
-//     and EMF and WMF pictures, and magick for TIFF pictures.
+//     and, with magick, EMF and WMF pictures, and magick for TIFF pictures.
 //   - [Converter] converts office documents through office.
 //   - [NewConverter] builds a Converter over a Config.
 //   - [Converter.Convert] converts one document as a Request says.
-//   - [Request] is one document's conversion: its working directory, its format, and its file
-//     name.
+//   - [Request] is one document's conversion: its working directory, its format, its file name,
+//     and the scale its EMF and WMF pictures are rendered at.
 //   - [Format] is a conversion's rendering: [JSON] or [Markdown].
 //   - [Format.String] returns a format's name, as office's --format takes it.
 //   - [Result] is one document's conversion: the model or the Markdown, the media directory, the

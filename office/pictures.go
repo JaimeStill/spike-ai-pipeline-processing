@@ -35,13 +35,44 @@ func MagickSpec() tool.Spec {
 	}
 }
 
+// DefaultMetafileScale is the scale an EMF or WMF picture is rendered at when its Request leaves
+// MetafileScale zero: 3, three times its size at 96 dpi.
+const DefaultMetafileScale = 3
+
+// MaxMetafileScale is the largest MetafileScale a Request may ask for: 8, at which the page each
+// picture is rendered on is 6352x8984 pixels, some 57 million, before the trim.
+const MaxMetafileScale = 8
+
+// pageWidth and pageHeight are, in pixels at 96 dpi, the page LibreOffice's Draw places a
+// metafile on: A4, which metafileLocale makes its default page. The picture keeps its own size
+// on the page, at its center, so rendering the page at a scale renders the picture at that scale.
+const (
+	pageWidth  = 794
+	pageHeight = 1123
+)
+
+// metafileLocale is the locale the metafiles' soffice run is given, through its profile, so that
+// Draw's default page is A4 whatever the paper of the system it runs on: its default page is the
+// locale's paper, and without one, the system's, A4 in LibreOfficeImage and Letter under a US
+// locale. A page of another shape than the pixel size asked for would stretch the picture.
+const metafileLocale = "en-GB"
+
+// metafileRegistry is the configuration the metafiles' soffice run starts its profile with:
+// metafileLocale as LibreOffice's locale.
+const metafileRegistry = `<?xml version="1.0" encoding="UTF-8"?>
+<oor:items xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<item oor:path="/org.openoffice.Setup/L10N"><prop oor:name="ooSetupSystemLocale" oor:op="fuse"><value>` + metafileLocale + `</value></prop></item>
+</oor:items>
+`
+
 // pictureConverter is the converter a picture kind takes to PNG. Its zero value is none: the
 // picture is handed on as stored, as one vision decodes, PNG, JPEG, GIF, or BMP, is, and any kind
 // the picture standard names no converter for.
 type pictureConverter int
 
 const (
-	// viaLibreOffice is a metafile, EMF or WMF, converted to PNG through LibreOffice.
+	// viaLibreOffice is a metafile, EMF or WMF, rendered to PNG through LibreOffice and trimmed
+	// to the picture through ImageMagick.
 	viaLibreOffice pictureConverter = iota + 1
 	// viaMagick is a TIFF, converted to PNG through ImageMagick.
 	viaMagick
@@ -56,31 +87,37 @@ var pictureConverters = map[string]pictureConverter{
 	".tiff": viaMagick,
 }
 
-// pictureFilter is LibreOffice's PNG export filter for a picture it opens. Naming it, not only
-// the extension, keeps a file soffice doesn't open as a picture, such as text named .emf, from
-// being exported as a page of a text document; soffice fails on it instead.
-const pictureFilter = "png:draw_png_Export"
+// metafileFilter returns soffice's --convert-to for metafiles rendered at scale: LibreOffice's
+// Draw PNG export, with the page's pixel size, scale times its size at 96 dpi, as its filter
+// options. Naming the filter, not only the extension, keeps a file soffice doesn't open as a
+// picture, such as text named .emf, from being exported as a page of a text document; soffice
+// fails on it instead.
+func metafileFilter(scale int) string {
+	return fmt.Sprintf(`png:draw_png_Export:{"PixelWidth":{"type":"long","value":"%d"},"PixelHeight":{"type":"long","value":"%d"}}`,
+		scale*pageWidth, scale*pageHeight)
+}
 
 // pngSignature begins every PNG file.
 var pngSignature = []byte("\x89PNG\r\n\x1a\n")
 
 // convertPictures converts the pictures in media, the media list of a conversion whose media
 // directory is in dir, the working directory, to PNG, as the picture standard says: each EMF and
-// WMF through the LibreOffice converter, all of them in one soffice run, and each TIFF through
-// magick, one run each. A converted picture's PNG is named by the stored name's stem, its
+// WMF rendered at scale through the LibreOffice converter, all of them in one soffice run, and
+// trimmed to the picture through magick, one run each; and each TIFF through magick, one run
+// each. A converted picture's PNG is named by the stored name's stem, its
 // SHA-256, and .png, and written into the media directory beside the stored file, which stays;
 // its entry's File becomes the PNG and Converted true. A picture whose converter the Converter
-// wasn't given is left with no File. Every other picture keeps its stored file. Two stored files
+// wasn't given, for a metafile either of LibreOffice and magick, is left with no File. Every other picture keeps its stored file. Two stored files
 // that share a stem, the same bytes under two extensions, are converted once and handed on as the
 // same PNG. A conversion that fails, or writes no PNG, is an error, and media is then only partly
 // converted.
-func (c *Converter) convertPictures(ctx context.Context, dir string, media []MediaFile) error {
+func (c *Converter) convertPictures(ctx context.Context, dir string, scale int, media []MediaFile) error {
 	var metafiles []int
 	tiffs := map[string]string{}
 	for i := range media {
 		switch pictureConverters[strings.ToLower(filepath.Ext(media[i].Name))] {
 		case viaLibreOffice:
-			if c.libreoffice == nil {
+			if c.libreoffice == nil || c.magick == nil {
 				media[i].File = ""
 				continue
 			}
@@ -103,7 +140,7 @@ func (c *Converter) convertPictures(ctx context.Context, dir string, media []Med
 	if len(metafiles) == 0 {
 		return nil
 	}
-	return c.metafilesToPNG(ctx, dir, media, metafiles)
+	return c.metafilesToPNG(ctx, dir, scale, media, metafiles)
 }
 
 // pngName returns the name of a converted picture's PNG: the stored name's stem, its SHA-256,
@@ -112,13 +149,15 @@ func pngName(name string) string {
 	return strings.TrimSuffix(name, filepath.Ext(name)) + ".png"
 }
 
-// metafilesToPNG converts the metafiles at media's indexes, EMF and WMF, to PNG through the
-// LibreOffice converter, in one soffice run in dir, and moves each PNG into the media directory
-// beside its stored file. soffice names each PNG for its input's stem, so two stored files that
-// share a stem, the same bytes under two extensions, are converted once and handed on as the
-// same PNG. soffice exits zero having written nothing for a picture it can't export, so a PNG
-// that isn't there is an error too.
-func (c *Converter) metafilesToPNG(ctx context.Context, dir string, media []MediaFile, indexes []int) error {
+// metafilesToPNG converts the metafiles at media's indexes, EMF and WMF, to PNG: it renders each
+// at scale through the LibreOffice converter, in one soffice run in dir, whose profile starts
+// with metafileRegistry, so the page each is rendered on is A4 at scale times 96 dpi, and trims
+// each page to its picture through magick, writing the PNG into the media directory beside its
+// stored file. soffice names each PNG for its input's stem, so two stored files that share a
+// stem, the same bytes under two extensions, are converted once and handed on as the same PNG.
+// soffice exits zero having written nothing for a picture it can't export, so a PNG that isn't
+// there is an error too, as is a trim that fails.
+func (c *Converter) metafilesToPNG(ctx context.Context, dir string, scale int, media []MediaFile, indexes []int) error {
 	var inputs []string
 	seen := map[string]bool{}
 	for _, i := range indexes {
@@ -127,24 +166,28 @@ func (c *Converter) metafilesToPNG(ctx context.Context, dir string, media []Medi
 			inputs = append(inputs, media[i].File)
 		}
 	}
-	outdir, remove, msg, err := c.soffice(ctx, dir, pictureFilter, inputs)
+	outdir, remove, msg, err := c.soffice(ctx, dir, metafileFilter(scale), metafileRegistry, inputs)
 	if err != nil {
 		return err
 	}
-	moved := map[string]string{}
+	trimmed := map[string]string{}
 	for _, i := range indexes {
 		m := &media[i]
 		name := pngName(m.Name)
-		dest, ok := moved[name]
+		dest, ok := trimmed[name]
 		if !ok {
-			dest = filepath.Join(filepath.Dir(m.File), name)
-			if err := checkPNG(filepath.Join(outdir, name)); err != nil {
+			page := filepath.Join(outdir, name)
+			if err := checkPNG(page); err != nil {
 				return errors.Join(sofficeError(fmt.Errorf("%s: %w", m.Name, err), msg), remove())
 			}
-			if err := os.Rename(filepath.Join(outdir, name), dest); err != nil {
-				return errors.Join(fmt.Errorf("office: libreoffice: %w", err), remove())
+			dest = filepath.Join(filepath.Dir(m.File), name)
+			// -trim crops the page to the picture, the bounding box of what differs from the
+			// corners' color, and +repage drops the crop's offset from the PNG; PNG in and out,
+			// nothing is encoded lossily.
+			if err := c.runMagick(ctx, dir, m.Name, []string{"png:" + page, "-trim", "+repage", "png:" + dest}, dest); err != nil {
+				return errors.Join(err, remove())
 			}
-			moved[name] = dest
+			trimmed[name] = dest
 		}
 		m.File, m.Converted = dest, true
 	}
@@ -163,9 +206,20 @@ const magickOutputLimit = 64 << 10
 // multi-image TIFF gives one PNG. An error carries magick's own message, its first line.
 func (c *Converter) tiffToPNG(ctx context.Context, dir string, m *MediaFile) error {
 	png := filepath.Join(filepath.Dir(m.File), pngName(m.Name))
+	if err := c.runMagick(ctx, dir, m.Name, []string{"tiff:" + m.File + "[0]", "png:" + png}, png); err != nil {
+		return err
+	}
+	m.File, m.Converted = png, true
+	return nil
+}
+
+// runMagick runs magick once with args, in dir, to write the PNG png for the picture stored as
+// name, and checks that it wrote one. An error names the picture and carries magick's own
+// message, its first line.
+func (c *Converter) runMagick(ctx context.Context, dir, name string, args []string, png string) error {
 	out := &limitedBuffer{limit: magickOutputLimit}
 	err := c.magick.Run(ctx, tool.Invocation{
-		Args:   []string{"tiff:" + m.File + "[0]", "png:" + png},
+		Args:   args,
 		Dir:    dir,
 		Stdout: out,
 		Stderr: out,
@@ -174,13 +228,12 @@ func (c *Converter) tiffToPNG(ctx context.Context, dir string, m *MediaFile) err
 		err = checkPNG(png)
 	}
 	if err != nil {
-		err = fmt.Errorf("office: magick: %s: %w", m.Name, err)
+		err = fmt.Errorf("office: magick: %s: %w", name, err)
 		if msg := firstLine(out.String()); msg != "" {
 			err = fmt.Errorf("%w: %s", err, msg)
 		}
 		return err
 	}
-	m.File, m.Converted = png, true
 	return nil
 }
 

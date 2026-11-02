@@ -129,7 +129,7 @@ func standin(args []string) int {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
-	if err := appendLog(os.Getenv(logEnv), "spike-ai-pipeline-office", args, string(input)); err != nil {
+	if err := appendLog(os.Getenv(logEnv), "spike-ai-pipeline-office", args, string(input), ""); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
@@ -177,7 +177,8 @@ func standin(args []string) int {
 // sofficeStandin is the stand-in soffice. With --version alone it writes a line of noise to
 // stderr and the version line to stdout, as the real one does in a container. Otherwise its
 // inputs are its arguments that are neither options nor their values. It appends its working
-// directory, arguments, and its first input's content to the log file; exits with
+// directory, arguments, its first input's content, and the registrymodifications.xcu its
+// -env:UserInstallation profile starts with, if any, to the log file; exits with
 // sofficeExitEnv's code, having written sofficeOutputEnv's value to stderr, when it is set; exits
 // zero having written nothing when sofficeNothingEnv is set; and else writes each input's
 // conversion into the directory after --outdir, named for its input's stem with the extension
@@ -189,10 +190,12 @@ func sofficeStandin(args []string) int {
 		fmt.Printf("LibreOffice %s 680(Build:1)\n", os.Getenv(sofficeVersionEnv))
 		return 0
 	}
-	var outdir, format string
+	var outdir, format, profile string
 	var inputs []string
 	for i := 0; i < len(args); i++ {
 		switch a := args[i]; {
+		case strings.HasPrefix(a, "-env:UserInstallation=file://"):
+			profile = strings.TrimPrefix(a, "-env:UserInstallation=file://")
 		case a == "--outdir" && i+1 < len(args):
 			i++
 			outdir = args[i]
@@ -215,7 +218,12 @@ func sofficeStandin(args []string) int {
 			return 2
 		}
 	}
-	if err := appendLog(os.Getenv(logEnv), "soffice", args, string(contents[0])); err != nil {
+	registry, err := os.ReadFile(filepath.Join(profile, "user", "registrymodifications.xcu"))
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	if err := appendLog(os.Getenv(logEnv), "soffice", args, string(contents[0]), string(registry)); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
@@ -257,8 +265,9 @@ func sofficeStandin(args []string) int {
 // and frame suffix, "tiff:path[0]", and its last as its output, "png:path". It appends its
 // working directory, arguments, and its input's content to the log file; exits with
 // magickExitEnv's code, having written magickOutputEnv's value to stderr, when it is set; and
-// else writes PNG's signature, convertedPrefix, and its input to the output, without the
-// signature when magickRawEnv is set.
+// else writes PNG's signature, convertedPrefix, and its input, less any PNG signature it begins
+// with, to the output, without the signature when magickRawEnv is set. A metafile's PNG, which
+// soffice and then magick wrote, holds convertedPrefix twice.
 func magickStandin(args []string) int {
 	if len(args) == 1 && args[0] == "-version" {
 		fmt.Printf("Version: ImageMagick %s Q16-HDRI x86_64 https://imagemagick.org\n", os.Getenv(magickVersionEnv))
@@ -279,7 +288,7 @@ func magickStandin(args []string) int {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
-	if err := appendLog(os.Getenv(logEnv), "magick", args, string(input)); err != nil {
+	if err := appendLog(os.Getenv(logEnv), "magick", args, string(input), ""); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
@@ -292,7 +301,7 @@ func magickStandin(args []string) int {
 		}
 		return n
 	}
-	out := convertedPrefix + string(input)
+	out := convertedPrefix + strings.TrimPrefix(string(input), pngSignature)
 	if os.Getenv(magickRawEnv) == "" {
 		out = pngSignature + out
 	}
@@ -304,24 +313,26 @@ func magickStandin(args []string) int {
 }
 
 // standinRun is one logged run of a stand-in: its program, its working directory, its
-// arguments, and its input file's content. The log holds the content as bytes, Raw, since a
-// legacy document's isn't UTF-8; reading it sets Input from Raw.
+// arguments, its input file's content, and, for soffice, the registrymodifications.xcu its
+// profile started with, "" for none. The log holds the content as bytes, Raw, since a legacy
+// document's isn't UTF-8; reading it sets Input from Raw.
 type standinRun struct {
-	Program string   `json:"program"`
-	Dir     string   `json:"dir"`
-	Args    []string `json:"args"`
-	Raw     []byte   `json:"input"`
-	Input   string   `json:"-"`
+	Program  string   `json:"program"`
+	Dir      string   `json:"dir"`
+	Args     []string `json:"args"`
+	Raw      []byte   `json:"input"`
+	Registry string   `json:"registry"`
+	Input    string   `json:"-"`
 }
 
-// appendLog appends program, the working directory, args, and input to file as one JSON object
-// and a newline.
-func appendLog(file, program string, args []string, input string) error {
+// appendLog appends program, the working directory, args, input, and registry to file as one
+// JSON object and a newline.
+func appendLog(file, program string, args []string, input, registry string) error {
 	dir, err := os.Getwd()
 	if err != nil {
 		return err
 	}
-	line, err := json.Marshal(standinRun{Program: program, Dir: dir, Args: args, Raw: []byte(input)})
+	line, err := json.Marshal(standinRun{Program: program, Dir: dir, Args: args, Raw: []byte(input), Registry: registry})
 	if err != nil {
 		return err
 	}
