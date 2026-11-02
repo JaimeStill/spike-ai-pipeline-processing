@@ -241,8 +241,9 @@ func TestConvertRefuses(t *testing.T) {
 }
 
 // TestConvertMedia: the media list has one entry per file in the media directory, in name order,
-// each with its name, its content type by its extension, and the stored file handed onward, not
-// converted, in a JSON and a Markdown result alike.
+// each with its name and its content type by its extension, in a JSON and a Markdown result
+// alike. Without converters, an EMF or WMF has no file handed onward, and every other file is
+// handed on as stored, not converted.
 func TestConvertMedia(t *testing.T) {
 	c, _ := standinConverter(t)
 	t.Setenv(mediaEnv, "b.emf,a.png,c.WMF,d.jpeg,e.bin")
@@ -259,13 +260,15 @@ func TestConvertMedia(t *testing.T) {
 			{Name: "e.bin", ContentType: "application/octet-stream"},
 		}
 		for i := range want {
-			want[i].File = filepath.Join(res.MediaDir, want[i].Name)
+			if ext := strings.ToLower(filepath.Ext(want[i].Name)); ext != ".emf" && ext != ".wmf" {
+				want[i].File = filepath.Join(res.MediaDir, want[i].Name)
+			}
 		}
 		if !slices.Equal(res.Media, want) {
 			t.Errorf("%v media: got %+v, want %+v", format, res.Media, want)
 		}
 		for _, m := range res.Media {
-			if b, err := os.ReadFile(m.File); err != nil || string(b) != m.Name {
+			if b, err := os.ReadFile(filepath.Join(res.MediaDir, m.Name)); err != nil || string(b) != m.Name {
 				t.Errorf("%s: got %q, %v", m.File, b, err)
 			}
 		}

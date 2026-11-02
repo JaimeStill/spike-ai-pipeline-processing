@@ -52,6 +52,26 @@ apache/poi commit `6327f056ba3cfdae326a0261a236460592b80f5c`), Apache-2.0, © Th
 Foundation; its license and NOTICE, as office keeps them, are in `licenses/poi.LICENSE` and
 `licenses/poi.NOTICE`. office's `fixtures/realworld/SOURCES.md` gives their provenance in full.
 
+## Pictures
+
+`pictures/tiff.docx` holds a TIFF picture, which no fixture above does: none of office's
+fixtures holds one, and the two OOXML files in Apache POI's test data that hold one
+(`test-data/slideshow/bug65228.pptx` and `ArtisticEffectSample.pptx`) keep it where office
+extracts no picture from. `pictures/generate.sh` wrote it, once, and the check never runs it: it
+downloads Apache POI's `test-data/slideshow/testtiff.tif` at commit
+`6327f056ba3cfdae326a0261a236460592b80f5c`, checks it against its SHA-256, and packs it byte for
+byte, as `word/media/image1.tiff`, into the smallest WordprocessingML package that shows it, one
+paragraph and the picture inline, every entry at a fixed time, so a regeneration writes the same
+bytes. The TIFF is Apache-2.0, © The Apache Software Foundation; POI's license and NOTICE are in
+`licenses/poi.LICENSE` and `licenses/poi.NOTICE`. The package around it is this repository's.
+
+| File | Source | License | Bytes | SHA-256 |
+| --- | --- | --- | --- | --- |
+| `tiff.docx` | `pictures/generate.sh` | Apache-2.0 | 11705 | `d1d54755de784b7662a1b7e430bef7afb6ed8d3b0336fba4550f39e605f6f8dc` |
+| its `word/media/image1.tiff` | `test-data/slideshow/testtiff.tif` at POI's commit | Apache-2.0, Apache POI's | 12236 | `9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119` |
+
+The TIFF is 640x400, 8-bit RGB, LZW-compressed, written by GIMP.
+
 ## Legacy, generated
 
 `legacy/generated/` holds every `*.libreoffice.*` file in `ooxml/` saved by LibreOffice as `.doc`,

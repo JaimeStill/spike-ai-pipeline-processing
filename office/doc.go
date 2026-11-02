@@ -35,12 +35,25 @@
 // such as a picture's section index, is a pointer, nil for none. An array keeps its nulls in
 // place, as a chart series' points do. A block or inline of a kind the package doesn't know is
 // kept as an UnknownBlock or UnknownInline with its type and its JSON, never an error, since
-// office's model grows by adding kinds. A Markdown result is office's Markdown text, unchanged.
+// office's model grows by adding kinds. A Markdown result is office's Markdown text, unchanged but
+// for its links to converted pictures, below.
 //
-// Both results carry the media list, one MediaFile per file in the media directory: office's
-// name for it, the lowercase hex SHA-256 of its bytes and its stored extension, its content type
-// by that extension, and the file handed onward, which is the stored file itself. A linked
-// picture is no file, never fetched, and isn't listed. Each line office writes to stderr as a
+// Both results carry the media list, one MediaFile per file office wrote in the media directory:
+// office's name for it, the lowercase hex SHA-256 of its bytes and its stored extension, its
+// content type by that extension, the file handed onward, and whether that file was converted. A
+// linked picture is no file, never fetched, and isn't listed.
+//
+// Pictures follow one standard, and no conversion encodes a picture lossily: each writes PNG. A
+// picture vision decodes, PNG, JPEG, GIF, or BMP, is handed on exactly as stored, as is any kind
+// the standard names no converter for. EMF and WMF are converted to PNG through the LibreOffice
+// Tool, all of a document's in one soffice run with LibreOffice's Draw PNG export, and TIFF
+// through a magick Tool, its first image alone; MagickSpec declares magick, minimum 7.1. A
+// converted picture's PNG is named by the stored name's stem, its SHA-256, and .png, and written
+// into the media directory beside the stored file, which stays. A picture whose converter the
+// Config didn't give is listed with no file handed onward, and the conversion still succeeds; a
+// picture conversion that fails fails the conversion. In a Markdown result each converted
+// picture's stored name is swapped for its PNG's wherever it appears, without parsing the
+// Markdown, so its links name the PNG; a link to any other picture stays as office wrote it. Each line office writes to stderr as a
 // warning is one of the result's Warnings, and a conversion with warnings succeeds.
 //
 // office's exit codes 1 to 4 are an *ExitError carrying office's message, which matches its
@@ -55,9 +68,11 @@
 //   - [LibreOfficeSpec] declares LibreOffice's soffice for either runner's constructor.
 //   - [LibreOfficeMinimum] is the oldest LibreOffice the Converter accepts, 24.2.
 //   - [LibreOfficeImage] is the default image soffice runs in through the container runner.
+//   - [MagickSpec] declares ImageMagick's magick for either runner's constructor.
+//   - [MagickMinimum] is the oldest magick the Converter accepts, 7.1.
 //   - [ErrNoLibreOffice] is the cause of a legacy document's refusal without a LibreOffice Tool.
-//   - [Config] is the Tools a Converter is built over: office, and LibreOffice for legacy
-//     documents.
+//   - [Config] is the Tools a Converter is built over: office, LibreOffice for legacy documents
+//     and EMF and WMF pictures, and magick for TIFF pictures.
 //   - [Converter] converts office documents through office.
 //   - [NewConverter] builds a Converter over a Config.
 //   - [Converter.Convert] converts one document as a Request says.

@@ -51,7 +51,8 @@ func realConverter(t *testing.T) *office.Converter {
 // TestReal runs the real pinned office over the fixtures, as JSON and as Markdown. Each model is
 // schema "1" in the fixture's format, with no kind the package doesn't know; together they hold
 // every block and inline kind of schema "1", and pictures of every media kind. Each media list
-// is the media directory's files, each named by its SHA-256 and handed on as stored, the same
+// is the media directory's files, each named by its SHA-256, a picture vision decodes handed on
+// as stored and, without converters, an EMF or WMF with no file handed onward, the same
 // list for both results, and exactly the names the model's Media and the Markdown's links give,
 // a linked picture in neither. The spooled document is gone.
 func TestReal(t *testing.T) {
@@ -90,10 +91,15 @@ func TestReal(t *testing.T) {
 			for _, m := range res.Media {
 				listed = append(listed, m.Name)
 				extensions[strings.ToLower(filepath.Ext(m.Name))] = true
-				if m.Converted || m.File != filepath.Join(res.MediaDir, m.Name) {
-					t.Errorf("%s: handed on as %s, converted %t; want the stored file", m.Name, m.File, m.Converted)
+				stored := filepath.Join(res.MediaDir, m.Name)
+				want := stored
+				if ext := filepath.Ext(m.Name); ext == ".emf" || ext == ".wmf" {
+					want = ""
 				}
-				data, err := os.ReadFile(m.File)
+				if m.Converted || m.File != want {
+					t.Errorf("%s: handed on as %q, converted %t; want %q", m.Name, m.File, m.Converted, want)
+				}
+				data, err := os.ReadFile(stored)
 				if err != nil {
 					t.Fatal(err)
 				}

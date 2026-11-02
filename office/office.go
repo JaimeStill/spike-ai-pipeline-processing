@@ -40,8 +40,12 @@ type Config struct {
 	Office *tool.Tool
 	// LibreOffice is LibreOffice's soffice, typically built from LibreOfficeSpec through the
 	// container runner in LibreOfficeImage. It converts legacy documents to OOXML; nil leaves the
-	// Converter without one, and a legacy document is then refused with ErrNoLibreOffice.
+	// Converter without one, and a legacy document is then refused with ErrNoLibreOffice. It
+	// converts EMF and WMF pictures to PNG too; without one, they have no file handed onward.
 	LibreOffice *tool.Tool
+	// Magick is ImageMagick's magick, typically built from MagickSpec. It converts TIFF pictures
+	// to PNG; nil leaves the Converter without one, and a TIFF then has no file handed onward.
+	Magick *tool.Tool
 }
 
 // Converter prepares office documents for a model through office: a document in, office's JSON
@@ -50,11 +54,13 @@ type Config struct {
 type Converter struct {
 	office      *tool.Tool
 	libreoffice *tool.Tool
+	magick      *tool.Tool
 }
 
 // NewConverter builds a Converter over cfg's Tools. It refuses a nil Office, and an Office whose
-// version is older than OfficeMinimum, or a LibreOffice older than LibreOfficeMinimum, whatever
-// minimum the Tool's own Spec declared, with a *tool.VersionError wrapping tool.ErrTooOld.
+// version is older than OfficeMinimum, a LibreOffice older than LibreOfficeMinimum, or a Magick
+// older than MagickMinimum, whatever minimum the Tool's own Spec declared, with a
+// *tool.VersionError wrapping tool.ErrTooOld.
 func NewConverter(cfg Config) (*Converter, error) {
 	if cfg.Office == nil {
 		return nil, errors.New("office: no office tool")
@@ -67,7 +73,12 @@ func NewConverter(cfg Config) (*Converter, error) {
 			return nil, err
 		}
 	}
-	return &Converter{office: cfg.Office, libreoffice: cfg.LibreOffice}, nil
+	if cfg.Magick != nil {
+		if err := atLeast(cfg.Magick, MagickMinimum); err != nil {
+			return nil, err
+		}
+	}
+	return &Converter{office: cfg.Office, libreoffice: cfg.LibreOffice, magick: cfg.Magick}, nil
 }
 
 // atLeast refuses t when its version is older than minimum, with a *tool.VersionError wrapping
@@ -124,12 +135,15 @@ type Request struct {
 type Result struct {
 	// Document is the decoded JSON model, for a JSON request; nil for a Markdown one.
 	Document *Document
-	// Markdown is office's Markdown, for a Markdown request; "" for a JSON one.
+	// Markdown is office's Markdown, for a Markdown request, with each link to a converted
+	// picture naming its PNG; "" for a JSON one.
 	Markdown string
 	// MediaDir is the conversion's media directory, an absolute path in the request's Dir, which
-	// the caller owns. It holds the document's embedded media as office wrote them.
+	// the caller owns. It holds the document's embedded media as office wrote them, and beside
+	// each converted picture its PNG.
 	MediaDir string
-	// Media lists the files in MediaDir, one entry each, by name.
+	// Media lists the files office wrote in MediaDir, one entry each, by name; a converted
+	// picture's PNG is its entry's File, never an entry of its own.
 	Media []MediaFile
 	// Warnings are office's warnings, one per line it wrote to stderr: what it skipped and
 	// converted the rest without. A conversion with warnings has still succeeded.
@@ -210,6 +224,17 @@ const stderrLimit = 1 << 20
 // converter, a legacy document is an error matching ErrNoLibreOffice, before anything is spooled
 // or run. Any other OLE2 file, such as an encrypted OOXML package, goes to office as it is, and
 // office refuses it.
+//
+// The media office wrote then follow the picture standard. A picture vision decodes, PNG, JPEG,
+// GIF, or BMP, is handed on as stored, as is any kind the standard names no converter for. EMF and
+// WMF are converted to PNG through the LibreOffice converter, all of a document's in one soffice
+// run, and TIFF through magick; each PNG is named by the stored name's SHA-256 and .png, and
+// written into the media directory beside the stored file, which stays. A picture whose converter
+// the Converter wasn't given is listed with no file handed onward, and the conversion still
+// succeeds; a picture conversion that fails fails the conversion. No conversion encodes a picture
+// lossily: each writes PNG. In a Markdown result each converted picture's stored name is swapped
+// for its PNG's wherever it appears, which rewrites its links without parsing the Markdown; every
+// other link stays as office wrote it.
 //
 // A JSON model whose schema isn't Schema is an error matching ErrSchema, naming the schema.
 // office's exit codes 1 to 4 are an *ExitError matching the code's error. When ctx ends the run,
@@ -314,6 +339,12 @@ func (c *Converter) convert(ctx context.Context, dir, path string, format Format
 	}
 	if res.Media, err = listMedia(media); err != nil {
 		return res, err
+	}
+	if err := c.convertPictures(ctx, dir, res.Media); err != nil {
+		return res, err
+	}
+	if format == Markdown {
+		res.Markdown = rewriteLinks(res.Markdown, res.Media)
 	}
 	return res, nil
 }
