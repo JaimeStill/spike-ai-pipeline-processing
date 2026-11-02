@@ -23,3 +23,4 @@ The architecture pages that apply, in the architecture repository:
 - A tool runs under the caller's context, and its temporary files live in a directory the caller
   owns.
 - A tool's options, such as an image correction, are per-request values, never library policy.
+- No processing stage re-encodes a picture lossily; a conversion writes PNG.

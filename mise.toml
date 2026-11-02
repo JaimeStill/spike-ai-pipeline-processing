@@ -4,6 +4,9 @@ go = "1.27.3"
 golangci-lint = "2.15.0"
 jq = "1.8.2"
 shellcheck = "0.11.0"
+# office, from its GitHub release, for the office package's tests that run the real binary; mise
+# checks the archive against the release's digest.
+"github:JaimeStill/spike-ai-pipeline-office" = "0.1.0"
 
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
@@ -37,8 +40,9 @@ done
 '''
 
 # The integration tier runs the integration-tagged tests on this machine: real ffprobe, gs, and
-# magick on PATH, a reachable docker daemon, which pulls the pinned ffmpeg image when it isn't
-# present, and, for the vision tests, the router SPIKE_ROUTER_URL names. It never starts a server.
+# magick on PATH, the office binary mise pins, a reachable docker daemon, which pulls the pinned
+# ffmpeg and LibreOffice images when they aren't present, and, for the vision tests, the router
+# SPIKE_ROUTER_URL names. It never starts a server.
 [tasks.integration]
 description = "Run the integration-tagged tests against this machine's tools and docker, and the router"
 run = '''

@@ -62,8 +62,8 @@ and files the tool writes there belong to the caller.
 
 ```go
 probe, err := tool.NewContainer(ctx, "", tool.Image{
-	Ref: "linuxserver/ffmpeg:9.0.2-cli-ls87@sha256:" +
-		"6547359fac23a2747e606d380e10267b2923a38f68485d9cacefd039e74d3aa8",
+	Ref: "linuxserver/ffmpeg:9.0.2-cli-ls88@sha256:" +
+		"f4191c1abe18d75c49a23f7224d1403d55334f80013a47cb096f5056cf19617b",
 }, spec)
 ```
 
@@ -175,6 +175,65 @@ these choices found: which renderer, whether to reason while transcribing, wheth
 help, where the instructions go, whether the staged two-pass flow pays, and what a page costs in
 image tokens. The run results it cites are in `docs/findings/documents-results/`.
 
+`office` prepares office documents, docx, xlsx, and pptx, and the legacy doc, xls, and ppt, for a
+model, on Linux, the standard library, and `tool`. It runs spike-ai-pipeline-office's Open XML CLI
+and provides pre-inference preparation only. A `Converter`, built by `NewConverter` over a `Config`
+of Tools the caller built, needs an office Tool that `OfficeSpec` declares, minimum
+`OfficeMinimum`, 0.1.0; a LibreOffice Tool and a magick Tool are optional. `Converter.Convert`
+spools a document read from an `io.Reader` into the working directory the `Request` names, runs
+office once with a media directory there, and returns a `Result`: office's JSON model decoded
+into typed Go values that mirror its schema "1" (`JSON`, the default), or office's Markdown
+(`Markdown`), with the media list, office's stderr warnings, and, for a legacy document, the
+format it was converted from. A model of another schema is an error matching `ErrSchema`; a
+block kind the package doesn't know is kept with its raw JSON. office's exit codes 1 to 4 are an
+`*ExitError` that matches `ErrMediaNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`.
+
+```go
+o, err := tool.NewExec(ctx, office.OfficeSpec())
+if err != nil {
+	return err
+}
+lo, err := tool.NewContainer(ctx, "", tool.Image{Ref: office.LibreOfficeImage}, office.LibreOfficeSpec())
+if err != nil {
+	return err
+}
+mg, err := tool.NewExec(ctx, office.MagickSpec())
+if err != nil {
+	return err
+}
+conv, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
+if err != nil {
+	return err
+}
+res, err := conv.Convert(ctx, doc, office.Request{Dir: dir, Name: "report.doc", Format: office.Markdown})
+```
+
+Pictures follow one standard: no stage re-encodes a picture lossily, and every conversion
+writes PNG. The media list has one `MediaFile` per file office wrote: office's stored name (the
+SHA-256 of its bytes and its extension), its content type, the file handed onward, and whether it
+was converted. A picture vision decodes, PNG, JPEG, GIF, or BMP, is handed on exactly as stored.
+EMF and WMF are rendered to PNG through LibreOffice's Draw export at `Request.MetafileScale`
+times 96 dpi, `DefaultMetafileScale`, 3, when it is zero and at most `MaxMetafileScale`, 8, and
+trimmed to the picture through magick, since Draw places a metafile in the middle of an A4 page.
+TIFF is converted through magick, its first image alone. A converted picture is named by its
+original's SHA-256 with `.png`, written beside the original, which stays, and is the same bytes
+on every conversion. In a Markdown result, each link to a converted picture is rewritten to its
+PNG by swapping the exact stored name; no Markdown is parsed.
+
+A legacy document is one with the OLE2 compound-file signature and a legacy extension in
+`Request.Name`: .doc and .dot become docx, .xls and .xlt xlsx, and .ppt, .pps, and .pot pptx.
+Given a LibreOffice Tool, `Convert` converts it to that OOXML format through soffice headless,
+then runs office on the result; without one it is refused with `ErrNoLibreOffice` before anything
+runs. `LibreOfficeSpec` declares soffice, minimum `LibreOfficeMinimum`, 24.2, and
+`LibreOfficeImage` is the default image a caller may replace:
+gotenberg/gotenberg:8.39.0-libreoffice, LibreOffice 26.8.1.1, pinned by digest, which
+`mise run currency` scans. soffice runs in it under
+the container runner's full lockdown, with its user profile inside the mounted working directory.
+
+[docs/findings/office.md](docs/findings/office.md) records what the legacy round trip loses, per
+element kind and format, the container's footprint, the picture conversions, and each picture's
+vision time and image tokens. The run results it cites are in `docs/findings/office-results/`.
+
 Known limits:
 
 - Page 7 of the scanned fixtures carries a faded "NOFORN" marking at its foot that the vision
@@ -183,6 +242,20 @@ Known limits:
 - A text layer keeps gs's physical layout, so a multi-column page or a form reads out of reading
   order; restore the order, or send such pages to vision.
 - Ghostscript is AGPL-licensed; the package runs gs as a separate program, never linked.
+- An EMF or WMF picture needs both the LibreOffice and the magick Tools, and a TIFF needs magick;
+  without them, it is listed with no picture handed onward.
+- A legacy file is recognized only by its OLE2 signature and a legacy extension in its request's
+  name.
+- Legacy conversion inherits LibreOffice's losses, which
+  [docs/findings/office.md](docs/findings/office.md) records.
+- The metafile trim removes a white border the picture itself has, and a blank metafile becomes a
+  1x1 PNG.
+- `office` evaluates nothing office doesn't: a formula's value is the one the file caches, or
+  none, and a chart is its cached data.
+- Pictures are listed as the document holds them, in order, and their layout isn't evaluated: a
+  picture that another covers, that sits off the slide or page, or that is cropped away still
+  appears in the model and the Markdown and is handed onward to vision. In `slide-objects`'s
+  slide 3, a blue square covers a red one at the same position, and both are listed.
 - The container runner's limit above: a SIGKILLed processing leaves a running container to its
   tool's exit.
 
@@ -206,9 +279,12 @@ few minutes to about 25:
 The tests' vision harness, the bake-offs, and the staged flow are test code, not released.
 
 Host prerequisites: gs 10.0 or later and ImageMagick's magick 7.1 or later on PATH for `document`,
-and docker, server 20.10 or later, for the container runner. The renderer bake-off also runs
-poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to regenerate the
-fixtures in `document/testdata`, whose README says how.
+and docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
+0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice
+in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
+metafile trim. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and libvips.
+typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, whose README
+says how.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
 integration and bake-off tiers run on; no released file imports it. It is released by tag,

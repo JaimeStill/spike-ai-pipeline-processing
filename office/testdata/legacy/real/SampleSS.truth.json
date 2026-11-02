@@ -1,0 +1,27 @@
+{
+  "file": "SampleSS.xls",
+  "format": "xls",
+  "description": "Excel: three sheets, the third empty; text cells on the first two, and on the second a row of numbers summed by a formula.",
+  "elements": {
+    "sheet": ["First Sheet", "Sheet Number 2", "Sheet3"],
+    "table": ["sheet", "sheet"],
+    "cell": [
+      "First Sheet!A1=Test spreadsheet",
+      "First Sheet!A2=2nd row",
+      "First Sheet!B2=2nd row 2nd column",
+      "First Sheet!A4=This one is red",
+      "Sheet Number 2!A1=Start of 2nd sheet",
+      "Sheet Number 2!A2=Sheet 2 row 2",
+      "Sheet Number 2!A4=I'm in bold blue, on a yellow background",
+      "Sheet Number 2!A6=cb=1",
+      "Sheet Number 2!B6=cb=10",
+      "Sheet Number 2!C6=cb=2",
+      "Sheet Number 2!D6=cb=sum",
+      "Sheet Number 2!A7=1",
+      "Sheet Number 2!B7=10",
+      "Sheet Number 2!C7=2",
+      "Sheet Number 2!D7=13"
+    ],
+    "formula": ["Sheet Number 2!D7=SUM(A7:C7)"]
+  }
+}

@@ -1,0 +1,60 @@
+# TestPictures: every EMF, WMF, and TIFF picture to PNG, at the default MetafileScale, 3
+# Run: 2026-11-02, started 14:13:51 UTC, from the laptop (Linux 7.2.15 x86_64, go 1.27.3,
+# docker server 29.9.2), at processing commit 9bf84f4 on branch office:
+#   mise exec -- env GOWORK=off go test -race -tags integration -count=1 -v ./office/
+# office 0.1.0 (mise pin); soffice 26.8.1.1 in
+#   gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054
+#   (present before the run, so no pull was timed); ImageMagick 7.1.2-34 Q16-HDRI on the host.
+# Each fixture converted twice; each PNG was the same bytes both times (the test asserts it).
+# The lines below are the test's -v output, verbatim.
+
+=== RUN   TestPictures
+    pictures_integration_test.go:56: soffice 26.8.1.1 in gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054, magick 7.1.2
+=== RUN   TestPictures/charts.libreoffice.docx
+=== RUN   TestPictures/comments.libreoffice.docx
+=== RUN   TestPictures/lists.libreoffice.docx
+=== RUN   TestPictures/media.libreoffice.docx
+    pictures_integration_test.go:111: picture: media.libreoffice.docx             670be6349ed8… emf      108 B -> png    1x1        160 B  pictures   996 ms for 1
+=== RUN   TestPictures/notes.libreoffice.docx
+=== RUN   TestPictures/sections.libreoffice.docx
+=== RUN   TestPictures/tables.libreoffice.docx
+=== RUN   TestPictures/word-with-attachments.docx
+    pictures_integration_test.go:111: picture: word-with-attachments.docx         2156195ef201… emf     1952 B -> png  511x155    11618 B  pictures  2008 ms for 5
+    pictures_integration_test.go:111: picture: word-with-attachments.docx         8e362ed59772… emf     5396 B -> png  339x187    15735 B  pictures  2008 ms for 5
+    pictures_integration_test.go:111: picture: word-with-attachments.docx         90f616810030… wmf     3726 B -> png  236x193    13165 B  pictures  2008 ms for 5
+    pictures_integration_test.go:111: picture: word-with-attachments.docx         cc90707a7aab… emf     5132 B -> png 1489x566     9952 B  pictures  2008 ms for 5
+    pictures_integration_test.go:111: picture: word-with-attachments.docx         f35ded1fae0a… emf     3392 B -> png  639x200     9860 B  pictures  2008 ms for 5
+=== RUN   TestPictures/cells.libreoffice.xlsx
+=== RUN   TestPictures/drawings.libreoffice.xlsx
+=== RUN   TestPictures/formulas.libreoffice.xlsx
+=== RUN   TestPictures/merges.libreoffice.xlsx
+=== RUN   TestPictures/with-drawing.xlsx
+    pictures_integration_test.go:111: picture: with-drawing.xlsx                  14013b5a111a… emf    87004 B -> png  767x535   103972 B  pictures  1552 ms for 3
+    pictures_integration_test.go:111: picture: with-drawing.xlsx                  3c9e27e68d03… emf     6184 B -> png  672x404    40065 B  pictures  1552 ms for 3
+    pictures_integration_test.go:111: picture: with-drawing.xlsx                  fdc312bc0dbe… wmf    28696 B -> png  539x577   114013 B  pictures  1552 ms for 3
+=== RUN   TestPictures/bullets.libreoffice.pptx
+=== RUN   TestPictures/slide-objects.libreoffice.pptx
+=== RUN   TestPictures/slides.libreoffice.pptx
+=== RUN   TestPictures/tiff.docx
+    pictures_integration_test.go:111: picture: tiff.docx                          9006e4b5615b… tiff   12236 B -> png  640x400     3366 B  pictures    25 ms for 1
+=== RUN   TestPictures/charts.libreoffice.doc
+=== RUN   TestPictures/comments.libreoffice.doc
+=== RUN   TestPictures/lists.libreoffice.doc
+=== RUN   TestPictures/media.libreoffice.doc
+    pictures_integration_test.go:111: picture: media.libreoffice.doc              670be6349ed8… emf      108 B -> png    1x1        160 B  conversion  1802 ms for 1
+=== RUN   TestPictures/notes.libreoffice.doc
+=== RUN   TestPictures/sections.libreoffice.doc
+=== RUN   TestPictures/tables.libreoffice.doc
+=== RUN   TestPictures/cells.libreoffice.xls
+=== RUN   TestPictures/drawings.libreoffice.xls
+=== RUN   TestPictures/formulas.libreoffice.xls
+=== RUN   TestPictures/merges.libreoffice.xls
+=== RUN   TestPictures/bullets.libreoffice.ppt
+=== RUN   TestPictures/slide-objects.libreoffice.ppt
+=== RUN   TestPictures/slides.libreoffice.ppt
+=== RUN   TestPictures/simple-table.doc
+=== RUN   TestPictures/SampleSS.xls
+=== RUN   TestPictures/basic_test_ppt_file.ppt
+=== NAME  TestPictures
+    pictures_integration_test.go:115: pictures: 8 emf, 2 wmf, 1 tiff
+--- PASS: TestPictures (80.94s)

@@ -15,7 +15,13 @@ express; the spike's question and evidence live in the root repository's `contex
   fixed order, their catalog for a prompt, and Assess's measures; and Preparer.Images, the lazy,
   ordered, concurrent page stream over them. Inference is test code: the vision harness and the
   bake-off tier, whose results `docs/findings/documents.md` records.
-- **office**: the adapter over spike-ai-pipeline-office's CLI, and legacy conversion through
-  LibreOffice in a container.
+- **office**: the adapter over spike-ai-pipeline-office's CLI, its JSON model decoded into typed
+  schema "1" values or its Markdown, with the media list and office's exit codes as errors;
+  legacy doc, xls, and ppt converted to OOXML through soffice in the default gotenberg image,
+  locked down; and the picture standard, EMF and WMF rendered through LibreOffice at a scale and
+  trimmed by magick, TIFF through magick, PNG named by the original's SHA-256, the Markdown's links
+  rewritten. Vision over the pictures is test code in the integration tier, whose results
+  `docs/findings/office.md` records with the legacy round trip's loss and the container's
+  footprint.
 - **audio**: windows cut at silences, concurrent transcription, and the seam merge.
 - **streams**: live and real-time-paced media, and chat streams, as events.
