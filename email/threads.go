@@ -382,13 +382,15 @@ func messageIDs(field string) []string {
 }
 
 // RFC 5256's subject grammar, section 5, case-insensitive: a subj-blob, and a subj-leader that
-// is a subj-refwd after any subj-blobs.
+// is a subj-refwd after any subj-blobs; and runs of spaces, which extraction makes one.
 var (
-	subjBlob   = regexp.MustCompile(`^\[[^\[\]]*\][ \t]*`)
-	subjRefwd  = regexp.MustCompile(`(?i)^(?:\[[^\[\]]*\][ \t]*)*(?:re|fwd?)[ \t]*(?:\[[^\[\]]*\][ \t]*)?:`)
-	spaces     = regexp.MustCompile(`  +`)
-	subjFwdHdr = "[fwd:"
+	subjBlob  = regexp.MustCompile(`^\[[^\[\]]*\][ \t]*`)
+	subjRefwd = regexp.MustCompile(`(?i)^(?:\[[^\[\]]*\][ \t]*)*(?:re|fwd?)[ \t]*(?:\[[^\[\]]*\][ \t]*)?:`)
+	spaces    = regexp.MustCompile(`  +`)
 )
+
+// subjFwdHdr is RFC 5256's subj-fwd-hdr, matched case-insensitively.
+const subjFwdHdr = "[fwd:"
 
 // baseSubject returns subject's base subject, by RFC 5256's section 2.1, and whether extracting
 // it removed a subj-refwd, a "(fwd)" subj-trailer, or a subj-fwd-hdr and subj-fwd-trl: whether

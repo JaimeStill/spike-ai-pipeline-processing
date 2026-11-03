@@ -74,8 +74,8 @@
 //   - [ErrNotWritten], [ErrUsage], [ErrRefused], and [ErrFailed] are mail's exit codes 1 to 4.
 //   - [Schema] is the version of mail's JSON Lines the package decodes, "1".
 //   - [ErrSchema] is the cause of a store line of another schema.
-//   - [Record] is one of mail's lines: [Store], [Folder], [Message], [Skipped], or
-//     [UnknownRecord].
+//   - [Record] is one of mail's lines, its Line the line's kind: [Store], [Folder], [Message],
+//     [Skipped], or [UnknownRecord].
 //   - [Address], [Body], [Derived], and [Attachment] are a message's addresses, bodies, and
 //     attachment records; an Attachment's Path names its content's file in the attachments
 //     directory.
