@@ -29,7 +29,9 @@ if [ -z "${EMAIL_FINDINGS_RESULTS:-}" ]; then
 	EMAIL_FINDINGS_RESULTS=$(mktemp -d)
 	trap 'rm -rf "$EMAIL_FINDINGS_RESULTS"' EXIT
 else
+	# The tests run in email/, so a relative path is taken from where the script was run.
 	mkdir -p "$EMAIL_FINDINGS_RESULTS"
+	EMAIL_FINDINGS_RESULTS=$(cd "$EMAIL_FINDINGS_RESULTS" && pwd)
 fi
 export EMAIL_FINDINGS_RESULTS
 
