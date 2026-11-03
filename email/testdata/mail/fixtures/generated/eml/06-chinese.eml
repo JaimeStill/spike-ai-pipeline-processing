@@ -1,0 +1,21 @@
+Received: from mx.example.cn by mail.example.org; Sun, 26 Apr 2026 13:00:09 +0000
+Message-ID: <jingyesi@example.cn>
+Date: Sun, 26 Apr 2026 21:00:00 +0800
+From: =?GB2312?B?wO6w1w==?= <libai@example.cn>
+To: Ada Lovelace <ada@example.org>
+Subject: =?GB2312?B?vrLSucu8?=
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="alternative-06"
+
+--alternative-06
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: base64
+
+tLLHsMP31MK54qOsDQrSycrHtdjJz8uqoaMNCr7ZzbfN+8P31MKjrA0Ktc3Nt8u8ucrP56GjDQo=
+--alternative-06
+Content-Type: text/html; charset=GB2312
+Content-Transfer-Encoding: base64
+
+PGh0bWw+PGJvZHk+PHA+tLLHsMP31MK54qOsPGJyPtLJyse12MnPy6qhozxicj6+2c23zfvD99TC
+o6w8YnI+tc3Nt8u8ucrP56GjPC9wPjwvYm9keT48L2h0bWw+DQo=
+--alternative-06--

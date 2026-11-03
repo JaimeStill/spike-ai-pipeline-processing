@@ -1,0 +1,84 @@
+{
+  "note": "Hand truth for Apache POI's .msg files: the values POI's own HSMF tests assert of them, at the commit and paths below, each written as a JSON pointer into the CLI's message line and the value the CLI's field has when it holds what POI's assertion holds. POI's getters map to the CLI's fields: getSubject to /subject, getConversationTopic to /conversation_topic, getDisplayFrom to the sender's name, getTextBody and getHtmlBody to /body/text and /body/html, a recipient's display name and address in OutlookTextExtractor's \"'Name' <address>\" to that recipient's name and address, MESSAGE_CLASS.NOTE to /class \"IPM.Note\", and the length of getRecipientEmailAddressList to the length of /to. \"fields\" holds equal values; \"java_hashes\" holds the Java String.hashCode POI asserts of a body, computed over the CLI's field's UTF-16 code units; \"lengths\" holds array lengths. Assertions by prefix or by containment alone, on the RTF body (POI's string keeps the decompressed RTF's trailing NUL, which the CLI's doesn't), on the transport headers split into lines, on SMTP addresses of Exchange recipients (PidTagSmtpAddress, which the CLI doesn't write), or after POI's guessing is overridden, are not written here. msgClassAppointment.msg is committed for its class, a meeting item, and POI asserts nothing of it. tests/msg.rs reads this file.",
+  "source": {
+    "repository": "https://github.com/apache/poi",
+    "commit": "81ab52621cb3ecaf9cb96a5a92edcb2e5fd60408",
+    "license": "Apache-2.0; poi/LICENSE and poi/NOTICE",
+    "files": [
+      {
+        "path": "poi-scratchpad/src/test/java/org/apache/poi/hsmf/Test7BitCodepage.java",
+        "sha256": "38fa812e6368ea9caa4ec1c08e8d4d457d64d4359346da7936f0076c35f51924"
+      },
+      {
+        "path": "poi-scratchpad/src/test/java/org/apache/poi/hsmf/TestBasics.java",
+        "sha256": "e3087183ab357f10405e5b25a8c7adae1c295dd9a13cb840fb729f7aad814abb"
+      },
+      {
+        "path": "poi-scratchpad/src/test/java/org/apache/poi/hsmf/TestOutlook30FileRead.java",
+        "sha256": "743606daf733aff7ec9eca4047f9549c0b5222549b6a239c0d362267f43b0dda"
+      },
+      {
+        "path": "poi-scratchpad/src/test/java/org/apache/poi/hsmf/extractor/TestOutlookTextExtractor.java",
+        "sha256": "6903f79daa7cc5dd761dfce064dc461023544e7dfa0816bde413dc441a8d25fe"
+      }
+    ]
+  },
+  "messages": {
+    "poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg": {
+      "tests": "Test7BitCodepage.test7BitEncoding",
+      "fields": {
+        "/subject": "Subject öäü Subject",
+        "/body/text": "Body öäü Body",
+        "/body/html": "<!DOCTYPE html><html><meta charset=\\\"utf-8\\\"><body>HTML öäü</body></html>"
+      }
+    },
+    "poi/example_sent_regular.msg": {
+      "tests": "TestOutlookTextExtractor.testSentWithMulipleRecipients",
+      "fields": {
+        "/subject": "This is a test message please ignore",
+        "/sender/name": "Mike Farman",
+        "/to/0/name": "'Ashutosh Dandavate'",
+        "/to/0/address": "ashutosh.dandavate@alfresco.com",
+        "/to/1/name": "'Paul Holmes-Higgin'",
+        "/to/1/address": "paul.hh@alfresco.com",
+        "/to/2/name": "'Mike Farman'",
+        "/to/2/address": "mikef@alfresco.com",
+        "/cc/0/name": "'nickb@alfresco.com'",
+        "/cc/0/address": "nickb@alfresco.com",
+        "/cc/1/name": "'nick.burch@alfresco.com'",
+        "/cc/1/address": "nick.burch@alfresco.com",
+        "/cc/2/name": "'Roy Wetherall'",
+        "/cc/2/address": "roy.wetherall@alfresco.com",
+        "/bcc/0/name": "'David Caruana'",
+        "/bcc/0/address": "dave.caruana@alfresco.com",
+        "/bcc/1/name": "'Vonka Jan'",
+        "/bcc/1/address": "jan.vonka@alfresco.com"
+      },
+      "lengths": {
+        "/to": 3,
+        "/cc": 3,
+        "/bcc": 2
+      }
+    },
+    "poi/outlook_30_msg.msg": {
+      "tests": "TestBasics.testSubject, testBody, testRecipientEmail; TestOutlook30FileRead.testReadDisplayFrom, testReadSubject, testReadConversationTopic, testReadMessageClass",
+      "fields": {
+        "/class": "IPM.Note",
+        "/subject": "IN-SPIRE servers going down for a bit, back up around 8am",
+        "/conversation_topic": "IN-SPIRE servers going down for a bit, back up around 8am",
+        "/sender/name": "Cramer, Nick"
+      },
+      "java_hashes": {
+        "/body/text": 850494485,
+        "/body/html": -654938715
+      },
+      "lengths": {
+        "/to": 18
+      }
+    },
+    "poi/msgClassAppointment.msg": {
+      "tests": "none",
+      "fields": {}
+    }
+  }
+}

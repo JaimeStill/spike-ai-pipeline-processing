@@ -1,0 +1,42 @@
+[
+  {
+    "file": "tika/testPST.pst",
+    "repository": "https://github.com/apache/tika",
+    "commit": "48010f83ad3869119f54546cbb272fde88130283",
+    "path": "tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testPST.pst",
+    "license": "Apache-2.0; tika/LICENSE and tika/NOTICE",
+    "sha256": "f2a6b1d2cad00f574e3d1c1211c4b1c854d6526caea77213adc3da92b7813ae3"
+  },
+  {
+    "file": "tika/testPST_variousBodyTypes.pst",
+    "repository": "https://github.com/apache/tika",
+    "commit": "48010f83ad3869119f54546cbb272fde88130283",
+    "path": "tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testPST_variousBodyTypes.pst",
+    "license": "Apache-2.0; tika/LICENSE and tika/NOTICE",
+    "sha256": "24c5e6bbb8bf26a817c977283e40e7b69d2661fec0845abbe177f97efcb05fb0"
+  },
+  {
+    "file": "libyal/outlook.pst",
+    "repository": "https://github.com/libyal/testdata",
+    "commit": "f018eb7c91c8356123b021ecd28ae894dd500210",
+    "path": "pst/outlook.pst",
+    "license": "CC-BY-4.0; libyal/LICENSE",
+    "sha256": "df01707f76d0e24ab913cf1ffeffa6eaf9c1d590e02102c7ed26bb3ac51d4e24"
+  },
+  {
+    "file": "java-libpst/dist-list.pst",
+    "repository": "https://github.com/rjohnsondev/java-libpst",
+    "commit": "f158a64acf2a0e46ac3bd699bc7a5a8da6c40d26",
+    "path": "src/test/resources/dist-list.pst",
+    "license": "Apache-2.0 (java-libpst is LGPL or Apache-2.0; taken under Apache-2.0); java-libpst/LICENSE",
+    "sha256": "c86841da106036b5abe5a2141dc7644cbb2bf8b504873515eb35a2efeb8c28ac"
+  },
+  {
+    "file": "java-libpst/passworded.pst",
+    "repository": "https://github.com/rjohnsondev/java-libpst",
+    "commit": "f158a64acf2a0e46ac3bd699bc7a5a8da6c40d26",
+    "path": "src/test/resources/passworded.pst",
+    "license": "Apache-2.0 (java-libpst is LGPL or Apache-2.0; taken under Apache-2.0); java-libpst/LICENSE",
+    "sha256": "e1085e210bc823fcfbdd1220da08b51423f3c39301c563a99dde71895f2af217"
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "file": "tika/testMSG_att_msg.msg",
+    "repository": "https://github.com/apache/tika",
+    "commit": "48010f83ad3869119f54546cbb272fde88130283",
+    "path": "tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testMSG_att_msg.msg",
+    "license": "Apache-2.0; tika/LICENSE and tika/NOTICE",
+    "sha256": "439a1fb117edd4c84b780fcf44bf1d5167166694130ced5743a70132a83c6970"
+  },
+  {
+    "file": "tika/testMSG_chinese.msg",
+    "repository": "https://github.com/apache/tika",
+    "commit": "48010f83ad3869119f54546cbb272fde88130283",
+    "path": "tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testMSG_chinese.msg",
+    "license": "Apache-2.0; tika/LICENSE and tika/NOTICE",
+    "sha256": "b84c12748155dc57b41de02c6d43aa47e82b879020df070290633e9fd5ce7fdd"
+  },
+  {
+    "file": "tika/testMSG_forwarded.msg",
+    "repository": "https://github.com/apache/tika",
+    "commit": "48010f83ad3869119f54546cbb272fde88130283",
+    "path": "tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testMSG_forwarded.msg",
+    "license": "Apache-2.0; tika/LICENSE and tika/NOTICE",
+    "sha256": "9f1d5e911e5fa182054e3034f836cd15adc64e1034fefb7026b80ee19280b599"
+  },
+  {
+    "file": "tika/test-outlook2003.msg",
+    "repository": "https://github.com/apache/tika",
+    "commit": "48010f83ad3869119f54546cbb272fde88130283",
+    "path": "tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/test-outlook2003.msg",
+    "license": "Apache-2.0; tika/LICENSE and tika/NOTICE",
+    "sha256": "ba3c378c3612a1a72a030f3c198ddede9304ffe466f871585956cb87b553d0b3"
+  },
+  {
+    "file": "poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+    "repository": "https://github.com/apache/poi",
+    "commit": "81ab52621cb3ecaf9cb96a5a92edcb2e5fd60408",
+    "path": "test-data/hsmf/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+    "license": "Apache-2.0; poi/LICENSE and poi/NOTICE",
+    "sha256": "da9c8731ac16dde690493a8ca0d96323d36ea4300dc7d34614292f18d9b58eb8"
+  },
+  {
+    "file": "poi/example_sent_regular.msg",
+    "repository": "https://github.com/apache/poi",
+    "commit": "81ab52621cb3ecaf9cb96a5a92edcb2e5fd60408",
+    "path": "test-data/hsmf/example_sent_regular.msg",
+    "license": "Apache-2.0; poi/LICENSE and poi/NOTICE",
+    "sha256": "2f3abc72e5a1da955b06256fb0e20078ad517b029d07edf4f4346941700e78af"
+  },
+  {
+    "file": "poi/msgClassAppointment.msg",
+    "repository": "https://github.com/apache/poi",
+    "commit": "81ab52621cb3ecaf9cb96a5a92edcb2e5fd60408",
+    "path": "test-data/hsmf/msgClassAppointment.msg",
+    "license": "Apache-2.0; poi/LICENSE and poi/NOTICE",
+    "sha256": "e0a8fb568bc837c4f835a9e85e70280beb1b604b6223a3fa547b22c4860f3eb9"
+  },
+  {
+    "file": "poi/outlook_30_msg.msg",
+    "repository": "https://github.com/apache/poi",
+    "commit": "81ab52621cb3ecaf9cb96a5a92edcb2e5fd60408",
+    "path": "test-data/hsmf/outlook_30_msg.msg",
+    "license": "Apache-2.0; poi/LICENSE and poi/NOTICE",
+    "sha256": "4ca32fdfeba6317ad0c818e4c12948bdbb385465e4665430b10751e13ea2adeb"
+  }
+]

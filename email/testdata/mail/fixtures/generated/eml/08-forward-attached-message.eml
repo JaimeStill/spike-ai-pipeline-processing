@@ -1,0 +1,45 @@
+Message-ID: <fwd-1@example.org>
+References: <notes-0@example.org>
+Date: Tue, 05 May 2026 16:20:00 -0700
+From: Ada Lovelace <ada@example.org>
+To: Mary Somerville <mary@example.org>
+Subject: Fwd: Notes on the engine (draft)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="mixed-08"
+
+--mixed-08
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Mary,
+
+The draft, as I first sent it to Charles, is attached, with Note G.
+
+Ada
+--mixed-08
+Content-Type: text/plain; charset=us-ascii; name="note-g.txt"
+Content-Disposition: attachment; filename="note-g.txt"
+Content-Transfer-Encoding: 7bit
+
+B2 = 1/6
+B4 = -1/30
+B6 = 1/42
+--mixed-08
+Content-Type: message/rfc822
+Content-Disposition: attachment
+
+Message-ID: <notes-0@example.org>
+Date: Sat, 10 Jan 2026 20:00:00 +0000
+From: Ada Lovelace <ada@example.org>
+To: Charles Babbage <charles@example.org>
+Subject: Notes on the engine (draft)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Charles,
+
+A first draft of the notes.
+
+Ada
+--mixed-08--

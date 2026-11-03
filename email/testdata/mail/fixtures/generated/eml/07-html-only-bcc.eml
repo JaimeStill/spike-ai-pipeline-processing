@@ -1,0 +1,11 @@
+Message-ID: <noon@example.org>
+Date: Mon, 04 May 2026 11:45:00 +0000
+From: Ada Lovelace <ada@example.org>
+To: Grace Hopper <grace@example.net>
+Bcc: Charles Babbage <charles@example.org>
+Subject: =?UTF-8?Q?Caf=C3=A9_at_noon_=E2=98=95?=
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+<html><body><p>Shall we meet at the café at noon? ☕</p><ul><li>Bring Note G</li><li>Bring the moth</li></ul></body></html>
