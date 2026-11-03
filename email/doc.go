@@ -49,4 +49,8 @@
 //     [UnknownRecord].
 //   - [Address], [Body], [Derived], and [Attachment] are a message's addresses, bodies, and
 //     attachment records.
+//   - [Threader] builds a store's threads from the threading keys of the messages
+//     [Threader.Add] is fed while a Stream is read; [Threader.Threads] returns them.
+//   - [Threads] builds the threads of a read's Records whole.
+//   - [Thread] is one message of a thread, or a placeholder, with its replies.
 package email
