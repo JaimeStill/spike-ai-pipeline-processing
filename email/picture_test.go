@@ -88,8 +88,9 @@ func pictureConverter(t *testing.T) (*office.Converter, func() [][]string) {
 // TestRouteVisionConvertedPicture: a TIFF attachment, written into the attachments directory as
 // mail names it, its SHA-256 and stored extension, routes RouteVisionConverted, and the caller
 // converts it through office's ConvertPicture into a directory of its own: the PNG is that
-// directory's file named by the attachment's SHA-256 and .png, from one magick run on a copy of
-// the TIFF, and the attachment's file is kept as mail wrote it.
+// directory's file named by the attachment's SHA-256 and .png, from one magick run on the TIFF's
+// bytes, and the attachment's file is kept as mail wrote it. How office invokes magick is
+// office's own tests' to prove.
 func TestRouteVisionConvertedPicture(t *testing.T) {
 	c, runs := pictureConverter(t)
 	attachments := t.TempDir()
@@ -118,8 +119,7 @@ func TestRouteVisionConvertedPicture(t *testing.T) {
 	if list, err := os.ReadDir(attachments); err != nil || len(list) != 1 || list[0].Name() != file {
 		t.Errorf("attachments directory holds %v, %v; want the attachment alone", list, err)
 	}
-	all := runs()
-	if len(all) != 1 || !strings.HasPrefix(all[0][0], "tiff:"+out+"/picture-") || !strings.HasSuffix(all[0][0], "/"+stem+".tiff[0]") {
-		t.Errorf("runs: got %q, want one magick run on the TIFF's copy in the output directory", all)
+	if all := runs(); len(all) != 1 {
+		t.Errorf("runs: got %q, want one magick run", all)
 	}
 }
