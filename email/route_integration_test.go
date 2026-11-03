@@ -16,6 +16,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
@@ -112,7 +113,7 @@ type stages struct {
 // the fixtures hold had its stage run, and the fixtures hold every staged route. It logs a
 // recorded line per stage run, with its wall time and result, and per picture.
 func TestRoutesToStages(t *testing.T) {
-	c := routerClient(t)
+	c := visiontest.Router(t)
 	s := &stages{
 		t:        t,
 		reader:   realReader(t),
@@ -309,7 +310,7 @@ func (s *stages) stored(a *email.Attachment, source string) {
 	}
 	s.gather(a.File, &picture{data: data, contentType: ct, sources: []string{source}})
 	s.ran[email.RouteVision]++
-	t.Logf("recorded: stage vision, %s: %s %s, %d bytes, as stored", source, ct, pixelSize(data), len(data))
+	t.Logf("recorded: stage vision, %s: %s %s, %d bytes, as stored", source, ct, visiontest.PixelSize(data), len(data))
 }
 
 // converted runs office's ConvertPicture over a's picture and gathers its PNG for vision,
@@ -339,7 +340,7 @@ func (s *stages) converted(a *email.Attachment, source string) {
 	s.gather(a.File, &picture{data: data, contentType: "image/png", sources: []string{source}})
 	s.ran[email.RouteVisionConverted]++
 	t.Logf("recorded: stage vision-converted, %s: %d bytes -> png %s, %d bytes: %v wall",
-		source, sizeOf(a), pixelSize(data), len(data), elapsed.Round(time.Millisecond))
+		source, sizeOf(a), visiontest.PixelSize(data), len(data), elapsed.Round(time.Millisecond))
 }
 
 // nested carries an embedded message on: one nested under its record, which mail read with its

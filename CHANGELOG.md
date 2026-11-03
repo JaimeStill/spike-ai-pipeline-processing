@@ -68,6 +68,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Currency: jdx/mise-action v5.2.5 to v5.2.6 in CI, and taiki-e/create-gh-release-action v1.11.0
   to v1.12.0 in the release workflow.
+- The vision tests' router client and response helpers, which `document`'s, `office`'s, and
+  `email`'s integration tiers each carried a copy of, are one internal package,
+  `internal/visiontest`, built under the integration tag alone.
 
 ### Fixed
 

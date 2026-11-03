@@ -369,7 +369,9 @@ typst and qpdf are needed only to regenerate the fixtures in `document/testdata`
 which mise installs, only to rebuild `email/testdata`'s built .msg, as their READMEs say.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
-integration and bake-off tiers run on; no released file imports it. It is released by tag,
+integration and bake-off tiers run on; no released package imports it, and `internal/visiontest`,
+the router client and response helpers the vision tests share, builds under the integration tag
+alone. It is released by tag,
 `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer are in the root
 repository's README.
 
