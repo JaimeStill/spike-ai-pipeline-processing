@@ -17,3 +17,28 @@ each directory's `sources.json` and `LICENSE` and `NOTICE` files give the public
 messages' provenance and licenses, and `fixtures/generated/manifest.json` the generated ones'.
 The real-binary tests read every `.pst` and `.msg` here and compare their records and warnings
 with the goldens.
+
+## built
+
+`built/` holds one `.msg` built for this package, apart from mail's copy and its MANIFEST:
+`msg/office-attachments.msg`, built from `eml/office-attachments.eml` by mail's fixtures generator
+at its tag `v0.1.0`, in its fixtures mode, through MsgKit. The source attaches four of this
+repository's committed office fixtures, byte for byte: `minutes.docx`, which is
+`office/testdata/ooxml/tables.libreoffice.docx`; `budget.xls`, which is
+`office/testdata/legacy/generated/formulas.libreoffice.xls`; `scan.tif`, the
+`word/media/image1.tiff` member of `office/testdata/pictures/tiff.docx`; and `diagram.emf`, the
+`word/media/image4.emf` member of `office/testdata/ooxml/word-with-attachments.docx`. Their
+licenses are the office fixtures' (`office/testdata/README.md`).
+
+`mise run fixtures:built` (`scripts/fixtures-built.sh`) writes the source from those fixtures and
+rebuilds the `.msg` with the generator, fetched from mail's tag and built in a temporary directory
+with the .NET SDK it pins, 10.0.402; it needs network access, and the check never runs it. The
+generator writes `layout.json`'s `.msg` and `manifest.json`, its record of the source's and the
+`.msg`'s SHA-256 and its tool versions: .NET SDK 10.0.402, MsgKit 3.0.6, and MimeKit 4.18.2.
+`MANIFEST` pins the directory: mail's repository, tag, and commit, those tool versions, each
+attachment's SHA-256 and the fixture and member it came from, and each file's SHA-256. MsgKit's
+`.msg` isn't byte-stable, as mail's manifest notes, so a rebuild changes the `.msg`'s SHA-256: the
+tests pin its content, each attachment written by the real mail byte for byte its source, and its
+routes, the docx and the xls to office, the TIFF and the EMF to vision through office's picture
+conversion. MsgKit stores the EMF as `application/octet-stream`, whatever the source's
+`image/emf`; the route reads its signature.

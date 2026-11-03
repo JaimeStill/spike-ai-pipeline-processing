@@ -1,0 +1,20 @@
+# The built .msg: msg/office-attachments.msg, built from eml/office-attachments.eml
+# by mail's fixtures generator at the tag, through scripts/fixtures-built.sh
+# (mise run fixtures:built). Each attachment's line gives its filename, its
+# SHA-256, the committed fixture it came from, and the member of that fixture's
+# package, or - for the fixture itself; each file's SHA-256 is below. MsgKit's
+# .msg isn't byte-stable, so a rebuild changes its SHA-256.
+repository https://github.com/JaimeStill/spike-ai-pipeline-mail
+tag v0.1.0
+commit 75923186494d94ddf37a61b9865c1848bb0bbbd6
+dotnet-sdk 10.0.402
+MsgKit 3.0.6
+MimeKit 4.18.2
+attachment minutes.docx 01116cf56ffbb4ad1f360272e2fabd8cd6e60d25e8081202f4b2d0aad91b7d2c office/testdata/ooxml/tables.libreoffice.docx -
+attachment budget.xls 8ac61ba5ef1c3e20c45167ec8f40afe24720b7bf606e2eaee248ef158cb15c66 office/testdata/legacy/generated/formulas.libreoffice.xls -
+attachment scan.tif 9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119 office/testdata/pictures/tiff.docx word/media/image1.tiff
+attachment diagram.emf cc90707a7aab5dcb25ce2cb5fdefe6fd611d5c3d632ee5d4d18373cc7d672add office/testdata/ooxml/word-with-attachments.docx word/media/image4.emf
+8c6fdfc54e74f1db9aa6f038f6ba18c60d8232c63302cdd2b9f256593031b8ed  eml/office-attachments.eml
+afc6bc00d79ee233954b39452c5f1a99deaf2c0c391ca0b6d51fce46ce5321bf  layout.json
+79f1ae5be4c943a44c865147a9ac09e0f2b26e1bb9ceb8c5799dd33897fad4d8  manifest.json
+b54889ad52ed8b1d8a34d759dafd4b40d209c4805d3a2f295739252dc9f4ca17  msg/office-attachments.msg
