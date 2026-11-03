@@ -22,13 +22,16 @@ with the goldens.
 
 `built/` holds one `.msg` built for this package, apart from mail's copy and its MANIFEST:
 `msg/office-attachments.msg`, built from `eml/office-attachments.eml` by mail's fixtures generator
-at its tag `v0.1.0`, in its fixtures mode, through MsgKit. The source attaches four of this
-repository's committed office fixtures, byte for byte: `minutes.docx`, which is
+at its tag `v0.1.0`, in its fixtures mode, through MsgKit. The source attaches five files, byte
+for byte. Four are this repository's committed office fixtures: `minutes.docx`, which is
 `office/testdata/ooxml/tables.libreoffice.docx`; `budget.xls`, which is
 `office/testdata/legacy/generated/formulas.libreoffice.xls`; `scan.tif`, the
 `word/media/image1.tiff` member of `office/testdata/pictures/tiff.docx`; and `diagram.emf`, the
 `word/media/image4.emf` member of `office/testdata/ooxml/word-with-attachments.docx`. Their
-licenses are the office fixtures' (`office/testdata/README.md`).
+licenses are the office fixtures' (`office/testdata/README.md`). The fifth, `forwarded.msg`, is
+the copy of mail's `mail/fixtures/generated/msg/03-html-inline-image.msg`, attached as a file,
+which mail reads back by value and writes as it is, not as an embedded message: a by-value `.msg`,
+which holds a PNG of its own; its provenance is mail's generated fixtures'.
 
 `mise run fixtures:built` (`scripts/fixtures-built.sh`) writes the source from those fixtures and
 rebuilds the `.msg` with the generator, fetched from mail's tag and built in a temporary directory
@@ -40,5 +43,6 @@ attachment's SHA-256 and the fixture and member it came from, and each file's SH
 `.msg` isn't byte-stable, as mail's manifest notes, so a rebuild changes the `.msg`'s SHA-256: the
 tests pin its content, each attachment written by the real mail byte for byte its source, and its
 routes, the docx and the xls to office, the TIFF and the EMF to vision through office's picture
-conversion. MsgKit stores the EMF as `application/octet-stream`, whatever the source's
-`image/emf`; the route reads its signature.
+conversion, and the `.msg` nested, for a Reader to read again. MsgKit stores the EMF and the `.msg`
+as `application/octet-stream`, whatever the source's `image/emf` and
+`application/vnd.ms-outlook`; the route reads their signatures.

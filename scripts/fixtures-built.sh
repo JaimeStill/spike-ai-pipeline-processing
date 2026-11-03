@@ -6,9 +6,10 @@
 # out. Run it through `mise run fixtures:built`; the check never runs it, and
 # reads the committed outputs.
 #
-# The source attaches four files, byte for byte: a docx and a legacy xls, each
-# a committed office fixture, and a TIFF and an EMF, each a member of a
-# committed office fixture's package. The generator writes the .msg and its own
+# The source attaches five files, byte for byte: a docx and a legacy xls, each
+# a committed office fixture; a TIFF and an EMF, each a member of a committed
+# office fixture's package; and a .msg, one of the copied mail fixtures, which
+# holds a PNG, so a reader that reads it again has its own attachment to route. The generator writes the .msg and its own
 # manifest.json, which records the source's and the .msg's SHA-256 and its tool
 # versions. MANIFEST then pins the whole directory: mail's repository, tag, and
 # commit, the generator's .NET SDK, MsgKit, and MimeKit, each attachment's
@@ -36,6 +37,7 @@ attachments=(
 	"budget.xls|application/vnd.ms-excel|office/testdata/legacy/generated/formulas.libreoffice.xls|-"
 	"scan.tif|image/tiff|office/testdata/pictures/tiff.docx|word/media/image1.tiff"
 	"diagram.emf|image/emf|office/testdata/ooxml/word-with-attachments.docx|word/media/image4.emf"
+	"forwarded.msg|application/vnd.ms-outlook|email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg|-"
 )
 
 work=$(mktemp -d)
@@ -58,14 +60,14 @@ eml=$built/eml/$source.eml
 	printf 'Date: Thu, 22 Oct 2026 10:14:00 +0100\r\n'
 	printf 'From: Grace Hopper <grace@example.net>\r\n'
 	printf 'To: Ada Lovelace <ada@example.org>\r\n'
-	printf 'Subject: Minutes, budget, and the scanned diagram\r\n'
+	printf 'Subject: Minutes, budget, the scanned diagram, and a forwarded message\r\n'
 	printf 'MIME-Version: 1.0\r\n'
 	printf 'Content-Type: multipart/mixed; boundary="mixed-office"\r\n'
 	printf '\r\n'
 	printf -- '--mixed-office\r\n'
 	printf 'Content-Type: text/plain; charset=utf-8\r\n'
 	printf '\r\n'
-	printf 'Ada,\r\n\r\nThe minutes, the budget, the scanned page, and the diagram are attached.\r\n\r\nGrace\r\n'
+	printf 'Ada,\r\n\r\nThe minutes, the budget, the scanned page, the diagram, and the message I was\r\nforwarded are attached.\r\n\r\nGrace\r\n'
 	for entry in "${attachments[@]}"; do
 		IFS='|' read -r filename type fixture member <<<"$entry"
 		printf -- '--mixed-office\r\n'

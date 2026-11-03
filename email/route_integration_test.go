@@ -82,6 +82,9 @@ type stages struct {
 	document *document.Preparer
 	// seen are the routes the fixtures' attachments take; ran, those whose stage ran.
 	seen, ran map[email.Route]int
+	// dispatched counts the attachments dispatched; readAgain, the by-value .msg files read
+	// through the CLI again, and readAgainDispatched, the attachments those reads dispatched.
+	dispatched, readAgain, readAgainDispatched int
 	// done are the contents already carried to their stage, by File, each content's stage run
 	// once whichever attachments carry it; it holds the attachment that first did.
 	done map[string]string
@@ -108,10 +111,13 @@ type stages struct {
 //     and not run;
 //   - RouteUnrouted: logged, with its reason.
 //
-// Each content's stage runs once, by File. Then each distinct picture is sent once to
+// Each content's stage runs once, by File, so an attachment whose content was carried already is
+// logged with the attachment that first carried it. Then each distinct picture is sent once to
 // visionModel on the router. It fails unless every stage it runs succeeds, every staged route
-// the fixtures hold had its stage run, and the fixtures hold every staged route. It logs a
-// recorded line per stage run, with its wall time and result, and per picture.
+// the fixtures hold had its stage run, the fixtures hold every staged route, and a by-value .msg
+// was read through the CLI again, counted apart as "nested, read again", with attachments of its
+// own dispatched. It logs a recorded line per stage run, with its wall time and result, and per
+// picture.
 func TestRoutesToStages(t *testing.T) {
 	c := visiontest.Router(t)
 	s := &stages{
@@ -135,6 +141,7 @@ func TestRoutesToStages(t *testing.T) {
 	for _, route := range slices.Sorted(maps.Keys(s.seen)) {
 		t.Logf("recorded: route %s: %d attachments, %d stage runs", route, s.seen[route], s.ran[route])
 	}
+	t.Logf("recorded: route nested, read again: %d stage runs, %d attachments dispatched", s.readAgain, s.readAgainDispatched)
 	for _, route := range stagedRoutes {
 		switch {
 		case s.seen[route] == 0:
@@ -142,6 +149,12 @@ func TestRoutesToStages(t *testing.T) {
 		case s.ran[route] == 0:
 			t.Errorf("route %s: %d attachments, no stage run", route, s.seen[route])
 		}
+	}
+	switch {
+	case s.readAgain == 0:
+		t.Error("no by-value .msg was read through the CLI again")
+	case s.readAgainDispatched == 0:
+		t.Errorf("%d by-value .msg files read again, no attachment of theirs dispatched", s.readAgain)
 	}
 
 	pictures := make([]*picture, 0, len(s.order))
@@ -187,6 +200,7 @@ func (s *stages) dispatch(a *email.Attachment, where string) {
 		return
 	}
 	s.seen[route]++
+	s.dispatched++
 	name := a.Filename
 	if name == "" {
 		name = "(unnamed)"
@@ -356,8 +370,13 @@ func (s *stages) nested(a *email.Attachment, source, why string) {
 		s.message(a.Message, source+" >")
 	case a.Path != "":
 		s.ran[email.RouteNested]++
-		t.Logf("recorded: stage nested, %s: %s; read through the CLI again", source, why)
+		s.readAgain++
+		before := s.dispatched
 		s.read(a.Path, source+" >")
+		n := s.dispatched - before
+		s.readAgainDispatched += n
+		t.Logf("recorded: stage nested, read again, %s: %s; read through the CLI again, %d attachments dispatched in turn",
+			source, why, n)
 	default:
 		t.Logf("stage: %s: nested (%s), not read: mail lists it without its content", source, why)
 	}

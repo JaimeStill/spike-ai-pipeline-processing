@@ -12,14 +12,14 @@
   "sources": [
     {
       "file": "eml/office-attachments.eml",
-      "sha256": "8c6fdfc54e74f1db9aa6f038f6ba18c60d8232c63302cdd2b9f256593031b8ed"
+      "sha256": "cd662fbbd7ff7c7e0a94b43d7e98f78703c7ce348e06fc0008b0d0dc67b36afb"
     }
   ],
   "outputs": [
     {
       "file": "msg/office-attachments.msg",
-      "sha256": "b54889ad52ed8b1d8a34d759dafd4b40d209c4805d3a2f295739252dc9f4ca17",
-      "size": 64000,
+      "sha256": "048e98824f1ea8077d950e98ce95e12d965f919f914138dd939d71ebc4759423",
+      "size": 79360,
       "byte_stable": false,
       "sources": [
         "eml/office-attachments.eml"

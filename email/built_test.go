@@ -40,12 +40,14 @@ type builtSource struct {
 
 // builtSources are the built .msg's attachments, in the order its source attaches them, written
 // by hand from the brief: processing's own committed office fixtures, two whole and two pictures
-// taken from packages.
+// taken from packages, and one of the copied mail fixtures, a .msg attached as a file.
 var builtSources = []builtSource{
 	{"minutes.docx", email.RouteOffice, "office/testdata/ooxml/tables.libreoffice.docx", "-"},
 	{"budget.xls", email.RouteOffice, "office/testdata/legacy/generated/formulas.libreoffice.xls", "-"},
 	{"scan.tif", email.RouteVisionConverted, "office/testdata/pictures/tiff.docx", "word/media/image1.tiff"},
 	{"diagram.emf", email.RouteVisionConverted, "office/testdata/ooxml/word-with-attachments.docx", "word/media/image4.emf"},
+	// MsgKit attaches it by value, as a file, not as an embedded message: a by-value .msg.
+	{"forwarded.msg", email.RouteNested, "email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg", "-"},
 }
 
 // builtManifest is the built directory's MANIFEST: its header, each key and its value; its
@@ -201,7 +203,8 @@ func TestBuiltManifest(t *testing.T) {
 // TestBuiltRoutes runs the real pinned mail over the built .msg with an attachments directory.
 // Its one message holds builtSources' attachments, in order, each routed as they say and written
 // under the SHA-256 name mail gives it, its content byte for byte its source's: the docx and the
-// legacy xls go to office, the TIFF and the EMF to vision through office's conversion.
+// legacy xls go to office, the TIFF and the EMF to vision through office's conversion, and the
+// .msg, by value, not an embedded message, is nested by its OLE2 signature and .msg extension.
 func TestBuiltRoutes(t *testing.T) {
 	r := realReader(t)
 	dir := t.TempDir()
@@ -233,6 +236,9 @@ func TestBuiltRoutes(t *testing.T) {
 			}
 			if route != s.route {
 				t.Errorf("route %q (%s), want %q", route, why, s.route)
+			}
+			if a.Message != nil || (route == email.RouteNested && why != "OLE2 signature, .msg extension") {
+				t.Errorf("route %q (%s), nests a message %t; want a by-value file routed by its signature", route, why, a.Message != nil)
 			}
 			t.Logf("%s: %s (%s), stored as %s", a.Filename, route, why, a.MimeType)
 		})
