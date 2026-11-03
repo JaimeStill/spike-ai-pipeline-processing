@@ -147,27 +147,8 @@ func golden(rel string) (stdout, stderr string) {
 // records, warnings, and a .msg's nested messages.
 func TestReal(t *testing.T) {
 	r := realReader(t)
-	var inputs []string
 	root := filepath.Join(mailCopy, "fixtures")
-	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if ext := filepath.Ext(path); !d.IsDir() && (ext == ".pst" || ext == ".msg") {
-			rel, err := filepath.Rel(root, path)
-			if err != nil {
-				return err
-			}
-			inputs = append(inputs, rel)
-		}
-		return nil
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(inputs) != 22 {
-		t.Errorf("%d inputs, want mail's 22", len(inputs))
-	}
+	inputs := realInputs(t)
 	kinds := map[string]bool{}
 	warned, nested := false, false
 	for _, rel := range inputs {
@@ -223,6 +204,34 @@ func TestReal(t *testing.T) {
 	if !warned || !nested {
 		t.Errorf("warnings among the fixtures %t, nested messages %t; want both", warned, nested)
 	}
+}
+
+// realInputs returns every .pst and .msg among the copied fixtures, each a path under fixtures/,
+// and fails the test unless they are mail's 22.
+func realInputs(t *testing.T) []string {
+	t.Helper()
+	var inputs []string
+	root := filepath.Join(mailCopy, "fixtures")
+	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if ext := filepath.Ext(path); !d.IsDir() && (ext == ".pst" || ext == ".msg") {
+			rel, err := filepath.Rel(root, path)
+			if err != nil {
+				return err
+			}
+			inputs = append(inputs, filepath.ToSlash(rel))
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(inputs) != 22 {
+		t.Errorf("%d inputs, want mail's 22", len(inputs))
+	}
+	return inputs
 }
 
 // hasNested reports whether any of m's attachments nests a message.

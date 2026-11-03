@@ -71,6 +71,11 @@ type Request struct {
 	// never its name. It is made absolute before mail runs, so a name that begins with "-" is
 	// never taken as an option. It is required.
 	Input string
+	// Attachments is the directory mail writes each distinct attachment content into once,
+	// named by its File, created if missing; the caller owns it. Each Attachment's Path then
+	// names its file there, and Attachment.Route sniffs it. It is made absolute before mail runs.
+	// "" writes nothing, and routes nothing by content.
+	Attachments string
 }
 
 // The outcomes of a mail run that exits nonzero, each its exit code's; an *ExitError matches its
@@ -130,6 +135,7 @@ type Stream struct {
 	mail     *tool.Tool
 	ctx      context.Context
 	input    string
+	dir      string
 	started  bool
 	warnings []string
 }
@@ -137,7 +143,7 @@ type Stream struct {
 // Read returns the read of req's input under ctx. Nothing runs until the Stream's Records are
 // ranged over.
 func (r *Reader) Read(ctx context.Context, req Request) *Stream {
-	return &Stream{mail: r.mail, ctx: ctx, input: req.Input}
+	return &Stream{mail: r.mail, ctx: ctx, input: req.Input, dir: req.Attachments}
 }
 
 // Warnings returns mail's warnings, one per line it wrote to stderr as a warning, with mail's
@@ -187,6 +193,14 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 	if err != nil {
 		return fmt.Errorf("email: %w", err)
 	}
+	args := []string{input}
+	var dir string
+	if s.dir != "" {
+		if dir, err = filepath.Abs(s.dir); err != nil {
+			return fmt.Errorf("email: %w", err)
+		}
+		args = []string{"--attachments", dir, input}
+	}
 	ctx, cancel := context.WithCancel(s.ctx)
 	defer cancel()
 	// An *os.File passes straight to mail as its stdout, so no copy sits between them that Run
@@ -199,7 +213,7 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 	stderr := &limitedBuffer{limit: stderrLimit}
 	done := make(chan error, 1)
 	go func() {
-		err := s.mail.Run(ctx, tool.Invocation{Args: []string{input}, Stdout: pw, Stderr: stderr})
+		err := s.mail.Run(ctx, tool.Invocation{Args: args, Stdout: pw, Stderr: stderr})
 		// mail has exited, and its write end with it: closing this one, the last, ends the read
 		// end at EOF.
 		_ = pw.Close()
@@ -244,6 +258,9 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 			return err
 		}
 		first = false
+		if m, ok := rec.(*Message); ok && dir != "" {
+			setPaths(m, dir)
+		}
 		if !yield(rec, nil) {
 			_ = stop()
 			return nil
@@ -258,6 +275,21 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 		return errors.New("email: mail wrote no store line")
 	}
 	return nil
+}
+
+// setPaths sets the Path of each of m's attachments with a File, those of its nested messages
+// included, to the File's path in dir, the read's attachments directory. A File that isn't a
+// bare name, which mail never writes, is given no Path, so no Path leaves dir.
+func setPaths(m *Message, dir string) {
+	for i := range m.Attachments {
+		a := &m.Attachments[i]
+		if a.File != "" && filepath.IsLocal(a.File) && filepath.Base(a.File) == a.File {
+			a.Path = filepath.Join(dir, a.File)
+		}
+		if a.Message != nil {
+			setPaths(a.Message, dir)
+		}
+	}
 }
 
 // ended returns the error of a read that its context ended: runErr, the run's, when it matches

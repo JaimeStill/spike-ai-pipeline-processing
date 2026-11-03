@@ -32,7 +32,7 @@ const (
 	// stdoutEnv, when set, is what a run writes to stdout in place of standinLines.
 	stdoutEnv = "MAIL_TEST_STANDIN_STDOUT"
 	// stderrEnv, when set, is what a run writes to stderr, after its stdout, each {path} in it the
-	// input's path as the run was given it.
+	// input's path, its last argument, as the run was given it.
 	stderrEnv = "MAIL_TEST_STANDIN_STDERR"
 	// exitEnv, when set, is the exit code of a run.
 	exitEnv = "MAIL_TEST_STANDIN_EXIT"
@@ -94,7 +94,7 @@ func standin(args []string) int {
 	if os.Getenv(sleepEnv) != "" {
 		time.Sleep(time.Minute)
 	}
-	fmt.Fprint(os.Stderr, strings.ReplaceAll(os.Getenv(stderrEnv), "{path}", args[0]))
+	fmt.Fprint(os.Stderr, strings.ReplaceAll(os.Getenv(stderrEnv), "{path}", args[len(args)-1]))
 	if code := os.Getenv(exitEnv); code != "" {
 		n, err := strconv.Atoi(code)
 		if err != nil {

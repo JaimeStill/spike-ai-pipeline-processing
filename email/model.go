@@ -156,6 +156,11 @@ type Attachment struct {
 	// Message is, in a .msg, an embedded message, nested with its own bodies and attachments; nil
 	// otherwise. In a .pst an embedded message is listed with its metadata alone.
 	Message *Message `json:"message,omitzero"`
+	// Path is where the caller opens the content's file, an absolute path in the read's
+	// attachments directory, which mail writes each distinct content into before the record's
+	// line; "" for a read without a directory, and for an attachment with no File. It is the
+	// package's, not mail's, and never marshalled.
+	Path string `json:"-"`
 }
 
 // Skipped is a skipped line: a record mail couldn't read inside a readable store, in the place

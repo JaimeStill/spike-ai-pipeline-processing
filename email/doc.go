@@ -38,7 +38,8 @@
 //   - [Reader] reads mail stores through mail.
 //   - [NewReader] builds a Reader over a Config.
 //   - [Reader.Read] returns the Stream of one input's read.
-//   - [Request] is one input's read: its path.
+//   - [Request] is one input's read: its path, and the attachments directory mail writes
+//     their content into, if any.
 //   - [Stream] is one read: [Stream.Records] streams its records, and [Stream.Warnings]
 //     returns mail's warnings once they have been read.
 //   - [ExitError] reports mail's exit code 1, 2, 3, or 4, with its message.
@@ -48,7 +49,11 @@
 //   - [Record] is one of mail's lines: [Store], [Folder], [Message], [Skipped], or
 //     [UnknownRecord].
 //   - [Address], [Body], [Derived], and [Attachment] are a message's addresses, bodies, and
-//     attachment records.
+//     attachment records; an Attachment's Path names its content's file in the attachments
+//     directory.
+//   - [Attachment.Route] returns an attachment's [Route] and why, decided by its content's
+//     signature: [RouteDocument], [RouteOffice], [RouteVision], [RouteVisionConverted],
+//     [RouteNested], or [RouteUnrouted].
 //   - [Threader] builds a store's threads from the threading keys of the messages
 //     [Threader.Add] is fed while a Stream is read; [Threader.Threads] returns them.
 //   - [Threads] builds the threads of a read's Records whole.
