@@ -1,99 +1,103 @@
-# TestRoutesToStages: every fixture's attachments carried to their real stage, and each distinct
-# picture sent once to vision. An excerpt, verbatim, of one -v run of the integration tier's
-# tests, its packages one at a time (go test -race -tags integration -count=1 -v ./...).
-# Run: 2026-11-03, ending 17:58:59 UTC, from the laptop (Linux 7.2.15 x86_64, go 1.27.3), at
-# processing commit 38dbc8d on branch email; office 0.1.0 and mail 0.1.0 (mise pins); soffice
+# TestRoutesToStages: every fixture's attachments carried to their real stage, the built .msg's
+# by-value forwarded.msg read through the CLI again, and each distinct picture sent once to vision.
+# An excerpt, verbatim, of one -v run of the email package's integration-tagged tests
+# (go test -race -tags integration -count=1 -v ./email/), right after a full mise run integration
+# that passed every package.
+# Run: 2026-11-03, ending 18:44:22 UTC, from the laptop (Linux 7.2.15 x86_64, go 1.27.3), at
+# processing commit 464fa86 on branch email; office 0.1.0 and mail 0.1.0 (mise pins); soffice
 # 26.8.1.1 in office.LibreOfficeImage; magick 7.1.2; gs 10.8.0. The vision requests went to
-# gb10-2's llama.cpp router, build b11669, serving set A; gb10-2 had OS apt upgrades pending at the
-# time, with the router untouched. Every package passed in that run.
+# gb10-2's llama.cpp router, build b11669, serving set A. Every test in the package passed.
 === RUN   TestRoutesToStages
-    route_integration_test.go:119: soffice 26.8.1.1 in gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054, magick 7.1.2
-    route_integration_test.go:120: gs 10.8.0
-    route_integration_test.go:293: recorded: stage office, office-attachments.msg minutes.docx: a docx model, as it was, 0 media, 0 warnings: 28ms wall
-    route_integration_test.go:293: recorded: stage office, office-attachments.msg budget.xls: a xlsx model, from xls through soffice, 0 media, 0 warnings: 695ms wall
-    route_integration_test.go:341: recorded: stage vision-converted, office-attachments.msg scan.tif: 12236 bytes -> png 640x400, 3366 bytes: 21ms wall
-    route_integration_test.go:341: recorded: stage vision-converted, office-attachments.msg diagram.emf: 5132 bytes -> png 1489x566, 9952 bytes: 888ms wall
-    route_integration_test.go:312: recorded: stage vision, 03-html-inline-image.msg moth.png: image/png 1x1, 70 bytes, as stored
-    route_integration_test.go:216: stage: 04-attachment-cyrillic.msg отчёт.csv: unrouted (no routed signature), no stage
-    route_integration_test.go:216: stage: 08-forward-attached-message.msg note-g.txt: unrouted (no routed signature), no stage
-    route_integration_test.go:216: stage: 08-forward-attached-message.msg Notes on the engine (draft).eml: unrouted (no routed signature), no stage
-    route_integration_test.go:199: stage: mailbox.pst moth.png: vision (PNG signature), its content carried as 03-html-inline-image.msg moth.png
-    route_integration_test.go:216: stage: mailbox.pst отчёт.csv: unrouted (no routed signature), no stage
-    route_integration_test.go:216: stage: mailbox.pst note-g.txt: unrouted (no routed signature), no stage
-    route_integration_test.go:312: recorded: stage vision, example_sent_regular.msg alfresco.gif: image/bmp 202x74, 16174 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 1.jpg: image/jpeg 32x32, 1969 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 2.jpg: image/jpeg 32x32, 1889 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 3.jpg: image/jpeg 32x32, 2088 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 4.jpg: image/jpeg 32x32, 1934 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 5.jpg: image/jpeg 32x32, 2285 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 6.jpg: image/jpeg 32x32, 2136 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 7.jpg: image/jpeg 32x32, 1964 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 8.jpg: image/jpeg 32x32, 1906 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 9.jpg: image/jpeg 32x32, 1764 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 10.jpg: image/jpeg 32x32, 1951 bytes, as stored
-    route_integration_test.go:312: recorded: stage vision, test-outlook2003.msg 12.jpg: image/jpeg 32x32, 1985 bytes, as stored
-    route_integration_test.go:353: recorded: stage nested, testMSG_att_msg.msg Test Attachment: embedded message, nested under its record; message "Test Attachment", 0 attachments, dispatched in turn
-    route_integration_test.go:255: recorded: stage document, testMSG_att_msg.msg smbprn.00009008.KdcPjl.pdf: 1 of 1 pages rendered at 150 dpi, 1 with a text layer: 207ms wall
-    route_integration_test.go:361: stage: dist-list.pst (unnamed): nested (embedded message, listed without its content), not read: mail lists it without its content
-    route_integration_test.go:361: stage: dist-list.pst (unnamed): nested (embedded message, listed without its content), not read: mail lists it without its content
-    route_integration_test.go:199: stage: outlook.pst 1.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 1.jpg
-    route_integration_test.go:199: stage: outlook.pst 2.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 2.jpg
-    route_integration_test.go:199: stage: outlook.pst 3.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 3.jpg
-    route_integration_test.go:199: stage: outlook.pst 4.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 4.jpg
-    route_integration_test.go:199: stage: outlook.pst 5.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 5.jpg
-    route_integration_test.go:199: stage: outlook.pst 6.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 6.jpg
-    route_integration_test.go:199: stage: outlook.pst 7.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 7.jpg
-    route_integration_test.go:199: stage: outlook.pst 8.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 8.jpg
-    route_integration_test.go:199: stage: outlook.pst 9.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 9.jpg
-    route_integration_test.go:199: stage: outlook.pst 10.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 10.jpg
-    route_integration_test.go:199: stage: outlook.pst 12.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 12.jpg
-    route_integration_test.go:199: stage: outlook.pst 1.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 1.jpg
-    route_integration_test.go:199: stage: outlook.pst 2.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 2.jpg
-    route_integration_test.go:199: stage: outlook.pst 3.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 3.jpg
-    route_integration_test.go:199: stage: outlook.pst 4.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 4.jpg
-    route_integration_test.go:199: stage: outlook.pst 5.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 5.jpg
-    route_integration_test.go:199: stage: outlook.pst 6.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 6.jpg
-    route_integration_test.go:199: stage: outlook.pst 7.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 7.jpg
-    route_integration_test.go:199: stage: outlook.pst 8.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 8.jpg
-    route_integration_test.go:199: stage: outlook.pst 9.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 9.jpg
-    route_integration_test.go:199: stage: outlook.pst 10.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 10.jpg
-    route_integration_test.go:199: stage: outlook.pst 12.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 12.jpg
-    route_integration_test.go:361: stage: testPST.pst (unnamed): nested (embedded message, listed without its content), not read: mail lists it without its content
-    route_integration_test.go:135: recorded: route document: 1 attachments, 1 stage runs
-    route_integration_test.go:135: recorded: route nested: 4 attachments, 1 stage runs
-    route_integration_test.go:135: recorded: route office: 2 attachments, 2 stage runs
-    route_integration_test.go:135: recorded: route unrouted: 5 attachments, 0 stage runs
-    route_integration_test.go:135: recorded: route vision: 36 attachments, 13 stage runs
-    route_integration_test.go:135: recorded: route vision-converted: 2 attachments, 2 stage runs
-    route_integration_test.go:153: recorded: vision picture 1 of 15, office-attachments.msg scan.tif: image/png 640x400, 3366 bytes: 806ms wall, 106 image tokens, 37 output tokens, completed
-    route_integration_test.go:153: description: office-attachments.msg scan.tif: "This image features the word \"TEST\" positioned directly above the word \"TIFF\" in a black, sans-serif font. Both words are set against a plain white background."
-    route_integration_test.go:153: recorded: vision picture 2 of 15, office-attachments.msg diagram.emf: image/png 1489x566, 9952 bytes: 1.42s wall, 374 image tokens, 51 output tokens, completed
-    route_integration_test.go:153: description: office-attachments.msg diagram.emf: "This image shows a blank grid or spreadsheet with text written in different languages in the top left cells. The text includes \"Привет!\" in Russian, \"hi\" in English, and \"o'zbeklar hissasi juda katta\" in Uzbek."
-    route_integration_test.go:153: recorded: vision picture 3 of 15, 03-html-inline-image.msg moth.png, also mailbox.pst moth.png: image/png 1x1, 70 bytes: 689ms wall, 83 image tokens, 31 output tokens, completed
-    route_integration_test.go:153: description: 03-html-inline-image.msg moth.png: "This is a solid, uniform square of a single color. The color is a muted, earthy shade of brown, similar to terracotta or ochre."
-    route_integration_test.go:153: recorded: vision picture 4 of 15, example_sent_regular.msg alfresco.gif: image/bmp 202x74, 16174 bytes: 937ms wall, 86 image tokens, 45 output tokens, completed
-    route_integration_test.go:153: description: example_sent_regular.msg alfresco.gif: "This image features the Alfresco logo, which consists of a colorful, stylized flower icon next to the brand name in gray text. Below the name, a tagline reads, \"The Open Source Alternative for Enterprise Content Management.\""
-    route_integration_test.go:153: recorded: vision picture 5 of 15, test-outlook2003.msg 1.jpg, also outlook.pst 1.jpg, outlook.pst 1.jpg: image/jpeg 32x32, 1969 bytes: 715ms wall, 83 image tokens, 33 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 1.jpg: "This is a small, square icon with a golden border. Inside the frame, there is a circular clock icon positioned above a rectangular shape that resembles an envelope."
-    route_integration_test.go:153: recorded: vision picture 6 of 15, test-outlook2003.msg 2.jpg, also outlook.pst 2.jpg, outlook.pst 2.jpg: image/jpeg 32x32, 1889 bytes: 739ms wall, 83 image tokens, 33 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 2.jpg: "This is a small, stylized icon of a white envelope with a yellow top flap. It is set against a pale yellow background and features a subtle drop shadow."
-    route_integration_test.go:153: recorded: vision picture 7 of 15, test-outlook2003.msg 3.jpg, also outlook.pst 3.jpg, outlook.pst 3.jpg: image/jpeg 32x32, 2088 bytes: 848ms wall, 83 image tokens, 44 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 3.jpg: "This image is a simple, stylized icon featuring a house next to a clock. The house is white with a brown roof and a yellow door, while the clock is a light blue circle with a black clock face."
-    route_integration_test.go:153: recorded: vision picture 8 of 15, test-outlook2003.msg 4.jpg, also outlook.pst 4.jpg, outlook.pst 4.jpg: image/jpeg 32x32, 1934 bytes: 828ms wall, 83 image tokens, 43 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 4.jpg: "This image shows a stylized, abstract representation of a document or a digital interface. It features vertical rectangular blocks in shades of blue and white, arranged in a way that resembles lines of text or a sidebar menu."
-    route_integration_test.go:153: recorded: vision picture 9 of 15, test-outlook2003.msg 5.jpg, also outlook.pst 5.jpg, outlook.pst 5.jpg: image/jpeg 32x32, 2285 bytes: 945ms wall, 83 image tokens, 52 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 5.jpg: "This image features four small, pixelated flags arranged in a two-by-two grid. Each flag is a different color: red, blue, yellow, and green. The flags are set against a light, pale blue background within a square frame."
-    route_integration_test.go:153: recorded: vision picture 10 of 15, test-outlook2003.msg 6.jpg, also outlook.pst 6.jpg, outlook.pst 6.jpg: image/jpeg 32x32, 2136 bytes: 821ms wall, 83 image tokens, 42 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 6.jpg: "This image shows two stylized envelope icons with arrows, suggesting the movement of messages. One arrow points from a text block toward an envelope, while another arrow points away from an envelope toward a different text block."
-    route_integration_test.go:153: recorded: vision picture 11 of 15, test-outlook2003.msg 7.jpg, also outlook.pst 7.jpg, outlook.pst 7.jpg: image/jpeg 32x32, 1964 bytes: 745ms wall, 83 image tokens, 36 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 7.jpg: "This image is a small icon depicting a yellow folder with a magnifying glass positioned in front of it. The magnifying glass is white and blue, suggesting a search or inspection function."
-    route_integration_test.go:153: recorded: vision picture 12 of 15, test-outlook2003.msg 8.jpg, also outlook.pst 8.jpg, outlook.pst 8.jpg: image/jpeg 32x32, 1906 bytes: 795ms wall, 83 image tokens, 40 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 8.jpg: "This is a small, pixelated icon of a calendar with a blue header and a grid of light blue squares. A single red square is outlined within the grid, indicating a specific selected date."
-    route_integration_test.go:153: recorded: vision picture 13 of 15, test-outlook2003.msg 9.jpg, also outlook.pst 9.jpg, outlook.pst 9.jpg: image/jpeg 32x32, 1764 bytes: 720ms wall, 83 image tokens, 34 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 9.jpg: "This is a simple icon of a golden bell set against a pale yellow background. The bell is surrounded by thin, radiating lines that suggest it is ringing or glowing."
-    route_integration_test.go:153: recorded: vision picture 14 of 15, test-outlook2003.msg 10.jpg, also outlook.pst 10.jpg, outlook.pst 10.jpg: image/jpeg 32x32, 1951 bytes: 784ms wall, 83 image tokens, 39 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 10.jpg: "This image shows two rectangular, light blue cards or envelopes stacked slightly offset from one another. Each card features a small red square in the upper right corner and several horizontal gray lines representing text."
-    route_integration_test.go:153: recorded: vision picture 15 of 15, test-outlook2003.msg 12.jpg, also outlook.pst 12.jpg, outlook.pst 12.jpg: image/jpeg 32x32, 1985 bytes: 877ms wall, 83 image tokens, 46 output tokens, completed
-    route_integration_test.go:153: description: test-outlook2003.msg 12.jpg: "This image shows a yellow folder icon with a white envelope placed in front of it. A red \"prohibited\" or \"no\" symbol is overlaid on the envelope, suggesting that sending or receiving messages is blocked or restricted."
-    route_integration_test.go:153: recorded: vision pictures, google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0, 15 distinct pictures, one at a time: 12.669s wall, 1562 image tokens, 606 output tokens, 0 failed; text-only baseline 22 input tokens
---- PASS: TestRoutesToStages (15.29s)
+    route_integration_test.go:126: soffice 26.8.1.1 in gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054, magick 7.1.2
+    route_integration_test.go:127: gs 10.8.0
+    route_integration_test.go:308: recorded: stage office, office-attachments.msg minutes.docx: a docx model, as it was, 0 media, 0 warnings: 25ms wall
+    route_integration_test.go:308: recorded: stage office, office-attachments.msg budget.xls: a xlsx model, from xls through soffice, 0 media, 0 warnings: 678ms wall
+    route_integration_test.go:356: recorded: stage vision-converted, office-attachments.msg scan.tif: 12236 bytes -> png 640x400, 3366 bytes: 21ms wall
+    route_integration_test.go:356: recorded: stage vision-converted, office-attachments.msg diagram.emf: 5132 bytes -> png 1489x566, 9952 bytes: 909ms wall
+    route_integration_test.go:327: recorded: stage vision, office-attachments.msg forwarded.msg > moth.png: image/png 1x1, 70 bytes, as stored
+    route_integration_test.go:378: recorded: stage nested, read again, office-attachments.msg forwarded.msg: OLE2 signature, .msg extension; read through the CLI again, 1 attachments dispatched in turn
+    route_integration_test.go:214: stage: 03-html-inline-image.msg moth.png: vision (PNG signature), its content carried as office-attachments.msg forwarded.msg > moth.png
+    route_integration_test.go:231: stage: 04-attachment-cyrillic.msg отчёт.csv: unrouted (no routed signature), no stage
+    route_integration_test.go:231: stage: 08-forward-attached-message.msg note-g.txt: unrouted (no routed signature), no stage
+    route_integration_test.go:231: stage: 08-forward-attached-message.msg Notes on the engine (draft).eml: unrouted (no routed signature), no stage
+    route_integration_test.go:214: stage: mailbox.pst moth.png: vision (PNG signature), its content carried as office-attachments.msg forwarded.msg > moth.png
+    route_integration_test.go:231: stage: mailbox.pst отчёт.csv: unrouted (no routed signature), no stage
+    route_integration_test.go:231: stage: mailbox.pst note-g.txt: unrouted (no routed signature), no stage
+    route_integration_test.go:327: recorded: stage vision, example_sent_regular.msg alfresco.gif: image/bmp 202x74, 16174 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 1.jpg: image/jpeg 32x32, 1969 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 2.jpg: image/jpeg 32x32, 1889 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 3.jpg: image/jpeg 32x32, 2088 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 4.jpg: image/jpeg 32x32, 1934 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 5.jpg: image/jpeg 32x32, 2285 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 6.jpg: image/jpeg 32x32, 2136 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 7.jpg: image/jpeg 32x32, 1964 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 8.jpg: image/jpeg 32x32, 1906 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 9.jpg: image/jpeg 32x32, 1764 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 10.jpg: image/jpeg 32x32, 1951 bytes, as stored
+    route_integration_test.go:327: recorded: stage vision, test-outlook2003.msg 12.jpg: image/jpeg 32x32, 1985 bytes, as stored
+    route_integration_test.go:368: recorded: stage nested, testMSG_att_msg.msg Test Attachment: embedded message, nested under its record; message "Test Attachment", 0 attachments, dispatched in turn
+    route_integration_test.go:270: recorded: stage document, testMSG_att_msg.msg smbprn.00009008.KdcPjl.pdf: 1 of 1 pages rendered at 150 dpi, 1 with a text layer: 216ms wall
+    route_integration_test.go:381: stage: dist-list.pst (unnamed): nested (embedded message, listed without its content), not read: mail lists it without its content
+    route_integration_test.go:381: stage: dist-list.pst (unnamed): nested (embedded message, listed without its content), not read: mail lists it without its content
+    route_integration_test.go:214: stage: outlook.pst 1.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 1.jpg
+    route_integration_test.go:214: stage: outlook.pst 2.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 2.jpg
+    route_integration_test.go:214: stage: outlook.pst 3.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 3.jpg
+    route_integration_test.go:214: stage: outlook.pst 4.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 4.jpg
+    route_integration_test.go:214: stage: outlook.pst 5.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 5.jpg
+    route_integration_test.go:214: stage: outlook.pst 6.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 6.jpg
+    route_integration_test.go:214: stage: outlook.pst 7.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 7.jpg
+    route_integration_test.go:214: stage: outlook.pst 8.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 8.jpg
+    route_integration_test.go:214: stage: outlook.pst 9.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 9.jpg
+    route_integration_test.go:214: stage: outlook.pst 10.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 10.jpg
+    route_integration_test.go:214: stage: outlook.pst 12.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 12.jpg
+    route_integration_test.go:214: stage: outlook.pst 1.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 1.jpg
+    route_integration_test.go:214: stage: outlook.pst 2.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 2.jpg
+    route_integration_test.go:214: stage: outlook.pst 3.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 3.jpg
+    route_integration_test.go:214: stage: outlook.pst 4.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 4.jpg
+    route_integration_test.go:214: stage: outlook.pst 5.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 5.jpg
+    route_integration_test.go:214: stage: outlook.pst 6.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 6.jpg
+    route_integration_test.go:214: stage: outlook.pst 7.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 7.jpg
+    route_integration_test.go:214: stage: outlook.pst 8.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 8.jpg
+    route_integration_test.go:214: stage: outlook.pst 9.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 9.jpg
+    route_integration_test.go:214: stage: outlook.pst 10.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 10.jpg
+    route_integration_test.go:214: stage: outlook.pst 12.jpg: vision (JPEG signature), its content carried as test-outlook2003.msg 12.jpg
+    route_integration_test.go:381: stage: testPST.pst (unnamed): nested (embedded message, listed without its content), not read: mail lists it without its content
+    route_integration_test.go:142: recorded: route document: 1 attachments, 1 stage runs
+    route_integration_test.go:142: recorded: route nested: 5 attachments, 2 stage runs
+    route_integration_test.go:142: recorded: route office: 2 attachments, 2 stage runs
+    route_integration_test.go:142: recorded: route unrouted: 5 attachments, 0 stage runs
+    route_integration_test.go:142: recorded: route vision: 37 attachments, 13 stage runs
+    route_integration_test.go:142: recorded: route vision-converted: 2 attachments, 2 stage runs
+    route_integration_test.go:144: recorded: route nested, read again: 1 stage runs, 1 attachments dispatched
+    route_integration_test.go:167: recorded: vision picture 1 of 15, office-attachments.msg scan.tif: image/png 640x400, 3366 bytes: 992ms wall, 106 image tokens, 49 output tokens, completed
+    route_integration_test.go:167: description: office-attachments.msg scan.tif: "This image features the word \"TEST\" in large, black, uppercase letters on the top line. Below it, the word \"TIFF\" is written in the same font and style. Both words are set against a plain white background."
+    route_integration_test.go:167: recorded: vision picture 2 of 15, office-attachments.msg diagram.emf: image/png 1489x566, 9952 bytes: 1.147s wall, 374 image tokens, 67 output tokens, completed
+    route_integration_test.go:167: description: office-attachments.msg diagram.emf: "This image shows a white grid or table containing text in different languages. The words \"Привет!\" (Russian for \"Hello!\"), \"hi\" (English), and \"o'zbeklar hissasi juda katta\" (Uzbek for \"the contribution of Uzbeks is very large\") are written in the top left cells."
+    route_integration_test.go:167: recorded: vision picture 3 of 15, office-attachments.msg forwarded.msg > moth.png, also 03-html-inline-image.msg moth.png, mailbox.pst moth.png: image/png 1x1, 70 bytes: 919ms wall, 83 image tokens, 46 output tokens, completed
+    route_integration_test.go:167: description: office-attachments.msg forwarded.msg > moth.png: "This is a solid, uniform image consisting of a single, flat color. The color is a medium shade of brown, similar to terracotta or ochre. There are no patterns, textures, or shapes present in the image."
+    route_integration_test.go:167: recorded: vision picture 4 of 15, example_sent_regular.msg alfresco.gif: image/bmp 202x74, 16174 bytes: 989ms wall, 86 image tokens, 45 output tokens, completed
+    route_integration_test.go:167: description: example_sent_regular.msg alfresco.gif: "This image features the Alfresco logo, which consists of a colorful, stylized flower icon next to the brand name in gray text. Below the name, a tagline reads, \"The Open Source Alternative for Enterprise Content Management.\""
+    route_integration_test.go:167: recorded: vision picture 5 of 15, test-outlook2003.msg 1.jpg, also outlook.pst 1.jpg, outlook.pst 1.jpg: image/jpeg 32x32, 1969 bytes: 775ms wall, 83 image tokens, 36 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 1.jpg: "This is a small, square icon with a golden border. Inside the frame, there is a circular clock icon positioned above a rectangular shape that resembles an envelope or a document."
+    route_integration_test.go:167: recorded: vision picture 6 of 15, test-outlook2003.msg 2.jpg, also outlook.pst 2.jpg, outlook.pst 2.jpg: image/jpeg 32x32, 1889 bytes: 736ms wall, 83 image tokens, 33 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 2.jpg: "This is a small, stylized icon of a white envelope with a yellow top flap. It is set against a pale yellow background and features a subtle drop shadow."
+    route_integration_test.go:167: recorded: vision picture 7 of 15, test-outlook2003.msg 3.jpg, also outlook.pst 3.jpg, outlook.pst 3.jpg: image/jpeg 32x32, 2088 bytes: 1.016s wall, 83 image tokens, 54 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 3.jpg: "This image is a simple, stylized icon featuring a house and a clock. The house is white with a brown roof and a yellow door, while the clock is a light blue circle with a black clock face. The entire graphic is set against a pale yellow background."
+    route_integration_test.go:167: recorded: vision picture 8 of 15, test-outlook2003.msg 4.jpg, also outlook.pst 4.jpg, outlook.pst 4.jpg: image/jpeg 32x32, 1934 bytes: 755ms wall, 83 image tokens, 35 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 4.jpg: "This image shows a stylized, abstract representation of a document or a book layout. It features several horizontal blue bars of varying lengths arranged in two columns against a light background."
+    route_integration_test.go:167: recorded: vision picture 9 of 15, test-outlook2003.msg 5.jpg, also outlook.pst 5.jpg, outlook.pst 5.jpg: image/jpeg 32x32, 2285 bytes: 826ms wall, 83 image tokens, 40 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 5.jpg: "This image features four small, pixelated flags arranged in a two-by-two grid. The flags are colored red, blue, yellow, and green, each attached to a dark pole."
+    route_integration_test.go:167: recorded: vision picture 10 of 15, test-outlook2003.msg 6.jpg, also outlook.pst 6.jpg, outlook.pst 6.jpg: image/jpeg 32x32, 2136 bytes: 886ms wall, 83 image tokens, 44 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 6.jpg: "This image shows two stylized envelope icons with arrows, suggesting the movement or transfer of messages. One arrow points from a text block toward an envelope, while another arrow points away from an envelope toward a different text block."
+    route_integration_test.go:167: recorded: vision picture 11 of 15, test-outlook2003.msg 7.jpg, also outlook.pst 7.jpg, outlook.pst 7.jpg: image/jpeg 32x32, 1964 bytes: 776ms wall, 83 image tokens, 36 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 7.jpg: "This image is a small icon of a yellow folder with a magnifying glass positioned in front of it. The magnifying glass is white and blue, suggesting a search or inspection function."
+    route_integration_test.go:167: recorded: vision picture 12 of 15, test-outlook2003.msg 8.jpg, also outlook.pst 8.jpg, outlook.pst 8.jpg: image/jpeg 32x32, 1906 bytes: 874ms wall, 83 image tokens, 43 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 8.jpg: "This is a small, pixelated icon of a calendar with a blue header and a grid of light blue squares. A single red square is outlined within the grid, likely indicating a selected date or an appointment."
+    route_integration_test.go:167: recorded: vision picture 13 of 15, test-outlook2003.msg 9.jpg, also outlook.pst 9.jpg, outlook.pst 9.jpg: image/jpeg 32x32, 1764 bytes: 752ms wall, 83 image tokens, 35 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 9.jpg: "This is a simple icon of a golden bell set against a pale yellow background. The bell is surrounded by thin, radiating lines that suggest it is ringing or emitting light."
+    route_integration_test.go:167: recorded: vision picture 14 of 15, test-outlook2003.msg 10.jpg, also outlook.pst 10.jpg, outlook.pst 10.jpg: image/jpeg 32x32, 1951 bytes: 820ms wall, 83 image tokens, 39 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 10.jpg: "This image shows two rectangular, light blue cards or envelopes stacked slightly offset from one another. Each card features a small red square in the upper right corner and several horizontal gray lines representing text."
+    route_integration_test.go:167: recorded: vision picture 15 of 15, test-outlook2003.msg 12.jpg, also outlook.pst 12.jpg, outlook.pst 12.jpg: image/jpeg 32x32, 1985 bytes: 917ms wall, 83 image tokens, 46 output tokens, completed
+    route_integration_test.go:167: description: test-outlook2003.msg 12.jpg: "This image shows a yellow folder icon with a white envelope placed in front of it. A red \"prohibited\" or \"no\" symbol is overlaid on the envelope, suggesting that sending or receiving messages is blocked or restricted."
+    route_integration_test.go:167: recorded: vision pictures, google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0, 15 distinct pictures, one at a time: 13.178s wall, 1562 image tokens, 648 output tokens, 0 failed; text-only baseline 22 input tokens
+--- PASS: TestRoutesToStages (15.87s)

@@ -97,19 +97,19 @@
     }
   },
   "floor": {
-    "max_rss": 14172160,
-    "user": 0,
-    "system": 3049000,
-    "wall": 2614024
+    "max_rss": 14184448,
+    "user": 1041000,
+    "system": 2083000,
+    "wall": 2732120
   },
   "runs": [
     {
       "way": "adapter",
       "launched": {
-        "max_rss": 68112384,
-        "user": 11542627000,
-        "system": 3357571000,
-        "wall": 13023457899
+        "max_rss": 67956736,
+        "user": 11613776000,
+        "system": 3272412000,
+        "wall": 12997793730
       },
       "measured": {
         "survey": {
@@ -127,27 +127,27 @@
             "largest": 56,
             "deepest": 3
           },
-          "elapsed": 13018699083
+          "elapsed": 12991104465
         },
         "self": {
-          "max_rss": 47288320,
-          "user": 1727071000,
-          "system": 262151000
+          "max_rss": 53010432,
+          "user": 1731857000,
+          "system": 268791000
         },
         "mail": {
-          "max_rss": 68112384,
-          "user": 9814707000,
-          "system": 3094272000
+          "max_rss": 67956736,
+          "user": 9881603000,
+          "system": 3000552000
         }
       }
     },
     {
       "way": "adapter",
       "launched": {
-        "max_rss": 67989504,
-        "user": 11804576000,
-        "system": 3361020000,
-        "wall": 13270903400
+        "max_rss": 68186112,
+        "user": 11600816000,
+        "system": 3314155000,
+        "wall": 13052202495
       },
       "measured": {
         "survey": {
@@ -165,27 +165,27 @@
             "largest": 56,
             "deepest": 3
           },
-          "elapsed": 13264284102
+          "elapsed": 13046114694
         },
         "self": {
-          "max_rss": 51539968,
-          "user": 1737017000,
-          "system": 271700000
+          "max_rss": 54587392,
+          "user": 1740125000,
+          "system": 237768000
         },
         "mail": {
-          "max_rss": 67989504,
-          "user": 10067211000,
-          "system": 3086268000
+          "max_rss": 68186112,
+          "user": 9860387000,
+          "system": 3074271000
         }
       }
     },
     {
       "way": "adapter",
       "launched": {
-        "max_rss": 68087808,
-        "user": 11832139000,
-        "system": 3361923000,
-        "wall": 13283121000
+        "max_rss": 68141056,
+        "user": 11740039000,
+        "system": 3413155000,
+        "wall": 13276211208
       },
       "measured": {
         "survey": {
@@ -203,27 +203,27 @@
             "largest": 56,
             "deepest": 3
           },
-          "elapsed": 13276606692
+          "elapsed": 13270243123
         },
         "self": {
-          "max_rss": 53194752,
-          "user": 1778700000,
-          "system": 246263000
+          "max_rss": 52527104,
+          "user": 1724894000,
+          "system": 263777000
         },
         "mail": {
-          "max_rss": 68087808,
-          "user": 10053439000,
-          "system": 3112729000
+          "max_rss": 68141056,
+          "user": 10015145000,
+          "system": 3146890000
         }
       }
     },
     {
       "way": "adapter, attachments",
       "launched": {
-        "max_rss": 70598656,
-        "user": 11850258000,
-        "system": 3977855000,
-        "wall": 13847941344
+        "max_rss": 69730304,
+        "user": 12006267000,
+        "system": 3957193000,
+        "wall": 13974085315
       },
       "measured": {
         "survey": {
@@ -243,17 +243,17 @@
             "largest": 56,
             "deepest": 3
           },
-          "elapsed": 13841358238
+          "elapsed": 13969967302
         },
         "self": {
-          "max_rss": 55918592,
-          "user": 1780861000,
-          "system": 324086000
+          "max_rss": 53383168,
+          "user": 1793110000,
+          "system": 319679000
         },
         "mail": {
-          "max_rss": 70598656,
-          "user": 10068656000,
-          "system": 3651692000
+          "max_rss": 69730304,
+          "user": 10212350000,
+          "system": 3637370000
         }
       },
       "written_files": 21202,
@@ -262,10 +262,10 @@
     {
       "way": "adapter, attachments",
       "launched": {
-        "max_rss": 70148096,
-        "user": 11977760000,
-        "system": 3968616000,
-        "wall": 13906965058
+        "max_rss": 69726208,
+        "user": 11792110000,
+        "system": 4039842000,
+        "wall": 13809163457
       },
       "measured": {
         "survey": {
@@ -285,17 +285,17 @@
             "largest": 56,
             "deepest": 3
           },
-          "elapsed": 13900592027
+          "elapsed": 13803315089
         },
         "self": {
-          "max_rss": 53792768,
-          "user": 1865032000,
-          "system": 298535000
+          "max_rss": 56668160,
+          "user": 1835386000,
+          "system": 311576000
         },
         "mail": {
-          "max_rss": 70148096,
-          "user": 10111906000,
-          "system": 3667873000
+          "max_rss": 69726208,
+          "user": 9955968000,
+          "system": 3727097000
         }
       },
       "written_files": 21202,
@@ -304,10 +304,10 @@
     {
       "way": "adapter, attachments",
       "launched": {
-        "max_rss": 69849088,
-        "user": 11900816000,
-        "system": 4108610000,
-        "wall": 13994304095
+        "max_rss": 70201344,
+        "user": 11925608000,
+        "system": 4001908000,
+        "wall": 13932905267
       },
       "measured": {
         "survey": {
@@ -327,17 +327,17 @@
             "largest": 56,
             "deepest": 3
           },
-          "elapsed": 13989330418
+          "elapsed": 13926038725
         },
         "self": {
-          "max_rss": 53878784,
-          "user": 1793896000,
-          "system": 352823000
+          "max_rss": 54419456,
+          "user": 1833470000,
+          "system": 299513000
         },
         "mail": {
-          "max_rss": 69849088,
-          "user": 10106350000,
-          "system": 3755674000
+          "max_rss": 70201344,
+          "user": 10091690000,
+          "system": 3700470000
         }
       },
       "written_files": 21202,
@@ -346,37 +346,37 @@
     {
       "way": "mail",
       "launched": {
-        "max_rss": 67858432,
-        "user": 9921782000,
-        "system": 2998090000,
-        "wall": 13007028631
+        "max_rss": 68026368,
+        "user": 9814320000,
+        "system": 2996279000,
+        "wall": 12900098215
       }
     },
     {
       "way": "mail",
       "launched": {
-        "max_rss": 68481024,
-        "user": 9886116000,
-        "system": 2989702000,
-        "wall": 12965303727
+        "max_rss": 68120576,
+        "user": 9627013000,
+        "system": 3052789000,
+        "wall": 12766363947
       }
     },
     {
       "way": "mail",
       "launched": {
-        "max_rss": 67731456,
-        "user": 9822606000,
-        "system": 3058447000,
-        "wall": 12969183224
+        "max_rss": 68235264,
+        "user": 9910409000,
+        "system": 2979022000,
+        "wall": 12977093188
       }
     },
     {
       "way": "mail, attachments",
       "launched": {
-        "max_rss": 69619712,
-        "user": 9949841000,
-        "system": 3570160000,
-        "wall": 13615080928
+        "max_rss": 69599232,
+        "user": 10054026000,
+        "system": 3612917000,
+        "wall": 13769351802
       },
       "written_files": 21202,
       "written_bytes": 1877202474
@@ -384,10 +384,10 @@
     {
       "way": "mail, attachments",
       "launched": {
-        "max_rss": 69713920,
-        "user": 9998640000,
-        "system": 3500059000,
-        "wall": 13591860365
+        "max_rss": 69513216,
+        "user": 9967837000,
+        "system": 3590920000,
+        "wall": 13660009828
       },
       "written_files": 21202,
       "written_bytes": 1877202474
@@ -395,10 +395,10 @@
     {
       "way": "mail, attachments",
       "launched": {
-        "max_rss": 69787648,
-        "user": 9903015000,
-        "system": 3537053000,
-        "wall": 13532317399
+        "max_rss": 69218304,
+        "user": 10003616000,
+        "system": 3539556000,
+        "wall": 13643094057
       },
       "written_files": 21202,
       "written_bytes": 1877202474

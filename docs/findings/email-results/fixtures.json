@@ -15,7 +15,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1436275,
+    "elapsed": 1645174,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -36,7 +36,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1238911,
+    "elapsed": 976761,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -59,7 +59,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1102947,
+    "elapsed": 1144713,
     "rendered": "0",
     "routes_scored": 1,
     "routes_right": 1
@@ -82,7 +82,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1202208,
+    "elapsed": 1502339,
     "rendered": "0",
     "routes_scored": 1,
     "routes_right": 1
@@ -103,7 +103,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1015501,
+    "elapsed": 1075234,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -124,7 +124,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1065193,
+    "elapsed": 1036990,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -145,7 +145,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1167410,
+    "elapsed": 1173501,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -168,7 +168,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1209283,
+    "elapsed": 1220957,
     "rendered": "0",
     "routes_scored": 2,
     "routes_right": 2
@@ -192,7 +192,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 2621173,
+    "elapsed": 2348952,
     "rendered": "2097156 2097188 2097220 2097252 2097284 2097316 2097348 2097380",
     "threads_truth": "2097156 2097188 2097220 2097252 2097284 2097316 2097348 2097380",
     "threads_scored": 8,
@@ -216,7 +216,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 785332,
+    "elapsed": 806989,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -239,7 +239,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 2762459,
+    "elapsed": 2599116,
     "rendered": "0",
     "routes_scored": 1,
     "routes_right": 1
@@ -260,7 +260,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 4222083,
+    "elapsed": 5210548,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -281,7 +281,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 4310724,
+    "elapsed": 3230495,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -304,7 +304,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 4154766,
+    "elapsed": 4273494,
     "rendered": "0",
     "routes_scored": 11,
     "routes_right": 11
@@ -328,7 +328,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 2739286,
+    "elapsed": 2356079,
     "rendered": "0",
     "routes_scored": 2,
     "routes_right": 2
@@ -349,7 +349,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 2361129,
+    "elapsed": 2706195,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -370,7 +370,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1553395,
+    "elapsed": 1639037,
     "rendered": "0",
     "routes_scored": 0,
     "routes_right": 0
@@ -393,7 +393,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1919045,
+    "elapsed": 2062807,
     "rendered": "2097252 2097348",
     "routes_scored": 2,
     "routes_right": 2
@@ -414,7 +414,7 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1461874,
+    "elapsed": 1540204,
     "rendered": "2097252",
     "routes_scored": 0,
     "routes_right": 0
@@ -437,7 +437,7 @@
       "largest": 2,
       "deepest": 2
     },
-    "elapsed": 5419461,
+    "elapsed": 4964208,
     "rendered": "*[2097188 2097220]",
     "routes_scored": 22,
     "routes_right": 22
@@ -460,7 +460,7 @@
       "largest": 2,
       "deepest": 2
     },
-    "elapsed": 6924526,
+    "elapsed": 6931193,
     "rendered": "2097348 2097252[2097188] 2097220 2097316 2097284 2097380",
     "threads_truth": "2097348 2097252[2097188] 2097220 2097316 2097284 2097380",
     "threads_scored": 7,
@@ -484,7 +484,7 @@
       "largest": 4,
       "deepest": 2
     },
-    "elapsed": 4895505,
+    "elapsed": 4751933,
     "rendered": "2097188[2097220 2097252 2097284]",
     "threads_truth": "2097188[2097220 2097252 2097284]",
     "threads_scored": 4,
@@ -498,8 +498,9 @@
     "messages": 1,
     "skipped": 0,
     "warnings": 0,
-    "attachments": 4,
+    "attachments": 5,
     "routes": {
+      "nested": 1,
       "office": 2,
       "vision-converted": 2
     },
@@ -511,9 +512,9 @@
       "largest": 1,
       "deepest": 1
     },
-    "elapsed": 1650400,
+    "elapsed": 1684537,
     "rendered": "0",
-    "routes_scored": 4,
-    "routes_right": 4
+    "routes_scored": 5,
+    "routes_right": 5
   }
 ]
