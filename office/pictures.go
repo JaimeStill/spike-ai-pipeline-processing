@@ -43,6 +43,16 @@ const DefaultMetafileScale = 3
 // picture is rendered on is 6352x8984 pixels, some 57 million, before the trim.
 const MaxMetafileScale = 8
 
+// metafileScale returns the scale a request's MetafileScale asks for, DefaultMetafileScale when
+// it is zero, or an error when it is negative or above MaxMetafileScale.
+func metafileScale(scale int) (int, error) {
+	s := cmp.Or(scale, DefaultMetafileScale)
+	if s < 1 || s > MaxMetafileScale {
+		return 0, fmt.Errorf("office: metafile scale %d isn't from 1 to %d", scale, MaxMetafileScale)
+	}
+	return s, nil
+}
+
 // pageWidth and pageHeight are, in pixels at 96 dpi, the page LibreOffice's Draw places a
 // metafile on: A4, which metafileLocale makes its default page. The picture keeps its own size
 // on the page, at its center, so rendering the page at a scale renders the picture at that scale.

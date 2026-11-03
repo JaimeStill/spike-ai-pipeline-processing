@@ -20,7 +20,9 @@ import (
 )
 
 // standinEnv marks a process as a stand-in: the test binary, re-executed through a link named
-// spike-ai-pipeline-mail, acting on its arguments as mail instead of running the tests.
+// spike-ai-pipeline-mail, acting on its arguments as mail instead of running the tests, or
+// through one named spike-ai-pipeline-office or magick, acting as the office and magick the
+// office package's ConvertPicture is built over.
 const standinEnv = "MAIL_TEST_STANDIN"
 
 // The stand-in's settings, which it reads from the environment it inherits.
@@ -49,11 +51,15 @@ const standinLines = `{"line":"store","schema":"1","format":"msg"}
 
 func TestMain(m *testing.M) {
 	if os.Getenv(standinEnv) == "1" {
-		if name := filepath.Base(os.Args[0]); name != "spike-ai-pipeline-mail" {
+		switch name := filepath.Base(os.Args[0]); name {
+		case "spike-ai-pipeline-mail":
+			os.Exit(standin(os.Args[1:]))
+		case "spike-ai-pipeline-office", "magick":
+			os.Exit(pictureStandin(name, os.Args[1:]))
+		default:
 			fmt.Fprintf(os.Stderr, "stand-in: no tool named %s\n", name)
 			os.Exit(2)
 		}
-		os.Exit(standin(os.Args[1:]))
 	}
 	// The stand-in inherits the environment. Under -race, GORACE's atexit_sleep_ms keeps it from
 	// sleeping a second as it exits.

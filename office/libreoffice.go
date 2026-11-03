@@ -46,7 +46,8 @@ func LibreOfficeSpec() tool.Spec {
 }
 
 // ErrNoLibreOffice is the cause of the error a conversion returns for a legacy document when the
-// Converter has no LibreOffice converter. Nothing runs for it.
+// Converter has no LibreOffice converter, and of the error ConvertPicture returns for an EMF or
+// WMF then. Nothing runs for it.
 var ErrNoLibreOffice = errors.New("no LibreOffice converter")
 
 // ole2Signature begins every OLE2 compound file: the legacy binary formats, and an encrypted

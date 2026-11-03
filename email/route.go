@@ -32,7 +32,9 @@ const (
 	// RouteVision is a picture a vision model decodes as stored: PNG, JPEG, GIF, or BMP.
 	RouteVision Route = "vision"
 	// RouteVisionConverted is a picture a vision model decodes only once office's picture
-	// conversion has made it a PNG: TIFF, EMF, or WMF. The caller converts it first.
+	// conversion has made it a PNG: TIFF, EMF, or WMF. The caller converts it first, through the
+	// office package's Converter.ConvertPicture given the attachment's Path, which tells the kind
+	// by the same signatures and names the PNG by the content's SHA-256.
 	RouteVisionConverted Route = "vision-converted"
 	// RouteNested is a message: an embedded message, nested under its record in a .msg and
 	// listed without its content in a .pst, or a by-value .msg file, an OLE2 compound file whose

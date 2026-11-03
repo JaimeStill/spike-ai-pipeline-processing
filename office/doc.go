@@ -89,12 +89,19 @@
 //   - [MagickMinimum] is the oldest magick the Converter accepts, 7.1.
 //   - [DefaultMetafileScale] is the scale EMF and WMF pictures are rendered at by default, 3.
 //   - [MaxMetafileScale] is the largest scale a Request may render them at, 8.
-//   - [ErrNoLibreOffice] is the cause of a legacy document's refusal without a LibreOffice Tool.
+//   - [ErrNoLibreOffice] is the cause of a legacy document's refusal without a LibreOffice Tool,
+//     and of an EMF's or WMF's in ConvertPicture.
+//   - [ErrNoMagick] is the cause of a TIFF's, EMF's, or WMF's refusal in ConvertPicture without a
+//     magick Tool.
 //   - [Config] is the Tools a Converter is built over: office, LibreOffice for legacy documents
 //     and, with magick, EMF and WMF pictures, and magick for TIFF pictures.
 //   - [Converter] converts office documents through office.
 //   - [NewConverter] builds a Converter over a Config.
 //   - [Converter.Convert] converts one document as a Request says.
+//   - [Converter.ConvertPicture] converts one TIFF, EMF, or WMF file, told by its signature, to
+//     a PNG named by its SHA-256, as a PictureRequest says, through Convert's own conversion.
+//   - [PictureRequest] is one picture's conversion: its working directory, where the PNG is
+//     written, the picture's path, and the scale an EMF or WMF is rendered at.
 //   - [Request] is one document's conversion: its working directory, its format, its file name,
 //     and the scale its EMF and WMF pictures are rendered at.
 //   - [Format] is a conversion's rendering: [JSON] or [Markdown].

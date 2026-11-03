@@ -52,8 +52,8 @@
 //     attachment records; an Attachment's Path names its content's file in the attachments
 //     directory.
 //   - [Attachment.Route] returns an attachment's [Route] and why, decided by its content's
-//     signature: [RouteDocument], [RouteOffice], [RouteVision], [RouteVisionConverted],
-//     [RouteNested], or [RouteUnrouted].
+//     signature: [RouteDocument], [RouteOffice], [RouteVision], [RouteVisionConverted] (for the
+//     office package's Converter.ConvertPicture), [RouteNested], or [RouteUnrouted].
 //   - [Threader] builds a store's threads from the threading keys of the messages
 //     [Threader.Add] is fed while a Stream is read; [Threader.Threads] returns them.
 //   - [Threads] builds the threads of a read's Records whole.

@@ -5,7 +5,6 @@ package office
 import (
 	"bufio"
 	"bytes"
-	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -254,9 +253,9 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 	if req.Format != JSON && req.Format != Markdown {
 		return nil, fmt.Errorf("office: unknown format %v", req.Format)
 	}
-	scale := cmp.Or(req.MetafileScale, DefaultMetafileScale)
-	if scale < 1 || scale > MaxMetafileScale {
-		return nil, fmt.Errorf("office: metafile scale %d isn't from 1 to %d", req.MetafileScale, MaxMetafileScale)
+	scale, err := metafileScale(req.MetafileScale)
+	if err != nil {
+		return nil, err
 	}
 	if err := ctx.Err(); err != nil {
 		return nil, err
