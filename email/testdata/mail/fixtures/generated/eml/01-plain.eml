@@ -1,0 +1,18 @@
+Received: from mx.example.org by mail.example.org; Mon, 12 Jan 2026 14:16:30 +0000
+Message-ID: <notes-1@example.org>
+Date: Mon, 12 Jan 2026 09:15:00 -0500
+From: Ada Lovelace <ada@example.org>
+To: Charles Babbage <charles@example.org>, analytical-engine@example.org
+Cc: "Mary Somerville" <mary@example.org>
+Subject: Notes on the engine
+Importance: high
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Charles,
+
+I have finished the notes on the engine. Note G has the table for the
+Bernoulli numbers.
+
+Ada

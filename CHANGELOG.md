@@ -6,6 +6,81 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.4.0] - 2026-11-03
+
+### Added
+
+- `email`, which reads mail stores, Outlook .pst stores and .msg messages, for a model through
+  spike-ai-pipeline-mail's CLI, on Linux, the standard library, and `tool`. It provides
+  pre-inference preparation only, and the program it runs is a `tool.Tool` the caller built.
+  Additive to v0.3.0: `tool`, `document`, and `office`'s existing API are unchanged.
+- The `Reader`, built by `NewReader` over a `Config`: a mail Tool, required, that `MailSpec`
+  declares, refused when older than `MailMinimum`, 0.1.0. `Reader.Read` returns a `Stream` for one
+  `Request`, an input path and an optional attachments directory, and refuses an invalid one, with
+  no input or a path that can't be made absolute, with an error matching `ErrRequest` before
+  anything runs. Ranging over `Stream.Records` runs mail once and yields each line it writes while
+  it runs, decoded one line at a time from a pipe through encoding/json/v2 into typed values
+  mirroring schema "1": `Store`, `Folder`, `Message` (with `Address`, `Body`, `Derived`, and
+  `Attachment`), and `Skipped`, so memory follows the record being read, never the store. A line of
+  a kind the package doesn't know is kept as an
+  `UnknownRecord`; a store line of another schema is an error matching `ErrSchema`. A loop that
+  stops early stops mail.
+- mail's outcomes as errors: each warning line on stderr is one of `Stream.Warnings`, and a read
+  with skipped records and warnings succeeds; exit codes 1 to 4 are an `*ExitError` carrying
+  mail's message that matches `ErrNotWritten`, `ErrUsage`, `ErrRefused` (an .ost's among them),
+  or `ErrFailed`. A cancelled read returns an error matching the context's.
+- Attachment routes: with an attachments directory, each `Attachment`'s `Path` names the file mail
+  wrote, under its content's SHA-256, and `Attachment.Route` names the stage the content goes to
+  next, and why, by the content's signature, never the stored MIME type: `RouteDocument` (PDF),
+  `RouteOffice` (a ZIP with an OOXML extension, or an OLE2 file with a legacy one),
+  `RouteVision` (PNG, JPEG, GIF, BMP, as stored), `RouteVisionConverted` (TIFF, EMF, WMF, for
+  `office.Converter.ConvertPicture`), `RouteNested` (an embedded message, or an OLE2 file named
+  .msg), or `RouteUnrouted`. The package never runs the stage.
+- Threads: a `Threader`, fed each record while a Stream is read, keeps each message's threading
+  keys alone; `Threader.Threads`, and `Threads` over a read's Records whole, build the store's
+  threads as `Thread` trees by RFC 5256's REFERENCES algorithm over Message-ID, In-Reply-To, and
+  References, with a message that names no parent taking the one its conversation index names.
+  Placeholders are pruned as RFC 5256 says, roots with the same base subject are gathered, and
+  children are ordered by sent date.
+- `office.Converter.ConvertPicture` and `office.PictureRequest`: one TIFF, EMF, or WMF file, told by
+  its content's signature, converted to PNG outside a document through `Convert`'s own picture
+  conversion, the PNG named by the picture's SHA-256; a missing converter is an error, an EMF or
+  WMF without LibreOffice matching `ErrNoLibreOffice` and any of the three without magick the new
+  `office.ErrNoMagick`. It is what `RouteVisionConverted` hands a picture to.
+- mail 0.1.0 pinned in mise from its GitHub release, checked against the release's digest, and
+  reported by `mise run currency` when a newer one ships.
+- The email fixtures in `email/testdata`: mail's committed fixtures and goldens copied byte for
+  byte at its tag, pinned by a SHA-256 manifest the check verifies offline, refreshed by
+  `mise run fixtures:mail`; and a built .msg attaching four of this repository's office fixtures
+  and, by value, one of mail's .msg fixtures, rebuilt by mail's generator at its tag through `mise
+  run fixtures:built`, which needs .NET and
+  network and which the check never runs. The hermetic check runs a stand-in mail for exits,
+  warnings, arguments, and cancellation, and the real pinned mail over every fixture against its
+  goldens, routes, and threads.
+- The email integration tier, which carries every fixture's attachments to their real stage and
+  sends each distinct picture to Gemma 4 26B-A4B on the router `SPIKE_ROUTER_URL` names; and the
+  findings tier, findings-tagged tests run by `mise run findings-email`, never in CI, which score
+  threads and routes over the fixtures against hand truth and time the adapter on plaso's store
+  and the scale store. What they measured is in `docs/findings/email.md`.
+- Known limits of `email`: a by-value .eml attachment is unrouted; .ost is refused by mail; in a
+  .pst, an embedded message is nested without its content; a by-reference attachment is
+  unrouted; and the stores mail's generator writes carry no threading fields, so they thread by
+  subject alone.
+
+### Changed
+
+- Currency: jdx/mise-action v5.2.5 to v5.2.6 in CI, and taiki-e/create-gh-release-action v1.11.0
+  to v1.12.0 in the release workflow.
+- The vision tests' router client and response helpers, which `document`'s, `office`'s, and
+  `email`'s integration tiers each carried a copy of, are one internal package,
+  `internal/visiontest`, built under the integration tag alone.
+
+### Fixed
+
+- The `tool` integration tests' container leak check counts only the containers of its own
+  ffmpeg image, so the LibreOffice containers office's and email's tests start through the same
+  runner, in parallel, no longer fail it.
+
 ## [v0.3.0] - 2026-11-02
 
 ### Added
@@ -216,7 +291,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.4.0...HEAD
+[v0.4.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.4.0
 [v0.3.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.3.0
 [v0.2.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.1.0

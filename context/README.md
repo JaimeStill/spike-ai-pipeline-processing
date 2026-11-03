@@ -22,6 +22,17 @@ express; the spike's question and evidence live in the root repository's `contex
   trimmed by magick, TIFF through magick, PNG named by the original's SHA-256, the Markdown's links
   rewritten. Vision over the pictures is test code in the integration tier, whose results
   `docs/findings/office.md` records with the legacy round trip's loss and the container's
-  footprint.
+  footprint. ConvertPicture converts one TIFF, EMF, or WMF file outside a document, for email's
+  RouteVisionConverted.
+- **email**: the adapter over spike-ai-pipeline-mail's CLI, its JSON Lines streamed from a pipe
+  into typed schema "1" records, a .pst's or a .msg's, with mail's warnings and exit codes as
+  errors; attachment routes by content signature, never the stored type, from the attachments
+  directory mail writes; and threads by RFC 5256's REFERENCES algorithm plus conversation-index
+  parents, from keys a Threader keeps while the stream is read. Its fixtures are mail's, copied at
+  its tag under a SHA-256 manifest, and a built .msg of this repository's office fixtures and,
+  by value, one of mail's .msg fixtures. The
+  integration tier carries each route to its real stage; the findings tier, whose results
+  `docs/findings/email.md` records, scores threads and routes against hand truth and times the
+  adapter on plaso's store and mail's generated scale store, neither committed.
 - **audio**: windows cut at silences, concurrent transcription, and the seam merge.
 - **streams**: live and real-time-paced media, and chat streams, as events.

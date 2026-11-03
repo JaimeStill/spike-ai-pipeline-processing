@@ -1,0 +1,29 @@
+{
+  "note": "Written by the generator (MISE_ENV=fixtures mise run fixtures); edit layout.json or the .eml sources, never this file. Each output was built twice in the run, and byte_stable is whether the two builds were identical. Neither format is: PST Builder 1.3.0 writes a random store UID and a random search key per message (Guid.NewGuid), and MsgKit 3.0.6 random record keys and entry IDs and the time of conversion as the creation and modification times. So each output's sha256 records the committed file only; a rerun shows drift in an output's size, and the tests show drift in its content.",
+  "tools": {
+    "dotnet-sdk": "10.0.402",
+    "dotnet-runtime": "10.0.13",
+    "PstBuilder": "1.3.0",
+    "PstBuilder.Eml": "1.3.0",
+    "MsgKit": "3.0.6",
+    "MimeKit": "4.18.2",
+    "OpenMcdf": "3.3.0"
+  },
+  "sources": [
+    {
+      "file": "eml/office-attachments.eml",
+      "sha256": "cd662fbbd7ff7c7e0a94b43d7e98f78703c7ce348e06fc0008b0d0dc67b36afb"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "msg/office-attachments.msg",
+      "sha256": "048e98824f1ea8077d950e98ce95e12d965f919f914138dd939d71ebc4759423",
+      "size": 79360,
+      "byte_stable": false,
+      "sources": [
+        "eml/office-attachments.eml"
+      ]
+    }
+  ]
+}

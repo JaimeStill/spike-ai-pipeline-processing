@@ -1,0 +1,97 @@
+{
+  "note": "Hand truth for the threading fields of Tika's two stores, one entry per message in the store's folder and contents order; null is a field the store doesn't hold. Message-ID, In-Reply-To and References were checked against each message's own transport headers, where it has them (not the last message of testPST.pst). testPST_variousBodyTypes.pst's conversation indexes were checked against the Thread-Index headers, base64-decoded. testPST.pst has no Thread-Index headers: its indexes were read from the store, and the replies were checked to extend their originals' 22-byte header block by one 5-byte child block.",
+  "stores": {
+    "tika/testPST.pst": [
+      {
+        "subject": "Re: Feature Generators",
+        "message_id": "<530D9CAC.5080901@gmail.com>",
+        "in_reply_to": "<CAJ+FrY6C_Hp_b-Pzx2VqUqnonx9Dei8kcXDV7j1wPT99mNKsuA@mail.gmail.com>",
+        "references": "<CAJ+FrY6C_Hp_b-Pzx2VqUqnonx9Dei8kcXDV7j1wPT99mNKsuA@mail.gmail.com>",
+        "conversation_topic": "Feature Generators",
+        "conversation_index": "0101cf3261feef5e54df7f998f42a727517f633a04ac9ac729f300"
+      },
+      {
+        "subject": "Re: init tokenizer fails: \"Bad type in putfield/putstatic\"",
+        "message_id": "<1393363252.28814.YahooMailNeo@web140906.mail.bf1.yahoo.com>",
+        "in_reply_to": null,
+        "references": null,
+        "conversation_topic": "init tokenizer fails: \"Bad type in putfield/putstatic\"",
+        "conversation_index": "0101cf326f7696e70de2a73ccd4e8e9f9b7400860ae5"
+      },
+      {
+        "subject": "Feature Generators",
+        "message_id": "<CAJ+FrY6C_Hp_b-Pzx2VqUqnonx9Dei8kcXDV7j1wPT99mNKsuA@mail.gmail.com>",
+        "in_reply_to": null,
+        "references": null,
+        "conversation_topic": "Feature Generators",
+        "conversation_index": "0101cf3261feef5e54df7f998f42a727517f633a04ac"
+      },
+      {
+        "subject": "[jira] [Resolved] (TIKA-1249) Vcard files detection",
+        "message_id": "<JIRA.12697327.1393405059550.107997.1393417219950@arcas>",
+        "in_reply_to": "<JIRA.12697327.1393405059550@arcas>",
+        "references": "<JIRA.12697327.1393405059550@arcas>",
+        "conversation_topic": "[jira] [Resolved] (TIKA-1249) Vcard files detection",
+        "conversation_index": "0101cf32ed2005467c12e4446d43b39bd21f1a9e2ac9"
+      },
+      {
+        "subject": "[jira] [Commented] (TIKA-1250) Process loops infintely processing a CHM file",
+        "message_id": "<JIRA.12697352.1393416577650.107951.1393416740976@arcas>",
+        "in_reply_to": "<JIRA.12697352.1393416577650@arcas>",
+        "references": "<JIRA.12697352.1393416577650@arcas>",
+        "conversation_topic": "[jira] [Commented] (TIKA-1250) Process loops infintely processing a CHM file",
+        "conversation_index": "0101cf32ec022a005a9ed78ffb4a866de2b7f8f90ee2"
+      },
+      {
+        "subject": "[WEBINAR] - \"Introducing Couchbase Server 2.5\"",
+        "message_id": "<343897812.110224025.1393276474157.JavaMail.root@abmas02.marketo.org>",
+        "in_reply_to": null,
+        "references": null,
+        "conversation_topic": "[WEBINAR] - \"Introducing Couchbase Server 2.5\"",
+        "conversation_index": "0101cf31a56cf06c7c00d36df4429ee6658928eda398"
+      },
+      {
+        "subject": "FW: First email",
+        "message_id": "<2915856a7d3449e68529f3e61b8d26bc@pf.gov.br>",
+        "in_reply_to": "<3148510c2360443396a78d35e0888de9@pf.gov.br>",
+        "references": "<3148510c2360443396a78d35e0888de9@pf.gov.br>",
+        "conversation_topic": "First email",
+        "conversation_index": "01d6c441ee0a7d408d320c2c40f6ac88aae17faebcda000005c400"
+      }
+    ],
+    "tika/testPST_variousBodyTypes.pst": [
+      {
+        "subject": "original email",
+        "message_id": "<MWHPR09MB1391E30131B0D193163AA6E0C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "in_reply_to": null,
+        "references": null,
+        "conversation_topic": "original email",
+        "conversation_index": "01d321c5c2dc64ee4b2f50da41d68f42001487a4d229"
+      },
+      {
+        "subject": "FW: original email",
+        "message_id": "<MWHPR09MB1391413CE029AC2620153A18C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "in_reply_to": "<MWHPR09MB1391E30131B0D193163AA6E0C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "references": "<MWHPR09MB1391E30131B0D193163AA6E0C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "conversation_topic": "original email",
+        "conversation_index": "01d321c5c2dc64ee4b2f50da41d68f42001487a4d2290000049f70"
+      },
+      {
+        "subject": "FW: original email",
+        "message_id": "<MWHPR09MB139102BEC166B4E7E45937FDC79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "in_reply_to": "<MWHPR09MB1391E30131B0D193163AA6E0C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "references": "<MWHPR09MB1391E30131B0D193163AA6E0C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "conversation_topic": "original email",
+        "conversation_index": "01d321c5c2dc64ee4b2f50da41d68f42001487a4d22900000b50b0"
+      },
+      {
+        "subject": "FW: original email",
+        "message_id": "<MWHPR09MB139197A39B6D512965440118C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "in_reply_to": "<MWHPR09MB1391E30131B0D193163AA6E0C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "references": "<MWHPR09MB1391E30131B0D193163AA6E0C79C0@MWHPR09MB1391.namprd09.prod.outlook.com>",
+        "conversation_topic": "original email",
+        "conversation_index": "01d321c5c2dc64ee4b2f50da41d68f42001487a4d2290000107ef0"
+      }
+    ]
+  }
+}

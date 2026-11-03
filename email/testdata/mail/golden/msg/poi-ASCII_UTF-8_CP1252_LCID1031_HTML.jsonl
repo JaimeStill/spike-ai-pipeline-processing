@@ -1,0 +1,2 @@
+{"line":"store","schema":"1","format":"msg"}
+{"line":"message","class":"IPM.Note","subject":"Subject öäü Subject","body":{"text":"Body öäü Body","html":"<!DOCTYPE html><html><meta charset=\\\"utf-8\\\"><body>HTML öäü</body></html>","derived":{"markdown":"HTML öäü"}}}

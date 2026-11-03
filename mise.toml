@@ -7,6 +7,9 @@ shellcheck = "0.11.0"
 # office, from its GitHub release, for the office package's tests that run the real binary; mise
 # checks the archive against the release's digest.
 "github:JaimeStill/spike-ai-pipeline-office" = "0.1.0"
+# mail, from its GitHub release, for the email package's tests that run the real binary; mise
+# checks the archive against the release's digest.
+"github:JaimeStill/spike-ai-pipeline-mail" = "0.1.0"
 
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
@@ -36,13 +39,14 @@ for mod in $GO_MODULES; do
   golangci-lint run ./...
   golangci-lint run --build-tags integration ./...
   golangci-lint run --build-tags bakeoff ./...
+  golangci-lint run --build-tags findings ./...
 done
 '''
 
 # The integration tier runs the integration-tagged tests on this machine: real ffprobe, gs, and
-# magick on PATH, the office binary mise pins, a reachable docker daemon, which pulls the pinned
-# ffmpeg and LibreOffice images when they aren't present, and, for the vision tests, the router
-# SPIKE_ROUTER_URL names. It never starts a server.
+# magick on PATH, the office and mail binaries mise pins, a reachable docker daemon, which pulls
+# the pinned ffmpeg and LibreOffice images when they aren't present, and, for the vision tests,
+# the router SPIKE_ROUTER_URL names. It never starts a server.
 [tasks.integration]
 description = "Run the integration-tagged tests against this machine's tools and docker, and the router"
 run = '''
@@ -56,6 +60,20 @@ done
 [tasks.currency]
 description = "Report every requirement, Go version, and tool behind its latest; writes nothing"
 run = "scripts/currency.sh"
+
+# The email package's copy of mail's fixtures and goldens, refreshed from mail's tag on the remote;
+# it reports any drift against the copy's manifest. The check never fetches: it verifies the copy
+# against the manifest offline.
+[tasks."fixtures:mail"]
+description = "Refresh email's copy of mail's fixtures from mail's tag; reports drift against the manifest"
+run = "scripts/fixtures-mail.sh"
+
+# The email package's built .msg, rebuilt by mail's fixtures generator at its tag from an .eml
+# source that attaches this repository's own office fixtures. It needs network access and installs
+# .NET through mise; the check never runs it, and reads the committed .msg and its MANIFEST.
+[tasks."fixtures:built"]
+description = "Rebuild email's built .msg with mail's fixtures generator from its .eml source; needs .NET and network"
+run = "scripts/fixtures-built.sh"
 
 # The bake-off tier runs the bakeoff-tagged tests in package document: five PDF renderers on this
 # machine's poppler, ghostscript, libvips, and ImageMagick, each page sent to Gemma 4 26B-A4B on
@@ -216,3 +234,13 @@ for dpi in 300 200; do
 done
 exit "$failed"
 '''
+
+# Evidence 16's email finding, in the findings tier: the findings-tagged tests in package email
+# thread and route every fixture against the tests' hand truth, count plaso's 59 MB store's threads
+# and routes, and time the adapter, threads included, and mail alone on plaso's store and on the
+# scale store EMAIL_SCALE_STORE names, with their peak memory. plaso's store is fetched into
+# .state/ and checked by its SHA-256; neither store is committed. An EMAIL_FINDINGS_RESULTS the
+# shell sets keeps the run's results there; unset, the run keeps nothing. It isn't CI.
+[tasks.findings-email]
+description = "Run the email finding on the fixtures, plaso's store, and the EMAIL_SCALE_STORE scale store; keeps results only in EMAIL_FINDINGS_RESULTS"
+run = "scripts/findings-email.sh"

@@ -1,0 +1,54 @@
+{
+  "note": "Hand truth for Tika's .msg files: the values Apache Tika's own OutlookParserTest asserts of them, at the commit and path below, each written as a JSON pointer into the CLI's message line and the value the CLI's field has when it holds what Tika's assertion holds. Tika's metadata names map to the CLI's fields: TITLE and SUBJECT to /subject, MESSAGE_TO_NAME to a To recipient's name, MESSAGE_TO_EMAIL to its address, FROM_REPRESENTING_NAME and _EMAIL to the sender's (the sender and the represented sender are one person in these files), INTERNET_MESSAGE_ID, IN_REPLY_TO_ID, INTERNET_REFERENCES and CONVERSATION_INDEX to the threading fields, an embedded resource path to an attachment's filename or its embedded message, and ATTACH_FLAGS 4 (ATT_MHTML_REF) to the inline flag. Assertions on content, on the Tika-only metadata, or by prefix only, are not written here. tests/msg.rs reads this file.",
+  "source": {
+    "repository": "https://github.com/apache/tika",
+    "commit": "48010f83ad3869119f54546cbb272fde88130283",
+    "path": "tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/java/org/apache/tika/parser/microsoft/OutlookParserTest.java",
+    "license": "Apache-2.0; tika/LICENSE and tika/NOTICE",
+    "sha256": "cda07ccf0b7b48da56c5895c1b804a81d437f5bad0e4210314406d4b382f793a"
+  },
+  "messages": {
+    "tika/test-outlook2003.msg": {
+      "tests": "testOutlookNew, testAttachFlagsExtracted",
+      "fields": {
+        "/subject": "Welcome to Microsoft Office Outlook 2003",
+        "/to/0/name": "New Outlook User",
+        "/attachments/0/inline": true,
+        "/attachments/1/inline": true,
+        "/attachments/2/inline": true,
+        "/attachments/3/inline": true,
+        "/attachments/4/inline": true,
+        "/attachments/5/inline": true,
+        "/attachments/6/inline": true,
+        "/attachments/7/inline": true,
+        "/attachments/8/inline": true,
+        "/attachments/9/inline": true,
+        "/attachments/10/inline": true
+      }
+    },
+    "tika/testMSG_chinese.msg": {
+      "tests": "testOutlookHTMLVersion",
+      "fields": {
+        "/sender/name": "Tests Chang@FT (張毓倫)",
+        "/sender/address": "/O=FT GROUP/OU=FT/CN=RECIPIENTS/CN=LYDIACHANG",
+        "/to/0/address": "tests.chang@fengttt.com",
+        "/message_id": "<EBB9951D34EA4B41B70AB946CF3FB6EC1A297D98@ftm02.FT.FTG.COM>"
+      }
+    },
+    "tika/testMSG_forwarded.msg": {
+      "tests": "testOutlookForwarded",
+      "fields": {
+        "/conversation_index": "01ccb5408a75b6cf3ad7837949b698499034202313ef000002a160",
+        "/references": "<C8508767C15DBF40A21693142739EA8D564D18FDA1@EXVMBX018-1.exch018.msoutlookonline.net>",
+        "/in_reply_to": "<C8508767C15DBF40A21693142739EA8D564D18FDA1@EXVMBX018-1.exch018.msoutlookonline.net>"
+      }
+    },
+    "tika/testMSG_att_msg.msg": {
+      "tests": "testEmbeddedPath",
+      "fields": {
+        "/attachments/0/method": "embedded_message",
+        "/attachments/1/filename": "smbprn.00009008.KdcPjl.pdf"
+      }
+    }
+  }
+}

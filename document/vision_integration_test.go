@@ -17,9 +17,8 @@ import (
 	"testing"
 	"time"
 
-	client "github.com/JaimeStill/spike-ai-pipeline-client"
-	"github.com/JaimeStill/spike-ai-pipeline-client/format/completions"
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 )
 
 // The vision tier: the vision harness's pages and document (vision_test.go), on the released
@@ -49,34 +48,13 @@ const (
 	pageRetries = 1
 )
 
-// routerClient returns a Client of the router SPIKE_ROUTER_URL names, speaking Chat Completions,
-// with autoload=false so a request fails rather than load a model. It skips t when
-// SPIKE_ROUTER_URL is unset.
-func routerClient(t *testing.T) *client.Client {
-	t.Helper()
-	base := os.Getenv("SPIKE_ROUTER_URL")
-	if base == "" {
-		t.Skip("SPIKE_ROUTER_URL is unset: set it to the router to test against, such as http://gb10-2:8080")
-	}
-	c, err := client.New(client.Config{
-		BaseURL: strings.TrimSuffix(base, "/") + "/v1",
-		Query:   url.Values{"autoload": {"false"}},
-		HTTP:    &http.Client{Timeout: 5 * time.Minute},
-		Format:  completions.New(),
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	return c
-}
-
 // hostVision builds a vision over the router's Client and the host's gs, with no corrections
 // stage, and a request for a PDF: each page transcribed as the bake-off transcribes, greedy and
 // with reasoning off, at 150 dpi and 4 pages at once, capped at pageOutputCap and retried
 // pageRetries times, and a final request for a digest.
 func hostVision(t *testing.T) (*vision, visionRequest) {
 	t.Helper()
-	c := routerClient(t)
+	c := visiontest.Router(t)
 	g, _ := hostGhostscript(t)
 	v, err := newVision(c, g, nil)
 	if err != nil {
@@ -431,7 +409,7 @@ func TestVisionDocumentScannedHost(t *testing.T) {
 // begins and ends in the model's chat template. The request has no output bound of its own, which
 // the protocol sets no lower than 16; Native's max_completion_tokens of 1 bounds it instead.
 func TestVisionImageTokensHost(t *testing.T) {
-	c := routerClient(t)
+	c := visiontest.Router(t)
 	g, _ := hostGhostscript(t)
 	ask := func(parts ...protocol.ContentPart) int {
 		t.Helper()

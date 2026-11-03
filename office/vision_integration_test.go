@@ -3,25 +3,16 @@
 package office_test
 
 import (
-	"bytes"
-	"encoding/binary"
 	"encoding/json/jsontext"
 	"fmt"
-	"image"
-	_ "image/gif"  // decodes a GIF's size
-	_ "image/jpeg" // decodes a JPEG's size
-	_ "image/png"  // decodes a PNG's size
-	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
-	client "github.com/JaimeStill/spike-ai-pipeline-client"
-	"github.com/JaimeStill/spike-ai-pipeline-client/format/completions"
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
 )
 
@@ -40,27 +31,6 @@ const (
 	// it, and a model that loops on its text stops at it.
 	describeOutputCap = 512
 )
-
-// routerClient returns a Client of the router SPIKE_ROUTER_URL names, speaking Chat Completions,
-// with autoload=false so a request fails rather than load a model. It skips t when
-// SPIKE_ROUTER_URL is unset.
-func routerClient(t *testing.T) *client.Client {
-	t.Helper()
-	base := os.Getenv("SPIKE_ROUTER_URL")
-	if base == "" {
-		t.Skip("SPIKE_ROUTER_URL is unset: set it to the router to test against, such as http://gb10-2:8080")
-	}
-	c, err := client.New(client.Config{
-		BaseURL: strings.TrimSuffix(base, "/") + "/v1",
-		Query:   url.Values{"autoload": {"false"}},
-		HTTP:    &http.Client{Timeout: 5 * time.Minute},
-		Format:  completions.New(),
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	return c
-}
 
 // handedOn is a distinct picture handed onward: the file's bytes, its content type, and the
 // fixtures and stored names it came from, the first first. Pictures are distinct by office's name
@@ -85,7 +55,7 @@ type handedOn struct {
 // picture, as document's TestVisionImageTokensHost measures them: the image's tokens and the few
 // that mark where an image begins and ends in the model's chat template.
 func TestVisionPictures(t *testing.T) {
-	c := routerClient(t)
+	c := visiontest.Router(t)
 	conv := fullConverter(t)
 
 	var paths []string
@@ -156,7 +126,7 @@ func TestVisionPictures(t *testing.T) {
 	var imageTokens, outputTokens, failed int
 	for i, key := range order {
 		p := pictures[key]
-		size := pixelSize(p.data)
+		size := visiontest.PixelSize(p.data)
 		resp, elapsed, err := describe(describeOutputCap, `{"temperature":0}`, prompt, protocol.InputImage{ImageURL: protocol.DataURL(p.contentType, p.data)})
 		if err != nil {
 			failed++
@@ -165,10 +135,10 @@ func TestVisionPictures(t *testing.T) {
 				i+1, len(order), p.sources[0], p.contentType, size, len(p.data), elapsed.Round(time.Millisecond), err)
 			continue
 		}
-		out := strings.TrimSpace(responseText(resp))
+		out := strings.TrimSpace(visiontest.ResponseText(resp))
 		if resp.Status != protocol.StatusCompleted || out == "" {
 			failed++
-			t.Errorf("%s: the response is %s with %q, want completed with text", p.sources[0], responseStatus(resp), out)
+			t.Errorf("%s: the response is %s with %q, want completed with text", p.sources[0], visiontest.ResponseStatus(resp), out)
 		}
 		img := resp.Usage.InputTokens - without
 		wall += elapsed
@@ -180,54 +150,9 @@ func TestVisionPictures(t *testing.T) {
 		}
 		t.Logf("recorded: vision picture %d of %d, %s%s: %s %s, %d bytes: %v wall, %d image tokens, %d output tokens, %s",
 			i+1, len(order), p.sources[0], also, p.contentType, size, len(p.data),
-			elapsed.Round(time.Millisecond), img, resp.Usage.OutputTokens, responseStatus(resp))
+			elapsed.Round(time.Millisecond), img, resp.Usage.OutputTokens, visiontest.ResponseStatus(resp))
 		t.Logf("description: %s: %q", p.sources[0], out)
 	}
 	t.Logf("recorded: vision pictures, %s, %d distinct pictures from %d fixtures, one at a time: %v wall, %d image tokens, %d output tokens, %d failed; text-only baseline %d input tokens",
 		visionModel, len(order), len(paths), wall.Round(time.Millisecond), imageTokens, outputTokens, failed, without)
-}
-
-// pixelSize returns a picture's width and height as "WxH": a PNG's, JPEG's, or GIF's by
-// image.DecodeConfig, a BMP's from its header, which the standard library doesn't decode, and
-// "?x?" for any other.
-func pixelSize(data []byte) string {
-	if cfg, _, err := image.DecodeConfig(bytes.NewReader(data)); err == nil {
-		return fmt.Sprintf("%dx%d", cfg.Width, cfg.Height)
-	}
-	// A BMP's info header gives its width and height as signed 32-bit little-endian integers at
-	// offsets 18 and 22; a negative height marks a top-down bitmap.
-	if len(data) >= 26 && string(data[:2]) == "BM" {
-		w := int32(binary.LittleEndian.Uint32(data[18:22]))
-		h := int32(binary.LittleEndian.Uint32(data[22:26]))
-		return fmt.Sprintf("%dx%d", w, max(h, -h))
-	}
-	return "?x?"
-}
-
-// responseText returns a response's output text, the text of every OutputText part of its
-// messages, in order, joined.
-func responseText(r *protocol.Response) string {
-	var s strings.Builder
-	for _, it := range r.Output {
-		if m, ok := it.(protocol.Message); ok {
-			for _, p := range m.Content {
-				if o, ok := p.(protocol.OutputText); ok {
-					s.WriteString(o.Text)
-				}
-			}
-		}
-	}
-	return s.String()
-}
-
-// responseStatus returns a response's status, with its incomplete reason or error when it has
-// one.
-func responseStatus(r *protocol.Response) string {
-	switch {
-	case r.IncompleteDetails != nil:
-		return fmt.Sprintf("%s (%s)", r.Status, r.IncompleteDetails.Reason)
-	case r.Error != nil:
-		return fmt.Sprintf("%s (%s: %s)", r.Status, r.Error.Code, r.Error.Message)
-	}
-	return string(r.Status)
 }

@@ -1,0 +1,27 @@
+Received: from mx.example.ru by mail.example.org; Wed, 18 Mar 2026 09:31:00 +0000
+Message-ID: <table-1869@example.ru>
+Date: Wed, 18 Mar 2026 12:30:00 +0300
+From: =?WINDOWS-1251?B?xOzo8vDo6SDM5e3k5evl5eI=?= <dmitri@example.ru>
+To: Ada Lovelace <ada@example.org>
+Cc: Grace Hopper <grace@example.net>
+Subject: =?WINDOWS-1251?B?z+Xw6O7k6Pfl8erg/yDy4OHr6PbgOiDu8ve48g==?=
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="mixed-04"
+
+--mixed-04
+Content-Type: text/plain; charset=windows-1251
+Content-Transfer-Encoding: quoted-printable
+
+=C4=EE=E1=F0=FB=E9 =E4=E5=ED=FC!
+
+=C2=EE =E2=EB=EE=E6=E5=ED=E8=E8 =F2=E0=E1=EB=E8=F6=E0 =FD=EB=E5=EC=E5=ED=F2=
+=EE=E2.
+
+=C4. =CC.
+--mixed-04
+Content-Type: text/csv; charset=utf-8
+Content-Disposition: attachment; filename*=utf-8''%D0%BE%D1%82%D1%87%D1%91%D1%82%2E%63%73%76
+Content-Transfer-Encoding: base64
+
+ZWxlbWVudCx3ZWlnaHQNCkgsMS4wMDgNCkhlLDQuMDAyNg0K
+--mixed-04--

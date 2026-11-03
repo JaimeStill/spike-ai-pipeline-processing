@@ -1,0 +1,25 @@
+{
+  "stores": [
+    {
+      "file": "pst/mailbox.pst",
+      "display_name": "Generated mailbox",
+      "folders": [
+        { "path": ["Inbox"], "messages": ["01-plain.eml", "02-reply-latin1.eml"] },
+        { "path": ["Inbox", "Projects", "2026"], "messages": ["03-html-inline-image.eml", "04-attachment-cyrillic.eml"] },
+        { "path": ["Archive", "Été 2026"], "messages": ["05-japanese.eml", "06-chinese.eml"] },
+        { "path": ["Archive", "Empty"], "messages": [] },
+        { "path": ["Sent Items"], "messages": ["07-html-only-bcc.eml", "08-forward-attached-message.eml"] }
+      ]
+    }
+  ],
+  "msg": [
+    "01-plain.eml",
+    "02-reply-latin1.eml",
+    "03-html-inline-image.eml",
+    "04-attachment-cyrillic.eml",
+    "05-japanese.eml",
+    "06-chinese.eml",
+    "07-html-only-bcc.eml",
+    "08-forward-attached-message.eml"
+  ]
+}
