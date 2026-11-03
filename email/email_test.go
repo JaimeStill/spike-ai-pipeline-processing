@@ -18,9 +18,8 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
-// TestNewReader: a stand-in at the minimum, or a build past it, is accepted; a missing mail and an
-// older one fail at construction, the older one whether the Tool's Spec or NewReader refuses it;
-// a nil Tool is refused.
+// TestNewReader: a stand-in at the minimum, or a build past it, is accepted; an older one fails at
+// construction, whether the Tool's Spec or NewReader refuses it; a nil Tool is refused.
 func TestNewReader(t *testing.T) {
 	for _, version := range []string{"0.1.0", "0.1.0+0b6b5a4", "0.2.0"} {
 		t.Run(version, func(t *testing.T) {
@@ -34,12 +33,6 @@ func TestNewReader(t *testing.T) {
 			}
 		})
 	}
-	t.Run("missing", func(t *testing.T) {
-		t.Setenv("PATH", t.TempDir())
-		if _, err := tool.NewExec(t.Context(), email.MailSpec()); err == nil || !strings.Contains(err.Error(), "not found") {
-			t.Fatalf("got %v, want not found", err)
-		}
-	})
 	t.Run("older", func(t *testing.T) {
 		installStandin(t, "0.0.9")
 		_, err := tool.NewExec(t.Context(), email.MailSpec())

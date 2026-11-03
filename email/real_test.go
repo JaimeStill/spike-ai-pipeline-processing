@@ -29,15 +29,18 @@ var mailCopy = filepath.Join("testdata", "mail")
 // manifestLine matches a file's line in the MANIFEST: its SHA-256, two spaces, and its path.
 var manifestLine = regexp.MustCompile(`^([0-9a-f]{64})  (\S.*)$`)
 
-// TestManifest: the copy of mail's fixtures and goldens is exactly the files its MANIFEST lists,
-// each with the SHA-256 listed, pinned to mail's tag v0.1.0 and the commit it names.
-func TestManifest(t *testing.T) {
+// commitHash matches a full git commit hash.
+var commitHash = regexp.MustCompile(`^[0-9a-f]{40}$`)
+
+// readManifest reads the copy's MANIFEST: its header, each key and its value, and the files it
+// lists, each path and its SHA-256.
+func readManifest(t *testing.T) (header, listed map[string]string) {
+	t.Helper()
 	data, err := os.ReadFile(filepath.Join(mailCopy, "MANIFEST"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	listed := map[string]string{}
-	header := map[string]string{}
+	header, listed = map[string]string{}, map[string]string{}
 	for line := range strings.Lines(string(data)) {
 		line = strings.TrimRight(line, "\n")
 		if m := manifestLine.FindStringSubmatch(line); m != nil {
@@ -46,8 +49,15 @@ func TestManifest(t *testing.T) {
 			header[key] = value
 		}
 	}
-	if header["tag"] != "v0.1.0" || header["commit"] != "75923186494d94ddf37a61b9865c1848bb0bbbd6" {
-		t.Errorf("manifest pins %q at %q", header["tag"], header["commit"])
+	return header, listed
+}
+
+// TestManifest: the copy of mail's fixtures and goldens is exactly the files its MANIFEST lists,
+// each with the SHA-256 listed, and the MANIFEST names the tag and the commit it was copied from.
+func TestManifest(t *testing.T) {
+	header, listed := readManifest(t)
+	if header["tag"] == "" || !commitHash.MatchString(header["commit"]) {
+		t.Errorf("manifest pins tag %q at commit %q, want a tag and a full commit hash", header["tag"], header["commit"])
 	}
 	found := map[string]string{}
 	for _, top := range []string{"fixtures", "golden"} {
@@ -85,6 +95,19 @@ func TestManifest(t *testing.T) {
 		if _, ok := listed[path]; !ok {
 			t.Errorf("%s: in the copy, not listed", path)
 		}
+	}
+}
+
+// TestRealVersion: the mail the check's mise pins is the version whose tag the copy of its
+// fixtures and goldens was taken from, so the goldens TestReal compares against are that mail's.
+func TestRealVersion(t *testing.T) {
+	tl, err := tool.NewExec(t.Context(), email.MailSpec())
+	if err != nil {
+		t.Fatalf("mail, which mise pins, run the check through mise run check: %v", err)
+	}
+	header, _ := readManifest(t)
+	if got, want := tl.Version().String(), strings.TrimPrefix(header["tag"], "v"); got != want {
+		t.Errorf("mail %s, the fixtures' tag %s: refresh them with mise run fixtures:mail", got, header["tag"])
 	}
 }
 
