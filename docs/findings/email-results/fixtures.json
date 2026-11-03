@@ -1,0 +1,519 @@
+[
+  {
+    "fixture": "generated/msg/01-plain.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1436275,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "generated/msg/02-reply-latin1.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1238911,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "generated/msg/03-html-inline-image.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 1,
+    "routes": {
+      "vision": 1
+    },
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1102947,
+    "rendered": "0",
+    "routes_scored": 1,
+    "routes_right": 1
+  },
+  {
+    "fixture": "generated/msg/04-attachment-cyrillic.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 1,
+    "routes": {
+      "unrouted": 1
+    },
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1202208,
+    "rendered": "0",
+    "routes_scored": 1,
+    "routes_right": 1
+  },
+  {
+    "fixture": "generated/msg/05-japanese.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1015501,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "generated/msg/06-chinese.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1065193,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "generated/msg/07-html-only-bcc.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1167410,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "generated/msg/08-forward-attached-message.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 2,
+    "routes": {
+      "unrouted": 2
+    },
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1209283,
+    "rendered": "0",
+    "routes_scored": 2,
+    "routes_right": 2
+  },
+  {
+    "fixture": "generated/pst/mailbox.pst",
+    "folders": 9,
+    "messages": 8,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 3,
+    "routes": {
+      "unrouted": 2,
+      "vision": 1
+    },
+    "threads": {
+      "threads": 8,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 2621173,
+    "rendered": "2097156 2097188 2097220 2097252 2097284 2097316 2097348 2097380",
+    "threads_truth": "2097156 2097188 2097220 2097252 2097284 2097316 2097348 2097380",
+    "threads_scored": 8,
+    "threads_right": 8,
+    "routes_scored": 3,
+    "routes_right": 3
+  },
+  {
+    "fixture": "msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 785332,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "msg/poi/example_sent_regular.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 1,
+    "routes": {
+      "vision": 1
+    },
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 2762459,
+    "rendered": "0",
+    "routes_scored": 1,
+    "routes_right": 1
+  },
+  {
+    "fixture": "msg/poi/msgClassAppointment.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 4222083,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "msg/poi/outlook_30_msg.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 4310724,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "msg/tika/test-outlook2003.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 11,
+    "routes": {
+      "vision": 11
+    },
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 4154766,
+    "rendered": "0",
+    "routes_scored": 11,
+    "routes_right": 11
+  },
+  {
+    "fixture": "msg/tika/testMSG_att_msg.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 2,
+    "routes": {
+      "document": 1,
+      "nested": 1
+    },
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 2739286,
+    "rendered": "0",
+    "routes_scored": 2,
+    "routes_right": 2
+  },
+  {
+    "fixture": "msg/tika/testMSG_chinese.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 2361129,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "msg/tika/testMSG_forwarded.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1553395,
+    "rendered": "0",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "pst/java-libpst/dist-list.pst",
+    "folders": 13,
+    "messages": 2,
+    "skipped": 1,
+    "warnings": 3,
+    "attachments": 2,
+    "routes": {
+      "nested": 2
+    },
+    "threads": {
+      "threads": 2,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1919045,
+    "rendered": "2097252 2097348",
+    "routes_scored": 2,
+    "routes_right": 2
+  },
+  {
+    "fixture": "pst/java-libpst/passworded.pst",
+    "folders": 13,
+    "messages": 1,
+    "skipped": 1,
+    "warnings": 1,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1461874,
+    "rendered": "2097252",
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "pst/libyal/outlook.pst",
+    "folders": 17,
+    "messages": 2,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 22,
+    "routes": {
+      "vision": 22
+    },
+    "threads": {
+      "threads": 1,
+      "multi": 1,
+      "in_multi": 2,
+      "placeholders": 1,
+      "largest": 2,
+      "deepest": 2
+    },
+    "elapsed": 5419461,
+    "rendered": "*[2097188 2097220]",
+    "routes_scored": 22,
+    "routes_right": 22
+  },
+  {
+    "fixture": "pst/tika/testPST.pst",
+    "folders": 2,
+    "messages": 7,
+    "skipped": 0,
+    "warnings": 1,
+    "attachments": 1,
+    "routes": {
+      "nested": 1
+    },
+    "threads": {
+      "threads": 6,
+      "multi": 1,
+      "in_multi": 2,
+      "placeholders": 0,
+      "largest": 2,
+      "deepest": 2
+    },
+    "elapsed": 6924526,
+    "rendered": "2097348 2097252[2097188] 2097220 2097316 2097284 2097380",
+    "threads_truth": "2097348 2097252[2097188] 2097220 2097316 2097284 2097380",
+    "threads_scored": 7,
+    "threads_right": 7,
+    "routes_scored": 1,
+    "routes_right": 1
+  },
+  {
+    "fixture": "pst/tika/testPST_variousBodyTypes.pst",
+    "folders": 4,
+    "messages": 4,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 0,
+    "routes": {},
+    "threads": {
+      "threads": 1,
+      "multi": 1,
+      "in_multi": 4,
+      "placeholders": 0,
+      "largest": 4,
+      "deepest": 2
+    },
+    "elapsed": 4895505,
+    "rendered": "2097188[2097220 2097252 2097284]",
+    "threads_truth": "2097188[2097220 2097252 2097284]",
+    "threads_scored": 4,
+    "threads_right": 4,
+    "routes_scored": 0,
+    "routes_right": 0
+  },
+  {
+    "fixture": "built/msg/office-attachments.msg",
+    "folders": 0,
+    "messages": 1,
+    "skipped": 0,
+    "warnings": 0,
+    "attachments": 4,
+    "routes": {
+      "office": 2,
+      "vision-converted": 2
+    },
+    "threads": {
+      "threads": 1,
+      "multi": 0,
+      "in_multi": 0,
+      "placeholders": 0,
+      "largest": 1,
+      "deepest": 1
+    },
+    "elapsed": 1650400,
+    "rendered": "0",
+    "routes_scored": 4,
+    "routes_right": 4
+  }
+]

@@ -1,0 +1,407 @@
+{
+  "store": "scale",
+  "path": "/tmp/claude-1000/-home-jaime-experiments-spike-ai-pipeline/21cd7039-0bbf-4760-8609-5a1b19d66ba2/scratchpad/mail-scale/.state/scale/scale.pst",
+  "size": 2141594624,
+  "record": {
+    "content_sha256": "d40792a45510dc0d4b7a3abc527848095d4f255bae26d853ee7f9a87119362b4",
+    "counts": {
+      "attachment_bytes": 1818207086,
+      "attachments": 17828,
+      "html": 34889,
+      "html_only": 4946,
+      "inline_images": 3374,
+      "largest_attachment": 16736336,
+      "messages": 50000,
+      "mime_bytes": 2690853493,
+      "replies": 14977
+    },
+    "note": "Written by the generator's scale mode (MISE_ENV=fixtures mise run scale); never committed. The messages are a function of the parameters alone: content_sha256 hashes each message's folder path and MIME bytes, in order, and is the same on every run with these parameters and tools. The .pst's bytes are not: PST Builder 1.3.0 writes a random store UID and search keys, so the store has no SHA-256 worth recording.",
+    "parameters": {
+      "attachment_bytes": "log-uniform from 256 to 524288",
+      "attachment_share": 0.18,
+      "attachments_per_message": "1 to 3, uniform",
+      "bodies": "plain only 30%, plain and HTML 60%, HTML only 10%; 1 to 6 paragraphs of 1 to 5 sentences of 4 to 17 words",
+      "folders": [
+        {
+          "path": "Inbox",
+          "weight": 30
+        },
+        {
+          "path": "Inbox/Projects/Engine",
+          "weight": 8
+        },
+        {
+          "path": "Inbox/Projects/Notes",
+          "weight": 6
+        },
+        {
+          "path": "Inbox/Projects/Été",
+          "weight": 3
+        },
+        {
+          "path": "Inbox/Lists",
+          "weight": 10
+        },
+        {
+          "path": "Sent Items",
+          "weight": 15
+        },
+        {
+          "path": "Archive/2024/Q1",
+          "weight": 5
+        },
+        {
+          "path": "Archive/2024/Q2",
+          "weight": 5
+        },
+        {
+          "path": "Archive/2024/Q3",
+          "weight": 5
+        },
+        {
+          "path": "Archive/2024/Q4",
+          "weight": 5
+        },
+        {
+          "path": "Archive/2025",
+          "weight": 6
+        },
+        {
+          "path": "Junk E-mail",
+          "weight": 2
+        }
+      ],
+      "inline_image_share": 0.1,
+      "large_attachment_bytes": "log-uniform from 1048576 to 16777216, one more attachment",
+      "large_attachment_share": 0.002,
+      "messages": 50000,
+      "people": 200,
+      "reply_share": 0.3,
+      "seed": 16
+    },
+    "parts": [
+      {
+        "file": "scale.pst",
+        "size": 2141594624
+      }
+    ],
+    "seconds": 32.2,
+    "tools": {
+      "MimeKit": "4.18.2",
+      "MsgKit": "3.0.6",
+      "OpenMcdf": "3.3.0",
+      "PstBuilder": "1.3.0",
+      "PstBuilder.Eml": "1.3.0",
+      "dotnet-runtime": "10.0.13",
+      "dotnet-sdk": "10.0.402"
+    }
+  },
+  "floor": {
+    "max_rss": 14172160,
+    "user": 0,
+    "system": 3049000,
+    "wall": 2614024
+  },
+  "runs": [
+    {
+      "way": "adapter",
+      "launched": {
+        "max_rss": 68112384,
+        "user": 11542627000,
+        "system": 3357571000,
+        "wall": 13023457899
+      },
+      "measured": {
+        "survey": {
+          "folders": 17,
+          "messages": 50000,
+          "skipped": 0,
+          "warnings": 0,
+          "attachments": 21202,
+          "routes": {},
+          "threads": {
+            "threads": 34928,
+            "multi": 8109,
+            "in_multi": 23181,
+            "placeholders": 94,
+            "largest": 56,
+            "deepest": 3
+          },
+          "elapsed": 13018699083
+        },
+        "self": {
+          "max_rss": 47288320,
+          "user": 1727071000,
+          "system": 262151000
+        },
+        "mail": {
+          "max_rss": 68112384,
+          "user": 9814707000,
+          "system": 3094272000
+        }
+      }
+    },
+    {
+      "way": "adapter",
+      "launched": {
+        "max_rss": 67989504,
+        "user": 11804576000,
+        "system": 3361020000,
+        "wall": 13270903400
+      },
+      "measured": {
+        "survey": {
+          "folders": 17,
+          "messages": 50000,
+          "skipped": 0,
+          "warnings": 0,
+          "attachments": 21202,
+          "routes": {},
+          "threads": {
+            "threads": 34928,
+            "multi": 8109,
+            "in_multi": 23181,
+            "placeholders": 94,
+            "largest": 56,
+            "deepest": 3
+          },
+          "elapsed": 13264284102
+        },
+        "self": {
+          "max_rss": 51539968,
+          "user": 1737017000,
+          "system": 271700000
+        },
+        "mail": {
+          "max_rss": 67989504,
+          "user": 10067211000,
+          "system": 3086268000
+        }
+      }
+    },
+    {
+      "way": "adapter",
+      "launched": {
+        "max_rss": 68087808,
+        "user": 11832139000,
+        "system": 3361923000,
+        "wall": 13283121000
+      },
+      "measured": {
+        "survey": {
+          "folders": 17,
+          "messages": 50000,
+          "skipped": 0,
+          "warnings": 0,
+          "attachments": 21202,
+          "routes": {},
+          "threads": {
+            "threads": 34928,
+            "multi": 8109,
+            "in_multi": 23181,
+            "placeholders": 94,
+            "largest": 56,
+            "deepest": 3
+          },
+          "elapsed": 13276606692
+        },
+        "self": {
+          "max_rss": 53194752,
+          "user": 1778700000,
+          "system": 246263000
+        },
+        "mail": {
+          "max_rss": 68087808,
+          "user": 10053439000,
+          "system": 3112729000
+        }
+      }
+    },
+    {
+      "way": "adapter, attachments",
+      "launched": {
+        "max_rss": 70598656,
+        "user": 11850258000,
+        "system": 3977855000,
+        "wall": 13847941344
+      },
+      "measured": {
+        "survey": {
+          "folders": 17,
+          "messages": 50000,
+          "skipped": 0,
+          "warnings": 0,
+          "attachments": 21202,
+          "routes": {
+            "unrouted": 21202
+          },
+          "threads": {
+            "threads": 34928,
+            "multi": 8109,
+            "in_multi": 23181,
+            "placeholders": 94,
+            "largest": 56,
+            "deepest": 3
+          },
+          "elapsed": 13841358238
+        },
+        "self": {
+          "max_rss": 55918592,
+          "user": 1780861000,
+          "system": 324086000
+        },
+        "mail": {
+          "max_rss": 70598656,
+          "user": 10068656000,
+          "system": 3651692000
+        }
+      },
+      "written_files": 21202,
+      "written_bytes": 1877202474
+    },
+    {
+      "way": "adapter, attachments",
+      "launched": {
+        "max_rss": 70148096,
+        "user": 11977760000,
+        "system": 3968616000,
+        "wall": 13906965058
+      },
+      "measured": {
+        "survey": {
+          "folders": 17,
+          "messages": 50000,
+          "skipped": 0,
+          "warnings": 0,
+          "attachments": 21202,
+          "routes": {
+            "unrouted": 21202
+          },
+          "threads": {
+            "threads": 34928,
+            "multi": 8109,
+            "in_multi": 23181,
+            "placeholders": 94,
+            "largest": 56,
+            "deepest": 3
+          },
+          "elapsed": 13900592027
+        },
+        "self": {
+          "max_rss": 53792768,
+          "user": 1865032000,
+          "system": 298535000
+        },
+        "mail": {
+          "max_rss": 70148096,
+          "user": 10111906000,
+          "system": 3667873000
+        }
+      },
+      "written_files": 21202,
+      "written_bytes": 1877202474
+    },
+    {
+      "way": "adapter, attachments",
+      "launched": {
+        "max_rss": 69849088,
+        "user": 11900816000,
+        "system": 4108610000,
+        "wall": 13994304095
+      },
+      "measured": {
+        "survey": {
+          "folders": 17,
+          "messages": 50000,
+          "skipped": 0,
+          "warnings": 0,
+          "attachments": 21202,
+          "routes": {
+            "unrouted": 21202
+          },
+          "threads": {
+            "threads": 34928,
+            "multi": 8109,
+            "in_multi": 23181,
+            "placeholders": 94,
+            "largest": 56,
+            "deepest": 3
+          },
+          "elapsed": 13989330418
+        },
+        "self": {
+          "max_rss": 53878784,
+          "user": 1793896000,
+          "system": 352823000
+        },
+        "mail": {
+          "max_rss": 69849088,
+          "user": 10106350000,
+          "system": 3755674000
+        }
+      },
+      "written_files": 21202,
+      "written_bytes": 1877202474
+    },
+    {
+      "way": "mail",
+      "launched": {
+        "max_rss": 67858432,
+        "user": 9921782000,
+        "system": 2998090000,
+        "wall": 13007028631
+      }
+    },
+    {
+      "way": "mail",
+      "launched": {
+        "max_rss": 68481024,
+        "user": 9886116000,
+        "system": 2989702000,
+        "wall": 12965303727
+      }
+    },
+    {
+      "way": "mail",
+      "launched": {
+        "max_rss": 67731456,
+        "user": 9822606000,
+        "system": 3058447000,
+        "wall": 12969183224
+      }
+    },
+    {
+      "way": "mail, attachments",
+      "launched": {
+        "max_rss": 69619712,
+        "user": 9949841000,
+        "system": 3570160000,
+        "wall": 13615080928
+      },
+      "written_files": 21202,
+      "written_bytes": 1877202474
+    },
+    {
+      "way": "mail, attachments",
+      "launched": {
+        "max_rss": 69713920,
+        "user": 9998640000,
+        "system": 3500059000,
+        "wall": 13591860365
+      },
+      "written_files": 21202,
+      "written_bytes": 1877202474
+    },
+    {
+      "way": "mail, attachments",
+      "launched": {
+        "max_rss": 69787648,
+        "user": 9903015000,
+        "system": 3537053000,
+        "wall": 13532317399
+      },
+      "written_files": 21202,
+      "written_bytes": 1877202474
+    }
+  ]
+}

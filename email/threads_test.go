@@ -618,9 +618,19 @@ func TestThreadsStandin(t *testing.T) {
 	}
 }
 
-// TestRealThreads runs the real pinned mail over Tika's two stores and threads them, the expected
-// trees derived by hand from the stored fields tika-threading.json holds and the dates mail's
-// goldens give. One store is threaded through a Threader fed while reading, the other through
+// realThreads is the threads of the copied stores that have a hand truth, each by its path under
+// fixtures/, rendered: Tika's two, derived by hand from the stored fields tika-threading.json holds
+// and the dates mail's goldens give, and the generated store's, by subject alone. TestRealThreads,
+// TestRealThreadsIndex, and TestRealThreadsGenerated check them, and the findings tier scores
+// against them.
+var realThreads = map[string]string{
+	"pst/tika/testPST.pst":                  "2097348 2097252[2097188] 2097220 2097316 2097284 2097380",
+	"pst/tika/testPST_variousBodyTypes.pst": "2097188[2097220 2097252 2097284]",
+	"generated/pst/mailbox.pst":             "2097156 2097188 2097220 2097252 2097284 2097316 2097348 2097380",
+}
+
+// TestRealThreads runs the real pinned mail over Tika's two stores and threads them, against
+// realThreads. One store is threaded through a Threader fed while reading, the other through
 // Threads.
 //
 // testPST.pst: Re: Feature Generators (2097188) refers to Feature Generators (2097252). The two
@@ -643,7 +653,7 @@ func TestRealThreads(t *testing.T) {
 			}
 			tr.Add(rec)
 		}
-		const want = "2097348 2097252[2097188] 2097220 2097316 2097284 2097380"
+		want := realThreads["pst/tika/testPST.pst"]
 		if got := render(tr.Threads()); got != want {
 			t.Errorf("threads %s, want %s", got, want)
 		}
@@ -653,7 +663,7 @@ func TestRealThreads(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		const want = "2097188[2097220 2097252 2097284]"
+		want := realThreads["pst/tika/testPST_variousBodyTypes.pst"]
 		if got := render(threads); got != want {
 			t.Errorf("threads %s, want %s", got, want)
 		}
@@ -669,21 +679,14 @@ func TestRealThreads(t *testing.T) {
 // and one child block, and FW: First email's names a parent the store doesn't hold, a placeholder
 // with one child, so a root; the others are 22-byte headers. In testPST_variousBodyTypes.pst, each
 // FW: original email's is original email's and one child block. The trees are those the headers
-// give.
+// give, realThreads'.
 func TestRealThreadsIndex(t *testing.T) {
 	r := realReader(t)
 	root := filepath.Join(mailCopy, "fixtures", "pst", "tika")
-	cases := []struct {
-		store string
-		want  string
-	}{
-		{"testPST.pst", "2097348 2097252[2097188] 2097220 2097316 2097284 2097380"},
-		{"testPST_variousBodyTypes.pst", "2097188[2097220 2097252 2097284]"},
-	}
-	for _, c := range cases {
-		t.Run(c.store, func(t *testing.T) {
+	for _, store := range []string{"testPST.pst", "testPST_variousBodyTypes.pst"} {
+		t.Run(store, func(t *testing.T) {
 			var tr email.Threader
-			for rec, err := range r.Read(t.Context(), email.Request{Input: filepath.Join(root, c.store)}).Records() {
+			for rec, err := range r.Read(t.Context(), email.Request{Input: filepath.Join(root, store)}).Records() {
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -695,8 +698,8 @@ func TestRealThreadsIndex(t *testing.T) {
 				}
 				tr.Add(rec)
 			}
-			if got := render(tr.Threads()); got != c.want {
-				t.Errorf("threads %s, want %s", got, c.want)
+			if got, want := render(tr.Threads()), realThreads["pst/tika/"+store]; got != want {
+				t.Errorf("threads %s, want %s", got, want)
 			}
 		})
 	}
@@ -713,7 +716,7 @@ func TestRealThreadsGenerated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	const want = "2097156 2097188 2097220 2097252 2097284 2097316 2097348 2097380"
+	want := realThreads["generated/pst/mailbox.pst"]
 	if got := render(threads); got != want {
 		t.Errorf("threads %s, want %s", got, want)
 	}

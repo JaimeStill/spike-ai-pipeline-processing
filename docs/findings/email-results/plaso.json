@@ -1,0 +1,321 @@
+{
+  "store": "plaso",
+  "path": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst",
+  "size": 59442176,
+  "record": {
+    "commit": "f5bf35fcc102585eed58b930392da56a318690f6",
+    "sha256": "bab64f3589f8ce758df9e595b89a5e4b9be159929e49100397152fdcc7bd6013",
+    "url": "https://raw.githubusercontent.com/log2timeline/plaso/f5bf35fcc102585eed58b930392da56a318690f6/test_data/nromanoff%40stark-research-labs.com.pst"
+  },
+  "floor": {
+    "max_rss": 14135296,
+    "user": 0,
+    "system": 2458000,
+    "wall": 2193322
+  },
+  "runs": [
+    {
+      "way": "adapter",
+      "launched": {
+        "max_rss": 43487232,
+        "user": 1524882000,
+        "system": 229291000,
+        "wall": 1599533253
+      },
+      "measured": {
+        "survey": {
+          "folders": 18,
+          "messages": 540,
+          "skipped": 3,
+          "warnings": 3,
+          "attachments": 6,
+          "routes": {},
+          "threads": {
+            "threads": 347,
+            "multi": 49,
+            "in_multi": 242,
+            "placeholders": 44,
+            "largest": 52,
+            "deepest": 6
+          },
+          "elapsed": 1594353836
+        },
+        "self": {
+          "max_rss": 23089152,
+          "user": 160878000,
+          "system": 29827000
+        },
+        "mail": {
+          "max_rss": 43487232,
+          "user": 1363051000,
+          "system": 198526000
+        }
+      }
+    },
+    {
+      "way": "adapter",
+      "launched": {
+        "max_rss": 43446272,
+        "user": 1478909000,
+        "system": 253772000,
+        "wall": 1571438310
+      },
+      "measured": {
+        "survey": {
+          "folders": 18,
+          "messages": 540,
+          "skipped": 3,
+          "warnings": 3,
+          "attachments": 6,
+          "routes": {},
+          "threads": {
+            "threads": 347,
+            "multi": 49,
+            "in_multi": 242,
+            "placeholders": 44,
+            "largest": 52,
+            "deepest": 6
+          },
+          "elapsed": 1566025365
+        },
+        "self": {
+          "max_rss": 23248896,
+          "user": 177299000,
+          "system": 22550000
+        },
+        "mail": {
+          "max_rss": 43446272,
+          "user": 1301610000,
+          "system": 229173000
+        }
+      }
+    },
+    {
+      "way": "adapter",
+      "launched": {
+        "max_rss": 43573248,
+        "user": 1482466000,
+        "system": 253987000,
+        "wall": 1581284227
+      },
+      "measured": {
+        "survey": {
+          "folders": 18,
+          "messages": 540,
+          "skipped": 3,
+          "warnings": 3,
+          "attachments": 6,
+          "routes": {},
+          "threads": {
+            "threads": 347,
+            "multi": 49,
+            "in_multi": 242,
+            "placeholders": 44,
+            "largest": 52,
+            "deepest": 6
+          },
+          "elapsed": 1577419666
+        },
+        "self": {
+          "max_rss": 22458368,
+          "user": 153314000,
+          "system": 40376000
+        },
+        "mail": {
+          "max_rss": 43573248,
+          "user": 1328379000,
+          "system": 213407000
+        }
+      }
+    },
+    {
+      "way": "adapter, attachments",
+      "launched": {
+        "max_rss": 43655168,
+        "user": 1503296000,
+        "system": 243753000,
+        "wall": 1590174207
+      },
+      "measured": {
+        "survey": {
+          "folders": 18,
+          "messages": 540,
+          "skipped": 3,
+          "warnings": 3,
+          "attachments": 6,
+          "routes": {
+            "office": 4,
+            "unrouted": 2
+          },
+          "threads": {
+            "threads": 347,
+            "multi": 49,
+            "in_multi": 242,
+            "placeholders": 44,
+            "largest": 52,
+            "deepest": 6
+          },
+          "elapsed": 1585221898
+        },
+        "self": {
+          "max_rss": 20488192,
+          "user": 170274000,
+          "system": 22521000
+        },
+        "mail": {
+          "max_rss": 43655168,
+          "user": 1333022000,
+          "system": 219592000
+        }
+      },
+      "written_files": 5,
+      "written_bytes": 14533959
+    },
+    {
+      "way": "adapter, attachments",
+      "launched": {
+        "max_rss": 43589632,
+        "user": 1493623000,
+        "system": 239859000,
+        "wall": 1572018684
+      },
+      "measured": {
+        "survey": {
+          "folders": 18,
+          "messages": 540,
+          "skipped": 3,
+          "warnings": 3,
+          "attachments": 6,
+          "routes": {
+            "office": 4,
+            "unrouted": 2
+          },
+          "threads": {
+            "threads": 347,
+            "multi": 49,
+            "in_multi": 242,
+            "placeholders": 44,
+            "largest": 52,
+            "deepest": 6
+          },
+          "elapsed": 1567427020
+        },
+        "self": {
+          "max_rss": 22401024,
+          "user": 171226000,
+          "system": 32083000
+        },
+        "mail": {
+          "max_rss": 43589632,
+          "user": 1322149000,
+          "system": 206650000
+        }
+      },
+      "written_files": 5,
+      "written_bytes": 14533959
+    },
+    {
+      "way": "adapter, attachments",
+      "launched": {
+        "max_rss": 43311104,
+        "user": 1484591000,
+        "system": 226469000,
+        "wall": 1560943939
+      },
+      "measured": {
+        "survey": {
+          "folders": 18,
+          "messages": 540,
+          "skipped": 3,
+          "warnings": 3,
+          "attachments": 6,
+          "routes": {
+            "office": 4,
+            "unrouted": 2
+          },
+          "threads": {
+            "threads": 347,
+            "multi": 49,
+            "in_multi": 242,
+            "placeholders": 44,
+            "largest": 52,
+            "deepest": 6
+          },
+          "elapsed": 1555598475
+        },
+        "self": {
+          "max_rss": 22310912,
+          "user": 162807000,
+          "system": 26479000
+        },
+        "mail": {
+          "max_rss": 43311104,
+          "user": 1321784000,
+          "system": 198050000
+        }
+      },
+      "written_files": 5,
+      "written_bytes": 14533959
+    },
+    {
+      "way": "mail",
+      "launched": {
+        "max_rss": 43139072,
+        "user": 1306590000,
+        "system": 198775000,
+        "wall": 1514502087
+      }
+    },
+    {
+      "way": "mail",
+      "launched": {
+        "max_rss": 43704320,
+        "user": 1356103000,
+        "system": 195825000,
+        "wall": 1562282214
+      }
+    },
+    {
+      "way": "mail",
+      "launched": {
+        "max_rss": 43450368,
+        "user": 1323719000,
+        "system": 194812000,
+        "wall": 1527912349
+      }
+    },
+    {
+      "way": "mail, attachments",
+      "launched": {
+        "max_rss": 43606016,
+        "user": 1317067000,
+        "system": 199905000,
+        "wall": 1526526582
+      },
+      "written_files": 5,
+      "written_bytes": 14533959
+    },
+    {
+      "way": "mail, attachments",
+      "launched": {
+        "max_rss": 43589632,
+        "user": 1293981000,
+        "system": 227744000,
+        "wall": 1531096236
+      },
+      "written_files": 5,
+      "written_bytes": 14533959
+    },
+    {
+      "way": "mail, attachments",
+      "launched": {
+        "max_rss": 43487232,
+        "user": 1280177000,
+        "system": 214975000,
+        "wall": 1504006867
+      },
+      "written_files": 5,
+      "written_bytes": 14533959
+    }
+  ]
+}
