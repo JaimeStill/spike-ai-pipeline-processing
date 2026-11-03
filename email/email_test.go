@@ -159,8 +159,8 @@ func TestReadWarnings(t *testing.T) {
 `)
 	t.Setenv(stderrEnv, "spike-ai-pipeline-mail: warning: /Top/Contacts, message 2097188: skipped: Missing Sub-Node Tree on message\n"+
 		"spike-ai-pipeline-mail: warning: message, attachment 2: an embedded message\n")
-	s := r.Read(t.Context(), email.Request{Input: "store.pst"})
-	recs, err := collect(s)
+	s := mustRead(t)(r.Read(t.Context(), email.Request{Input: "store.pst"}))
+	recs, err := collect(s, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -197,8 +197,8 @@ func TestReadExit(t *testing.T) {
 			t.Setenv(stdoutEnv, "")
 			t.Setenv(stderrEnv, c.stderr)
 			t.Setenv(exitEnv, strconv.Itoa(c.code))
-			s := r.Read(t.Context(), email.Request{Input: "in.pst"})
-			recs, err := collect(s)
+			s := mustRead(t)(r.Read(t.Context(), email.Request{Input: "in.pst"}))
+			recs, err := collect(s, nil)
 			if len(recs) != 0 {
 				t.Errorf("records %v, want none", recs)
 			}
@@ -306,7 +306,7 @@ func TestReadCancel(t *testing.T) {
 	start := time.Now()
 	var recs []email.Record
 	var err error
-	for rec, rerr := range r.Read(ctx, email.Request{Input: "in.msg"}).Records() {
+	for rec, rerr := range mustRead(t)(r.Read(ctx, email.Request{Input: "in.msg"})).Records() {
 		if rerr != nil {
 			err = rerr
 			break
@@ -351,7 +351,7 @@ func TestReadStop(t *testing.T) {
 	t.Setenv(sleepEnv, "1")
 	start := time.Now()
 	n := 0
-	for _, err := range r.Read(t.Context(), email.Request{Input: "in.msg"}).Records() {
+	for _, err := range mustRead(t)(r.Read(t.Context(), email.Request{Input: "in.msg"})).Records() {
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -367,14 +367,14 @@ func TestReadStop(t *testing.T) {
 }
 
 // TestReadOnce: a Stream's records are read once; ranging again yields an error and runs nothing.
-// A cancelled context runs nothing; neither does an empty input.
+// A cancelled context runs nothing.
 func TestReadOnce(t *testing.T) {
 	r, runs := standinReader(t)
-	s := r.Read(t.Context(), email.Request{Input: "in.msg"})
-	if _, err := collect(s); err != nil {
+	s := mustRead(t)(r.Read(t.Context(), email.Request{Input: "in.msg"}))
+	if _, err := collect(s, nil); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := collect(s); err == nil {
+	if _, err := collect(s, nil); err == nil {
 		t.Error("second range: want an error")
 	}
 	ctx, cancel := context.WithCancel(t.Context())
@@ -382,10 +382,40 @@ func TestReadOnce(t *testing.T) {
 	if _, err := collect(r.Read(ctx, email.Request{Input: "in.msg"})); !errors.Is(err, context.Canceled) {
 		t.Errorf("cancelled: got %v", err)
 	}
-	if _, err := collect(r.Read(t.Context(), email.Request{})); err == nil {
-		t.Error("no input: want an error")
-	}
 	if got := len(runs()); got != 1 {
 		t.Errorf("%d runs, want 1", got)
+	}
+}
+
+// TestReadRefused: Read refuses an invalid request at once, with an error matching ErrRequest and
+// no Stream: an empty Input, and, from a working directory that has been removed, a relative
+// Input or Attachments, which can't be made absolute. mail never runs; an absolute Input with no
+// Attachments is still read from there.
+func TestReadRefused(t *testing.T) {
+	r, runs := standinReader(t)
+	cwd := t.TempDir()
+	t.Chdir(cwd)
+	if err := os.Remove(cwd); err != nil {
+		t.Fatal(err)
+	}
+	abs := filepath.Join(t.TempDir(), "in.msg")
+	cases := map[string]email.Request{
+		"no input":             {Attachments: "att"},
+		"relative input":       {Input: "in.msg"},
+		"relative attachments": {Input: abs, Attachments: "att"},
+	}
+	for name, req := range cases {
+		t.Run(name, func(t *testing.T) {
+			s, err := r.Read(t.Context(), req)
+			if !errors.Is(err, email.ErrRequest) || s != nil {
+				t.Errorf("got %v, %v; want ErrRequest and no Stream", s, err)
+			}
+		})
+	}
+	if got := runs(); len(got) != 0 {
+		t.Errorf("runs %q, want none", got)
+	}
+	if _, err := collect(r.Read(t.Context(), email.Request{Input: abs})); err != nil {
+		t.Errorf("absolute input: %v", err)
 	}
 }

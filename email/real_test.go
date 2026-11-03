@@ -157,8 +157,8 @@ func TestReal(t *testing.T) {
 			want := goldenLines(t, stdoutPath)
 			wantWarnings := goldenWarnings(t, stderrPath)
 
-			s := r.Read(t.Context(), email.Request{Input: filepath.Join(root, rel)})
-			recs, err := collect(s)
+			s := mustRead(t)(r.Read(t.Context(), email.Request{Input: filepath.Join(root, rel)}))
+			recs, err := collect(s, nil)
 			if err != nil {
 				t.Fatal(err)
 			}

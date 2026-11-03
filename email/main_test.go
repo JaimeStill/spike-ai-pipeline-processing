@@ -185,9 +185,24 @@ func standinReader(t *testing.T) (*email.Reader, func() [][]string) {
 	return r, runs
 }
 
+// mustRead returns a function that returns Read's Stream, given Read's results, failing the test
+// if Read refused the request: mustRead(t)(r.Read(ctx, req)).
+func mustRead(t *testing.T) func(*email.Stream, error) *email.Stream {
+	return func(s *email.Stream, err error) *email.Stream {
+		t.Helper()
+		if err != nil {
+			t.Fatal(err)
+		}
+		return s
+	}
+}
+
 // collect ranges over s's records, returning those yielded and the error, if any, that ended
-// them.
-func collect(s *email.Stream) ([]email.Record, error) {
+// them. It takes Read's results as they are: err, Read's refusal, is returned at once.
+func collect(s *email.Stream, err error) ([]email.Record, error) {
+	if err != nil {
+		return nil, err
+	}
 	var recs []email.Record
 	for rec, err := range s.Records() {
 		if err != nil {

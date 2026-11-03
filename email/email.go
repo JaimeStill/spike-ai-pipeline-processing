@@ -68,15 +68,19 @@ func NewReader(cfg Config) (*Reader, error) {
 // Request is one input's read.
 type Request struct {
 	// Input is the path of the .pst or .msg to read; mail sniffs its format from its content,
-	// never its name. It is made absolute before mail runs, so a name that begins with "-" is
-	// never taken as an option. It is required.
+	// never its name. Read makes it absolute, so a name that begins with "-" is never taken as an
+	// option. It is required.
 	Input string
 	// Attachments is the directory mail writes each distinct attachment content into once,
 	// named by its File, created if missing; the caller owns it. Each Attachment's Path then
-	// names its file there, and Attachment.Route sniffs it. It is made absolute before mail runs.
-	// "" writes nothing, and routes nothing by content.
+	// names its file there, and Attachment.Route sniffs it. Read makes it absolute. "" writes
+	// nothing, and routes nothing by content.
 	Attachments string
 }
+
+// ErrRequest is the cause of a request Read refuses before anything runs: one with no Input, or
+// whose Input or Attachments can't be made absolute.
+var ErrRequest = errors.New("invalid request")
 
 // The outcomes of a mail run that exits nonzero, each its exit code's; an *ExitError matches its
 // code's through errors.Is.
@@ -132,18 +136,34 @@ func (e *ExitError) Unwrap() error { return e.err }
 // Stream is one read of an input: its records, streamed while mail runs, and mail's warnings once
 // they have all been read.
 type Stream struct {
-	mail     *tool.Tool
-	ctx      context.Context
+	mail *tool.Tool
+	ctx  context.Context
+	// input and dir are the request's Input and Attachments, made absolute; dir "" for none.
 	input    string
 	dir      string
 	started  bool
 	warnings []string
 }
 
-// Read returns the read of req's input under ctx. Nothing runs until the Stream's Records are
-// ranged over.
-func (r *Reader) Read(ctx context.Context, req Request) *Stream {
-	return &Stream{mail: r.mail, ctx: ctx, input: req.Input, dir: req.Attachments}
+// Read returns the read of req's input under ctx. It refuses an invalid request at once, with an
+// error wrapping ErrRequest: an empty Input, or an Input or Attachments that can't be made
+// absolute, which filepath.Abs does from the working directory. Nothing runs until the Stream's
+// Records are ranged over.
+func (r *Reader) Read(ctx context.Context, req Request) (*Stream, error) {
+	if req.Input == "" {
+		return nil, fmt.Errorf("email: %w: no input", ErrRequest)
+	}
+	input, err := filepath.Abs(req.Input)
+	if err != nil {
+		return nil, fmt.Errorf("email: %w: input: %w", ErrRequest, err)
+	}
+	var dir string
+	if req.Attachments != "" {
+		if dir, err = filepath.Abs(req.Attachments); err != nil {
+			return nil, fmt.Errorf("email: %w: attachments: %w", ErrRequest, err)
+		}
+	}
+	return &Stream{mail: r.mail, ctx: ctx, input: input, dir: dir}, nil
 }
 
 // Warnings returns mail's warnings, one per line it wrote to stderr as a warning, with mail's
@@ -183,22 +203,12 @@ func (s *Stream) Records() iter.Seq2[Record, error] {
 // read runs mail and yields its records, returning the read's error; nil too when yield stopped
 // the loop, which then has nothing more yielded.
 func (s *Stream) read(yield func(Record, error) bool) error {
-	if s.input == "" {
-		return errors.New("email: no input")
-	}
 	if err := s.ctx.Err(); err != nil {
 		return err
 	}
-	input, err := filepath.Abs(s.input)
-	if err != nil {
-		return fmt.Errorf("email: %w", err)
-	}
+	input, dir := s.input, s.dir
 	args := []string{input}
-	var dir string
-	if s.dir != "" {
-		if dir, err = filepath.Abs(s.dir); err != nil {
-			return fmt.Errorf("email: %w", err)
-		}
+	if dir != "" {
 		args = []string{"--attachments", dir, input}
 	}
 	ctx, cancel := context.WithCancel(s.ctx)

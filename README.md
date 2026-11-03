@@ -239,13 +239,14 @@ vision time and image tokens. The run results it cites are in `docs/findings/off
 standard library, and `tool`. It runs spike-ai-pipeline-mail's CLI and provides pre-inference
 preparation only. A `Reader`, built by `NewReader` over a `Config` holding a mail Tool that
 `MailSpec` declares, minimum `MailMinimum`, 0.1.0, reads one input per `Request`: `Reader.Read`
-returns a `Stream`, and ranging over `Stream.Records` runs mail once and yields each line it
-writes while it runs, decoded from a pipe one line at a time into typed Go values that mirror its
-schema "1": the `Store` first, then for a .pst each `Folder` before its `Message`s, and a `Skipped`
-record wherever mail couldn't read one; for a .msg its message, an embedded message nested under
-its attachment. Memory follows the record being read, never the store. mail's warnings are the
-Stream's `Warnings`, and its exit codes 1 to 4 an `*ExitError` that matches `ErrNotWritten`,
-`ErrUsage`, `ErrRefused`, or `ErrFailed`.
+returns a `Stream`, or refuses an invalid `Request`, one with no input or a path that can't be made
+absolute, with an error matching `ErrRequest` before anything runs, and ranging over
+`Stream.Records` runs mail once and yields each line it writes while it runs, decoded from a pipe
+one line at a time into typed Go values that mirror its schema "1": the `Store` first, then for a
+.pst each `Folder` before its `Message`s, and a `Skipped` record wherever mail couldn't read one;
+for a .msg its message, an embedded message nested under its attachment. Memory follows the record
+being read, never the store. mail's warnings are the Stream's `Warnings`, and its exit codes 1 to 4
+an `*ExitError` that matches `ErrNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`.
 
 ```go
 m, err := tool.NewExec(ctx, email.MailSpec())
@@ -257,7 +258,11 @@ if err != nil {
 	return err
 }
 var threads email.Threader
-for rec, err := range r.Read(ctx, email.Request{Input: "mailbox.pst", Attachments: dir}).Records() {
+s, err := r.Read(ctx, email.Request{Input: "mailbox.pst", Attachments: dir})
+if err != nil {
+	return err
+}
+for rec, err := range s.Records() {
 	if err != nil {
 		return err
 	}

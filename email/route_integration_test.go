@@ -172,7 +172,7 @@ func TestRoutesToStages(t *testing.T) {
 func (s *stages) read(input, where string) {
 	t := s.t
 	dir := t.TempDir()
-	stream := s.reader.Read(t.Context(), email.Request{Input: input, Attachments: dir})
+	stream := mustRead(t)(s.reader.Read(t.Context(), email.Request{Input: input, Attachments: dir}))
 	for rec, err := range stream.Records() {
 		if err != nil {
 			t.Errorf("%s: %v", where, err)

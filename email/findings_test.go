@@ -269,7 +269,10 @@ func surveyStore(ctx context.Context, r *email.Reader, input, dir string) (surve
 	var tr email.Threader
 	var routes []routed
 	start := time.Now()
-	stream := r.Read(ctx, email.Request{Input: input, Attachments: dir})
+	stream, err := r.Read(ctx, email.Request{Input: input, Attachments: dir})
+	if err != nil {
+		return s, nil, nil, err
+	}
 	for rec, err := range stream.Records() {
 		if err != nil {
 			return s, nil, nil, err

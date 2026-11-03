@@ -16,7 +16,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Additive to v0.3.0: `tool`, `document`, and `office`'s existing API are unchanged.
 - The `Reader`, built by `NewReader` over a `Config`: a mail Tool, required, that `MailSpec`
   declares, refused when older than `MailMinimum`, 0.1.0. `Reader.Read` returns a `Stream` for one
-  `Request`, an input path and an optional attachments directory; ranging over `Stream.Records`
+  `Request`, an input path and an optional attachments directory, and refuses an invalid one, with
+  no input or a path that can't be made absolute, with an error matching `ErrRequest` before
+  anything runs; ranging over `Stream.Records`
   runs mail once and yields each line it writes while it runs, decoded one line at a time from a
   pipe through encoding/json/v2 into typed values mirroring schema "1": `Store`, `Folder`,
   `Message` (with `Address`, `Body`, `Derived`, and `Attachment`), and `Skipped`, so memory follows

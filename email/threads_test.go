@@ -609,7 +609,7 @@ func TestThreadsStandin(t *testing.T) {
 {"line":"folder","id":32866,"parent":32802}
 {"line":"message","id":2097188,"folder":32866,"subject":"Re: Hello","in_reply_to":"<a@x>","submit_time":"2026-01-12T15:15:00Z"}
 `)
-	threads, err := email.Threads(r.Read(t.Context(), email.Request{Input: "store.pst"}).Records())
+	threads, err := email.Threads(mustRead(t)(r.Read(t.Context(), email.Request{Input: "store.pst"})).Records())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -647,7 +647,7 @@ func TestRealThreads(t *testing.T) {
 	root := filepath.Join(mailCopy, "fixtures", "pst", "tika")
 	t.Run("testPST.pst", func(t *testing.T) {
 		var tr email.Threader
-		for rec, err := range r.Read(t.Context(), email.Request{Input: filepath.Join(root, "testPST.pst")}).Records() {
+		for rec, err := range mustRead(t)(r.Read(t.Context(), email.Request{Input: filepath.Join(root, "testPST.pst")})).Records() {
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -659,7 +659,7 @@ func TestRealThreads(t *testing.T) {
 		}
 	})
 	t.Run("testPST_variousBodyTypes.pst", func(t *testing.T) {
-		threads, err := email.Threads(r.Read(t.Context(), email.Request{Input: filepath.Join(root, "testPST_variousBodyTypes.pst")}).Records())
+		threads, err := email.Threads(mustRead(t)(r.Read(t.Context(), email.Request{Input: filepath.Join(root, "testPST_variousBodyTypes.pst")})).Records())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -686,7 +686,7 @@ func TestRealThreadsIndex(t *testing.T) {
 	for _, store := range []string{"testPST.pst", "testPST_variousBodyTypes.pst"} {
 		t.Run(store, func(t *testing.T) {
 			var tr email.Threader
-			for rec, err := range r.Read(t.Context(), email.Request{Input: filepath.Join(root, store)}).Records() {
+			for rec, err := range mustRead(t)(r.Read(t.Context(), email.Request{Input: filepath.Join(root, store)})).Records() {
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -712,7 +712,7 @@ func TestRealThreadsIndex(t *testing.T) {
 func TestRealThreadsGenerated(t *testing.T) {
 	r := realReader(t)
 	path := filepath.Join(mailCopy, "fixtures", "generated", "pst", "mailbox.pst")
-	threads, err := email.Threads(r.Read(t.Context(), email.Request{Input: path}).Records())
+	threads, err := email.Threads(mustRead(t)(r.Read(t.Context(), email.Request{Input: path})).Records())
 	if err != nil {
 		t.Fatal(err)
 	}

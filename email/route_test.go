@@ -332,7 +332,7 @@ func TestRealRoutes(t *testing.T) {
 		t.Run(rel, func(t *testing.T) {
 			dir := t.TempDir()
 			var got []routed
-			s := r.Read(t.Context(), email.Request{Input: filepath.Join(root, rel), Attachments: dir})
+			s := mustRead(t)(r.Read(t.Context(), email.Request{Input: filepath.Join(root, rel), Attachments: dir}))
 			for rec, err := range s.Records() {
 				if err != nil {
 					t.Fatal(err)

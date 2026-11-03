@@ -11,17 +11,18 @@
 // outdated mail fails at startup. mail's contract is its README: its JSON Lines, schema "1", its
 // attachment naming, its warnings, and its exit codes.
 //
-// Reader.Read returns a Stream for one input, a path, and ranging over the Stream's Records runs
-// mail once on it and yields each line mail writes as it writes it: the store first, then, for a
-// .pst, each folder before its messages and they before its subfolders, with a skipped record
-// wherever mail couldn't read one; for a .msg, its message, with any embedded message nested
-// under its attachment record, then its skipped attachments. mail's stdout reaches the package
-// through a pipe and is decoded one line at a time, so memory follows the record being read,
-// never the store. Each line is decoded through encoding/json/v2 into the typed value of its
-// kind, Store, Folder, Message, or Skipped, which mirror schema "1": addresses, times, the
-// bodies stored and derived, and attachment records. A line of a kind the package doesn't know is
-// kept as an UnknownRecord, never an error. A store line of any other schema is an error matching
-// ErrSchema that names the schema. A loop that stops early stops mail.
+// Reader.Read returns a Stream for one input, a path, refusing an invalid Request at once with an
+// error matching ErrRequest, before anything runs; ranging over the Stream's Records runs mail once
+// on it and yields each line mail writes as it writes it: the store first, then, for a .pst, each
+// folder before its messages and they before its subfolders, with a skipped record wherever mail
+// couldn't read one; for a .msg, its message, with any embedded message nested under its attachment
+// record, then its skipped attachments. mail's stdout reaches the package through a pipe and is
+// decoded one line at a time, so memory follows the record being read, never the store. Each line
+// is decoded through encoding/json/v2 into the typed value of its kind, Store, Folder, Message, or
+// Skipped, which mirror schema "1": addresses, times, the bodies stored and derived, and attachment
+// records. A line of a kind the package doesn't know is kept as an UnknownRecord, never an error. A
+// store line of any other schema is an error matching ErrSchema that names the schema. A loop that
+// stops early stops mail.
 //
 // Each line mail writes to stderr as a warning is one of the Stream's Warnings, its prefix taken
 // off, and a read with skipped records and warnings succeeds. mail's exit codes 1 to 4 are an
@@ -65,11 +66,13 @@
 //   - [Config] is the Tool a Reader is built over.
 //   - [Reader] reads mail stores through mail.
 //   - [NewReader] builds a Reader over a Config.
-//   - [Reader.Read] returns the Stream of one input's read.
+//   - [Reader.Read] returns the Stream of one input's read, or refuses its Request.
 //   - [Request] is one input's read: its path, and the attachments directory mail writes
 //     their content into, if any.
 //   - [Stream] is one read: [Stream.Records] streams its records, and [Stream.Warnings]
 //     returns mail's warnings once they have been read.
+//   - [ErrRequest] is the cause of a Request Read refuses: no input, or a path that can't be
+//     made absolute.
 //   - [ExitError] reports mail's exit code 1, 2, 3, or 4, with its message.
 //   - [ErrNotWritten], [ErrUsage], [ErrRefused], and [ErrFailed] are mail's exit codes 1 to 4.
 //   - [Schema] is the version of mail's JSON Lines the package decodes, "1".
