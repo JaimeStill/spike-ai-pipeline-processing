@@ -9,7 +9,8 @@ tool contract this layer defines in its `tool` package, as herald's processing l
 runner for binaries and scripts, and a container runner for pinned images. The tools the layer's
 adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
 correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
-office documents, and LibreOffice in a container for legacy office formats only.
+office documents, LibreOffice in a container for legacy office formats only, and
+spike-ai-pipeline-mail's CLI for Outlook mail stores.
 
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
@@ -234,6 +235,71 @@ the container runner's full lockdown, with its user profile inside the mounted w
 element kind and format, the container's footprint, the picture conversions, and each picture's
 vision time and image tokens. The run results it cites are in `docs/findings/office-results/`.
 
+`email` reads mail stores, Outlook .pst stores and .msg messages, for a model, on Linux, the
+standard library, and `tool`. It runs spike-ai-pipeline-mail's CLI and provides pre-inference
+preparation only. A `Reader`, built by `NewReader` over a `Config` holding a mail Tool that
+`MailSpec` declares, minimum `MailMinimum`, 0.1.0, reads one input per `Request`: `Reader.Read`
+returns a `Stream`, and ranging over `Stream.Records` runs mail once and yields each line it
+writes while it runs, decoded from a pipe one line at a time into typed Go values that mirror its
+schema "1": the `Store` first, then for a .pst each `Folder` before its `Message`s, and a `Skipped`
+record wherever mail couldn't read one; for a .msg its message, an embedded message nested under
+its attachment. Memory follows the record being read, never the store. mail's warnings are the
+Stream's `Warnings`, and its exit codes 1 to 4 an `*ExitError` that matches `ErrNotWritten`,
+`ErrUsage`, `ErrRefused`, or `ErrFailed`.
+
+```go
+m, err := tool.NewExec(ctx, email.MailSpec())
+if err != nil {
+	return err
+}
+r, err := email.NewReader(email.Config{Mail: m})
+if err != nil {
+	return err
+}
+var threads email.Threader
+for rec, err := range r.Read(ctx, email.Request{Input: "mailbox.pst", Attachments: dir}).Records() {
+	if err != nil {
+		return err
+	}
+	threads.Add(rec)
+	if msg, ok := rec.(*email.Message); ok {
+		for _, a := range msg.Attachments {
+			route, _, err := a.Route()
+			if err != nil {
+				return err
+			}
+			switch route {
+			case email.RouteDocument, email.RouteOffice, email.RouteVision:
+				// hand a.Path to the route's stage
+			}
+		}
+	}
+}
+roots := threads.Threads()
+```
+
+Given an attachments directory, mail writes each distinct attachment content there once, named
+by its SHA-256, and `Attachment.Route` names the stage it goes to next, which the caller runs:
+`RouteDocument` for a PDF, `RouteOffice` for an office document (a ZIP with an OOXML extension, or
+an OLE2 file with a legacy one), `RouteVision` for PNG, JPEG, GIF, and BMP as stored,
+`RouteVisionConverted` for TIFF, EMF, and WMF, which `office.Converter.ConvertPicture` makes PNG
+first, `RouteNested` for an embedded message, and `RouteUnrouted` for anything else. The route is
+decided by the content's signature, never the stored MIME type, which real stores get wrong: MsgKit
+stores an EMF as `application/octet-stream`, and Apache POI's `alfresco.gif` is a BMP.
+
+A `Threader`, fed each record while a Stream is read, keeps only each message's threading keys,
+and `Threader.Threads` builds the store's threads, `Thread` trees, by RFC 5256's REFERENCES
+algorithm over Message-ID, In-Reply-To, and References, with a message that names no parent taking
+the one its conversation index names; placeholders for messages the store doesn't hold are pruned
+as RFC 5256 says, and roots with the same base subject are gathered. `Threads` builds them from a
+read's Records whole.
+
+[docs/findings/email.md](docs/findings/email.md) records the threads and routes over every
+fixture against hand truth, what they come to on plaso's 59 MB store, and the adapter's time and
+peak memory, threads included, against mail alone on plaso's store and a 2.1 GB generated store:
+about 2 to 4% over mail's time, and about 51 MiB at 50,000 messages beside mail's 65 MiB. The run
+results it cites are in `docs/findings/email-results/`.
+
 Known limits:
 
 - Page 7 of the scanned fixtures carries a faded "NOFORN" marking at its foot that the vision
@@ -256,11 +322,18 @@ Known limits:
   picture that another covers, that sits off the slide or page, or that is cropped away still
   appears in the model and the Markdown and is handed onward to vision. In `slide-objects`'s
   slide 3, a blue square covers a red one at the same position, and both are listed.
+- A by-value .eml attachment is unrouted: its content has no signature the routes know.
+- mail refuses an .ost, an `*ExitError` matching `ErrRefused`.
+- In a .pst, an embedded message is nested without its content, which mail can't read; in a .msg
+  it is nested in full.
+- A by-reference attachment has no content file, so it is unrouted.
+- The stores mail's generator writes, its fixtures and its scale store, carry no threading
+  fields, so they thread by subject alone.
 - The container runner's limit above: a SIGKILLed processing leaves a running container to its
   tool's exit.
 
 The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
-under the race detector, and lint, the integration and bakeoff tags included. `mise run
+under the race detector, and lint, the integration, bakeoff, and findings tags included. `mise run
 integration` runs the integration-tagged tests against this machine's tools and docker, and the
 vision tests against the llama.cpp router `SPIKE_ROUTER_URL` names, gb10-2's by default. The
 bake-off tier, bakeoff-tagged tests, sends pages to Gemma 4 26B-A4B on the same router and never
@@ -276,15 +349,24 @@ few minutes to about 25:
 - `mise run bakeoff-flow`: the staged two-pass flow, text layer first, against its baselines.
 - `mise run bakeoff-tiles`: tile shape, near-square tiles against a full-width band.
 
-The tests' vision harness, the bake-offs, and the staged flow are test code, not released.
+The findings tier, findings-tagged tests, measures `email` on this machine and never runs in CI:
+`mise run findings-email` scores threads and routes over the fixtures, fetches plaso's store by its
+pinned SHA-256, and times the adapter on it and on the scale store `EMAIL_SCALE_STORE` names, which
+mail's generator builds; a run keeps its results only in the directory `EMAIL_FINDINGS_RESULTS`
+names ([docs/findings/email.md](docs/findings/email.md), "Rerunning").
+
+The tests' vision harness, the bake-offs, the staged flow, and the findings tier are test code,
+not released.
 
 Host prerequisites: gs 10.0 or later and ImageMagick's magick 7.1 or later on PATH for `document`,
 and docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice
 in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
-metafile trim. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and libvips.
-typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, whose README
-says how.
+metafile trim. For `email`: spike-ai-pipeline-mail 0.1.0 or later, which mise pins from its
+GitHub release for the tests. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and
+libvips.
+typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, and .NET,
+which mise installs, only to rebuild `email/testdata`'s built .msg, as their READMEs say.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
 integration and bake-off tiers run on; no released file imports it. It is released by tag,

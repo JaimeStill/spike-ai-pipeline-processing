@@ -30,6 +30,34 @@
 // among them), or ErrFailed (a fault of mail's). A read whose context ends returns an error
 // matching the context's, as every Tool run does.
 //
+// Given an attachments directory in its Request, mail writes each distinct attachment content
+// there once, named by its SHA-256, and each Attachment's Path names its file. Attachment.Route
+// names the stage the content goes to next, which the caller runs; the package never runs it. The
+// route is decided by the content's signature, read from the file mail wrote, never by the stored
+// MIME type or the name, which real stores show to be unreliable: MsgKit stores an EMF as
+// application/octet-stream, and Apache POI's alfresco.gif is a BMP. A PDF goes to the document
+// package's stage; a ZIP with an OOXML extension, or an OLE2 file with a legacy one, to the office
+// package's Convert; PNG, JPEG, GIF, and BMP to vision as stored; TIFF, EMF, and WMF to vision once
+// the office package's Converter.ConvertPicture has made them PNG; an embedded message, or an
+// OLE2 file named .msg, is nested, for the caller to read; anything else is unrouted.
+//
+// Threads come from a store's messages: a Threader, fed each record while a Stream is read, keeps
+// their threading keys alone, so its memory follows the number of messages, never their bodies.
+// Threader.Threads builds them by RFC 5256's REFERENCES algorithm over Message-ID, In-Reply-To,
+// and References, with one addition: a message whose headers name no parent takes the one its
+// conversation index names, its own less the last child block. A Message-ID or index parent no
+// message has is a placeholder, pruned as RFC 5256 says: one with no children is removed, and one
+// with children gives them to its own parent, unless it is a root holding several, which it keeps
+// together. Roots with the same base subject are then gathered, a reply under the message it
+// replies to, so a store without threading fields threads by subject alone. Each set of children
+// is ordered by sent date.
+//
+// Known limits: a by-value .eml attachment is unrouted, as content of no routed signature; an
+// .ost is refused by mail; in a .pst, an embedded message is nested without its content, which
+// mail can't read; a by-reference attachment has no content file, so it is unrouted; and the
+// stores mail's generator writes, its fixtures and its scale store, carry no threading fields, so
+// they thread by subject alone.
+//
 // Its exported identifiers:
 //
 //   - [MailSpec] declares mail's spike-ai-pipeline-mail for either runner's constructor.

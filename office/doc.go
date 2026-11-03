@@ -78,6 +78,17 @@
 // office's). A conversion whose context ends returns an error matching the context's, as every
 // Tool run does.
 //
+// Converter.ConvertPicture converts one picture outside a document, such as a mail attachment the
+// email package routes to RouteVisionConverted, through the same code a document's picture takes.
+// The PictureRequest names the picture's file, a TIFF, EMF, or WMF told by its content's
+// signature, never its name; the working directory, which the caller owns; and the scale an EMF
+// or WMF is rendered at, as a Request's. The picture is copied under its SHA-256 into a directory
+// of its own in the working directory, so either runner's mount holds it, and the PNG is written
+// into the working directory, named by the picture's SHA-256 and .png; the copy's directory is
+// removed however the call ends, and the picture's own file is never changed. Unlike Convert, a
+// missing converter is an error, before anything runs: an EMF or WMF without the LibreOffice Tool
+// matches ErrNoLibreOffice, and any of the three without magick ErrNoMagick.
+//
 // Its exported identifiers:
 //
 //   - [OfficeSpec] declares office's spike-ai-pipeline-office for either runner's constructor.
