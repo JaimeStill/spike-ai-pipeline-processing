@@ -29,7 +29,8 @@ express; the spike's question and evidence live in the root repository's `contex
   errors; attachment routes by content signature, never the stored type, from the attachments
   directory mail writes; and threads by RFC 5256's REFERENCES algorithm plus conversation-index
   parents, from keys a Threader keeps while the stream is read. Its fixtures are mail's, copied at
-  its tag under a SHA-256 manifest, and a built .msg of this repository's office fixtures. The
+  its tag under a SHA-256 manifest, and a built .msg of this repository's office fixtures and,
+  by value, one of mail's .msg fixtures. The
   integration tier carries each route to its real stage; the findings tier, whose results
   `docs/findings/email.md` records, scores threads and routes against hand truth and times the
   adapter on plaso's store and mail's generated scale store, neither committed.

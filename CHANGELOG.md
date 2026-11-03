@@ -18,11 +18,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   declares, refused when older than `MailMinimum`, 0.1.0. `Reader.Read` returns a `Stream` for one
   `Request`, an input path and an optional attachments directory, and refuses an invalid one, with
   no input or a path that can't be made absolute, with an error matching `ErrRequest` before
-  anything runs; ranging over `Stream.Records`
-  runs mail once and yields each line it writes while it runs, decoded one line at a time from a
-  pipe through encoding/json/v2 into typed values mirroring schema "1": `Store`, `Folder`,
-  `Message` (with `Address`, `Body`, `Derived`, and `Attachment`), and `Skipped`, so memory follows
-  the record being read, never the store. A line of a kind the package doesn't know is kept as an
+  anything runs. Ranging over `Stream.Records` runs mail once and yields each line it writes while
+  it runs, decoded one line at a time from a pipe through encoding/json/v2 into typed values
+  mirroring schema "1": `Store`, `Folder`, `Message` (with `Address`, `Body`, `Derived`, and
+  `Attachment`), and `Skipped`, so memory follows the record being read, never the store. A line of
+  a kind the package doesn't know is kept as an
   `UnknownRecord`; a store line of another schema is an error matching `ErrSchema`. A loop that
   stops early stops mail.
 - mail's outcomes as errors: each warning line on stderr is one of `Stream.Warnings`, and a read
@@ -51,8 +51,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   reported by `mise run currency` when a newer one ships.
 - The email fixtures in `email/testdata`: mail's committed fixtures and goldens copied byte for
   byte at its tag, pinned by a SHA-256 manifest the check verifies offline, refreshed by
-  `mise run fixtures:mail`; and a built .msg attaching four of this repository's office fixtures,
-  rebuilt by mail's generator at its tag through `mise run fixtures:built`, which needs .NET and
+  `mise run fixtures:mail`; and a built .msg attaching four of this repository's office fixtures
+  and, by value, one of mail's .msg fixtures, rebuilt by mail's generator at its tag through `mise
+  run fixtures:built`, which needs .NET and
   network and which the check never runs. The hermetic check runs a stand-in mail for exits,
   warnings, arguments, and cancellation, and the real pinned mail over every fixture against its
   goldens, routes, and threads.

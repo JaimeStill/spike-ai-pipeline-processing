@@ -184,9 +184,10 @@ const stderrLimit = 1 << 20
 //
 // A read that fails yields one last pair, nil and its error. A store line whose schema isn't
 // Schema is an error matching ErrSchema, naming the schema. mail's exit codes 1 to 4 are an
-// *ExitError matching the code's error. When ctx ends the read, the error matches ctx's, as every
-// Tool run's does. A loop that stops early stops mail too, and nothing more is yielded. A Stream's
-// records are read once: ranging over them again yields an error.
+// *ExitError matching the code's error. When the context Read was given ends the read, the error
+// matches that context's, as every Tool run's does. A loop that stops early stops mail too, and
+// nothing more is yielded. A Stream's records are read once: ranging over them again yields an
+// error.
 func (s *Stream) Records() iter.Seq2[Record, error] {
 	return func(yield func(Record, error) bool) {
 		if s.started {

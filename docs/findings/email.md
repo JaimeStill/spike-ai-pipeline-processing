@@ -38,8 +38,9 @@ in `email/route_integration_test.go`.
 `TestFindingsFixtures` reads every fixture through the real pinned mail with an attachments
 directory: mail's 22 `.pst` and `.msg` fixtures, copied byte for byte at its tag
 (`email/testdata/README.md`), and the built `.msg`, which attaches four of this repository's office
-fixtures and, as a file, one of mail's `.msg` fixtures. It feeds every record to a `Threader`, routes every attachment as it is read, nested
-messages' included, and scores both against the hand truth the hermetic tests already hold:
+fixtures and, as a file, one of mail's `.msg` fixtures. It feeds every record to a `Threader`,
+routes every attachment as it is read, nested messages' included, and scores both against the hand
+truth the hermetic tests already hold:
 
 - **Routes** against `fixtureRoutes` (`email/route_test.go`), written by hand from mail's goldens,
   and `builtSources` (`email/built_test.go`), written from the built `.msg`'s source. Between them

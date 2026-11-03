@@ -238,15 +238,16 @@ vision time and image tokens. The run results it cites are in `docs/findings/off
 `email` reads mail stores, Outlook .pst stores and .msg messages, for a model, on Linux, the
 standard library, and `tool`. It runs spike-ai-pipeline-mail's CLI and provides pre-inference
 preparation only. A `Reader`, built by `NewReader` over a `Config` holding a mail Tool that
-`MailSpec` declares, minimum `MailMinimum`, 0.1.0, reads one input per `Request`: `Reader.Read`
-returns a `Stream`, or refuses an invalid `Request`, one with no input or a path that can't be made
-absolute, with an error matching `ErrRequest` before anything runs, and ranging over
-`Stream.Records` runs mail once and yields each line it writes while it runs, decoded from a pipe
-one line at a time into typed Go values that mirror its schema "1": the `Store` first, then for a
-.pst each `Folder` before its `Message`s, and a `Skipped` record wherever mail couldn't read one;
-for a .msg its message, an embedded message nested under its attachment. Memory follows the record
-being read, never the store. mail's warnings are the Stream's `Warnings`, and its exit codes 1 to 4
-an `*ExitError` that matches `ErrNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`.
+`MailSpec` declares, minimum `MailMinimum`, 0.1.0, reads one input per `Request`. `Reader.Read`
+returns a `Stream`, or refuses an invalid `Request`, one with no input or a path that can't be
+made absolute, with an error matching `ErrRequest` before anything runs. Ranging over
+`Stream.Records` runs mail once and yields each line it writes while it runs,
+decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
+`Store` first, then for a .pst each `Folder` before its `Message`s, and a `Skipped` record wherever
+mail couldn't read one; for a .msg its message, an embedded message nested under its attachment.
+Memory follows the record being read, never the store. mail's warnings are the Stream's
+`Warnings`, and its exit codes 1 to 4 are an `*ExitError` that matches `ErrNotWritten`, `ErrUsage`,
+`ErrRefused`, or `ErrFailed`.
 
 ```go
 m, err := tool.NewExec(ctx, email.MailSpec())
@@ -301,9 +302,10 @@ read's Records whole.
 
 [docs/findings/email.md](docs/findings/email.md) records the threads and routes over every
 fixture against hand truth, what they come to on plaso's 59 MB store, and the adapter's time and
-peak memory, threads included, against mail alone on plaso's store and a 2.1 GB generated store:
-about 2 to 4% over mail's time, and about 51 MiB at 50,000 messages beside mail's 65 MiB. The run
-results it cites are in `docs/findings/email-results/`.
+peak memory, threads included, against mail alone on plaso's store and a 2.1 GB generated store.
+The adapter adds about 1 to 3% to mail's time, and its Go process peaks at 52 to 54 MiB threading
+50,000 messages, beside mail's 65 to 67 MiB. The run results it cites are in
+`docs/findings/email-results/`.
 
 Known limits:
 
@@ -369,15 +371,14 @@ and docker, server 20.10 or later, for the container runner. For `office`: spike
 in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
 metafile trim. For `email`: spike-ai-pipeline-mail 0.1.0 or later, which mise pins from its
 GitHub release for the tests. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and
-libvips.
-typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, and .NET,
-which mise installs, only to rebuild `email/testdata`'s built .msg, as their READMEs say.
+libvips. typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, and
+.NET, which mise installs, only to rebuild `email/testdata`'s built .msg, as their READMEs say.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
 integration and bake-off tiers run on; no released package imports it, and `internal/visiontest`,
 the router client and response helpers the vision tests share, builds under the integration tag
-alone. It is released by tag,
-`vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer are in the root
+alone. It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer
+are in the root
 repository's README.
 
 Apache-2.0.
