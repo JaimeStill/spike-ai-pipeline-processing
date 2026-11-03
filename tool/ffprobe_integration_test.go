@@ -57,7 +57,9 @@ var ffprobeRunners = map[string]func(t *testing.T) ffprobeTool{
 	},
 	"container": func(t *testing.T) ffprobeTool {
 		// A run's container name isn't observable, so the checks are on containers named as the
-		// runner names its runs that weren't there before the build; other runs' are left out.
+		// runner names its runs, of ffprobe's image, that weren't there before the build. Other
+		// packages' tests run their own images through the same runner, in parallel with these,
+		// so their containers start after the snapshot; the image leaves them out.
 		before := toolContainers(t, false)
 		added := func(t *testing.T, running bool) []string {
 			return slices.DeleteFunc(toolContainers(t, running), func(id string) bool {
@@ -93,11 +95,13 @@ var ffprobeRunners = map[string]func(t *testing.T) ffprobeTool{
 	},
 }
 
-// toolContainers returns the IDs of the containers whose name begins tool-, the container
-// runner's prefix: the running ones only, or with running false, every one.
+// toolContainers returns the IDs of the containers of ffmpegImage whose name begins tool-, the
+// container runner's prefix: the running ones only, or with running false, every one. Only this
+// package's tests run ffmpegImage, so the containers that other packages' tests start through the
+// runner, which go test runs at the same time, aren't counted.
 func toolContainers(t *testing.T, running bool) []string {
 	t.Helper()
-	args := []string{"ps", "--quiet", "--no-trunc", "--filter=name=^tool-"}
+	args := []string{"ps", "--quiet", "--no-trunc", "--filter=name=^tool-", "--filter=ancestor=" + ffmpegImage}
 	if !running {
 		args = append(args, "--all")
 	}
