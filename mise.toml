@@ -7,6 +7,9 @@ shellcheck = "0.11.0"
 # office, from its GitHub release, for the office package's tests that run the real binary; mise
 # checks the archive against the release's digest.
 "github:JaimeStill/spike-ai-pipeline-office" = "0.1.0"
+# mail, from its GitHub release, for the email package's tests that run the real binary; mise
+# checks the archive against the release's digest.
+"github:JaimeStill/spike-ai-pipeline-mail" = "0.1.0"
 
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
@@ -56,6 +59,13 @@ done
 [tasks.currency]
 description = "Report every requirement, Go version, and tool behind its latest; writes nothing"
 run = "scripts/currency.sh"
+
+# The email package's copy of mail's fixtures and goldens, refreshed from mail's tag on the remote;
+# it reports any drift against the copy's manifest. The check never fetches: it verifies the copy
+# against the manifest offline.
+[tasks."fixtures:mail"]
+description = "Refresh email's copy of mail's fixtures from mail's tag; reports drift against the manifest"
+run = "scripts/fixtures-mail.sh"
 
 # The bake-off tier runs the bakeoff-tagged tests in package document: five PDF renderers on this
 # machine's poppler, ghostscript, libvips, and ImageMagick, each page sent to Gemma 4 26B-A4B on
