@@ -5,7 +5,9 @@ package email_test
 import (
 	"errors"
 	"iter"
+	"maps"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -629,6 +631,44 @@ var realThreads = map[string]string{
 	"generated/pst/mailbox.pst":             "2097156 2097188 2097220 2097252 2097284 2097316 2097348 2097380",
 }
 
+// mimeThreads is the threads of the MIME inputs, each by its path under testdata/ as mimeTruth
+// keys it, rendered: derived by hand from each input's Message-ID, In-Reply-To, References,
+// subject, and Date headers. An mbox message's id is its ordinal; an .eml's message has none, so
+// each .eml is one root, 0. TestRealThreadsMIME checks them.
+//
+// nine.mboxrd, by REFERENCES: The reply (2) refers to Notes on the engine (1), and the threading
+// message (9) to <notes-1> then <table-1>, which the file doesn't hold: <table-1>'s placeholder,
+// under 1 with one child, is pruned and 9 promoted to 1's child. The forward (8) refers to
+// <notes-0>, the message it carries attached, which is no message of the file: its placeholder,
+// a root with one child, is pruned, and 8 is a root. No base subjects match: "Notes on the engine
+// à la française", "Notes on the engine (draft)", and "Note G — the table" are not "Notes on the
+// engine". By date, UTC: 1 01-12 14:15, its children 2 01-12 18:02 and 9 01-13 09:29; 3 02-03,
+// 4 03-18, 5 04-09, 6 04-26, 7 05-04, 8 05-05.
+//
+// mbox.rlug: 4 refers to 1, the ZAPP question, and is its reply. 2 refers to four messages the
+// file doesn't hold, a chain of placeholders each with one child, pruned to 2 as a root. 3 and 5
+// refer to nothing, and no root shares a base subject with another. By date, UTC: 1 02-07 16:35,
+// 2 02-07 17:21, 3 02-07 17:36, 5 02-07 23:58.
+var mimeThreads = map[string]string{
+	"mail/fixtures/generated/eml/01-plain.eml":                    "0",
+	"mail/fixtures/generated/eml/02-reply-latin1.eml":             "0",
+	"mail/fixtures/generated/eml/03-html-inline-image.eml":        "0",
+	"mail/fixtures/generated/eml/04-attachment-cyrillic.eml":      "0",
+	"mail/fixtures/generated/eml/05-japanese.eml":                 "0",
+	"mail/fixtures/generated/eml/06-chinese.eml":                  "0",
+	"mail/fixtures/generated/eml/07-html-only-bcc.eml":            "0",
+	"mail/fixtures/generated/eml/08-forward-attached-message.eml": "0",
+	"mail/fixtures/mime/eml/09-threading.eml":                     "0",
+	"mail/fixtures/mime/nine.mboxrd":                              "1[2 9] 3 4 5 6 7 8",
+	"mail/fixtures/mime/rlug/mbox.rlug":                           "1[4] 2 3 5",
+	"mail/fixtures/mime/rlug/mbox.rlug-0":                         "0",
+	"mail/fixtures/mime/rlug/mbox.rlug-1":                         "0",
+	"mail/fixtures/mime/rlug/mbox.rlug-2":                         "0",
+	"mail/fixtures/mime/rlug/mbox.rlug-3":                         "0",
+	"mail/fixtures/mime/rlug/mbox.rlug-4":                         "0",
+	"built/" + builtEML:                                           "0",
+}
+
 // TestRealThreads runs the real pinned mail over Tika's two stores and threads them, against
 // realThreads. One store is threaded through a Threader fed while reading, the other through
 // Threads.
@@ -719,5 +759,51 @@ func TestRealThreadsGenerated(t *testing.T) {
 	want := realThreads["generated/pst/mailbox.pst"]
 	if got := render(threads); got != want {
 		t.Errorf("threads %s, want %s", got, want)
+	}
+}
+
+// TestRealThreadsMIME runs the real pinned mail over every MIME input and threads it, against
+// mimeThreads. Each is threaded twice, through Threads and through a Threader fed while reading,
+// and the two agree.
+// Each root is a message, never a placeholder, and nine.mboxrd's first root is Notes on the
+// engine, <notes-1@example.org>.
+func TestRealThreadsMIME(t *testing.T) {
+	r := realReader(t)
+	_, inputs := realInputs(t)
+	if got := slices.Sorted(maps.Keys(mimeThreads)); !slices.Equal(got, slices.Sorted(slices.Values(inputs))) {
+		t.Errorf("mimeThreads covers %q, the inputs are %q", got, inputs)
+	}
+	for _, rel := range inputs {
+		t.Run(rel, func(t *testing.T) {
+			input, err := filepath.Abs(filepath.Join("testdata", rel))
+			if err != nil {
+				t.Fatal(err)
+			}
+			threads, err := email.Threads(mustRead(t)(r.Read(t.Context(), email.Request{Input: input})).Records())
+			if err != nil {
+				t.Fatal(err)
+			}
+			var tr email.Threader
+			for rec, err := range mustRead(t)(r.Read(t.Context(), email.Request{Input: input})).Records() {
+				if err != nil {
+					t.Fatal(err)
+				}
+				tr.Add(rec)
+			}
+			if got, want := render(tr.Threads()), render(threads); got != want {
+				t.Errorf("Threader's threads %s, Threads' %s", got, want)
+			}
+			if got, want := render(threads), mimeThreads[rel]; got != want {
+				t.Errorf("threads %s, want %s", got, want)
+			}
+			for _, root := range threads {
+				if root.Placeholder {
+					t.Errorf("root placeholder %s", root.MessageID)
+				}
+			}
+			if rel == "mail/fixtures/mime/nine.mboxrd" && threads[0].MessageID != "<notes-1@example.org>" {
+				t.Errorf("root Message-ID %s, want <notes-1@example.org>", threads[0].MessageID)
+			}
+		})
 	}
 }
