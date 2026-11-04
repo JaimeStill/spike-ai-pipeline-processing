@@ -13,9 +13,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `email` reads MIME messages, .eml and mbox files, through spike-ai-pipeline-mail 0.2.0, beside
   .pst and .msg. An .eml's read is its store line and its message, with any message/rfc822 or
   message/global part nested under its attachment record; an mbox's is each message in the file's
-  order, its `Message.ID` its 1-based ordinal, which an empty entry keeps, and a `Skipped` record,
-  kind "message", for one mail can't read. Neither has folders, nor a store's encoding, password,
-  or display name. The decoded types are unchanged; their documentation says what MIME input gives.
+  order, its `Message.ID` its 1-based ordinal, which skips a number where an entry is empty, and a
+  `Skipped` record, kind "message", for one mail can't read. Neither has folders, nor a store's
+  encoding, password, or display name. The decoded types are unchanged; their documentation says what MIME input gives.
 - MIME threads: the `Threader` threads an .eml's and an mbox's messages as it does a store's, an
   mbox message by its ordinal and an .eml's as one root with no id. No change to the algorithm.
 - The nested .eml route: a by-value attachment of no routed signature is `RouteNested` when its
@@ -38,8 +38,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `EMAIL_SCALE_MBOX`, which names the scale mboxrd mail's generator writes for the findings tier
   to time; unset, it is skipped.
 - Known limits of `email`, replacing v0.4.0's "a by-value .eml attachment is unrouted": a by-value
-  .eml whose header isn't a message's shape is unrouted, one that begins with an mbox's "From "
-  line among them, as is header-shaped content neither named .eml nor stored as a message. mail's
+  .eml whose header isn't a message's shape, such as one that begins with an mbox's "From " line,
+  is unrouted, as is header-shaped content neither named .eml nor stored as a message. mail's
   own limits reach MIME input: it reads every mbox as an mboxrd, so an mboxcl's Content-Length is
   ignored and an mboxo body line that was ">From " loses its ">"; and an .eml's or an mbox's
   message has no class, no creation or modification time, and SMTP addresses alone.

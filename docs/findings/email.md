@@ -408,11 +408,11 @@ What the runs show:
 - **The adapter's peak on the mboxrd is 55.9 MiB, 58.3 MiB routing**, against 51.9 and 53.5 MiB on
   the store's same 50,000 messages; mail's under it is 41.5 and 43.3 MiB, where it is alone, 42.1
   and 43.2 MiB, as mail's own finding measured (41.0 and 42.2 MiB).
-- **The same records, threads, and routes as the store**, but no folders: 0 folders, 50,000
-  messages, 0 skipped, 0 warnings, 21,202 attachments, all unrouted, 21,202 files of
+- **The same messages, attachments, and thread counts as the store**, but no folders: 0 folders,
+  50,000 messages, 0 skipped, 0 warnings, 21,202 attachments, all unrouted, 21,202 files of
   1,877,202,474 bytes written, as from the store. Its threads are 34,928, 8,109 of more than one
-  message holding 23,181, 94 placeholders, the largest 56 messages, as the store's, but **11 levels
-  deep against the store's 3**.
+  message holding 23,181, 94 placeholders, the largest 56 messages, as the store's, but the
+  deepest is **11 levels against the store's 3**.
 
 ### The scale set
 

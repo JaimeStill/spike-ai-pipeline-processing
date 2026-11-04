@@ -56,9 +56,9 @@
 // replies to, so a store without threading fields threads by subject alone. Each set of children
 // is ordered by sent date.
 //
-// Known limits: a by-value .eml whose header isn't a message's shape is unrouted, one that begins
-// with an mbox's "From " line among them, as is header-shaped content neither named .eml nor
-// stored as a message; an .ost is refused by mail; in a .pst, an embedded message is nested
+// Known limits: a by-value .eml whose header isn't a message's shape, such as one that begins with
+// an mbox's "From " line, is unrouted, as is header-shaped content neither named .eml nor stored
+// as a message; an .ost is refused by mail; in a .pst, an embedded message is nested
 // without its content, which mail can't read; a by-reference attachment has no content file, so
 // it is unrouted; and the stores mail's generator writes, its fixtures and its scale store, carry
 // no threading fields, so they thread by subject alone. mail's own limits reach MIME input: it

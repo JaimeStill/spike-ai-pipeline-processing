@@ -337,8 +337,8 @@ Known limits:
   picture that another covers, that sits off the slide or page, or that is cropped away still
   appears in the model and the Markdown and is handed onward to vision. In `slide-objects`'s
   slide 3, a blue square covers a red one at the same position, and both are listed.
-- A by-value .eml whose header isn't a message's shape is unrouted, one that begins with an mbox's
-  "From " line among them; so is header-shaped content neither named .eml nor stored as
+- A by-value .eml whose header isn't a message's shape, such as one that begins with an mbox's
+  "From " line, is unrouted, as is header-shaped content neither named .eml nor stored as
   `message/rfc822` or `message/global`.
 - mail reads every mbox as an mboxrd: an mboxcl's Content-Length is ignored, so an unquoted body
   line starting "From " starts a new message, and an mboxo body line that was ">From " loses its

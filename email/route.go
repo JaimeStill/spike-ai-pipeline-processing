@@ -48,8 +48,8 @@ const (
 	// shape mail reads a message by: its first line a header field, and a From or Date field
 	// before its header block ends. The caller reads a by-value file with a Reader.
 	RouteNested Route = "nested"
-	// RouteUnrouted is anything else: content of no routed signature, an .eml whose header isn't
-	// a message's shape among them, as is one that begins with an mbox's "From " line; a
+	// RouteUnrouted is anything else: content of no routed signature, including an .eml whose
+	// header isn't a message's shape, such as one that begins with an mbox's "From " line; a
 	// by-reference attachment, which has no content file; and content that wasn't written, read
 	// without an attachments directory or not written by mail.
 	RouteUnrouted Route = "unrouted"

@@ -67,8 +67,9 @@ type Folder struct {
 // nothing into threads. An .eml's or an mbox's message has no class and no creation or
 // modification time, and its addresses are all SMTP.
 type Message struct {
-	// ID is, in a .pst, the message's node id; in an mbox, its 1-based ordinal in the file, which
-	// an empty entry keeps, so the ids can skip a number. A .msg's and an .eml's message has none.
+	// ID is, in a .pst, the message's node id; in an mbox, its 1-based ordinal in the file, where
+	// an empty entry still takes a number, so the ids can skip one. A .msg's and an .eml's message
+	// has none.
 	ID uint64 `json:"id,omitzero"`
 	// Folder is, in a .pst, the node id of its folder; nothing else has one.
 	Folder uint64 `json:"folder,omitzero"`
