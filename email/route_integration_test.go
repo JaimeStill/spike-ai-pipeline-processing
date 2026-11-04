@@ -131,7 +131,8 @@ func TestRoutesToStages(t *testing.T) {
 		pictures: map[string]*picture{},
 	}
 	inputs := []string{filepath.Join(builtDir, builtMsg)}
-	for _, rel := range realInputs(t) {
+	stores, _ := realInputs(t)
+	for _, rel := range stores {
 		inputs = append(inputs, filepath.Join(mailCopy, "fixtures", rel))
 	}
 	for _, input := range inputs {

@@ -150,6 +150,49 @@ func TestRead(t *testing.T) {
 	}
 }
 
+// TestReadMIMESkipped: an .eml's and an mbox's skipped records, which none of the real inputs
+// gives, decode as mail writes them: an .eml's skipped attachment names no message, an mbox's
+// names its message's ordinal, and an mbox's skipped message has its ordinal for its id.
+func TestReadMIMESkipped(t *testing.T) {
+	one, two, three := uint64(1), uint64(2), uint64(3)
+	cases := []struct {
+		name, lines string
+		want        []email.Record
+	}{
+		{"eml", `{"line":"store","schema":"1","format":"eml"}
+{"line":"message","subject":"Notes"}
+{"line":"skipped","kind":"attachment","id":1,"reason":"broken"}
+`, []email.Record{
+			&email.Store{Schema: "1", Format: "eml"},
+			&email.Message{Subject: "Notes"},
+			&email.Skipped{Kind: "attachment", ID: &one, Reason: "broken"},
+		}},
+		{"mbox", `{"line":"store","schema":"1","format":"mbox"}
+{"line":"message","id":1,"subject":"Notes"}
+{"line":"skipped","kind":"attachment","message":1,"id":2,"reason":"broken"}
+{"line":"skipped","kind":"message","id":3,"reason":"it has no header block with a From or Date field"}
+`, []email.Record{
+			&email.Store{Schema: "1", Format: "mbox"},
+			&email.Message{ID: 1, Subject: "Notes"},
+			&email.Skipped{Kind: "attachment", Message: 1, ID: &two, Reason: "broken"},
+			&email.Skipped{Kind: "message", ID: &three, Reason: "it has no header block with a From or Date field"},
+		}},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			r, _ := standinReader(t)
+			t.Setenv(stdoutEnv, c.lines)
+			recs, err := collect(r.Read(t.Context(), email.Request{Input: "mail." + c.name}))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(recs, c.want) {
+				t.Errorf("records %+v\nwant %+v", recs, c.want)
+			}
+		})
+	}
+}
+
 // TestReadWarnings: a read whose stderr holds warnings, with records skipped, succeeds; each
 // warning line is one warning, mail's prefix taken off, in order.
 func TestReadWarnings(t *testing.T) {

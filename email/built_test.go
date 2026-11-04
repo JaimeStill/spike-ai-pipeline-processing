@@ -27,6 +27,9 @@ var builtDir = filepath.Join("testdata", "built")
 // builtMsg is the built .msg, under builtDir.
 const builtMsg = "msg/office-attachments.msg"
 
+// builtEML is the built .msg's .eml source, under builtDir.
+const builtEML = "eml/office-attachments.eml"
+
 // builtSource is one of the built .msg's attachments as the source attaches it: its filename,
 // the route its content takes, and where its bytes came from, a committed fixture, by its path
 // from the repository's root, and the member of that fixture's package, or "-" for the fixture

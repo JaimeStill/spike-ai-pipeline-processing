@@ -328,7 +328,8 @@ func TestRealRoutes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, rel := range realInputs(t) {
+	stores, _ := realInputs(t)
+	for _, rel := range stores {
 		t.Run(rel, func(t *testing.T) {
 			dir := t.TempDir()
 			var got []routed

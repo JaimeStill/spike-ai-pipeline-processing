@@ -401,7 +401,8 @@ func TestFindingsFixtures(t *testing.T) {
 		routes     []routed
 	}
 	var inputs []input
-	for _, rel := range realInputs(t) {
+	stores, _ := realInputs(t)
+	for _, rel := range stores {
 		inputs = append(inputs, input{rel, filepath.Join(root, rel), fixtureRoutes[rel]})
 	}
 	var builtRoutes []routed
