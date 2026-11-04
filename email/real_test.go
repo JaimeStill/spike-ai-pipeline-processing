@@ -193,8 +193,9 @@ func TestReal(t *testing.T) {
 }
 
 // checkLines checks recs, a read's records, against want, mail's lines for the same input, whose
-// names in its errors: there is one record per line, in order and of the line's kind, none of an unknown
-// kind, and each marshals back to its line's fields, less "line" and any false boolean.
+// lines its errors call them: there is one record per line, in order and of the line's kind, none
+// of an unknown kind, and each marshals back to its line's fields, less "line" and any false
+// boolean.
 func checkLines(t *testing.T, recs []email.Record, want []map[string]any, whose string) {
 	t.Helper()
 	if len(recs) != len(want) {
@@ -392,16 +393,19 @@ func checkMIME(t *testing.T, recs []email.Record) {
 	if !ok || (store.Format != "eml" && store.Format != "mbox") || store.Encoding != "" || store.Password || store.DisplayName != "" {
 		t.Fatalf("store %#v, want an eml or mbox store alone", recs[0])
 	}
-	for i, rec := range recs[1:] {
+	for i, rec := range recs {
+		if i == 0 {
+			continue
+		}
 		switch rec := rec.(type) {
 		case *email.Message:
 			if rec.Folder != 0 || (store.Format == "eml") != (rec.ID == 0) {
-				t.Errorf("message %d: id %d, folder %d", i, rec.ID, rec.Folder)
+				t.Errorf("record %d: message id %d, folder %d", i, rec.ID, rec.Folder)
 			}
 			checkMIMEMessage(t, rec)
 		case *email.Skipped:
 			if store.Format == "eml" && rec.Message != 0 {
-				t.Errorf("skipped %+v names a message", rec)
+				t.Errorf("record %d: skipped %+v names a message", i, rec)
 			}
 		default:
 			t.Errorf("record %d: a %s record", i, rec.Line())
