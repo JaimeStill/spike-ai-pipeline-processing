@@ -15,6 +15,12 @@ results are committed in [`email-results/`](email-results/README.md), the log ve
 test's JSON. The integration tier's lines are from one run the same day, ending 18:44:22 UTC,
 against gb10-2's llama.cpp router, build b11669, serving set A.
 
+An addendum at the end, [mail 0.2.0, .eml and mbox](#addendum-mail-020-eml-and-mbox), records a
+second run, on 2026-11-04 with mail 0.2.0 at processing's task `email-mime`: the MIME inputs'
+threads and routes, the `.pst` and `.msg` routes re-recorded, and the scale mboxrd's cost. The
+sections before it are the first run's, unchanged; where they say a by-value `.eml` is unrouted,
+the addendum supersedes them.
+
 The `email` package releases pre-inference preparation only: it names each attachment's route and
 never runs the stage. The stages the integration tier runs, and its vision requests, are test code
 in `email/route_integration_test.go`.
@@ -304,3 +310,159 @@ EMAIL_FINDINGS_RESULTS=docs/findings/email-results EMAIL_SCALE_STORE=... mise ru
 
 which writes each test's JSON and the run's `-v` log, `findings.log`, there. The run above took
 3 minutes, 2 min 42 s of it the scale store.
+
+## Addendum: mail 0.2.0, .eml and mbox
+
+Every number in this addendum comes from one run of the findings tier, `mise run findings-email`,
+on 2026-11-04 from 15:20:24 to 15:24:32 UTC, on the laptop, with mail 0.2.0 from the mise pin, at
+processing commit 520ab64 on task `email-mime`, where the `email` package reads `.eml` and mbox
+through mail 0.2.0 and routes a by-value `.eml` nested. Its results are committed in
+[`email-results/mail-0.2.0/`](email-results/README.md), the log verbatim and each test's JSON.
+plaso's store was read from `.state/` and the scale set from mail's checkout's `.state/scale/`,
+all on the laptop's btrfs disk, warm in the page cache; every attachments directory was on tmpfs.
+The first run read its scale store from tmpfs, so this run's `.pst` times are beside its own
+mboxrd's, not the first run's.
+
+### Threads and routes over the MIME inputs
+
+`TestFindingsFixtures` now reads the 17 MIME inputs after the 23 `.pst` and `.msg` fixtures, the
+same way: mail's 9 `.eml`, `nine.mboxrd`, and `mbox.rlug` with its 5 single-message splits, copied
+at mail's tag `v0.2.0` (`email/testdata/README.md`), and the built `.msg`'s `.eml` source. Routes
+are scored against `mimeRoutes` (`email/route_test.go`), threads against `mimeThreads`
+(`email/threads_test.go`), both written by hand from the inputs' headers and parts, and covering
+every input. An mbox message's id is its ordinal; an `.eml`'s message has none, so it is one root,
+`0`.
+
+From `email-results/mail-0.2.0/fixtures.json` and its `recorded: fixture mail/` lines:
+
+| Input | Messages | Attachments, by route | Threads | Scored |
+|---|---|---|---|---|
+| `mime/nine.mboxrd` | 9 | vision 1, nested 1, unrouted 2 | 7 roots, `1[2 9]` the one of three | threads 9 of 9, routes 4 of 4 |
+| `mime/rlug/mbox.rlug` | 5 | none | 4 roots, `1[4]` the one of two | threads 5 of 5 |
+| `generated/eml/03-html-inline-image.eml` | 1 | vision 1 | 1 | threads 1 of 1, routes 1 of 1 |
+| `generated/eml/04-attachment-cyrillic.eml` | 1 | unrouted 1 (a `.csv`) | 1 | threads 1 of 1, routes 1 of 1 |
+| `generated/eml/08-forward-attached-message.eml` | 1 | nested 1 (a `message/rfc822` part), unrouted 1 (a `.txt`) | 1 | threads 1 of 1, routes 2 of 2 |
+| `built/eml/office-attachments.eml` | 1 | office 2, vision-converted 2, nested 1 (a by-value `.msg`) | 1 | threads 1 of 1, routes 5 of 5 |
+| The other 6 `.eml` and the 5 `mbox.rlug` splits | 1 each | none | 1 each | threads 1 of 1 each |
+| **All 17** | **29** | **13: office 2, vision 2, vision-converted 2, nested 3, unrouted 4** | | **threads 29 of 29, routes 13 of 13** |
+
+No input had a skipped record or a warning. Of the 29 messages scored, 15 are the only message of
+their input, a root by construction; the 14 in `nine.mboxrd` and `mbox.rlug` are the ones whose
+trees the headers decide.
+
+### The .pst and .msg routes, re-recorded
+
+The same run's 23 `.pst` and `.msg` fixtures, from its `recorded: .pst and .msg` line:
+
+| | First run, mail 0.1.0 | This run, mail 0.2.0 |
+|---|---|---|
+| Messages | 41 | 41 |
+| Attachments | 51 | 51 |
+| document | 1 | 1 |
+| office | 2 | 2 |
+| vision | 36 | 36 |
+| vision-converted | 2 | 2 |
+| nested | 5 | **6** |
+| unrouted | 5 | **4** |
+| Routes right, of the truth's | 51 of 51 | 51 of 51 |
+| Threads right, of the messages scored | 19 of 19 | 19 of 19 |
+
+The one that moved is `generated/msg/08-forward-attached-message.msg`'s by-value `.eml`, unrouted
+in the first run and nested in this one, as `fixtureRoutes` now gives it: its routes are nested 1,
+unrouted 1 (the `.txt`), 2 of 2 the truth's. Every other fixture's line is the first run's.
+
+### Time and peak memory: the scale mboxrd beside the scale store
+
+Measured as in [Time and peak memory](#time-and-peak-memory), the four ways, three runs each, back
+to back. `TestFindingsScaleMbox` reads the scale mboxrd `EMAIL_SCALE_MBOX` names as
+`TestFindingsScale` reads the scale store.
+
+| Store | Way | Median wall, of 3 | Runs | Adapter's peak, most of 3 | mail's peak, most of 3 | Adapter's own CPU, a run |
+|---|---|---|---|---|---|---|
+| scale.mboxrd, 2.7 GB, 50,000 messages | adapter | 5.849 s | 5.671, 5.887, 5.849 s | 55.9 MiB | 41.5 MiB | 1.49 to 1.51 s user, 0.20 to 0.23 s system |
+| | adapter, attachments | 6.080 s | 6.080, 5.995, 6.090 s | 58.3 MiB | 43.3 MiB | 1.53 to 1.59 s user, 0.24 to 0.28 s system |
+| | mail | 5.538 s | 5.542, 5.538, 5.533 s | | 42.1 MiB | |
+| | mail, attachments | 5.820 s | 5.774, 5.820, 5.835 s | | 43.2 MiB | |
+| scale.pst, 2.1 GB, the same run | adapter | 13.031 s | 12.879, 13.031, 13.085 s | 51.9 MiB | 65.2 MiB | 1.70 to 1.73 s user, 0.26 to 0.28 s system |
+| | adapter, attachments | 13.751 s | 13.911, 13.727, 13.751 s | 53.5 MiB | 66.9 MiB | 1.77 to 1.85 s user, 0.30 to 0.32 s system |
+| | mail | 12.646 s | 12.602, 12.704, 12.646 s | | 65.1 MiB | |
+| | mail, attachments | 13.171 s | 13.229, 13.158, 13.171 s | | 66.8 MiB | |
+| plaso's, 59 MB, the same run | adapter | 1.545 s | 1.526, 1.545, 1.585 s | 21.0 MiB | 41.5 MiB | 0.16 to 0.19 s user, 0.02 to 0.04 s system |
+| | adapter, attachments | 1.567 s | 1.567, 1.567, 1.572 s | 21.4 MiB | 41.9 MiB | 0.16 to 0.17 s user, 0.03 to 0.05 s system |
+| | mail | 1.493 s | 1.493, 1.542, 1.492 s | | 41.7 MiB | |
+| | mail, attachments | 1.505 s | 1.508, 1.505, 1.498 s | | 41.5 MiB | |
+
+The launcher's floor read 15.3 MiB before the mboxrd's runs, 13.9 MiB before the scale store's,
+and 13.7 MiB before plaso's.
+
+What the runs show:
+
+- **The adapter adds 0.26 to 0.31 s to mail's time on the mboxrd**: 5.849 s against 5.538 s,
+  5.6%; 6.080 s against 5.820 s with every attachment routed, 4.5%. On the scale store in the same
+  run, 0.39 s and 0.58 s, 3.0% and 4.4%; on plaso's, 0.05 s and 0.06 s, 3.5% and 4.1%.
+- **The mboxrd is read in 0.45 of the scale store's time through the adapter** (5.849 s against
+  13.031 s; 0.44 with attachments), and mail alone reads it in 0.44 of the store's (5.538 s against
+  12.646 s), close to mail's own finding's 0.46.
+- **The adapter's own CPU is about the same on both**: 1.49 to 1.51 s user on the mboxrd against
+  1.70 to 1.73 s on the store, beside mail's 3.67 to 3.86 s and 9.73 to 9.83 s user under it.
+- **The adapter's peak on the mboxrd is 55.9 MiB, 58.3 MiB routing**, against 51.9 and 53.5 MiB on
+  the store's same 50,000 messages; mail's under it is 41.5 and 43.3 MiB, where it is alone, 42.1
+  and 43.2 MiB, as mail's own finding measured (41.0 and 42.2 MiB).
+- **The same messages, attachments, and thread counts as the store**, but no folders: 0 folders,
+  50,000 messages, 0 skipped, 0 warnings, 21,202 attachments, all unrouted, 21,202 files of
+  1,877,202,474 bytes written, as from the store. Its threads are 34,928, 8,109 of more than one
+  message holding 23,181, 94 placeholders, the largest 56 messages, as the store's, but the
+  deepest is **11 levels against the store's 3**.
+
+### The scale set
+
+The scale set is mail's generator's, read in place from mail's checkout,
+`~/experiments/spike-ai-pipeline-mail/.state/scale/`, read-only, and never committed: `scale.pst`
+(2,141,594,624 bytes), `scale.mboxrd` (2,693,103,493 bytes), and `scale.json`, built from seed 16,
+50,000 messages, in 36.9 s, for mail's recorded run `v0.2.0`
+(`docs/findings/mail-cli/runs/v0.2.0/results.json`, finished 2026-11-04 12:06:14 UTC). That it is
+what mail v0.2.0's generator produces rests on three things:
+
+- **Its content SHA-256 is mail's pin**,
+  `d40792a45510dc0d4b7a3abc527848095d4f255bae26d853ee7f9a87119362b4`, the one mail's v0.1.0 and
+  v0.2.0 findings record and the first run's scale store had: the same 50,000 messages, the same
+  MIME in the same order, so this run's `scale.pst` is the first run's in content. A `.pst`'s bytes
+  aren't: PST Builder writes a random store UID and search keys.
+- **The mboxrd's SHA-256 is mail's record**,
+  `79f5ad34bd4962a1bd84974fd1b4e06bd06bbba7718e5db1321ea64dbb22fe1a`, hashed again on 2026-11-04
+  before the run and the same as `scale.json`'s and `results.json`'s `scale.mboxrd_sha256`; its
+  bytes are a function of the messages alone.
+- **No generator file changed between the run's build and the tag**: mail's run was built at
+  `v0.1.0-8-gb3f2f8b`, and `git diff b3f2f8b v0.2.0` touches the CLI's `src/mime.rs`, its version,
+  tests, bench, and docs, and, among the scripts, only `scripts/mboxrd.sh` (the committed
+  `nine.mboxrd`'s builder, its output path) and `scripts/findings.sh`; `mise.fixtures.toml` and
+  the generator are unchanged.
+
+### Known limits, as of this run
+
+- **The scale set's threads are counted, not scored.** The mboxrd carries the messages'
+  `In-Reply-To` headers (225 among its first 713 messages), where the `.pst` carries no threading
+  fields, PST Builder writing none; the two files' trees, 11 levels against 3, are not checked
+  against a truth.
+- **The MIME thread truth is small**: 14 messages across two mbox files decide a tree; the other
+  15 are single-message inputs.
+- **One machine, warm, x86_64**, as the first run.
+
+### Rerunning
+
+From this repository's root, on a laptop, with mail's scale set built from its tag outside any
+checkout of this repository:
+
+```sh
+git -C ~/experiments/spike-ai-pipeline-mail archive v0.2.0 | tar -x -C "$scratch/mail-scale"
+(cd "$scratch/mail-scale" && mise trust mise.toml && mise trust mise.fixtures.toml &&
+  MISE_ENV=fixtures mise run scale)
+
+EMAIL_SCALE_STORE="$scratch/mail-scale/.state/scale/scale.pst" \
+EMAIL_SCALE_MBOX="$scratch/mail-scale/.state/scale/scale.mboxrd" \
+EMAIL_FINDINGS_RESULTS=docs/findings/email-results/mail-0.2.0 mise run findings-email
+```
+
+Without `EMAIL_SCALE_MBOX` the scale mboxrd is skipped, as the scale store is without
+`EMAIL_SCALE_STORE`. The run above took 4 minutes 8 seconds: 2 min 39 s the scale store, 1 min
+11 s the scale mboxrd.

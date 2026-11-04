@@ -32,11 +32,12 @@ type Record interface {
 }
 
 // Store is the store line, the first of every read: the input's format and, for a .pst, its
-// encoding, whether it is password-protected, and its display name.
+// encoding, whether it is password-protected, and its display name; an .eml or an mbox has none
+// of the three.
 type Store struct {
 	// Schema is the lines' version, Schema for every Store a read yields.
 	Schema string `json:"schema,omitzero"`
-	// Format is the input's format, sniffed from its content: "pst" or "msg".
+	// Format is the input's format, sniffed from its content: "pst", "msg", "eml", or "mbox".
 	Format string `json:"format,omitzero"`
 	// Encoding is a .pst's: "unicode" or "ansi".
 	Encoding string `json:"encoding,omitzero"`
@@ -61,12 +62,16 @@ type Folder struct {
 	ContainerClass string `json:"container_class,omitzero"`
 }
 
-// Message is a message line, whatever its message class, or a message nested under a .msg's
-// attachment record. mail writes no class-specific field, and groups nothing into threads.
+// Message is a message line, whatever its message class, or a message nested under a .msg's,
+// an .eml's, or an mbox's attachment record. mail writes no class-specific field, and groups
+// nothing into threads. An .eml's or an mbox's message has no class and no creation or
+// modification time, and its addresses are all SMTP.
 type Message struct {
-	// ID is, in a .pst, the message's node id.
+	// ID is, in a .pst, the message's node id; in an mbox, its 1-based ordinal in the file, where
+	// an empty entry still takes a number, so the ids can skip one. A .msg's and an .eml's message
+	// has none.
 	ID uint64 `json:"id,omitzero"`
-	// Folder is, in a .pst, the node id of its folder.
+	// Folder is, in a .pst, the node id of its folder; nothing else has one.
 	Folder uint64 `json:"folder,omitzero"`
 	// Class is the message class, such as IPM.Note.
 	Class string `json:"class,omitzero"`
@@ -153,7 +158,8 @@ type Attachment struct {
 	Method string `json:"method,omitzero"`
 	// Size is the content's size in bytes, nil when its content wasn't read.
 	Size *int64 `json:"size,omitzero"`
-	// Message is, in a .msg, an embedded message, nested with its own bodies and attachments; nil
+	// Message is, in a .msg, an .eml, or an mbox, an embedded message, a message/rfc822 or
+	// message/global part in the latter two, nested with its own bodies and attachments; nil
 	// otherwise. In a .pst an embedded message is listed with its metadata alone.
 	Message *Message `json:"message,omitzero"`
 	// Path is where the caller opens the content's file, an absolute path in the read's
@@ -167,15 +173,18 @@ type Attachment struct {
 // the record would have had.
 type Skipped struct {
 	// Kind is "folder", "message", or "attachment"; or "contents" or "hierarchy" for a folder's
-	// table.
+	// table. An .eml's are "attachment"; an mbox's, "message" or "attachment".
 	Kind string `json:"kind,omitzero"`
 	// Folder is the node id of the folder the record is in: a skipped folder names its parent,
 	// and a skipped table the folder whose table it is.
 	Folder uint64 `json:"folder,omitzero"`
-	// Message is an attachment's message's node id.
+	// Message is an attachment's message's node id; in an mbox, its ordinal. An .eml's skipped
+	// attachment names none.
 	Message uint64 `json:"message,omitzero"`
 	// ID is the record's own id, nil for a table: in a .pst, its node id, an attachment's within
-	// its message; in a .msg, an attachment's number, which may be zero.
+	// its message; in a .msg, an attachment's number, which may be zero; in an .eml or an mbox,
+	// an attachment's 1-based number among its message's attachment parts, and in an mbox, a
+	// skipped message's ordinal.
 	ID *uint64 `json:"id,omitzero"`
 	// Reason is why it couldn't be read.
 	Reason string `json:"reason,omitzero"`

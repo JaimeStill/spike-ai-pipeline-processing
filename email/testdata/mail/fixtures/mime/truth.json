@@ -1,0 +1,37 @@
+{
+  "note": "Hand truth for the hand-written .eml sources under eml/, one entry per source, in the shape of ../generated/truth.json: headers decoded from their encoded words, times in UTC, bodies decoded, line breaks written as \\n, and a field the source doesn't have left out. It adds the threading and priority fields as schema \"1\" writes them: conversation_topic is Thread-Topic, decoded; conversation_index is Thread-Index, base64-decoded, in lowercase hex; importance is Importance, else X-Priority's band (1 to 2 high, 3 normal, 4 to 5 low); and sensitivity is Sensitivity, Company-Confidential written as confidential. The body's lines starting \"From \" and \">From \" are the ones an mbox quotes.",
+  "messages": {
+    "09-threading.eml": {
+      "subject": "Re: Note G — the table",
+      "sender": {
+        "name": "Mary Somerville",
+        "address": "mary@example.org"
+      },
+      "to": [
+        {
+          "name": "Ada Lovelace",
+          "address": "ada@example.org"
+        }
+      ],
+      "cc": [
+        {
+          "name": "Charles Babbage",
+          "address": "charles@example.org"
+        }
+      ],
+      "date": "2026-01-13T09:29:40Z",
+      "received": "2026-01-13T09:30:12Z",
+      "importance": "high",
+      "sensitivity": "confidential",
+      "message_id": "<table-2@example.org>",
+      "in_reply_to": "<table-1@example.org>",
+      "references": "<notes-1@example.org> <table-1@example.org>",
+      "conversation_topic": "Note G — the table",
+      "conversation_index": "01dc83b62a4f5e6d7c8b9aa9b8c7d6e5f403122130ef",
+      "charset": "utf-8",
+      "body": {
+        "text": "Ada,\n\nFrom the table in Note G, the seventh number checks.\n>From your last letter, I take it the engine's cards are cut.\n\nMary\n"
+      }
+    }
+  }
+}

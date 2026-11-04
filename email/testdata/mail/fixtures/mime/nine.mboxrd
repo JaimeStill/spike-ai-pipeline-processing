@@ -1,0 +1,229 @@
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Received: from mx.example.org by mail.example.org; Mon, 12 Jan 2026 14:16:30 +0000
+Message-ID: <notes-1@example.org>
+Date: Mon, 12 Jan 2026 09:15:00 -0500
+From: Ada Lovelace <ada@example.org>
+To: Charles Babbage <charles@example.org>, analytical-engine@example.org
+Cc: "Mary Somerville" <mary@example.org>
+Subject: Notes on the engine
+Importance: high
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Charles,
+
+I have finished the notes on the engine. Note G has the table for the
+Bernoulli numbers.
+
+Ada
+
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Received: from mx.example.org by mail.example.org; Mon, 12 Jan 2026 18:02:41 +0000
+Message-ID: <reply-1@example.org>
+In-Reply-To: <notes-1@example.org>
+References: <notes-1@example.org>
+Date: Mon, 12 Jan 2026 18:02:00 +0000
+From: Charles Babbage <charles@example.org>
+To: Ada Lovelace <ada@example.org>
+Subject: =?ISO-8859-1?Q?Re:_Notes_on_the_engine_=E0_la_fran=E7aise?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Ada,
+
+Splendid. The caf=E9 in Z=FCrich serves cr=E8me br=FBl=E9e; we shall
+discuss Note G there.
+
+> I have finished the notes on the engine.
+
+Charles
+
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Received: from mx.example.net by mail.example.org; Tue, 03 Feb 2026 09:00:05 +0000
+Message-ID: <bug-1945@example.net>
+Date: Tue, 03 Feb 2026 10:00:00 +0100
+From: "Grace Hopper" <grace@example.net>
+To: Ada Lovelace <ada@example.org>
+Subject: The first bug, with a picture
+MIME-Version: 1.0
+Content-Type: multipart/related; boundary="related-03"; type="multipart/alternative"
+
+--related-03
+Content-Type: multipart/alternative; boundary="alternative-03"
+
+--alternative-03
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+We found a moth in relay 70, panel F.
+It is taped into the log book.
+--alternative-03
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+<html><body><p>We found a <b>moth</b> in relay 70, panel F.</p><p><img src="cid:moth@example.net" alt="moth"></p></body></html>
+--alternative-03--
+
+--related-03
+Content-Type: image/png; name="moth.png"
+Content-Disposition: inline; filename="moth.png"
+Content-ID: <moth@example.net>
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGPojtL+DwAElAIQU5c/
+QgAAAABJRU5ErkJggg==
+--related-03--
+
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Received: from mx.example.ru by mail.example.org; Wed, 18 Mar 2026 09:31:00 +0000
+Message-ID: <table-1869@example.ru>
+Date: Wed, 18 Mar 2026 12:30:00 +0300
+From: =?WINDOWS-1251?B?xOzo8vDo6SDM5e3k5evl5eI=?= <dmitri@example.ru>
+To: Ada Lovelace <ada@example.org>
+Cc: Grace Hopper <grace@example.net>
+Subject: =?WINDOWS-1251?B?z+Xw6O7k6Pfl8erg/yDy4OHr6PbgOiDu8ve48g==?=
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="mixed-04"
+
+--mixed-04
+Content-Type: text/plain; charset=windows-1251
+Content-Transfer-Encoding: quoted-printable
+
+=C4=EE=E1=F0=FB=E9 =E4=E5=ED=FC!
+
+=C2=EE =E2=EB=EE=E6=E5=ED=E8=E8 =F2=E0=E1=EB=E8=F6=E0 =FD=EB=E5=EC=E5=ED=F2=
+=EE=E2.
+
+=C4. =CC.
+--mixed-04
+Content-Type: text/csv; charset=utf-8
+Content-Disposition: attachment; filename*=utf-8''%D0%BE%D1%82%D1%87%D1%91%D1%82%2E%63%73%76
+Content-Transfer-Encoding: base64
+
+ZWxlbWVudCx3ZWlnaHQNCkgsMS4wMDgNCkhlLDQuMDAyNg0K
+--mixed-04--
+
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Received: from mx.example.jp by mail.example.org; Thu, 09 Apr 2026 23:00:12 +0000
+Message-ID: <neko@example.jp>
+Date: Fri, 10 Apr 2026 08:00:00 +0900
+From: =?ISO-2022-JP?B?GyRCMkZMXF57QFAbKEI=?= <soseki@example.jp>
+To: Ada Lovelace <ada@example.org>
+Subject: =?ISO-2022-JP?B?GyRCOGNHWiRPRy0kRyQiJGsbKEI=?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+
+$B8cGZ$OG-$G$"$k!#L>A0$O$^$@L5$$!#(B
+$B$I$3$G@8$l$?$+$H$s$H8+Ev$,$D$+$L!#(B
+
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Received: from mx.example.cn by mail.example.org; Sun, 26 Apr 2026 13:00:09 +0000
+Message-ID: <jingyesi@example.cn>
+Date: Sun, 26 Apr 2026 21:00:00 +0800
+From: =?GB2312?B?wO6w1w==?= <libai@example.cn>
+To: Ada Lovelace <ada@example.org>
+Subject: =?GB2312?B?vrLSucu8?=
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="alternative-06"
+
+--alternative-06
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: base64
+
+tLLHsMP31MK54qOsDQrSycrHtdjJz8uqoaMNCr7ZzbfN+8P31MKjrA0Ktc3Nt8u8ucrP56GjDQo=
+--alternative-06
+Content-Type: text/html; charset=GB2312
+Content-Transfer-Encoding: base64
+
+PGh0bWw+PGJvZHk+PHA+tLLHsMP31MK54qOsPGJyPtLJyse12MnPy6qhozxicj6+2c23zfvD99TC
+o6w8YnI+tc3Nt8u8ucrP56GjPC9wPjwvYm9keT48L2h0bWw+DQo=
+--alternative-06--
+
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Message-ID: <noon@example.org>
+Date: Mon, 04 May 2026 11:45:00 +0000
+From: Ada Lovelace <ada@example.org>
+To: Grace Hopper <grace@example.net>
+Bcc: Charles Babbage <charles@example.org>
+Subject: =?UTF-8?Q?Caf=C3=A9_at_noon_=E2=98=95?=
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+<html><body><p>Shall we meet at the café at noon? ☕</p><ul><li>Bring Note G</li><li>Bring the moth</li></ul></body></html>
+
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Message-ID: <fwd-1@example.org>
+References: <notes-0@example.org>
+Date: Tue, 05 May 2026 16:20:00 -0700
+From: Ada Lovelace <ada@example.org>
+To: Mary Somerville <mary@example.org>
+Subject: Fwd: Notes on the engine (draft)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="mixed-08"
+
+--mixed-08
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Mary,
+
+The draft, as I first sent it to Charles, is attached, with Note G.
+
+Ada
+--mixed-08
+Content-Type: text/plain; charset=us-ascii; name="note-g.txt"
+Content-Disposition: attachment; filename="note-g.txt"
+Content-Transfer-Encoding: 7bit
+
+B2 = 1/6
+B4 = -1/30
+B6 = 1/42
+--mixed-08
+Content-Type: message/rfc822
+Content-Disposition: attachment
+
+Message-ID: <notes-0@example.org>
+Date: Sat, 10 Jan 2026 20:00:00 +0000
+From: Ada Lovelace <ada@example.org>
+To: Charles Babbage <charles@example.org>
+Subject: Notes on the engine (draft)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Charles,
+
+A first draft of the notes.
+
+Ada
+--mixed-08--
+
+From MAILER-DAEMON Thu Jan  1 00:00:00 1970
+Received: from mx.example.org by mail.example.org; Tue, 13 Jan 2026 09:30:12 +0000
+Message-ID: <table-2@example.org>
+In-Reply-To: <table-1@example.org>
+References: <notes-1@example.org> <table-1@example.org>
+Date: Tue, 13 Jan 2026 10:29:40 +0100
+From: Mary Somerville <mary@example.org>
+To: Ada Lovelace <ada@example.org>
+Cc: Charles Babbage <charles@example.org>
+Subject: =?UTF-8?Q?Re:_Note_G_=E2=80=94_the_table?=
+Thread-Topic: =?UTF-8?Q?Note_G_=E2=80=94_the_table?=
+Thread-Index: AdyDtipPXm18i5qpuMfW5fQDEiEw7w==
+Sensitivity: Company-Confidential
+X-Priority: 2 (High)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ada,
+
+>From the table in Note G, the seventh number checks.
+>>From your last letter, I take it the engine's cards are cut.
+
+Mary
+

@@ -3,12 +3,14 @@
 package email
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
 	"io/fs"
+	"mime"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,8 +18,10 @@ import (
 
 // Route names the stage an attachment goes to next, for the caller to run: the package names it
 // and never runs it. Routes are decided by the content's signature, read from the file mail
-// wrote, never by the stored MIME type; a file name's extension decides only within a ZIP or OLE2
-// container, where the signature alone can't tell its formats apart.
+// wrote; a file name's extension decides only within a ZIP or OLE2 container, where the signature
+// alone can't tell its formats apart. Content of no signature is a message only when its name or
+// stored MIME type says so and its header has a message's shape; the stored type decides nothing
+// else.
 type Route string
 
 const (
@@ -36,13 +40,18 @@ const (
 	// office package's Converter.ConvertPicture given the attachment's Path, which tells the kind
 	// by the same signatures and names the PNG by the content's SHA-256.
 	RouteVisionConverted Route = "vision-converted"
-	// RouteNested is a message: an embedded message, nested under its record in a .msg and
-	// listed without its content in a .pst, or a by-value .msg file, an OLE2 compound file whose
-	// name has the .msg extension, for the caller to read with a Reader.
+	// RouteNested is a message: an embedded message, nested under its record in a .msg or a
+	// MIME message and listed without its content in a .pst; a by-value .msg file, an OLE2
+	// compound file whose name has the .msg extension; or a by-value .eml file, content of no
+	// routed signature whose name has the .eml extension, in any case, or whose stored MIME type
+	// is message/rfc822 or message/global, its parameters ignored, and whose header has the
+	// shape mail reads a message by: its first line a header field, and a From or Date field
+	// before its header block ends. The caller reads a by-value file with a Reader.
 	RouteNested Route = "nested"
-	// RouteUnrouted is anything else: content of no routed signature, a by-value .eml among
-	// them; a by-reference attachment, which has no content file; and content that wasn't
-	// written, read without an attachments directory or not written by mail.
+	// RouteUnrouted is anything else: content of no routed signature, including an .eml whose
+	// header isn't a message's shape, such as one that begins with an mbox's "From " line; a
+	// by-reference attachment, which has no content file; and content that wasn't written, read
+	// without an attachments directory or not written by mail.
 	RouteUnrouted Route = "unrouted"
 )
 
@@ -63,8 +72,16 @@ var (
 	ole2Signature = []byte{0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1}
 )
 
-// sniffLen is the most of a file Route reads: enough for an EMF's signature at offset 40.
+// sniffLen is the most of a file Route reads for a signature: enough for an EMF's at offset 40.
 const sniffLen = 64
+
+// headerLineMax is the longest line headerShaped reads, mail's LINE_MAX; a longer one ends the
+// header block.
+const headerLineMax = 64 * 1024
+
+// messageTypes are the stored MIME types, as mime.ParseMediaType lowercases them, that name a
+// message.
+var messageTypes = map[string]bool{"message/rfc822": true, "message/global": true}
 
 // ooxmlExtensions are the extensions of the ZIP packages office reads, each as its base format:
 // the documents, their macro-enabled forms, templates, and slide show.
@@ -87,11 +104,12 @@ var bmpHeaderSizes = map[uint32]bool{12: true, 40: true, 52: true, 56: true, 64:
 
 // Route returns the attachment's route and why, in a few words, such as "PDF signature". An
 // embedded message is RouteNested. Any other attachment is routed by its content's file at Path,
-// of which Route reads at most the first 64 bytes: an attachment with no Path, read without an
-// attachments directory or with no content file, and one whose file mail didn't write, are
-// RouteUnrouted. Within a ZIP or OLE2 container, the extension is Filename's, else File's, the
-// name to give office's Convert. It returns an error only when the file is there but can't be
-// read.
+// of which Route reads the first 64 bytes for a signature: an attachment with no Path, read
+// without an attachments directory or with no content file, and one whose file mail didn't write,
+// are RouteUnrouted. The extension is Filename's, else File's, the name to give office's Convert;
+// it decides within a ZIP or OLE2 container, and, with the stored MimeType, whether content of no
+// signature is a message, whose header Route then reads further, line by line, a line at most 64
+// KiB. It returns an error only when the file is there but can't be read.
 func (a *Attachment) Route() (Route, string, error) {
 	if a.Method == "embedded_message" {
 		if a.Message == nil {
@@ -116,8 +134,100 @@ func (a *Attachment) Route() (Route, string, error) {
 	if name == "" {
 		name = a.File
 	}
-	route, why := sniff(head, strings.ToLower(filepath.Ext(name)))
-	return route, why, nil
+	ext := strings.ToLower(filepath.Ext(name))
+	if route, why := sniff(head, ext); route != "" {
+		return route, why, nil
+	}
+	as := messageNamed(ext, a.MimeType)
+	if as == "" {
+		return RouteUnrouted, "no routed signature", nil
+	}
+	shaped, err := headerShapedFile(a.Path)
+	if err != nil {
+		return "", "", fmt.Errorf("email: routing %s: %w", a.File, err)
+	}
+	if !shaped {
+		return RouteUnrouted, "a message by its " + as + ", but not header-shaped", nil
+	}
+	return RouteNested, "a message by its " + as + ", header-shaped", nil
+}
+
+// messageNamed returns what names content a message, its ext, the .eml extension, else its
+// stored type, mimeType, message/rfc822 or message/global; or "" when neither does. The type is
+// parsed as a media type, in any case and its parameters ignored, malformed ones included.
+func messageNamed(ext, mimeType string) string {
+	if ext == ".eml" {
+		return ".eml extension"
+	}
+	mediaType, _, err := mime.ParseMediaType(mimeType)
+	if err != nil && !errors.Is(err, mime.ErrInvalidMediaParameter) {
+		return ""
+	}
+	if messageTypes[mediaType] {
+		return mediaType + " type"
+	}
+	return ""
+}
+
+// headerShapedFile reports whether the file at path is headerShaped.
+func headerShapedFile(path string) (bool, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return false, err
+	}
+	defer func() { _ = f.Close() }()
+	return headerShaped(f)
+}
+
+// headerShaped reports whether r has the shape of an RFC 5322 message, mail's header_shape: its
+// first line a header field, and a From or Date field in its header block. The block runs to its
+// blank line, to the end of the input, or to the first line that is neither a field nor a
+// field's folded continuation; a line past headerLineMax ends it once its first headerLineMax
+// bytes are read. An mbox's "From " separator is no field, so an input that begins with one isn't
+// header-shaped. The field's name is checked by fieldName, not net/textproto's, which refuses the
+// space before the colon mail allows.
+func headerShaped(r io.Reader) (bool, error) {
+	// A line is read through its newline or to the buffer's size, whichever comes first.
+	br := bufio.NewReaderSize(r, headerLineMax)
+	for first := true; ; first = false {
+		line, err := br.ReadSlice('\n')
+		if err != nil && !errors.Is(err, io.EOF) && !errors.Is(err, bufio.ErrBufferFull) {
+			return false, err
+		}
+		content := bytes.TrimSuffix(line, []byte("\n"))
+		content = bytes.TrimSuffix(content, []byte("\r"))
+		if len(content) == 0 {
+			return false, nil
+		}
+		folded := content[0] == ' ' || content[0] == '\t'
+		name := fieldName(content)
+		switch {
+		case name != nil && (bytes.EqualFold(name, []byte("From")) || bytes.EqualFold(name, []byte("Date"))):
+			return true, nil
+		case name != nil, folded && !first:
+		default:
+			return false, nil
+		}
+		if !bytes.HasSuffix(line, []byte("\n")) {
+			// The end of the input, or a line past headerLineMax.
+			return false, nil
+		}
+	}
+}
+
+// fieldName returns the name of the header field line starts, or nil if it starts none: printable
+// ASCII but the colon (RFC 5322 3.6.8's ftext), then the colon, after any spaces or tabs, as RFC
+// 5322 4.5.8's obsolete syntax allows.
+func fieldName(line []byte) []byte {
+	end := 0
+	for end < len(line) && (line[end] >= 33 && line[end] <= 126 && line[end] != ':') {
+		end++
+	}
+	rest := bytes.TrimLeft(line[end:], " \t")
+	if end == 0 || len(rest) == 0 || rest[0] != ':' {
+		return nil
+	}
+	return line[:end]
 }
 
 // readHead returns the first sniffLen bytes of the file at path, fewer for a shorter file.
@@ -136,7 +246,8 @@ func readHead(path string) ([]byte, error) {
 }
 
 // sniff routes content by head, its first bytes, and ext, its name's extension lowercased, which
-// decides only within a ZIP or OLE2 container.
+// decides only within a ZIP or OLE2 container. It returns no route for content of no routed
+// signature, which Route decides.
 func sniff(head []byte, ext string) (Route, string) {
 	switch {
 	case bytes.HasPrefix(head, pdfSignature):
@@ -169,7 +280,7 @@ func sniff(head []byte, ext string) (Route, string) {
 		}
 		return RouteUnrouted, "OLE2 signature without a legacy or .msg extension"
 	}
-	return RouteUnrouted, "no routed signature"
+	return "", ""
 }
 
 // isBMP reports whether head begins a BMP: "BM", then a DIB header of a known size at offset 14.

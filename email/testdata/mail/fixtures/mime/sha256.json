@@ -1,0 +1,14 @@
+[
+  {"file": "eml/09-threading.eml", "sha256": "0bd5fd0a0f23a9b26158c13da173d596e39651afb1d0cd8bb2cd7ec2a7f1b7da"},
+  {"file": "nine.mboxrd", "sha256": "4f6a021e567c8fcf46773500346223179d2b59537bcf9deb71adc6513af886bf"},
+  {"file": "rlug/LICENSE", "sha256": "f76f44f15a87ca8593787f37d85381cf19091f5f99bef389496c925b1f2fa726"},
+  {"file": "rlug/NOTICE", "sha256": "52e7f35debe674e75cd9fdbb27b3235c3c341aa14bb6d0efc536bcb7dc0937db"},
+  {"file": "rlug/mbox.rlug", "sha256": "5a434065c6e89e431b5edd9f0e661d1ec454f4dd1d1f3c8d15b32eec21acba53"},
+  {"file": "rlug/mbox.rlug-0", "sha256": "61bfca4a5527115bc7bb814c35d0104bb16f189a73bf3a8d8e1e7f1c67b6d650"},
+  {"file": "rlug/mbox.rlug-1", "sha256": "38050ae2cd7670010f8d7f199ac9137ebb4cc6663c75e4a84f6d8829c62bb730"},
+  {"file": "rlug/mbox.rlug-2", "sha256": "472d3f2183ac5a8575a2c707ac76b89a1e15d34f1b34a9d1f79a595389cd1886"},
+  {"file": "rlug/mbox.rlug-3", "sha256": "1f6fe0823f1d8430aefaaf7d6b361f2fbafa0f1008378ec0694406146549e233"},
+  {"file": "rlug/mbox.rlug-4", "sha256": "321b5f1c924f11300a652017209b1b6b3dc39b98d76abf38ac153247a3940577"},
+  {"file": "sources.json", "sha256": "e39f8b41284c42f7b770c28f662f7671f954fcbc0d79c2329fc379274cb40364"},
+  {"file": "truth.json", "sha256": "c2af18c903b7612fed789d1b95e31b603401ae6a37db18247ad6e1342aaf9e0f"}
+]

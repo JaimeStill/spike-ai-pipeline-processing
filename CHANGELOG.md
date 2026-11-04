@@ -6,6 +6,55 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.5.0] - 2026-11-04
+
+### Added
+
+- `email` reads MIME messages, .eml and mbox files, through spike-ai-pipeline-mail 0.2.0, beside
+  .pst and .msg. An .eml's read is its store line and its message, with any message/rfc822 or
+  message/global part nested under its attachment record; an mbox's is each message in the file's
+  order, its `Message.ID` its 1-based ordinal, which skips a number where an entry is empty, and a
+  `Skipped` record, kind "message", for one mail can't read. Neither has folders, nor a store's
+  encoding, password, or display name. The decoded types are unchanged; their documentation says
+  what MIME input gives.
+- MIME threads: the `Threader` threads an .eml's and an mbox's messages as it does a store's, an
+  mbox message by its ordinal and an .eml's as one root with no id. No change to the algorithm.
+- The nested .eml route: a by-value attachment of no routed signature is `RouteNested` when its
+  name has the .eml extension, in any case, or its stored type is `message/rfc822` or
+  `message/global`, parameters ignored, and its header has the shape mail reads a message by: its
+  first line a header field, and a From or Date field before the header block ends. Signatures
+  still decide first, so a PDF named .eml is a document; one so named or stored that fails the
+  header check is `RouteUnrouted`, its reason saying it isn't header-shaped.
+- The MIME inputs in the hermetic check: 17, mail's 9 generated and threading .eml, `nine.mboxrd`,
+  `mbox.rlug` and its 5 single-message splits, and the built .msg's .eml source, read through the
+  pinned mail against hand-written records, threads, and routes.
+- The MIME integration tier: the integration tests carry the MIME inputs' attachments to their
+  real stages after the .pst and .msg fixtures', read each nested message again, and send each
+  picture not already sent to the vision model.
+- The email finding's addendum, "Addendum: mail 0.2.0, .eml and mbox" in
+  `docs/findings/email.md`, from one run of `mise run findings-email` recorded in
+  `docs/findings/email-results/mail-0.2.0/`: threads 29 of 29 and routes 13 of 13 over the MIME
+  inputs, the .pst and .msg routes re-recorded, and the adapter's time and peak memory on the
+  2.7 GB scale mboxrd beside the scale store.
+- `EMAIL_SCALE_MBOX`, which names the scale mboxrd mail's generator writes for the findings tier
+  to time; unset, it is skipped.
+- Known limits of `email`, replacing v0.4.0's "a by-value .eml attachment is unrouted": a by-value
+  .eml whose header isn't a message's shape, such as one that begins with an mbox's "From " line,
+  is unrouted, as is header-shaped content neither named .eml nor stored as a message. mail's
+  own limits reach MIME input: it reads every mbox as an mboxrd, so an mboxcl's Content-Length is
+  ignored and an mboxo body line that was ">From " loses its ">"; and an .eml's or an mbox's
+  message has no class, no creation or modification time, and SMTP addresses alone.
+
+### Changed
+
+- `MailMinimum` is 0.2.0, and so `MailSpec`'s minimum: `NewReader` refuses mail 0.1.0 with a
+  `tool.VersionError` matching `tool.ErrTooOld`. A caller on mail 0.1.0 must move to 0.2.0. mise
+  pins mail 0.2.0 from its GitHub release.
+- The copy of mail's fixtures and goldens in `email/testdata` is at mail's tag v0.2.0, its new
+  MIME fixtures added and every v0.1.0 file unchanged; the built .msg stays as built at v0.1.0.
+- `generated/msg/08-forward-attached-message.msg`'s by-value .eml, unrouted in v0.4.0, is routed
+  `RouteNested`: the .pst and .msg fixtures' routes are 6 nested and 4 unrouted, 51 of 51 right.
+
 ## [v0.4.0] - 2026-11-03
 
 ### Added
@@ -291,7 +340,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.5.0...HEAD
+[v0.5.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.5.0
 [v0.4.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.4.0
 [v0.3.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.3.0
 [v0.2.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.2.0

@@ -82,8 +82,8 @@ type stages struct {
 	document *document.Preparer
 	// seen are the routes the fixtures' attachments take; ran, those whose stage ran.
 	seen, ran map[email.Route]int
-	// dispatched counts the attachments dispatched; readAgain, the by-value .msg files read
-	// through the CLI again, and readAgainDispatched, the attachments those reads dispatched.
+	// dispatched counts the attachments dispatched; readAgain, the by-value .msg and .eml files
+	// read through the CLI again, and readAgainDispatched, the attachments those reads dispatched.
 	dispatched, readAgain, readAgainDispatched int
 	// done are the contents already carried to their stage, by File, each content's stage run
 	// once whichever attachments carry it; it holds the attachment that first did.
@@ -91,12 +91,21 @@ type stages struct {
 	// pictures are the distinct pictures for vision, by File, in the order first seen.
 	pictures map[string]*picture
 	order    []string
+	// mime is set while a MIME input, .eml or mbox, is read, the messages it nests included;
+	// mimeDispatched counts the attachments those reads dispatched.
+	mime           bool
+	mimeDispatched int
+	// mimeSent are the MIME inputs' pictures gathered for vision, their content first seen there;
+	// mimeSkipped, those whose content an earlier attachment, of a store or a MIME input, already
+	// gathered, each with the attachment that did.
+	mimeSent, mimeSkipped []string
 }
 
 // TestRoutesToStages carries each routed attachment from the real CLI to its real stage. The real
-// pinned mail reads every copied fixture, .pst and .msg, and the built .msg, each into an
-// attachments directory of its own, and each attachment of each message read, those of the
-// messages it nests included, is routed with Attachment.Route and dispatched on its route:
+// pinned mail reads the built .msg, every copied fixture, .pst and .msg, and then every MIME
+// input, .eml and mbox, the built .eml among them, each into an attachments directory of its own,
+// and each attachment of each message read, those of the messages it nests included, is routed
+// with Attachment.Route and dispatched on its route:
 //
 //   - RouteDocument: document's Images over the host's gs, each page's text layer read and the
 //     page rendered;
@@ -105,19 +114,22 @@ type stages struct {
 //   - RouteVision: the picture as stored, gathered for vision;
 //   - RouteVisionConverted: office's ConvertPicture, and its PNG gathered for vision;
 //   - RouteNested: a message nested under its record, which mail read with its parent, its own
-//     attachments dispatched in turn; a by-value .msg file read through the CLI again, into an
-//     attachments directory of its own, and its messages' attachments dispatched; a message
-//     listed without its content, as a .pst lists an embedded one, mail's known limit, logged
-//     and not run;
+//     attachments dispatched in turn; a by-value .msg or .eml file read through the CLI again,
+//     into an attachments directory of its own, and its messages' attachments dispatched; a
+//     message listed without its content, as a .pst lists an embedded one, mail's known limit,
+//     logged and not run;
 //   - RouteUnrouted: logged, with its reason.
 //
 // Each content's stage runs once, by File, so an attachment whose content was carried already is
-// logged with the attachment that first carried it. Then each distinct picture is sent once to
+// logged with the attachment that first carried it. Content is one across the whole run, stores
+// and MIME inputs together, so a MIME input's picture that a .pst or .msg already gathered is
+// skipped, logged as such, and not sent again. Then each distinct picture is sent once to
 // visionModel on the router. It fails unless every stage it runs succeeds, every staged route
-// the fixtures hold had its stage run, the fixtures hold every staged route, and a by-value .msg
-// was read through the CLI again, counted apart as "nested, read again", with attachments of its
-// own dispatched. It logs a recorded line per stage run, with its wall time and result, and per
-// picture.
+// the fixtures hold had its stage run, the fixtures hold every staged route, a by-value .msg or
+// .eml was read through the CLI again, counted apart as "nested, read again", with attachments of
+// its own dispatched, and the MIME inputs dispatched attachments. It logs a recorded line per
+// stage run, with its wall time and result, per picture, and the MIME inputs' pictures sent and
+// skipped as already sent.
 func TestRoutesToStages(t *testing.T) {
 	c := visiontest.Router(t)
 	s := &stages{
@@ -131,12 +143,20 @@ func TestRoutesToStages(t *testing.T) {
 		pictures: map[string]*picture{},
 	}
 	inputs := []string{filepath.Join(builtDir, builtMsg)}
-	for _, rel := range realInputs(t) {
+	stores, mime := realInputs(t)
+	for _, rel := range stores {
 		inputs = append(inputs, filepath.Join(mailCopy, "fixtures", rel))
 	}
 	for _, input := range inputs {
 		s.read(input, filepath.Base(input))
 	}
+	// The MIME inputs follow the stores, so a picture both hold is sent as the store's.
+	s.mime = true
+	for _, rel := range mime {
+		input := filepath.Join("testdata", rel)
+		s.read(input, filepath.Base(input))
+	}
+	s.mime = false
 
 	for _, route := range slices.Sorted(maps.Keys(s.seen)) {
 		t.Logf("recorded: route %s: %d attachments, %d stage runs", route, s.seen[route], s.ran[route])
@@ -152,9 +172,13 @@ func TestRoutesToStages(t *testing.T) {
 	}
 	switch {
 	case s.readAgain == 0:
-		t.Error("no by-value .msg was read through the CLI again")
+		t.Error("no by-value .msg or .eml was read through the CLI again")
 	case s.readAgainDispatched == 0:
-		t.Errorf("%d by-value .msg files read again, no attachment of theirs dispatched", s.readAgain)
+		t.Errorf("%d by-value .msg or .eml files read again, no attachment of theirs dispatched", s.readAgain)
+	}
+	t.Logf("recorded: MIME inputs: %d read, %d attachments dispatched", len(mime), s.mimeDispatched)
+	if s.mimeDispatched == 0 {
+		t.Errorf("%d MIME inputs read, no attachment of theirs dispatched", len(mime))
 	}
 
 	pictures := make([]*picture, 0, len(s.order))
@@ -165,10 +189,21 @@ func TestRoutesToStages(t *testing.T) {
 		t.Fatal("no attachment routes a picture to vision")
 	}
 	describePictures(t, c, pictures)
+	t.Logf("recorded: MIME pictures sent: %d%s", len(s.mimeSent), listed(s.mimeSent))
+	t.Logf("recorded: MIME pictures skipped as already sent: %d%s", len(s.mimeSkipped), listed(s.mimeSkipped))
 }
 
-// read reads input, a .pst or .msg, through the real mail into an attachments directory of its
-// own, and dispatches each message's attachments; where names it in the recorded lines.
+// listed returns items after a colon, joined by semicolons, or nothing when there are none.
+func listed(items []string) string {
+	if len(items) == 0 {
+		return ""
+	}
+	return ": " + strings.Join(items, "; ")
+}
+
+// read reads input, a .pst, .msg, .eml, or mbox, through the real mail into an attachments
+// directory of its own, and dispatches each message's attachments; where names it in the recorded
+// lines.
 func (s *stages) read(input, where string) {
 	t := s.t
 	dir := t.TempDir()
@@ -201,6 +236,9 @@ func (s *stages) dispatch(a *email.Attachment, where string) {
 	}
 	s.seen[route]++
 	s.dispatched++
+	if s.mime {
+		s.mimeDispatched++
+	}
 	name := a.Filename
 	if name == "" {
 		name = "(unnamed)"
@@ -210,6 +248,11 @@ func (s *stages) dispatch(a *email.Attachment, where string) {
 		if first, ok := s.done[a.File]; ok {
 			if p, ok := s.pictures[a.File]; ok {
 				p.sources = append(p.sources, source)
+				if s.mime {
+					s.mimeSkipped = append(s.mimeSkipped, source+", sent as "+first)
+					t.Logf("recorded: vision skipped, %s: %s (%s), already sent as %s", source, route, why, first)
+					return
+				}
 			}
 			t.Logf("stage: %s: %s (%s), its content carried as %s", source, route, why, first)
 			return
@@ -358,8 +401,8 @@ func (s *stages) converted(a *email.Attachment, source string) {
 }
 
 // nested carries an embedded message on: one nested under its record, which mail read with its
-// parent, has its own attachments dispatched; a by-value .msg file is read through the CLI again;
-// one listed without its content can't be read, mail's known limit, and is logged, not run.
+// parent, has its own attachments dispatched; a by-value .msg or .eml file is read through the CLI
+// again; one listed without its content can't be read, mail's known limit, and is logged, not run.
 func (s *stages) nested(a *email.Attachment, source, why string) {
 	t := s.t
 	switch {
@@ -382,10 +425,14 @@ func (s *stages) nested(a *email.Attachment, source, why string) {
 	}
 }
 
-// gather adds a distinct picture for vision under file, its attachment's content's name.
+// gather adds a distinct picture for vision under file, its attachment's content's name, and
+// notes it among the MIME inputs' pictures sent when a MIME input is being read.
 func (s *stages) gather(file string, p *picture) {
 	s.pictures[file] = p
 	s.order = append(s.order, file)
+	if s.mime {
+		s.mimeSent = append(s.mimeSent, p.sources[0])
+	}
 }
 
 // sizeOf returns a's stored size in bytes, or -1 when mail didn't read its content.

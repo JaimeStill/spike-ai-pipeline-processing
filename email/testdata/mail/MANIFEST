@@ -2,8 +2,8 @@
 # tests/golden, in golden/, at the tag, copied byte for byte by mise run fixtures:mail,
 # which reports any drift against this manifest. Each file's SHA-256 is below.
 repository https://github.com/JaimeStill/spike-ai-pipeline-mail
-tag v0.1.0
-commit 75923186494d94ddf37a61b9865c1848bb0bbbd6
+tag v0.2.0
+commit e2ec844634f77c7db2dd141ccb7e77527d250272
 80da257c69449439eb725769e562d9714bff4d5cc2ed5e97b7150ddae0b707f7  fixtures/generated/eml/01-plain.eml
 64391ec0f9866d2859eff23fed4507350d2a5bfd5443db21ac2d8beb8f0982d6  fixtures/generated/eml/02-reply-latin1.eml
 78db74762bc8f90de0fa83ae3b54502d0d80e35eac1dd070c27e4eb751ae759b  fixtures/generated/eml/03-html-inline-image.eml
@@ -24,6 +24,19 @@ ceedbf6ac52fe4d47144149089024efb9bd7a3920d2366bd222a345842978ab4  fixtures/gener
 a7c1b4ede2080d0a64e894e2c7d2454b82c56578944bba907347024c94da0464  fixtures/generated/msg/08-forward-attached-message.msg
 771e8d0c603c1f4f20785778e5be99b0fc7811d6b80c9fde2609ea87cc5c7fa6  fixtures/generated/pst/mailbox.pst
 92f67d4cd835fbe01042124f65482a3490d65c5d46af3dd41dd3f66b5d9e35cd  fixtures/generated/truth.json
+0bd5fd0a0f23a9b26158c13da173d596e39651afb1d0cd8bb2cd7ec2a7f1b7da  fixtures/mime/eml/09-threading.eml
+4f6a021e567c8fcf46773500346223179d2b59537bcf9deb71adc6513af886bf  fixtures/mime/nine.mboxrd
+f76f44f15a87ca8593787f37d85381cf19091f5f99bef389496c925b1f2fa726  fixtures/mime/rlug/LICENSE
+52e7f35debe674e75cd9fdbb27b3235c3c341aa14bb6d0efc536bcb7dc0937db  fixtures/mime/rlug/NOTICE
+5a434065c6e89e431b5edd9f0e661d1ec454f4dd1d1f3c8d15b32eec21acba53  fixtures/mime/rlug/mbox.rlug
+61bfca4a5527115bc7bb814c35d0104bb16f189a73bf3a8d8e1e7f1c67b6d650  fixtures/mime/rlug/mbox.rlug-0
+38050ae2cd7670010f8d7f199ac9137ebb4cc6663c75e4a84f6d8829c62bb730  fixtures/mime/rlug/mbox.rlug-1
+472d3f2183ac5a8575a2c707ac76b89a1e15d34f1b34a9d1f79a595389cd1886  fixtures/mime/rlug/mbox.rlug-2
+1f6fe0823f1d8430aefaaf7d6b361f2fbafa0f1008378ec0694406146549e233  fixtures/mime/rlug/mbox.rlug-3
+321b5f1c924f11300a652017209b1b6b3dc39b98d76abf38ac153247a3940577  fixtures/mime/rlug/mbox.rlug-4
+a7c240529d915f2a7514a264b57c31caee8fdd1d6628dc61f0c6130813af164e  fixtures/mime/sha256.json
+e39f8b41284c42f7b770c28f662f7671f954fcbc0d79c2329fc379274cb40364  fixtures/mime/sources.json
+c2af18c903b7612fed789d1b95e31b603401ae6a37db18247ad6e1342aaf9e0f  fixtures/mime/truth.json
 f4bf4c512344d106b3118da3e84db32b14a06474740c8e54fab51ea925659000  fixtures/msg/poi-truth.json
 da9c8731ac16dde690493a8ca0d96323d36ea4300dc7d34614292f18d9b58eb8  fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg
 6e7c918e5a49f677c1b85a9eb2d035cd85c217fc42af6b4a336964a434001a9c  fixtures/msg/poi/LICENSE

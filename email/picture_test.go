@@ -60,7 +60,7 @@ func pictureStandin(name string, args []string) int {
 // linked too, so the PATH it makes the whole of serves a Reader as well.
 func pictureConverter(t *testing.T) (*office.Converter, func() [][]string) {
 	t.Helper()
-	runs := installStandin(t, "0.1.0")
+	runs := installStandin(t, "0.2.0")
 	exe, err := os.Executable()
 	if err != nil {
 		t.Fatal(err)

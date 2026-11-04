@@ -9,7 +9,7 @@ shellcheck = "0.11.0"
 "github:JaimeStill/spike-ai-pipeline-office" = "0.1.0"
 # mail, from its GitHub release, for the email package's tests that run the real binary; mise
 # checks the archive against the release's digest.
-"github:JaimeStill/spike-ai-pipeline-mail" = "0.1.0"
+"github:JaimeStill/spike-ai-pipeline-mail" = "0.2.0"
 
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
@@ -236,11 +236,12 @@ exit "$failed"
 '''
 
 # Evidence 16's email finding, in the findings tier: the findings-tagged tests in package email
-# thread and route every fixture against the tests' hand truth, count plaso's 59 MB store's threads
-# and routes, and time the adapter, threads included, and mail alone on plaso's store and on the
-# scale store EMAIL_SCALE_STORE names, with their peak memory. plaso's store is fetched into
-# .state/ and checked by its SHA-256; neither store is committed. An EMAIL_FINDINGS_RESULTS the
-# shell sets keeps the run's results there; unset, the run keeps nothing. It isn't CI.
+# thread and route every fixture and MIME input against the tests' hand truth, count plaso's 59 MB
+# store's threads and routes, and time the adapter, threads included, and mail alone on plaso's
+# store, the scale store EMAIL_SCALE_STORE names, and the scale mboxrd EMAIL_SCALE_MBOX names, with
+# their peak memory. plaso's store is fetched into .state/ and checked by its SHA-256; none is
+# committed. An EMAIL_FINDINGS_RESULTS the shell sets keeps the run's results there; unset, the
+# run keeps nothing. It isn't CI.
 [tasks.findings-email]
-description = "Run the email finding on the fixtures, plaso's store, and the EMAIL_SCALE_STORE scale store; keeps results only in EMAIL_FINDINGS_RESULTS"
+description = "Run the email finding on the fixtures and MIME inputs, plaso's store, the EMAIL_SCALE_STORE scale store, and the EMAIL_SCALE_MBOX scale mboxrd; keeps results only in EMAIL_FINDINGS_RESULTS"
 run = "scripts/findings-email.sh"

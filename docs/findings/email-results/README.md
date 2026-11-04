@@ -18,3 +18,21 @@ and the scale store is rebuilt from mail's tag (`../email.md`, "Rerunning").
 | `routes-to-stages.log` | `TestRoutesToStages` (integration tier) | An excerpt of the run's `-v` output, verbatim: each attachment carried to its stage, the built .msg's by-value `forwarded.msg` read through the CLI again, and each of the 15 distinct pictures sent once to Gemma 4 26B-A4B on gb10-2's router |
 
 Each run's times are in nanoseconds in the JSON; `max_rss` is in bytes.
+
+## `mail-0.2.0/`: the addendum's run
+
+[`../email.md`](../email.md)'s addendum, "Addendum: mail 0.2.0, .eml and mbox", cites these. They
+are one run of `mise run findings-email` on 2026-11-04, 15:20:24 to 15:24:32 UTC, from the same
+laptop, with mail 0.2.0 from the mise pin, the release binary (SHA-256
+`376cd7bd94501770a11e64bd8f9191615cd687753d09f34619da2eaaf1c2d9b0`), at processing commit 520ab64
+on branch `email-mime`, recorded by setting `EMAIL_FINDINGS_RESULTS`. Neither scale file is
+committed: both are mail's generator's, rebuilt from mail's tag (`../email.md`, the addendum's
+"Rerunning").
+
+| File | Test | What it records |
+|---|---|---|
+| `findings.log` | all four | The run's `-v` output, verbatim, under a header |
+| `fixtures.json` | `TestFindingsFixtures` | Each of the 40 inputs, the 23 `.pst` and `.msg` fixtures and then the 17 MIME inputs, as the top-level `fixtures.json` records each |
+| `plaso.json` | `TestFindingsPlaso` | As the top-level `plaso.json` |
+| `scale.json` | `TestFindingsScale` | The scale store, its generator record, and every run, as the top-level `scale.json` |
+| `scale-mbox.json` | `TestFindingsScaleMbox` | The scale mboxrd, the same generator record, and every run, as `scale.json`'s |

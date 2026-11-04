@@ -21,8 +21,9 @@ import (
 // child's. Messages of the same date are ordered by store id, then by their order in the read, so
 // the same read always gives the same threads.
 type Thread struct {
-	// ID is the message's store id, its Message.ID: in a .pst, its node id. It is zero for a
-	// placeholder, and for a .msg's message, which has none.
+	// ID is the message's store id, its Message.ID: in a .pst, its node id; in an mbox, its
+	// ordinal in the file. It is zero for a placeholder, and for a .msg's or an .eml's message,
+	// which has none.
 	ID uint64
 	// Placeholder says the store doesn't hold this message: it stands for a Message-ID other
 	// messages refer to, for the parent a conversation index names, or for the base subject

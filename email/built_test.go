@@ -27,6 +27,9 @@ var builtDir = filepath.Join("testdata", "built")
 // builtMsg is the built .msg, under builtDir.
 const builtMsg = "msg/office-attachments.msg"
 
+// builtEML is the built .msg's .eml source, under builtDir.
+const builtEML = "eml/office-attachments.eml"
+
 // builtSource is one of the built .msg's attachments as the source attaches it: its filename,
 // the route its content takes, and where its bytes came from, a committed fixture, by its path
 // from the repository's root, and the member of that fixture's package, or "-" for the fixture
@@ -115,16 +118,17 @@ func sha256Hex(content []byte) string {
 }
 
 // TestBuiltManifest: the built directory is exactly the files its MANIFEST lists, each with the
-// SHA-256 listed. The MANIFEST names the mail tag the copy of mail's fixtures is taken from, a
+// SHA-256 listed. The MANIFEST names the mail tag whose fixtures generator built the .msg, a
 // full commit, and the generator's tool versions, the ones the generator's own manifest.json
 // records, which also records the .msg's SHA-256 and its source's as listed. Its attachments are
 // builtSources, each with its source's SHA-256, read from the fixture now.
 func TestBuiltManifest(t *testing.T) {
 	m := readBuiltManifest(t)
-	mailHeader, _ := readManifest(t)
-	if m.header["tag"] != mailHeader["tag"] || !commitHash.MatchString(m.header["commit"]) {
-		t.Errorf("manifest pins tag %q at commit %q, want mail's copy's tag %q and a full commit hash",
-			m.header["tag"], m.header["commit"], mailHeader["tag"])
+	// The generator's tag needn't be the copy's: mail v0.2.0 changed only the generator's scale
+	// mode, so the .msg built at v0.1.0 stands while the copy moves on.
+	if m.header["tag"] == "" || !commitHash.MatchString(m.header["commit"]) {
+		t.Errorf("manifest pins tag %q at commit %q, want a tag and a full commit hash",
+			m.header["tag"], m.header["commit"])
 	}
 
 	found := map[string]string{}

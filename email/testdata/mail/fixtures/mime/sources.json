@@ -1,0 +1,50 @@
+[
+  {
+    "file": "rlug/mbox.rlug",
+    "repository": "https://github.com/apache/james-mime4j",
+    "commit": "c9847207a5aa3ce2526bfee78edf3dbae9c22e35",
+    "path": "mbox/src/test/resources/test-1/mbox.rlug",
+    "license": "Apache-2.0; rlug/LICENSE and rlug/NOTICE",
+    "sha256": "5a434065c6e89e431b5edd9f0e661d1ec454f4dd1d1f3c8d15b32eec21acba53"
+  },
+  {
+    "file": "rlug/mbox.rlug-0",
+    "repository": "https://github.com/apache/james-mime4j",
+    "commit": "c9847207a5aa3ce2526bfee78edf3dbae9c22e35",
+    "path": "mbox/src/test/resources/test-1/mbox.rlug-0",
+    "license": "Apache-2.0; rlug/LICENSE and rlug/NOTICE",
+    "sha256": "61bfca4a5527115bc7bb814c35d0104bb16f189a73bf3a8d8e1e7f1c67b6d650"
+  },
+  {
+    "file": "rlug/mbox.rlug-1",
+    "repository": "https://github.com/apache/james-mime4j",
+    "commit": "c9847207a5aa3ce2526bfee78edf3dbae9c22e35",
+    "path": "mbox/src/test/resources/test-1/mbox.rlug-1",
+    "license": "Apache-2.0; rlug/LICENSE and rlug/NOTICE",
+    "sha256": "38050ae2cd7670010f8d7f199ac9137ebb4cc6663c75e4a84f6d8829c62bb730"
+  },
+  {
+    "file": "rlug/mbox.rlug-2",
+    "repository": "https://github.com/apache/james-mime4j",
+    "commit": "c9847207a5aa3ce2526bfee78edf3dbae9c22e35",
+    "path": "mbox/src/test/resources/test-1/mbox.rlug-2",
+    "license": "Apache-2.0; rlug/LICENSE and rlug/NOTICE",
+    "sha256": "472d3f2183ac5a8575a2c707ac76b89a1e15d34f1b34a9d1f79a595389cd1886"
+  },
+  {
+    "file": "rlug/mbox.rlug-3",
+    "repository": "https://github.com/apache/james-mime4j",
+    "commit": "c9847207a5aa3ce2526bfee78edf3dbae9c22e35",
+    "path": "mbox/src/test/resources/test-1/mbox.rlug-3",
+    "license": "Apache-2.0; rlug/LICENSE and rlug/NOTICE",
+    "sha256": "1f6fe0823f1d8430aefaaf7d6b361f2fbafa0f1008378ec0694406146549e233"
+  },
+  {
+    "file": "rlug/mbox.rlug-4",
+    "repository": "https://github.com/apache/james-mime4j",
+    "commit": "c9847207a5aa3ce2526bfee78edf3dbae9c22e35",
+    "path": "mbox/src/test/resources/test-1/mbox.rlug-4",
+    "license": "Apache-2.0; rlug/LICENSE and rlug/NOTICE",
+    "sha256": "321b5f1c924f11300a652017209b1b6b3dc39b98d76abf38ac153247a3940577"
+  }
+]
