@@ -176,7 +176,7 @@ func headerShapedFile(path string) (bool, error) {
 		return false, err
 	}
 	defer func() { _ = f.Close() }()
-	return headerShaped(bufio.NewReader(f))
+	return headerShaped(f)
 }
 
 // headerShaped reports whether r has the shape of an RFC 5322 message, mail's header_shape: its
@@ -186,10 +186,12 @@ func headerShapedFile(path string) (bool, error) {
 // bytes are read. An mbox's "From " separator is no field, so an input that begins with one isn't
 // header-shaped. The field's name is checked by fieldName, not net/textproto's, which refuses the
 // space before the colon mail allows.
-func headerShaped(r *bufio.Reader) (bool, error) {
+func headerShaped(r io.Reader) (bool, error) {
+	// A line is read through its newline or to the buffer's size, whichever comes first.
+	br := bufio.NewReaderSize(r, headerLineMax)
 	for first := true; ; first = false {
-		line, err := readHeaderLine(r)
-		if err != nil {
+		line, err := br.ReadSlice('\n')
+		if err != nil && !errors.Is(err, io.EOF) && !errors.Is(err, bufio.ErrBufferFull) {
 			return false, err
 		}
 		content := bytes.TrimSuffix(line, []byte("\n"))
@@ -211,26 +213,6 @@ func headerShaped(r *bufio.Reader) (bool, error) {
 			return false, nil
 		}
 	}
-}
-
-// readHeaderLine reads r through its next newline, kept, or headerLineMax bytes, whichever comes
-// first; at the end of the input it returns what is left, empty there.
-func readHeaderLine(r *bufio.Reader) ([]byte, error) {
-	var line []byte
-	for len(line) < headerLineMax {
-		b, err := r.ReadByte()
-		if errors.Is(err, io.EOF) {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-		line = append(line, b)
-		if b == '\n' {
-			break
-		}
-	}
-	return line, nil
 }
 
 // fieldName returns the name of the header field line starts, or nil if it starts none: printable
