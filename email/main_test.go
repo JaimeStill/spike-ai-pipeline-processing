@@ -169,11 +169,11 @@ func installStandin(t *testing.T, version string) func() [][]string {
 	}
 }
 
-// standinReader builds a Reader over the stand-in mail at 0.1.0, built from MailSpec through the
+// standinReader builds a Reader over the stand-in mail at 0.2.0, built from MailSpec through the
 // exec runner, and returns it with the stand-in's run log.
 func standinReader(t *testing.T) (*email.Reader, func() [][]string) {
 	t.Helper()
-	runs := installStandin(t, "0.1.0")
+	runs := installStandin(t, "0.2.0")
 	tl, err := tool.NewExec(t.Context(), email.MailSpec())
 	if err != nil {
 		t.Fatal(err)

@@ -7,7 +7,7 @@
 // package; the program it runs is a tool.Tool the caller built.
 //
 // A Reader is built at the composition root over a mail Tool, MailSpec declaring it. NewReader
-// refuses one older than 0.1.0, and the Tool's own construction a missing one, so a missing or
+// refuses one older than 0.2.0, and the Tool's own construction a missing one, so a missing or
 // outdated mail fails at startup. mail's contract is its README: its JSON Lines, schema "1", its
 // attachment naming, its warnings, and its exit codes.
 //
@@ -62,7 +62,7 @@
 // Its exported identifiers:
 //
 //   - [MailSpec] declares mail's spike-ai-pipeline-mail for either runner's constructor.
-//   - [MailMinimum] is the oldest mail the Reader accepts, 0.1.0.
+//   - [MailMinimum] is the oldest mail the Reader accepts, 0.2.0.
 //   - [Config] is the Tool a Reader is built over.
 //   - [Reader] reads mail stores through mail.
 //   - [NewReader] builds a Reader over a Config.

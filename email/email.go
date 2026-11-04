@@ -19,10 +19,10 @@ import (
 )
 
 // MailMinimum is the oldest mail the Reader accepts.
-const MailMinimum = "0.1.0"
+const MailMinimum = "0.2.0"
 
-// MailSpec declares mail's spike-ai-pipeline-mail, minimum 0.1.0, for either runner's
-// constructor. mail --version prints the version alone, as "0.1.0", and the pattern takes the
+// MailSpec declares mail's spike-ai-pipeline-mail, minimum 0.2.0, for either runner's
+// constructor. mail --version prints the version alone, as "0.2.0", and the pattern takes the
 // dotted numbers, as office's does. A caller that needs another program path or a KillAfter
 // period sets them on the Spec returned.
 func MailSpec() tool.Spec {

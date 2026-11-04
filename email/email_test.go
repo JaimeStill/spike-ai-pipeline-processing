@@ -21,7 +21,7 @@ import (
 // TestNewReader: a stand-in at the minimum, or a build past it, is accepted; an older one fails at
 // construction, whether the Tool's Spec or NewReader refuses it; a nil Tool is refused.
 func TestNewReader(t *testing.T) {
-	for _, version := range []string{"0.1.0", "0.1.0+0b6b5a4", "0.2.0"} {
+	for _, version := range []string{"0.2.0", "0.2.0+0b6b5a4", "0.3.0"} {
 		t.Run(version, func(t *testing.T) {
 			installStandin(t, version)
 			tl, err := tool.NewExec(t.Context(), email.MailSpec())
@@ -34,7 +34,7 @@ func TestNewReader(t *testing.T) {
 		})
 	}
 	t.Run("older", func(t *testing.T) {
-		installStandin(t, "0.0.9")
+		installStandin(t, "0.1.0")
 		_, err := tool.NewExec(t.Context(), email.MailSpec())
 		if !errors.Is(err, tool.ErrTooOld) {
 			t.Fatalf("spec's own minimum: got %v, want ErrTooOld", err)
@@ -47,8 +47,8 @@ func TestNewReader(t *testing.T) {
 		}
 		_, err = email.NewReader(email.Config{Mail: tl})
 		var verr *tool.VersionError
-		if !errors.Is(err, tool.ErrTooOld) || !errors.As(err, &verr) || verr.Found != "0.0.9" || verr.Minimum != email.MailMinimum {
-			t.Fatalf("NewReader: got %v, want a VersionError for 0.0.9 under %s", err, email.MailMinimum)
+		if !errors.Is(err, tool.ErrTooOld) || !errors.As(err, &verr) || verr.Found != "0.1.0" || verr.Minimum != email.MailMinimum {
+			t.Fatalf("NewReader: got %v, want a VersionError for 0.1.0 under %s", err, email.MailMinimum)
 		}
 	})
 	t.Run("nil", func(t *testing.T) {
