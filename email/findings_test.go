@@ -27,9 +27,9 @@ import (
 )
 
 // The findings tier measures the adapter for evidence 16, never in CI or the check: threads and
-// routes over every fixture, scored where the tests hold a hand truth; and, on plaso's 59 MB
-// store and on the scale store, threads and routes counted and the adapter's time and peak
-// memory, threads included, beside mail's own. `mise run findings-email` runs it; what it found
+// routes over every fixture and MIME input, scored where the tests hold a hand truth; and, on
+// plaso's 59 MB store, the scale store, and the scale mboxrd, threads and routes counted and the
+// adapter's time and peak memory, threads included, beside mail's own. `mise run findings-email` runs it; what it found
 // is in docs/findings/email.md. Its settings, from the environment:
 //
 //   - EMAIL_PLASO_STORE names where plaso's store is kept: fetched there at plasoCommit when it is
@@ -37,12 +37,16 @@ import (
 //   - EMAIL_SCALE_STORE names the scale store, the scale.pst mail's generator builds
 //     (MISE_ENV=fixtures mise run scale, in a checkout of mail's tag); a scale.json beside it is
 //     logged. Unset skips the scale store. Neither store is ever committed.
+//   - EMAIL_SCALE_MBOX names the scale mboxrd, the scale.mboxrd the same generator writes beside
+//     scale.pst, the same messages; a scale.json beside it is logged. Unset skips it. It is never
+//     committed.
 //   - EMAIL_FINDINGS_RUNS is the timed runs of each large store each way, 3 when unset.
 //   - EMAIL_FINDINGS_RESULTS names a directory each test writes its results to as JSON; unset
 //     writes nothing, so a run keeps its results only when asked to.
 const (
 	plasoEnv   = "EMAIL_PLASO_STORE"
 	scaleEnv   = "EMAIL_SCALE_STORE"
+	mboxEnv    = "EMAIL_SCALE_MBOX"
 	runsEnv    = "EMAIL_FINDINGS_RUNS"
 	resultsEnv = "EMAIL_FINDINGS_RESULTS"
 )
@@ -385,85 +389,112 @@ type fixtureResult struct {
 	RoutesRight  int `json:"routes_right"`
 }
 
-// TestFindingsFixtures reads every fixture, mail's copy and the built .msg, through the real
-// pinned mail with an attachments directory, threads it, and routes every attachment. Routes are
-// scored against the tests' hand truth, fixtureRoutes and builtSources, which cover every
-// fixture; threads against realThreads, Tika's two stores and the generated one. It fails on any
-// miss, and records each fixture's counts and scores.
+// fixtureInput is one input TestFindingsFixtures reads: its name, as the hand truth keys it, its
+// path, the routes the truth gives its attachments, and its threads, "" where there is no truth.
+type fixtureInput struct {
+	name, path string
+	routes     []routed
+	threads    string
+}
+
+// TestFindingsFixtures reads every fixture and MIME input through the real pinned mail with an
+// attachments directory, threads it, and routes every attachment. The fixtures are mail's .pst
+// and .msg copy and the built .msg: their routes are scored against fixtureRoutes and
+// builtSources, which cover every fixture, and their threads against realThreads, Tika's two
+// stores and the generated one. The MIME inputs are mail's .eml and mbox copy and the built .eml:
+// their routes are scored against mimeRoutes and their threads against mimeThreads, which cover
+// every one. It fails on any miss, and records each input's counts and scores, and each group's
+// totals.
 func TestFindingsFixtures(t *testing.T) {
 	r := realReader(t)
 	root, err := filepath.Abs(filepath.Join(mailCopy, "fixtures"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	type input struct {
-		name, path string
-		routes     []routed
+	testdata, err := filepath.Abs("testdata")
+	if err != nil {
+		t.Fatal(err)
 	}
-	var inputs []input
-	stores, _ := realInputs(t)
+	stores, mime := realInputs(t)
+	var fixtures, mimeInputs []fixtureInput
 	for _, rel := range stores {
-		inputs = append(inputs, input{rel, filepath.Join(root, rel), fixtureRoutes[rel]})
+		fixtures = append(fixtures, fixtureInput{rel, filepath.Join(root, rel), fixtureRoutes[rel], realThreads[rel]})
 	}
 	var builtRoutes []routed
 	for _, s := range builtSources {
 		builtRoutes = append(builtRoutes, routed{s.filename, s.route})
 	}
-	inputs = append(inputs, input{"built/" + builtMsg, filepath.Join(builtDir, builtMsg), builtRoutes})
+	fixtures = append(fixtures, fixtureInput{"built/" + builtMsg, filepath.Join(builtDir, builtMsg), builtRoutes, ""})
+	for _, rel := range mime {
+		mimeInputs = append(mimeInputs, fixtureInput{rel, filepath.Join(testdata, rel), mimeRoutes[rel], mimeThreads[rel]})
+	}
 
 	var results []fixtureResult
-	var total fixtureResult
-	for _, in := range inputs {
-		s, threads, routes, err := surveyStore(t.Context(), r, in.path, t.TempDir())
-		if err != nil {
-			t.Fatalf("%s: %v", in.name, err)
-		}
-		res := fixtureResult{Fixture: in.name, survey: s, Rendered: render(threads), RoutesScored: len(in.routes)}
-		for i, want := range in.routes {
-			if i < len(routes) && routes[i] == want {
-				res.RoutesRight++
+	for _, group := range []struct {
+		name   string
+		inputs []fixtureInput
+	}{{".pst and .msg", fixtures}, {"MIME", mimeInputs}} {
+		var total fixtureResult
+		for _, in := range group.inputs {
+			res := scoreFixture(t, r, in)
+			results = append(results, res)
+			total.Folders += res.Folders
+			total.Messages += res.Messages
+			total.Skipped += res.Skipped
+			total.Warnings += res.Warnings
+			total.Attachments += res.Attachments
+			total.RoutesScored += res.RoutesScored
+			total.RoutesRight += res.RoutesRight
+			total.ThreadsScored += res.ThreadsScored
+			total.ThreadsRight += res.ThreadsRight
+			if total.Routes == nil {
+				total.Routes = map[email.Route]int{}
+			}
+			for route, n := range res.Routes {
+				total.Routes[route] += n
 			}
 		}
-		if res.RoutesRight != res.RoutesScored || len(routes) != len(in.routes) {
-			t.Errorf("%s: routes %v, want %v", in.name, routes, in.routes)
-		}
-		if truth, ok := realThreads[in.name]; ok {
-			res.ThreadsTruth = truth
-			want, got := parseParents(truth), parentsOf(threads)
-			res.ThreadsScored = len(want)
-			for id, parent := range want {
-				if p, ok := got[id]; ok && p == parent {
-					res.ThreadsRight++
-				}
-			}
-			if res.Rendered != truth {
-				t.Errorf("%s: threads %s, want %s", in.name, res.Rendered, truth)
-			}
-		}
-		t.Logf("recorded: fixture %s: %d folders, %d messages, %d skipped, %d warnings; %d attachments, routes %s; %s; threads %s%s; %v",
-			in.name, s.Folders, s.Messages, s.Skipped, s.Warnings, s.Attachments, routeCounts(s.Routes),
-			threadLine(s.Threads), res.Rendered, scoreLine(res), s.Elapsed.Round(time.Microsecond))
-		results = append(results, res)
-		total.Folders += s.Folders
-		total.Messages += s.Messages
-		total.Skipped += s.Skipped
-		total.Warnings += s.Warnings
-		total.Attachments += s.Attachments
-		total.RoutesScored += res.RoutesScored
-		total.RoutesRight += res.RoutesRight
-		total.ThreadsScored += res.ThreadsScored
-		total.ThreadsRight += res.ThreadsRight
-		if total.Routes == nil {
-			total.Routes = map[email.Route]int{}
-		}
-		for route, n := range s.Routes {
-			total.Routes[route] += n
+		t.Logf("recorded: %s, %d inputs: %d folders, %d messages, %d skipped, %d warnings; %d attachments, routes %s; routes right %d of %d; threads right %d of %d messages scored",
+			group.name, len(group.inputs), total.Folders, total.Messages, total.Skipped, total.Warnings, total.Attachments,
+			routeCounts(total.Routes), total.RoutesRight, total.RoutesScored, total.ThreadsRight, total.ThreadsScored)
+	}
+	saveFindings(t, "fixtures.json", results)
+}
+
+// scoreFixture reads in with an attachments directory, threads and routes it, scores it against
+// its truth, reporting every miss, and logs it.
+func scoreFixture(t *testing.T, r *email.Reader, in fixtureInput) fixtureResult {
+	t.Helper()
+	s, threads, routes, err := surveyStore(t.Context(), r, in.path, t.TempDir())
+	if err != nil {
+		t.Fatalf("%s: %v", in.name, err)
+	}
+	res := fixtureResult{Fixture: in.name, survey: s, Rendered: render(threads), RoutesScored: len(in.routes)}
+	for i, want := range in.routes {
+		if i < len(routes) && routes[i] == want {
+			res.RoutesRight++
 		}
 	}
-	t.Logf("recorded: fixtures, %d inputs: %d folders, %d messages, %d skipped, %d warnings; %d attachments, routes %s; routes right %d of %d; threads right %d of %d messages scored",
-		len(results), total.Folders, total.Messages, total.Skipped, total.Warnings, total.Attachments,
-		routeCounts(total.Routes), total.RoutesRight, total.RoutesScored, total.ThreadsRight, total.ThreadsScored)
-	saveFindings(t, "fixtures.json", results)
+	if res.RoutesRight != res.RoutesScored || len(routes) != len(in.routes) {
+		t.Errorf("%s: routes %v, want %v", in.name, routes, in.routes)
+	}
+	if in.threads != "" {
+		res.ThreadsTruth = in.threads
+		want, got := parseParents(in.threads), parentsOf(threads)
+		res.ThreadsScored = len(want)
+		for id, parent := range want {
+			if p, ok := got[id]; ok && p == parent {
+				res.ThreadsRight++
+			}
+		}
+		if res.Rendered != in.threads {
+			t.Errorf("%s: threads %s, want %s", in.name, res.Rendered, in.threads)
+		}
+	}
+	t.Logf("recorded: fixture %s: %d folders, %d messages, %d skipped, %d warnings; %d attachments, routes %s; %s; threads %s%s; %v",
+		in.name, s.Folders, s.Messages, s.Skipped, s.Warnings, s.Attachments, routeCounts(s.Routes),
+		threadLine(s.Threads), res.Rendered, scoreLine(res), s.Elapsed.Round(time.Microsecond))
+	return res
 }
 
 // scoreLine writes res's thread score, when it has a truth, and its route score, when the truth
@@ -588,16 +619,42 @@ func TestFindingsScale(t *testing.T) {
 	if path == "" {
 		t.Skip(scaleEnv + " is unset")
 	}
-	var record any
-	if b, err := os.ReadFile(filepath.Join(filepath.Dir(path), "scale.json")); err == nil {
-		if err := json.Unmarshal(b, &record); err != nil {
-			t.Fatal(err)
-		}
-		if m, ok := record.(map[string]any); ok {
-			t.Logf("scale store %s: content SHA-256 %v, parameters %v", path, m["content_sha256"], m["parameters"])
-		}
+	measureStore(t, "scale", path, scaleRecord(t, path))
+}
+
+// TestFindingsScaleMbox measures the adapter on the scale mboxrd EMAIL_SCALE_MBOX names, the scale
+// store's messages as an mboxrd. They carry no threading fields there either, so its threads, too,
+// measure cost only.
+func TestFindingsScaleMbox(t *testing.T) {
+	path := os.Getenv(mboxEnv)
+	if path == "" {
+		t.Skip(mboxEnv + " is unset")
 	}
-	measureStore(t, "scale", path, record)
+	measureStore(t, "scale-mbox", path, scaleRecord(t, path))
+}
+
+// scaleRecord returns the generator's record, the scale.json beside path, and logs its content
+// SHA-256, its mboxrd's SHA-256, and its parameters; nil when there is none.
+func scaleRecord(t *testing.T, path string) any {
+	t.Helper()
+	b, err := os.ReadFile(filepath.Join(filepath.Dir(path), "scale.json"))
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	} else if err != nil {
+		t.Fatal(err)
+	}
+	var record any
+	if err := json.Unmarshal(b, &record); err != nil {
+		t.Fatal(err)
+	}
+	if m, ok := record.(map[string]any); ok {
+		var mbox any
+		if mb, ok := m["mboxrd"].(map[string]any); ok {
+			mbox = mb["sha256"]
+		}
+		t.Logf("scale set %s: content SHA-256 %v, mboxrd SHA-256 %v, parameters %v", path, m["content_sha256"], mbox, m["parameters"])
+	}
+	return record
 }
 
 // The ways a large store is timed: the adapter, the measuring process, reading and threading, and
@@ -703,7 +760,7 @@ func measureStore(t *testing.T, name, path string, record any) {
 				if rn.WrittenFiles, rn.WrittenBytes, err = dirSize(dir); err != nil {
 					t.Fatal(err)
 				}
-				// The scale store writes about 1.9 GB each run: none is kept.
+				// The scale set writes about 1.9 GB each run: none is kept.
 				if err := os.RemoveAll(dir); err != nil {
 					t.Fatal(err)
 				}
