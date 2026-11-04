@@ -15,7 +15,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   message/global part nested under its attachment record; an mbox's is each message in the file's
   order, its `Message.ID` its 1-based ordinal, which skips a number where an entry is empty, and a
   `Skipped` record, kind "message", for one mail can't read. Neither has folders, nor a store's
-  encoding, password, or display name. The decoded types are unchanged; their documentation says what MIME input gives.
+  encoding, password, or display name. The decoded types are unchanged; their documentation says
+  what MIME input gives.
 - MIME threads: the `Threader` threads an .eml's and an mbox's messages as it does a store's, an
   mbox message by its ordinal and an .eml's as one root with no id. No change to the algorithm.
 - The nested .eml route: a by-value attachment of no routed signature is `RouteNested` when its
