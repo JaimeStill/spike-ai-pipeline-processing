@@ -421,10 +421,9 @@ func attachmentsOf(recs []email.Record) []email.Attachment {
 
 // TestRealRoutes runs the real pinned mail over every copied fixture and MIME input with an
 // attachments directory, and routes each attachment as it is read: each is routed as
-// fixtureRoutes or mimeRoutes says, and
-// each with a file has its content at Path, under the SHA-256 name mail gives it. Read again
-// without a directory, nothing is written, every by-value attachment is unrouted, and embedded
-// messages are still nested.
+// fixtureRoutes or mimeRoutes says, and each with a file has its content at Path, under the
+// SHA-256 name mail gives it. Read again without a directory, nothing is written, every by-value
+// attachment is unrouted, and embedded messages are still nested.
 func TestRealRoutes(t *testing.T) {
 	r := realReader(t)
 	root, err := filepath.Abs(filepath.Join(mailCopy, "fixtures"))

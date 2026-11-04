@@ -29,8 +29,8 @@ import (
 // The findings tier measures the adapter for evidence 16, never in CI or the check: threads and
 // routes over every fixture and MIME input, scored where the tests hold a hand truth; and, on
 // plaso's 59 MB store, the scale store, and the scale mboxrd, threads and routes counted and the
-// adapter's time and peak memory, threads included, beside mail's own. `mise run findings-email` runs it; what it found
-// is in docs/findings/email.md. Its settings, from the environment:
+// adapter's time and peak memory, threads included, beside mail's own. `mise run findings-email`
+// runs it; what it found is in docs/findings/email.md. Its settings, from the environment:
 //
 //   - EMAIL_PLASO_STORE names where plaso's store is kept: fetched there at plasoCommit when it is
 //     absent, and refused unless its SHA-256 is plasoSHA256. Unset skips plaso's store.
@@ -420,11 +420,7 @@ func TestFindingsFixtures(t *testing.T) {
 	for _, rel := range stores {
 		fixtures = append(fixtures, fixtureInput{rel, filepath.Join(root, rel), fixtureRoutes[rel], realThreads[rel]})
 	}
-	var builtRoutes []routed
-	for _, s := range builtSources {
-		builtRoutes = append(builtRoutes, routed{s.filename, s.route})
-	}
-	fixtures = append(fixtures, fixtureInput{"built/" + builtMsg, filepath.Join(builtDir, builtMsg), builtRoutes, ""})
+	fixtures = append(fixtures, fixtureInput{"built/" + builtMsg, filepath.Join(builtDir, builtMsg), builtRoutes(), ""})
 	for _, rel := range mime {
 		mimeInputs = append(mimeInputs, fixtureInput{rel, filepath.Join(testdata, rel), mimeRoutes[rel], mimeThreads[rel]})
 	}

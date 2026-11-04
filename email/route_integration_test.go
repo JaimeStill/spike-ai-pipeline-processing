@@ -102,9 +102,10 @@ type stages struct {
 }
 
 // TestRoutesToStages carries each routed attachment from the real CLI to its real stage. The real
-// pinned mail reads the built .msg, every copied fixture, .pst and .msg, and then every MIME input,
-// .eml and mbox, the built .eml among them, each into an attachments directory of its own, and each attachment of each message read, those of the
-// messages it nests included, is routed with Attachment.Route and dispatched on its route:
+// pinned mail reads the built .msg, every copied fixture, .pst and .msg, and then every MIME
+// input, .eml and mbox, the built .eml among them, each into an attachments directory of its own,
+// and each attachment of each message read, those of the messages it nests included, is routed
+// with Attachment.Route and dispatched on its route:
 //
 //   - RouteDocument: document's Images over the host's gs, each page's text layer read and the
 //     page rendered;
@@ -114,9 +115,9 @@ type stages struct {
 //   - RouteVisionConverted: office's ConvertPicture, and its PNG gathered for vision;
 //   - RouteNested: a message nested under its record, which mail read with its parent, its own
 //     attachments dispatched in turn; a by-value .msg or .eml file read through the CLI again,
-//     into an attachments directory of its own, and its messages' attachments dispatched; a message
-//     listed without its content, as a .pst lists an embedded one, mail's known limit, logged
-//     and not run;
+//     into an attachments directory of its own, and its messages' attachments dispatched; a
+//     message listed without its content, as a .pst lists an embedded one, mail's known limit,
+//     logged and not run;
 //   - RouteUnrouted: logged, with its reason.
 //
 // Each content's stage runs once, by File, so an attachment whose content was carried already is
@@ -401,8 +402,7 @@ func (s *stages) converted(a *email.Attachment, source string) {
 
 // nested carries an embedded message on: one nested under its record, which mail read with its
 // parent, has its own attachments dispatched; a by-value .msg or .eml file is read through the CLI
-// again;
-// one listed without its content can't be read, mail's known limit, and is logged, not run.
+// again; one listed without its content can't be read, mail's known limit, and is logged, not run.
 func (s *stages) nested(a *email.Attachment, source, why string) {
 	t := s.t
 	switch {

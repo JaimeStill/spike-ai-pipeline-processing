@@ -764,9 +764,8 @@ func TestRealThreadsGenerated(t *testing.T) {
 
 // TestRealThreadsMIME runs the real pinned mail over every MIME input and threads it, against
 // mimeThreads. Each is threaded twice, through Threads and through a Threader fed while reading,
-// and the two agree.
-// Each root is a message, never a placeholder, and nine.mboxrd's first root is Notes on the
-// engine, <notes-1@example.org>.
+// and the two agree. Each root is a message, never a placeholder, and nine.mboxrd's first root is
+// Notes on the engine, <notes-1@example.org>.
 func TestRealThreadsMIME(t *testing.T) {
 	r := realReader(t)
 	_, inputs := realInputs(t)
