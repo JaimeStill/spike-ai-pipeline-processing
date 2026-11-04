@@ -18,7 +18,8 @@ against gb10-2's llama.cpp router, build b11669, serving set A.
 An addendum at the end, [mail 0.2.0, .eml and mbox](#addendum-mail-020-eml-and-mbox), records a
 second run, on 2026-11-04 with mail 0.2.0 at processing's task `email-mime`: the MIME inputs'
 threads and routes, the `.pst` and `.msg` routes re-recorded, and the scale mboxrd's cost. The
-sections before it are the first run's, unchanged.
+sections before it are the first run's, unchanged; where they say a by-value `.eml` is unrouted,
+the addendum supersedes them.
 
 The `email` package releases pre-inference preparation only: it names each attachment's route and
 never runs the stage. The stages the integration tier runs, and its vision requests, are test code

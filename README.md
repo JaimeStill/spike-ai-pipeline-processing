@@ -10,7 +10,7 @@ runner for binaries and scripts, and a container runner for pinned images. The t
 adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
 correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
 office documents, LibreOffice in a container for legacy office formats only, and
-spike-ai-pipeline-mail's CLI for Outlook mail stores.
+spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages.
 
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
@@ -235,19 +235,20 @@ the container runner's full lockdown, with its user profile inside the mounted w
 element kind and format, the container's footprint, the picture conversions, and each picture's
 vision time and image tokens. The run results it cites are in `docs/findings/office-results/`.
 
-`email` reads mail stores, Outlook .pst stores and .msg messages, for a model, on Linux, the
-standard library, and `tool`. It runs spike-ai-pipeline-mail's CLI and provides pre-inference
-preparation only. A `Reader`, built by `NewReader` over a `Config` holding a mail Tool that
-`MailSpec` declares, minimum `MailMinimum`, 0.1.0, reads one input per `Request`. `Reader.Read`
+`email` reads mail stores, Outlook .pst stores and .msg messages, and MIME messages, .eml and
+mbox files, for a model, on Linux, the standard library, and `tool`. It runs
+spike-ai-pipeline-mail's CLI and provides pre-inference preparation only. A `Reader`, built by
+`NewReader` over a `Config` holding a mail Tool that `MailSpec` declares, minimum `MailMinimum`,
+0.2.0, reads one input per `Request`. `Reader.Read`
 returns a `Stream`, or refuses an invalid `Request`, one with no input or a path that can't be
 made absolute, with an error matching `ErrRequest` before anything runs. Ranging over
 `Stream.Records` runs mail once and yields each line it writes while it runs,
 decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
 `Store` first, then for a .pst each `Folder` before its `Message`s, and a `Skipped` record wherever
-mail couldn't read one; for a .msg its message, an embedded message nested under its attachment.
-Memory follows the record being read, never the store. mail's warnings are the Stream's
-`Warnings`, and its exit codes 1 to 4 are an `*ExitError` that matches `ErrNotWritten`, `ErrUsage`,
-`ErrRefused`, or `ErrFailed`.
+mail couldn't read one; for a .msg or an .eml its message, an embedded message nested under its
+attachment; for an mbox each message in the file's order. Memory follows the record being read,
+never the store. mail's warnings are the Stream's `Warnings`, and its exit codes 1 to 4 are an
+`*ExitError` that matches `ErrNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`.
 
 ```go
 m, err := tool.NewExec(ctx, email.MailSpec())
@@ -289,9 +290,13 @@ by its SHA-256, and `Attachment.Route` names the stage it goes to next, which th
 `RouteDocument` for a PDF, `RouteOffice` for an office document (a ZIP with an OOXML extension, or
 an OLE2 file with a legacy one), `RouteVision` for PNG, JPEG, GIF, and BMP as stored,
 `RouteVisionConverted` for TIFF, EMF, and WMF, which `office.Converter.ConvertPicture` makes PNG
-first, `RouteNested` for an embedded message, and `RouteUnrouted` for anything else. The route is
-decided by the content's signature, never the stored MIME type, which real stores get wrong: MsgKit
-stores an EMF as `application/octet-stream`, and Apache POI's `alfresco.gif` is a BMP.
+first, `RouteNested` for an embedded message, an OLE2 file named .msg, or a by-value .eml, and
+`RouteUnrouted` for anything else. The route is decided by the content's signature, never the
+stored MIME type alone, which real stores get wrong: MsgKit stores an EMF as
+`application/octet-stream`, and Apache POI's `alfresco.gif` is a BMP. Content of no signature is a
+by-value .eml when its name has the .eml extension or its stored type is `message/rfc822` or
+`message/global`, and its header has the shape mail reads a message by: its first line a header
+field, and a From or Date field before the header block ends.
 
 A `Threader`, fed each record while a Stream is read, keeps only each message's threading keys,
 and `Threader.Threads` builds the store's threads, `Thread` trees, by RFC 5256's REFERENCES
@@ -305,7 +310,10 @@ fixture against hand truth, what they come to on plaso's 59 MB store, and the ad
 peak memory, threads included, against mail alone on plaso's store and a 2.1 GB generated store.
 The adapter adds about 1 to 3% to mail's time, and its Go process peaks at 52 to 54 MiB threading
 50,000 messages, beside mail's 65 to 67 MiB. The run results it cites are in
-`docs/findings/email-results/`.
+`docs/findings/email-results/`. Its addendum, for mail 0.2.0, scores the threads and routes over
+17 .eml and mbox inputs, 29 of 29 threads and 13 of 13 routes right, and times a 2.7 GB mboxrd of
+the scale store's 50,000 messages, where the adapter adds 4.5 to 5.6% to mail's time and peaks at
+56 to 58 MiB.
 
 Known limits:
 
@@ -329,7 +337,13 @@ Known limits:
   picture that another covers, that sits off the slide or page, or that is cropped away still
   appears in the model and the Markdown and is handed onward to vision. In `slide-objects`'s
   slide 3, a blue square covers a red one at the same position, and both are listed.
-- A by-value .eml attachment is unrouted: its content has no signature the routes know.
+- A by-value .eml whose header isn't a message's shape is unrouted, one that begins with an mbox's
+  "From " line among them; so is header-shaped content neither named .eml nor stored as
+  `message/rfc822` or `message/global`.
+- mail reads every mbox as an mboxrd: an mboxcl's Content-Length is ignored, so an unquoted body
+  line starting "From " starts a new message, and an mboxo body line that was ">From " loses its
+  ">". An .eml's or an mbox's message has no class, no creation or modification time, and SMTP
+  addresses alone. These are mail's, as its README states.
 - mail refuses an .ost, an `*ExitError` matching `ErrRefused`.
 - In a .pst, an embedded message is nested without its content, which mail can't read; in a .msg
   it is nested in full.
@@ -357,9 +371,10 @@ few minutes to about 25:
 - `mise run bakeoff-tiles`: tile shape, near-square tiles against a full-width band.
 
 The findings tier, findings-tagged tests, measures `email` on this machine and never runs in CI:
-`mise run findings-email` scores threads and routes over the fixtures, fetches plaso's store by its
-pinned SHA-256, and times the adapter on it and on the scale store `EMAIL_SCALE_STORE` names, which
-mail's generator builds; a run keeps its results only in the directory `EMAIL_FINDINGS_RESULTS`
+`mise run findings-email` scores threads and routes over the fixtures and the MIME inputs, fetches
+plaso's store by its pinned SHA-256, and times the adapter on it, on the scale store
+`EMAIL_SCALE_STORE` names, and on the scale mboxrd `EMAIL_SCALE_MBOX` names, both of which mail's
+generator builds; a run keeps its results only in the directory `EMAIL_FINDINGS_RESULTS`
 names ([docs/findings/email.md](docs/findings/email.md), "Rerunning").
 
 The tests' vision harness, the bake-offs, the staged flow, and the findings tier are test code,
@@ -369,7 +384,7 @@ Host prerequisites: gs 10.0 or later and ImageMagick's magick 7.1 or later on PA
 and docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice
 in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
-metafile trim. For `email`: spike-ai-pipeline-mail 0.1.0 or later, which mise pins from its
+metafile trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, which mise pins from its
 GitHub release for the tests. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and
 libvips. typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, and
 .NET, which mise installs, only to rebuild `email/testdata`'s built .msg, as their READMEs say.
