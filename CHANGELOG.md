@@ -85,20 +85,30 @@ Every move is without an alias: a caller on v0.5.0 renames as listed.
   the standard library, `route`, and `inspect`, and never calls a model. `New` builds a
   `Dispatcher` over a `Config` of `Stages`, an `Index`, a working directory, `Limits`, and
   inspect's Options; `Dispatcher.Dispatch` hashes, routes, and inspects each part before its stage
-  and yields its `Event`s depth-first, each output as it comes and each part's own event, with its
-  `Outcome`: prepared, no processor yet, seen, cycle, quarantined, encrypted, failed, or limited.
-  The stages:
+  and yields its `Event`s depth-first: an output event for each output as its stage yields it, and
+  each part's own event after its outputs and the parts found in it, with its `Outcome` (prepared,
+  no processor yet, seen, cycle, quarantined, encrypted, failed, or limited) and the counts of its
+  outputs and children. `Event.Keep` keeps an event's files, which the dispatcher otherwise
+  removes. The stages:
   - the format packages' adapters, on Linux: `DocumentStage`, `OfficeStage`, `PictureStage`,
     `VisionStage`, `EmailStage`, and `OneNoteStage`, each over the reader or converter the caller
     built and its tools' version, `Versions`; a found part, such as a message's attachment or a
     page's ink, is dispatched again;
-  - `ZipStage`, on any platform, each entry written by its SHA-256 and found as a part, an
-    encrypted entry a record, the bomb rule enforced again on the bytes written.
+  - `ZipStage`, on any platform, each entry written by its SHA-256 and found as a part, the bomb
+    rule enforced again on the bytes written. An encrypted entry is a record whose Meta outcome is
+    "encrypted", and the ZIP's own outcome is Encrypted once its readable entries are dispatched.
+- A stage that holds content later records name again gives each `Found` part its `SHA256` and a
+  `Release` func, which the dispatcher calls once the index holds the content's entry; the stage
+  then removes its original, and a later record names the content with no file and is seen.
+  The email and onenote stages do this, so a store's directory holds only the attachments of the
+  messages in flight.
 - The index: `Index`, content-addressed by the content's SHA-256 and the stage's identity, so
   content it holds is seen, its outputs streamed back, and a claim makes one of concurrent
-  dispatches prepare it; outputs and children appended as they come and read back streamed, so a
-  store streams through in the memory of one message. `MemoryIndex` and `FileIndex`, a directory
-  of records by atomic rename and claims by O_EXCL, taken over once `FileOptions.Stale`.
+  dispatches prepare it. `Append` and `AppendChild` add each output and found part to the claim's
+  pending entry as its event is done, `Record` commits the entry and `Release` drops it, and
+  `Outputs` and `Children` read them back streamed, so a store streams through in the memory of
+  one message. `MemoryIndex` and `FileIndex`, a directory of records by atomic rename and claims
+  by O_EXCL, taken over once `FileOptions.Stale`.
 - The pool: `Dispatcher.Pool`, inputs over N workers sharing one index, their events as
   `PoolEvent`s on the caller's goroutine.
 - Resuming a store: `Input.After` resumes a .pst or an mbox after a message, through
@@ -110,14 +120,17 @@ Every move is without an alias: a caller on v0.5.0 renames as listed.
 - The dispatch integration tier: `TestTierRoutes` dispatches every committed fixture input
   through every adapter over one file index, held to the hand route truth in
   `dispatch/testdata/tier-routes.tsv`, with a vision sample.
-- The onenote finding, `docs/findings/onenote.md`, from one run of `mise run findings-onenote`
-  recorded in `docs/findings/onenote-results/`: every route matches the truth over 119 inputs and
-  225 parts; inspection flags every hazard it has a check for over ~/docs; vision reads all 14
-  words of a OneNote page's ink, CER 0.0278, where OneNote's recognition holds 4; the onenote
-  adapter costs nothing measurable over its CLI; the dispatcher takes 16.29 s on mail's 2.1 GB
-  scale store, 15% over the email adapter, peaking at 35.9 MiB and 15.8 MB of disk; a resumed
-  half takes 0.54 of the whole; and the pool buys 18.2 s against 21.2 s at one worker. It found a
-  Threader saved at every message quadratic over a store, 3.5 ms a save at 25,000 messages.
+- The onenote finding, `docs/findings/onenote.md`, from a run of `mise run findings-onenote` at
+  `96797c6` and a later run of the scale store's dispatch at `fdbdab0`, both recorded in
+  `docs/findings/onenote-results/`: every route matches the truth over 119 inputs and 225 parts;
+  inspection flags every hazard it has a check for over ~/docs; vision reads all 14 words of a
+  OneNote page's ink, CER 0.0278, where OneNote's recognition holds 4; the onenote adapter costs
+  nothing measurable over its CLI; on mail's 2.1 GB scale store the dispatcher takes 15.61 s with
+  removal on and 17.57 s with it off, against the email adapter's 13.72 s, its own process peaking
+  at 36.8 MiB and its working directory at 19.0 MB with removal on, 1.88 GB with it off; a resumed
+  half takes 0.54 of the whole; and the pool takes 18.2 s at 2 to 8 workers against 21.2 s at one.
+  Saving the Threader at every message is quadratic over a store, 3.5 ms a save at 25,000
+  messages.
 - Known limits, in the README: mail's caps, an .eml at 4 GiB and a .msg's nesting at 16; office's
   and onenote's whole-input memory; the Threader's keys, about 60 bytes a message; OneNote's own
   encryption undetected, so `Encryption.one` fails; a bare RFC 822 file unrouted; a released

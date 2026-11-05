@@ -54,8 +54,8 @@ express; the spike's question and evidence live in the root repository's `contex
   mail's generated scale store, neither committed.
 - **onenote**: the adapter over spike-ai-pipeline-onenote's CLI, its JSON Lines streamed from a pipe
   into typed schema "1" records, a section's, a notebook's, or a package's: notebook, section
-  groups, sections, pages typed through and through, each record marshalling back to onenote's
-  bytes, and skipped sections, with onenote's warnings and exit codes as errors bound to
+  groups, sections, and pages, every element of their content typed, each record marshalling back to
+  onenote's bytes, and skipped sections, with onenote's warnings and exit codes as errors bound to
   internal/cli's shared set; and a page's media, images, embedded files, and ink, wherever they sit,
   each placed and routed by route.File. Its fixtures are onenote's public Interop-TestSuites and
   onenote.rs sets and expectations, copied at its tag under a SHA-256 manifest; the real-binary
