@@ -13,6 +13,13 @@ office documents, LibreOffice in a container for legacy office formats only,
 spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages, and
 spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages.
 
+Its packages, each below in turn: `tool`, the contract every program runs behind; `route`, which
+names the stage content goes to by its signature; `inspect`, which inspects every part before its
+stage; `dispatch`, which walks an input and every part found in it to the stages, with the
+format packages' adapters, an index, and a pool; and the format packages, `picture`, `document`,
+`office`, `email`, and `onenote`, each pre-inference preparation of its formats. `internal/cli`
+holds the CLI contract the format packages share.
+
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
 whose first capture group is the version, the minimum version, and `KillAfter`, the KillAfter
@@ -113,18 +120,19 @@ exits, and `--rm` removes it then.
 
 `route` identifies content by its signature and names the stage it goes to next, on the standard
 library alone: pure functions, which run no stage and no program. `Identify` names the `Kind` a
-file's first `HeadLen` bytes begin, and `File` routes the file at a path by that kind, never by
-its stored MIME type, and by its name's extension only where the signature can't tell formats
-apart: within a ZIP or OLE2 container, for a cabinet, for an mbox's "From " line, which prose
-named with a text extension begins too, and for content of no signature. The routes are
-`Document`, a PDF; `Office`, an OOXML package office reads, a legacy OLE2 document, an ODF
-package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, and BMP as
-stored; `VisionConverted`, TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF; `Nested`, a .msg, a
-header-shaped .eml, a .pst, or an mbox; `OneNote`; `Archive`, ZIP, tar, gzip, zstd, 7z, and a
-cabinet; `Audio`; `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else,
-each with a reason in a few words. The caller, or a dispatcher, runs the stage, and reports "no
-processor yet" for one that doesn't exist: no stage takes WordPerfect, .xlsb, HEIC, WebP, AVIF,
-OneNote, archives, audio, video, or text yet.
+file's first `HeadLen` bytes begin, and `File` routes the file at a path by that kind, never by its
+stored MIME type, and by its name's extension only where the signature can't tell formats apart:
+within a ZIP or OLE2 container, for a cabinet, for an mbox's "From " line, which prose named with a
+text extension begins too, and for content of no signature. The routes are `Document`, a PDF;
+`Office`, an OOXML package office reads, a legacy OLE2 document, an encrypted OOXML package (an OLE2
+file holding an EncryptedPackage stream, named as OOXML), which office refuses as encrypted, an ODF
+package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, and BMP as stored;
+`VisionConverted`, TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF; `Nested`, a .msg, a header-shaped
+.eml, a .pst, or an mbox; `OneNote`; `Archive`, ZIP, tar, gzip, zstd, 7z, and a cabinet; `Audio`;
+`Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
+in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
+that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, archives other
+than ZIP, audio, video, or text yet.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -164,48 +172,48 @@ if rep.Verdict == inspect.Quarantine {
 ```
 
 `dispatch` walks an input and every part found in it to the stages that prepare them, on the
-standard library, `route`, and `inspect`, and never calls a model. A caller registers a `Stage`
-per route; each names its `Identity`, its name, tool version, and configuration hash, and yields
-the `Output`s it prepares, text, Markdown, an image, or a record, in a file or inline, and the
-parts it finds. `Dispatcher.Dispatch` hashes each part, SHA-256, streamed, before any stage runs,
-routes and inspects it, and yields `Event`s depth-first in each stage's own order: each output is
-an output event, `ev.Output` set, as the stage yields it, among the subtrees of the parts it finds,
-and each part's own event, after its outputs and its descendants', carries its outcome: prepared,
-no processor yet, seen, cycle, quarantined, encrypted, failed, or limited, only under a cap the
-caller set, with a count of its outputs and its children. The dispatcher holds nothing of an
-output once the loop body returns for it, nor of a found part once its event is done but the
-`Child` reference it appends to its parent's pending entry by `Index.AppendChild`, so a store of
-millions of messages and attachments streams through in the memory of one. An `Index`, content-addressed, records a stage's outputs by the content's
-SHA-256 and the stage's identity, and the flags by the SHA-256 alone, so content it holds is seen,
-its outputs streamed back from the index as output events, neither inspected nor prepared again;
-a claim makes one of two concurrent dispatches prepare it while the other waits. Each output is
-appended to the claim's pending entry by `Index.Append` once the loop body returns for its event,
-so a caller that persists it sets `ev.Output.Ref` and a later seen part's output carries it; the
-part's own event commits the entry by `Record`, or `Release` drops it when the part fails or the
-loop stops, and `Index.Outputs` and `Index.Children` read its outputs and children back
-streamed. `MemoryIndex` and `FileIndex`, a directory of records written by atomic rename, O_EXCL
-claim files reclaimed once stale, and two pending files of JSON lines per claim, its outputs and
-its children, renamed beside its entry when recorded, ship. Each part's file and working directory
-are removed once its own event is done, unless the caller called `Event.Keep`, so the disk holds
-only the parts in flight. A stage holding content later records name again, as the email and
-onenote stages hold what mail and onenote write once per distinct content, gives each `Found`
-part its SHA-256 and a `Release`, which the dispatcher calls once the index holds the content's
-entry and the caller kept nothing of it: the stage removes its original, and a later record is
-found with no file and seen from the index, so a store's directory holds the attachments of the
-messages in flight. Content with no stage for its route is released once the caller's loop moves
-past its no-processor event without keeping it, and a later record naming it is no processor yet
-again, with no file. Content the dispatcher didn't settle, failed, limited, quarantined, or a
+standard library, `route`, and `inspect`, and never calls a model. A caller registers a `Stage` per
+route; each names its `Identity`, its name, tool version, and configuration hash, and yields the
+`Output`s it prepares, text, Markdown, an image, or a record, in a file or inline, and the parts it
+finds. `Dispatcher.Dispatch` hashes each part, SHA-256, streamed, before any stage runs, routes and
+inspects it, and yields `Event`s depth-first in each stage's own order: each output is an output
+event, `ev.Output` set, as the stage yields it, among the subtrees of the parts it finds, and each
+part's own event, after its outputs and its descendants', carries its outcome: prepared, no
+processor yet, seen, cycle, quarantined, encrypted, failed, or limited, only under a cap the caller
+set, with a count of its outputs and its children. The dispatcher holds nothing of an output once
+the loop body returns for it, nor of a found part once its event is done but the `Child` reference
+it appends to its parent's pending entry by `Index.AppendChild`, so a store of millions of messages
+and attachments streams through in the memory of one. An `Index`, content-addressed, records a
+stage's outputs by the content's SHA-256 and the stage's identity, and the flags by the SHA-256
+alone, so content it holds is seen, its outputs streamed back from the index as output events,
+neither inspected nor prepared again; a claim makes one of two concurrent dispatches prepare it
+while the other waits. Each output is appended to the claim's pending entry by `Index.Append` once
+the loop body returns for its event, so a caller that persists it sets `ev.Output.Ref` and a later
+seen part's output carries it; the part's own event commits the entry by `Record`, or `Release`
+drops it when the part fails or the loop stops, and `Index.Outputs` and `Index.Children` read its
+outputs and children back streamed. `MemoryIndex` and `FileIndex`, a directory of records written by
+atomic rename, O_EXCL claim files reclaimed once stale, and two pending files of JSON lines per
+claim, its outputs and its children, renamed beside its entry when recorded, ship. Each part's file
+and working directory are removed once its own event is done, unless the caller called `Event.Keep`,
+so the disk holds only the parts in flight. A stage holding content later records name again, as the
+email and onenote stages hold what mail and onenote write once per distinct content, gives each
+`Found` part its SHA-256 and a `Release`, which the dispatcher calls once the index holds the
+content's entry and the caller kept nothing of it: the stage removes its original, and a later
+record is found with no file and seen from the index, so a store's directory holds the attachments
+of the messages in flight. Content with no stage for its route is released once the caller's loop
+moves past its no-processor event without keeping it, and a later record naming it is no processor
+yet again, with no file. Content the dispatcher didn't settle, failed, limited, quarantined, or a
 cycle, keeps its original for the next record naming it.
 
-`Dispatcher.Pool` dispatches an iterator of inputs over N workers sharing the dispatcher's index,
-so content the inputs share is prepared once and seen by the rest, and yields every input's events
-as one sequence of `PoolEvent`s, each its `Input` and its `Event`. An input's events keep their
-order, and the inputs' interleave. The caller's loop body runs on one goroutine, and each worker
-waits for it to return before its dispatch goes on, so each output is still appended, the entry
-recorded, and the files removed, after the body returns; a worker holds one event at most, so a slow loop holds the
-workers back and the disk holds what N dispatches have in flight. An error that stops one input's
-dispatch is yielded with that input and the others go on; ctx ending stops them all, its error
-yielded last.
+`Dispatcher.Pool` dispatches an iterator of inputs over N workers sharing the dispatcher's index, so
+content the inputs share is prepared once and seen by the rest, and yields every input's events as
+one sequence of `PoolEvent`s, each its `Input` and its `Event`. An input's events keep their order,
+and the inputs' interleave. The caller's loop body runs on one goroutine, and each worker waits for
+it to return before its dispatch goes on, so each output is still appended, the entry recorded, and
+the files removed, after the body returns; a worker holds one event at most, so a slow loop holds
+the workers back and the disk holds what N dispatches have in flight. An error that stops one
+input's dispatch is yielded with that input and the others go on; ctx ending stops them all, its
+error yielded last.
 
 `Input.After` resumes a .pst or an mbox after a message, its node id or ordinal: the email stage
 passes it to mail as `--after`, mail 0.3.0 or later, and the store yields its store and folder
@@ -215,12 +223,16 @@ attachments first, each found part dispatched whole, then its record, its Meta `
 then its Markdown, which the record's Meta `markdown: follows` announces, so the message's last
 output is the last of everything it holds. A caller resuming after a crash keeps a `FileIndex`
 that outlives the process, so the attachments recorded before the crash are seen; the cursor, the
-id of the last message whose outputs it has persisted, advanced at each message's last output;
-and an `email.Threader`, fed each message record of the store's own, decoded, and saved with the
-cursor by `MarshalBinary`. It restores the Threader by `UnmarshalBinary`, dispatches with `After`
-set to the cursor, and feeds the Threader the rest, whose threads are then the whole store's; what
-it had of the message past the cursor comes again. A dead process's claims and pending outputs wait
-out `FileOptions.Stale` before the resumed dispatch takes them over.
+id of the last message whose outputs it has persisted, moved at each message's last output; and
+an `email.Threader`, fed each message record of the store's own, decoded. Every N messages, or on a
+timer, at a message's last output, it saves the cursor and the Threader, by `MarshalBinary`,
+together: a checkpoint. Not at every message: each save marshals every message's keys so far,
+3.5 ms at 25,000 messages in the onenote finding, so saving at every message grows with the
+square of the store. It restores the Threader by `UnmarshalBinary`, dispatches with `After` set
+to the checkpoint's cursor, and feeds the Threader the rest, whose threads are then the whole
+store's; every message past the checkpoint comes again, and it overwrites what it had of them. A
+dead process's claims and pending outputs wait out `FileOptions.Stale` before the resumed
+dispatch takes them over.
 
 The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader
 or converter the caller already built and the version of its Tools, which `dispatch.Versions`
@@ -228,11 +240,13 @@ names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeSta
 Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF, EMF, WMF, or SVG to
 PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
 mail's records, each message's attachments found as parts, then its record, then its Markdown,
-an embedded message mail gives no file for prepared inline in its attachment's place; and `OneNoteStage`, onenote's
-records, each page's record then its Markdown, and each of its media found as a part. A found part's `Where` names its place, such as
-`message 2097220, attachment 1` or `page {...}, page ink`, and it is dispatched again, so a PDF
-attached to a message reaches the document stage and a page's ink becomes a PNG. Kinds no adapter
-reads yet, ODF, RTF, WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet.
+an embedded message mail gives no file for prepared inline in its attachment's place; and
+`OneNoteStage`, onenote's records, each page's record then its Markdown, and each of its media
+found as a part. A found part's `Where` names its place, such as `message 2097220, attachment 1`
+or `page {...}, page ink`, and it is dispatched again, so a PDF attached to a message reaches the
+document stage and a page's ink becomes a PNG. Kinds no adapter reads yet, ODF, RTF,
+WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet. An encrypted OOXML package, which
+office refuses, is encrypted.
 
 `ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry
 at a time: each file entry is written into the part's directory under its content's SHA-256 and
@@ -315,8 +329,12 @@ for pe, err := range d.Pool(ctx, slices.Values(inputs), 4) {
 committed fixture against the hand route truth, inspection over ~/docs' hazards, vision's reading
 of a OneNote page's ink beside OneNote's own recognition, the onenote adapter's cost beside the
 CLI on three large sections, and the dispatcher's time, peak memory, and peak disk over mail's
-2.1 GB scale store, resumed midway, and through the pool at 1 to 8 workers. The run results it
-cites are in `docs/findings/onenote-results/`.
+2.1 GB scale store, resumed midway, and through the pool at 1 to 8 workers. Every route matched
+the truth; vision read all 14 of the ink's words; the dispatcher took 16.29 s on the scale store
+against the email adapter's 14.12 s, its own process peaking at 35.9 MiB and the disk at 15.8 MB,
+where mail alone writes 1.88 GB of attachments; and a resumed half took 0.54 of the whole. The run
+results it cites are in `docs/findings/onenote-results/`, recorded at commit `96797c6`, before an
+encrypted OOXML package was routed to office: its tier log has `encrypted.xlsx` unrouted.
 
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
@@ -560,40 +578,39 @@ the scale store's 50,000 messages, where the adapter adds 4.5 to 5.6% to mail's 
 56 to 58 MiB.
 
 `onenote` reads OneNote sections, .one files from desktop OneNote or OneDrive, .onetoc2 notebooks
-and notebook directories, and .onepkg packages, for a model, on Linux, the standard library,
-`tool`, and `route`. It runs spike-ai-pipeline-onenote's CLI and provides pre-inference preparation only. A
-`Reader`, built by `NewReader` over a `Config` holding a onenote Tool that `OneNoteSpec`
-declares, minimum `OneNoteMinimum`, 0.1.0, reads one input per `Request`, with an optional
-`Media` directory onenote writes each distinct image, embedded file, and ink drawing into, named
-by its SHA-256. `Reader.Read` returns a `Stream`, or refuses an invalid `Request`, one with no
-input or a path that can't be made absolute, with an error matching `ErrRequest` before anything
-runs. Ranging over `Stream.Records` runs onenote once and yields each line it writes while it
-runs, decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
-`Notebook` first, then the notebook's entries depth-first, each `SectionGroup` before what it
-holds and each `Section` before its `Page`s, then a `Skipped` record for each section onenote
-couldn't read. A `Page` is typed through and through: its ids, level, title, times, author,
-`Ink`, recognised `InkText`, Markdown, and `Content`, its `Containers`, each by its `Kind`
-(`Title`, `Outline`, `ImageContainer`, `EmbeddedFileContainer`, `InkContainer`), down through
-their `Items` (`Element`, `Group`) and `Blocks` (`Paragraph` with its `Run`s, equations among
-them, `Tag`s, `List` marker, and handwriting; `Table` of `Cell`s; `Image`; `EmbeddedFile`;
-`InkBlock`). A field onenote leaves out is left out, and a zero onenote writes is kept, so each
-record marshals back through encoding/json/v2 to onenote's own line, byte for byte, once its
-`line` field is put back in front; onenote's f32 numbers are a `Float`, which marshals as
-onenote writes them. A page's Markdown is onenote's, links untouched. A container, item, or block
-of a kind the package doesn't know is an `Unknown` holding its JSON, which marshals back as it
-came. A notebook line of another schema is an error matching `ErrSchema`. onenote's warnings are the
-Stream's `Warnings`, and its exit codes 1 to 4 are an `*ExitError` that matches `ErrNotWritten`,
-`ErrUsage`, `ErrRefused`, or `ErrFailed`, the errors email's and office's match too.
-`Page.Media(dir)` iterates, as an `iter.Seq2[Medium, error]`, every image, embedded file, and ink
-drawing the page names, wherever it sits: its image and embedded file containers, items nested at
-any depth, table cells, table in table, paragraph handwriting, ink blocks, and the page's own ink.
-Each `Medium` gives its `Kind` (`ImageMedium`, `EmbeddedFileMedium`, `InkMedium`), its record's
-fields and the record, `Where` it sits, such as `outline 2, item 1, block 3, table cell r1c2,
-item 1, block 1` or `page ink`, and, in the read's media directory, its `Path` and the `Route`
-`route.File` gives it, with a `Reason`. Ink is vision-converted, an SVG, its reason naming it
-OneNote ink; a recording, an embedded file of type `audio` or `video`, is routed by its signature
-first and by its type only when no signature is known in it. A medium onenote wrote no content
-for, or read without a media directory, is unrouted, with no `Path`.
+and notebook directories, and .onepkg packages, for a model, on Linux, the standard library, `tool`,
+and `route`. It runs spike-ai-pipeline-onenote's CLI and provides pre-inference preparation only. A
+`Reader`, built by `NewReader` over a `Config` holding a onenote Tool that `OneNoteSpec` declares,
+minimum `OneNoteMinimum`, 0.1.0, reads one input per `Request`, with an optional `Media` directory
+onenote writes each distinct image, embedded file, and ink drawing into, named by its SHA-256.
+`Reader.Read` returns a `Stream`, or refuses an invalid `Request`, one with no input or a path that
+can't be made absolute, with an error matching `ErrRequest` before anything runs. Ranging over
+`Stream.Records` runs onenote once and yields each line it writes while it runs, decoded from a pipe
+one line at a time into typed Go values that mirror its schema "1": the `Notebook` first, then the
+notebook's entries depth-first, each `SectionGroup` before what it holds and each `Section` before
+its `Page`s, then a `Skipped` record for each section onenote couldn't read. A `Page` is typed
+through and through: its ids, level, title, times, author, `Ink`, recognised `InkText`, Markdown,
+and `Content`, its `Containers`, each by its `Kind` (`Title`, `Outline`, `ImageContainer`,
+`EmbeddedFileContainer`, `InkContainer`), down through their `Items` (`Element`, `Group`) and
+`Blocks` (`Paragraph` with its `Run`s, equations among them, `Tag`s, `List` marker, and handwriting;
+`Table` of `Cell`s; `Image`; `EmbeddedFile`; `InkBlock`). A field onenote leaves out is left out,
+and a zero onenote writes is kept, so each record marshals back through encoding/json/v2 to
+onenote's own line, byte for byte, once its `line` field is put back in front; onenote's f32 numbers
+are a `Float`, which marshals as onenote writes them. A page's Markdown is onenote's, links
+untouched. A container, item, or block of a kind the package doesn't know is an `Unknown` holding
+its JSON, which marshals back as it came. A notebook line of another schema is an error matching
+`ErrSchema`. onenote's warnings are the Stream's `Warnings`, and its exit codes 1 to 4 are an
+`*ExitError` that matches `ErrNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`, the errors
+email's and office's match too. `Page.Media(dir)` iterates, as an `iter.Seq2[Medium, error]`, every
+image, embedded file, and ink drawing the page names, wherever it sits: its image and embedded file
+containers, items nested at any depth, table cells, table in table, paragraph handwriting, ink
+blocks, and the page's own ink. Each `Medium` gives its `Kind` (`ImageMedium`, `EmbeddedFileMedium`,
+`InkMedium`), its record's fields and the record, `Where` it sits, such as `outline 2, item 1, block
+3, table cell r1c2, item 1, block 1` or `page ink`, and, in the read's media directory, its `Path`
+and the `Route` `route.File` gives it, with a `Reason`. Ink is vision-converted, an SVG, its reason
+naming it OneNote ink; a recording, an embedded file of type `audio` or `video`, is routed by its
+signature first and by its type only when no signature is known in it. A medium onenote wrote no
+content for, or read without a media directory, is unrouted, with no `Path`.
 
 ```go
 n, err := tool.NewExec(ctx, onenote.OneNoteSpec())
@@ -653,15 +670,15 @@ the same shape:
 - **A route per part.** Each part names the stage it goes to next, through `route`, which the
   caller runs.
 
-Each package's deviations: `office` returns one `Result`, the whole model or Markdown, not a
-stream of lines, and its media list names no route yet; `email` follows the convention whole, its
-`Attachment.Route` the route per part; `onenote` follows it whole, its
-`Request.Media` the media directory and `Page.Media` the route per part; `document` streams pages, `PageImage`s, rather than a CLI's
-lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's failures
-are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not a
-reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one
-refused; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which
-run before a part's stage rather than as one.
+Each package's deviations: `office` returns one `Result`, the whole model or Markdown, not a stream
+of lines, and its media list names no route yet; `email` follows the convention whole, its
+`Attachment.Route` the route per part; `onenote` follows it whole, its `Request.Media` the media
+directory and `Page.Media` the route per part; `document` streams pages, `PageImage`s, rather than a
+CLI's lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's
+failures are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not
+a reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one
+refused; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which run
+before a part's stage rather than as one.
 
 Known limits:
 
@@ -701,7 +718,21 @@ Known limits:
 - The container runner's limit above: a SIGKILLed processing leaves a running container to its
   tool's exit.
 - `inspect` reads what pdfid reads: a PDF name inside a compressed object stream is unseen. A
-  legacy OLE2 document's macros and an ODF package's scripts aren't checked.
+  legacy OLE2 document's macros and an ODF package's scripts aren't checked, nor an XML file's
+  entity expansion, such as a billion laughs.
+- mail caps an .eml at 4 GiB and a .msg's nesting at 16 levels.
+- office reads a whole document into its model before writing it, and the onenote CLI holds a
+  whole section in memory, as onenote_parser reads one: 135 MiB at its peak on a 161 MB section.
+- A `Threader` holds about 60 bytes of threading keys a message for the whole read, 1.5 MB at
+  25,000 messages; saving it at every message is quadratic in the store, so a caller checkpoints
+  every N messages.
+- OneNote's own encryption isn't detected: an encrypted section such as `Encryption.one` is
+  refused by onenote, with no flag marking it encrypted, so the dispatcher reports it failed.
+- A bare RFC 822 file without an extension or a message type is unrouted.
+- Once a store's original is released, a later record naming the same content is met with no
+  file and takes the first occurrence's route and reason, whatever its own name says.
+- The file index may prepare content twice around a stale claim's takeover: a claimant slower
+  than `FileOptions.Stale` is taken over, and both prepare it.
 
 The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
 under the race detector, and lint, the integration, bakeoff, and findings tags included. `mise run
@@ -710,8 +741,9 @@ vision tests against the llama.cpp router `SPIKE_ROUTER_URL` names, gb10-2's by 
 them, `dispatch`'s `TestTierRoutes` dispatches every committed fixture input through every
 adapter over one file index, holds each route and outcome to the hand route truth in
 `dispatch/testdata/tier-routes.tsv`, and sends one image output per stage and part kind to Gemma
-4 26B-A4B; run alone, with its routes-to-stages log written to a file, it is `DISPATCH_TIER_LOG=<file>
-mise exec -- go test -race -tags integration -count=1 -run '^TestTierRoutes$' ./dispatch/`. The
+4 26B-A4B; run alone, with its routes-to-stages log written to a file, it is
+`DISPATCH_TIER_LOG=<file> mise exec -- go test -race -tags integration -count=1 -run
+'^TestTierRoutes$' ./dispatch/`. The
 bake-off tier, bakeoff-tagged tests, sends pages to Gemma 4 26B-A4B on the same router and never
 runs in CI. Each task is a series of `go test` runs, each capped at 10 minutes, and takes from a
 few minutes to about 25:
@@ -729,11 +761,11 @@ The findings tier, findings-tagged tests, measures `email` on this machine and n
 `mise run findings-email` scores threads and routes over the fixtures and the MIME inputs, fetches
 plaso's store by its pinned SHA-256, and times the adapter on it, on the scale store
 `EMAIL_SCALE_STORE` names, and on the scale mboxrd `EMAIL_SCALE_MBOX` names, both of which mail's
-generator builds; a run keeps its results only in the directory `EMAIL_FINDINGS_RESULTS`
-names ([docs/findings/email.md](docs/findings/email.md), "Rerunning"). `mise run findings-onenote` measures
-`dispatch` and `onenote` the same way: the tier's routes, inspection over ~/docs, the page ink to
-vision, the large sections, and the dispatcher over the scale store `ONENOTE_SCALE_STORE` names,
-resumed and pooled; a run keeps its results only in the directory `ONENOTE_FINDINGS_RESULTS`
+generator builds; a run keeps its results only in the directory `EMAIL_FINDINGS_RESULTS` names
+([docs/findings/email.md](docs/findings/email.md), "Rerunning"). `mise run findings-onenote`
+measures `dispatch` and `onenote` the same way: the tier's routes, inspection over ~/docs, the page
+ink to vision, the large sections, and the dispatcher over the scale store `ONENOTE_SCALE_STORE`
+names, resumed and pooled; a run keeps its results only in the directory `ONENOTE_FINDINGS_RESULTS`
 names ([docs/findings/onenote.md](docs/findings/onenote.md), "Rerunning").
 
 The tests' vision harness, the bake-offs, the staged flow, and the findings tier are test code,
@@ -742,19 +774,21 @@ not released.
 Host prerequisites: gs 10.0 or later on PATH for `document`; ImageMagick's magick 7.1 or later on
 PATH for `picture`, its conversions and its corrections, and so for `document`'s corrections; and
 docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
-0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice
-in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
-metafile trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a
-read, which mise pins, at 0.3.0, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote 0.1.0 or later, which mise
-pins from its GitHub release for the tests. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and
-libvips. typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, and
-.NET, which mise installs, only to rebuild `email/testdata`'s built .msg, as their READMEs say.
+0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice in
+the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the metafile
+trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a read, which
+mise pins, at 0.3.0, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
+0.1.0 or later, which mise pins from its GitHub release for the tests. The renderer bake-off also
+runs poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to regenerate the
+fixtures in `document/testdata`, and .NET, which mise installs, only to rebuild `email/testdata`'s
+built .msg, as their READMEs say.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
 integration and bake-off tiers run on; no released package imports it, and `internal/visiontest`,
 the router client and response helpers the vision tests share, builds under the integration and
-findings tags alone. It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer
-are in the root
-repository's README.
+findings tags alone. `internal/goldentest`, the golden sums, and `internal/textscore`, the
+character and word error rates the bake-offs and the ink finding score by, are test helpers too,
+built untagged. It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question,
+evidence, and answer are in the root repository's README.
 
 Apache-2.0.

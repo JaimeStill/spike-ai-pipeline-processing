@@ -50,5 +50,12 @@
 //     [DefaultBombRatio] and [DefaultBombSize]; an invalid one matches [ErrOptions].
 //   - [Flag] is one finding, its [Check], [Class], and evidence.
 //   - [Class] is [Active] or [Unsafe]; [Verdict] is [Proceed] or [Quarantine].
-//   - [Check] names a check; [Checks] lists them, and [ClassOf] returns a check's class.
+//   - [Check] names a check. Of class Active: [SignatureMismatch], [Polyglot], [Executable],
+//     [ExecutableExtension], [DoubleExtension], [VBAProject], [MacroSheet], [ActiveX],
+//     [OLEObject], [ExternalRelationship], [OOXMLEncrypted], and [ZIPEncrypted]; the PDF names,
+//     [PDFJavaScript], [PDFJS], [PDFOpenAction], [PDFAA], [PDFLaunch], [PDFEmbeddedFile],
+//     [PDFRichMedia], [PDFXFA], and [PDFEncrypt]; and [SVGScript], [SVGEventHandler],
+//     [SVGExternalHref], and [SVGForeignObject]. Of class Unsafe: [ZIPTraversal],
+//     [ZIPAbsolutePath], [ZIPSymlink], [ZIPBomb], and [ZIPUnreadable]. [Checks] lists them, and
+//     [ClassOf] returns a check's class.
 package inspect
