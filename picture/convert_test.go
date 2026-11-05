@@ -542,7 +542,7 @@ func TestConvertBatchFailsRemovesPNGs(t *testing.T) {
 // TestCheckMetafileScale: zero is the default, 3; 1 to 8 are themselves; below zero and above 8
 // are refused with ErrScale.
 func TestCheckMetafileScale(t *testing.T) {
-	for in, want := range map[int]int{0: picture.DefaultMetafileScale, 1: 1, 5: 5, 8: picture.MaxMetafileScale} {
+	for in, want := range map[int]int{0: 3, 1: 1, 5: 5, 8: 8} {
 		if got, err := picture.CheckMetafileScale(in); err != nil || got != want {
 			t.Errorf("CheckMetafileScale(%d) = %d, %v, want %d", in, got, err, want)
 		}
