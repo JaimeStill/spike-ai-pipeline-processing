@@ -142,7 +142,9 @@ func record(name string, v any, meta map[string]string) (Output, error) {
 // Part is one part of an input, the input itself among them: the file at Path, the name it was
 // given, its stored MIME type, its size and SHA-256, the kind its signature names, its route and
 // why, its inspection's flags, the SHA-256 of the part it was found in, "" for the input, its
-// depth, 0 for the input, and where it was found, in its parent's stage's words.
+// depth, 0 for the input, and where it was found, in its parent's stage's words. After is the
+// input's [Input.After], the message its stage resumes after, on the input's part alone; a stage
+// that doesn't resume ignores it.
 type Part struct {
 	Path   string
 	Name   string
@@ -156,4 +158,5 @@ type Part struct {
 	Parent string
 	Depth  int
 	Where  string
+	After  uint64
 }

@@ -137,10 +137,19 @@ func New(cfg Config) (*Dispatcher, error) {
 // Input is the file a dispatch begins at: its path, the name it was given, which routes it,
 // filepath.Base(Path) when empty, and its stored MIME type, if it has one. The dispatcher never
 // removes it.
+//
+// After, when not zero, resumes the input's read after the message whose store id it is, as
+// email.Request's After does: the input's [Part] carries it to its stage, and [EmailStage] reads
+// a .pst or an mbox from the message after it; every other stage, and every part found below the
+// input, reads whole. A resumed input's own entry is never recorded, its outputs being the
+// read's tail alone, so a later dispatch of the same content prepares it whole; the parts found
+// in it are recorded as any part is. The package doc's "Resuming a store" says how a caller
+// resumes after a crash.
 type Input struct {
-	Path string
-	Name string
-	MIME string
+	Path  string
+	Name  string
+	MIME  string
+	After uint64
 }
 
 // Dispatch dispatches in and every part its stages find in it, depth-first, yielding each
@@ -155,7 +164,7 @@ func (d *Dispatcher) Dispatch(ctx context.Context, in Input) iter.Seq2[Event, er
 		if name == "" {
 			name = filepath.Base(in.Path)
 		}
-		r := &run{d: d, ctx: ctx, yield: yield, kept: map[string]bool{}}
+		r := &run{d: d, ctx: ctx, yield: yield, kept: map[string]bool{}, after: in.After}
 		r.part(Found{Path: in.Path, Name: name, MIME: in.MIME}, "", 0)
 	}
 }
@@ -174,6 +183,8 @@ type run struct {
 	kept map[string]bool
 	// stopped is set once the caller's loop stopped or a fatal error was yielded.
 	stopped bool
+	// after is the input's After, which its part alone carries.
+	after uint64
 }
 
 // result is what a part came to, for its parent's entry: a reference to it, and whether its
@@ -288,6 +299,9 @@ func (r *run) part(f Found, parent string, depth int) result {
 		return r.fatal(err)
 	}
 	p := Part{Path: f.Path, Name: f.Name, MIME: f.MIME, Parent: parent, Depth: depth, Where: f.Where}
+	if depth == 0 {
+		p.After = r.after
+	}
 	failed := func(err error) result {
 		return r.emit(Event{Part: p, Outcome: Failed, Reason: err.Error(), Err: err}, "", false, nil)
 	}
@@ -485,7 +499,8 @@ func (r *run) staged(p Part, stage Stage, failed func(error) result) result {
 		ev.Outcome, ev.Reason, ev.Err, complete = Failed, stageErr.Error(), stageErr, false
 	}
 	record := func(ev Event, keep bool) error {
-		if !complete {
+		// A resumed read's outputs are its tail alone, no entry of the content's.
+		if !complete || p.After != 0 {
 			return nil
 		}
 		e := Entry{Outcome: ev.Outcome, Reason: ev.Reason, Outputs: slices.Clone(ev.Outputs), Children: ev.Children}

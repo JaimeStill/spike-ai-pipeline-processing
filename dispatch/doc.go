@@ -135,11 +135,54 @@
 // directory, the caller then owning them; a recorded output keeps its Path only for a kept
 // event, the path otherwise removed. A file the caller moved away is not missed.
 //
+// # The pool
+//
+// [Dispatcher.Pool] dispatches an iterator of inputs over a number of workers, each a Dispatch of
+// its own, all sharing the dispatcher's index, so content the inputs share is prepared once and
+// seen by the rest, and yields every input's events as one sequence, each a [PoolEvent], its
+// input and its event. An input's events keep their order; the inputs' interleave. The caller's
+// loop body runs on its own goroutine, and each worker waits for it to return before its dispatch
+// goes on, so the caller's loop owns each event as it owns one dispatch's: the entry is recorded
+// and the files removed once the body returns. A worker holds one event at most, so a slow loop
+// holds the workers back, and the disk holds what that many dispatches have in flight. An error
+// that stops one input's dispatch is yielded with that input, and the others go on; ctx ending
+// stops them all, its error yielded alone, last.
+//
+// # Resuming a store
+//
+// [Input.After] resumes the input's read after a message, the id email.Request's After takes, a
+// .pst's node id or an mbox's ordinal: [EmailStage] passes it to mail as --after, mail 0.3.0 or
+// later, which writes the whole read's store and folders, then only the messages after it. Only
+// the input's own part carries it. A resumed input's entry is never recorded, its outputs being
+// the read's tail, so a later whole dispatch prepares it whole; content the index already holds
+// is seen, resumed or not, and the parts found below are recorded as ever.
+//
+// A caller resuming a large store after a crash combines three things it kept as it went: a
+// [FileIndex] in a directory that outlives the process, which holds the entries and flags of the
+// parts recorded before the crash, so the resumed dispatch sees each attachment already prepared;
+// the cursor, the id of the last message whose outputs it persisted; and an email.Threader saved
+// by its MarshalBinary with that cursor, fed every message up to it. It restores the Threader by
+// UnmarshalBinary, dispatches the store with After set to the cursor, persists each message's
+// outputs and feeds the Threader each message record, advancing the cursor and saving the
+// Threader together, and once the store's event is done, the Threader's threads are the whole
+// store's. The crashed dispatch's claim on the store stays in the index's directory until it is
+// [FileOptions.Stale], so the resumed dispatch waits that out before it claims the store.
+//
+// A store's records reach the caller in the store's own event, its last, after every part found
+// in it, so the cursor, a message record's Meta "id", advances as the caller persists that
+// event's outputs: a crash while it does resumes after the last message persisted, every
+// attachment then seen in the index. A crash before the store's event, while the parts found in
+// it are dispatched, leaves no cursor, and the store is dispatched whole again, the parts
+// recorded before the crash seen. A caller that needs a cursor while the parts are dispatched
+// reads the store's records through email.Reader, which streams them.
+//
 // Its exported identifiers:
 //
 //   - [New] builds a [Dispatcher] over a [Config]: its [Stages], its [Index], its working
 //     directory, its [Limits], and its inspect.Options. [Dispatcher.Dispatch] dispatches an
-//     [Input], yielding [Event]s, each a [Part] and its [Outcome]; [Event.Keep] keeps its files.
+//     [Input], its After resuming a store, yielding [Event]s, each a [Part] and its [Outcome];
+//     [Event.Keep] keeps its files. [Dispatcher.Pool] dispatches many over workers, yielding
+//     [PoolEvent]s.
 //   - [Stage], its [Identity], and [HashConfig] for an identity's configuration hash; a stage
 //     yields [Item]s, made by [OutputItem] and [PartItem], each an [Output] of an [OutputKind],
 //     [TextOutput], [MarkdownOutput], [ImageOutput], or [RecordOutput], or a [Found] part, and

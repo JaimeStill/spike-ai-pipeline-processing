@@ -44,6 +44,10 @@ type EmailConfig struct {
 // own attachments found below it, "message <id>, attachment <n>, attachment <m>", at any depth.
 // An attachment with neither, by reference, not read, or a .pst's embedded message listed by its
 // metadata alone, is a record named by its place, its Meta naming why it has no content.
+//
+// A part with an After, an [Input.After], is read from the message after it, as email.Request's
+// After says: the store, every folder, and the messages after it, which needs mail 0.3.0 or
+// later; a .msg's or an .eml's read, or an After that names no message, fails.
 type EmailStage struct {
 	reader *email.Reader
 	id     Identity
@@ -74,7 +78,7 @@ func (s *EmailStage) Prepare(ctx context.Context, p Part, dir string) iter.Seq2[
 			yield(Item{}, fmt.Errorf("email stage: %w", err))
 			return
 		}
-		stream, err := s.reader.Read(ctx, email.Request{Input: p.Path, Attachments: attachments})
+		stream, err := s.reader.Read(ctx, email.Request{Input: p.Path, Attachments: attachments, After: p.After})
 		if err != nil {
 			yield(Item{}, err)
 			return

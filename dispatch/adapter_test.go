@@ -16,6 +16,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -455,6 +456,112 @@ func TestEmailStage(t *testing.T) {
 	recordThenMarkdown(t, pst, "message 2097156")
 	if len(pst.Children) != 3 {
 		t.Errorf("the .pst's children %+v", pst.Children)
+	}
+}
+
+// TestEmailResume: an input's After reaches the email stage, which reads the .pst from the
+// message after it: the resumed store's event holds the whole read's store and folder records and
+// the records of the messages after it, and finds the attachments of those messages alone. The
+// resumed store's own entry isn't recorded, while the parts found in it are; a whole dispatch of
+// it on the same index then prepares it, and a resumed one after that sees it. A .msg given an
+// After fails, mail refusing --after with a single message.
+func TestEmailResume(t *testing.T) {
+	stage := emailStage(t)
+	stages := dispatch.Stages{route.Nested: stage, route.Vision: dispatch.NewVisionStage()}
+	path := filepath.Join(mailFixtures, "generated", "pst", "mailbox.pst")
+	whole := dispatchAll(t, newDispatcher(t, stages, dispatch.NewMemoryIndex()), path, nil)
+	wholeStore := whole[len(whole)-1]
+	var ids []string
+	for _, o := range wholeStore.Outputs {
+		if o.Kind == dispatch.RecordOutput && strings.HasPrefix(o.Name, "message ") {
+			ids = append(ids, o.Meta["id"])
+		}
+	}
+	k := ids[len(ids)/2]
+	after, err := strconv.ParseUint(k, 10, 64)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// want are the whole read's outputs less the messages up to k's, and wantWheres the whole
+	// read's parts found in the messages after k's.
+	var want []string
+	past := false
+	for _, o := range wholeStore.Outputs {
+		switch {
+		case o.Name == "message "+k || strings.HasPrefix(o.Name, "message "+k+", "):
+			past = true
+		case !strings.HasPrefix(o.Name, "message ") || past:
+			want = append(want, string(o.Kind)+" "+o.Name)
+		}
+	}
+	var wantWheres []string
+	for _, w := range wheres(whole) {
+		id, _, _ := strings.Cut(strings.TrimPrefix(w, "message "), ",")
+		if slices.Index(ids, id) > slices.Index(ids, k) {
+			wantWheres = append(wantWheres, w)
+		}
+	}
+
+	if len(want) >= len(wholeStore.Outputs) || len(wantWheres) == 0 || len(wantWheres) == len(wheres(whole)) {
+		t.Fatalf("after %s: %d of %d outputs and %d of %d parts left; want some of each passed over, and a part left", k,
+			len(want), len(wholeStore.Outputs), len(wantWheres), len(wheres(whole)))
+	}
+
+	index := dispatch.NewMemoryIndex()
+	d := newDispatcher(t, stages, index)
+	var resumed []dispatch.Event
+	for ev, err := range d.Dispatch(t.Context(), dispatch.Input{Path: path, After: after}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		resumed = append(resumed, ev)
+	}
+	store := resumed[len(resumed)-1]
+	if store.Outcome != dispatch.Prepared || store.Part.After != after {
+		t.Fatalf("the resumed store: %s, after %d", store.Outcome, store.Part.After)
+	}
+	var got []string
+	for _, o := range store.Outputs {
+		got = append(got, string(o.Kind)+" "+o.Name)
+	}
+	if !slices.Equal(got, want) {
+		t.Errorf("after %s, outputs:\n got %q\nwant %q", k, got, want)
+	}
+	if got := wheres(resumed); !slices.Equal(got, wantWheres) {
+		t.Errorf("after %s, parts found %q, want %q", k, got, wantWheres)
+	}
+	for _, ev := range resumed[:len(resumed)-1] {
+		if ev.Part.After != 0 {
+			t.Errorf("%s, found below the input, carries after %d", ev.Part.Name, ev.Part.After)
+		}
+		if _, ok, err := index.Flags(t.Context(), ev.Part.SHA256); err != nil || !ok {
+			t.Errorf("%s's flags not recorded: %v", ev.Part.Name, err)
+		}
+	}
+	key := dispatch.Key{SHA256: store.Part.SHA256, Stage: stage.Identity()}
+	if _, ok, err := index.Lookup(t.Context(), key); err != nil || ok {
+		t.Errorf("the resumed store recorded: %t, %v", ok, err)
+	}
+	if again := dispatchAll(t, d, path, nil); again[len(again)-1].Outcome != dispatch.Prepared {
+		t.Errorf("a whole dispatch after the resumed one: %s, want prepared", again[len(again)-1].Outcome)
+	}
+	for ev, err := range d.Dispatch(t.Context(), dispatch.Input{Path: path, After: after}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ev.Part.Depth == 0 && ev.Outcome != dispatch.Seen {
+			t.Errorf("a resumed dispatch of a recorded store: %s, want seen", ev.Outcome)
+		}
+	}
+
+	msg := filepath.Join(mailFixtures, "generated", "msg", "01-plain.msg")
+	for ev, err := range d.Dispatch(t.Context(), dispatch.Input{Path: msg, After: 1}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ev.Outcome != dispatch.Failed || !errors.Is(ev.Err, email.ErrUsage) {
+			t.Errorf("a .msg after 1: %s, %v; want failed, mail's usage error", ev.Outcome, ev.Err)
+		}
 	}
 }
 
