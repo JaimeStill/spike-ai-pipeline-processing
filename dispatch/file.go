@@ -44,6 +44,12 @@ type FileOptions struct {
 // reader sees a whole record or none. claims/ holds each claim, a file created with O_EXCL,
 // holding its token and the time it was made; a claim older than [FileOptions.Stale] is taken
 // over by the next claimant, and a waiter polls the claim every [FileOptions.Poll].
+//
+// Taking a stale claim over, and releasing one, are each a read then a rename or remove, not one
+// atomic step: around a takeover, two claimants may both come to hold the key, and the stale
+// claimant's release may end the claim that replaced its own. Each then prepares the content,
+// the later record replacing the earlier, so the cost is work done twice, never a lost or
+// mixed record. A claim that never grows stale is held by one claimant only.
 type FileIndex struct {
 	dir   string
 	stale time.Duration

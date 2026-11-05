@@ -90,12 +90,9 @@ func (s *OneNoteStage) Prepare(ctx context.Context, p Part, dir string) iter.Seq
 			}
 		}
 		if warnings := stream.Warnings(); len(warnings) > 0 {
-			o, err := record("warnings", warnings, nil)
-			if err != nil {
+			if err := w.output(record("warnings", warnings, nil)); err != nil && !errors.Is(err, errStopped) {
 				yield(Item{}, err)
-				return
 			}
-			yield(OutputItem(o), nil)
 		}
 	}
 }

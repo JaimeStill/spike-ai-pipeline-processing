@@ -194,7 +194,8 @@ func (r *run) fatal(err error) result {
 
 // emit yields ev, then removes the part's file and, given dir, the part's working directory,
 // unless the caller kept them, and returns the part's result. record, when not nil, runs once the
-// caller's loop body returns, before the removal, to record the entry.
+// caller's loop body returns, before the removal, to record the entry; its failure stops the
+// dispatch once the removal is done.
 func (r *run) emit(ev Event, dir string, complete bool, record func(Event, bool) error) result {
 	var keep bool
 	ev.keep = &keep
@@ -205,10 +206,9 @@ func (r *run) emit(ev Event, dir string, complete bool, record func(Event, bool)
 		SHA256: ev.Part.SHA256, Name: ev.Part.Name, Where: ev.Part.Where, Size: ev.Part.Size,
 		Route: ev.Part.Route, Outcome: ev.Outcome,
 	}, complete: complete}
+	var err error
 	if record != nil {
-		if err := record(ev, keep); err != nil {
-			return r.fatal(err)
-		}
+		err = record(ev, keep)
 	}
 	if keep || ev.Outcome == Quarantined {
 		r.kept[ev.Part.Path] = true
@@ -216,7 +216,11 @@ func (r *run) emit(ev Event, dir string, complete bool, record func(Event, bool)
 			r.kept[dir] = true
 		}
 	}
-	if err := r.remove(ev, dir); err != nil {
+	// A failed record stops the dispatch, but the part's files are removed all the same.
+	if rerr := r.remove(ev, dir); err == nil {
+		err = rerr
+	}
+	if err != nil {
 		return r.fatal(err)
 	}
 	return res

@@ -363,6 +363,38 @@ func TestStopEarly(t *testing.T) {
 	})
 }
 
+// failingRecord is an index whose Record fails, once the entry's claim has been released.
+type failingRecord struct{ dispatch.Index }
+
+var errRecord = errors.New("told to fail recording")
+
+func (f failingRecord) Record(ctx context.Context, key dispatch.Key, token string, _ dispatch.Entry) error {
+	_ = f.Release(ctx, key, token)
+	return errRecord
+}
+
+// TestRecordFails: an index that fails to record stops the dispatch with its error, alone and
+// last, and the files of the part it failed on are removed all the same.
+func TestRecordFails(t *testing.T) {
+	f := newFixture(t, map[string]string{"b.txt": "leaf"}, failingRecord{dispatch.NewMemoryIndex()}, dispatch.Limits{})
+	var events []dispatch.Event
+	var errs []error
+	for ev, err := range f.d.Dispatch(t.Context(), dispatch.Input{Path: input(t, "top.txt", "file b.txt")}) {
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		events = append(events, ev)
+	}
+	wantSteps(t, events, []step{{"b.txt", 1, dispatch.Prepared}})
+	if len(errs) != 1 || !errors.Is(errs[0], errRecord) {
+		t.Fatalf("errors: %v", errs)
+	}
+	if entries, err := os.ReadDir(f.dir); err != nil || len(entries) != 0 {
+		t.Fatalf("working directory: %v, %v", entries, err)
+	}
+}
+
 // TestInputErrors: an input that can't be read is an error alone, which stops the dispatch; a
 // cancelled context stops it too.
 func TestInputErrors(t *testing.T) {
@@ -379,10 +411,12 @@ func TestInputErrors(t *testing.T) {
 	}
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
+	errs = nil
 	for _, err := range f.d.Dispatch(ctx, dispatch.Input{Path: input(t, "a.txt", "leaf")}) {
-		if !errors.Is(err, ctx.Err()) {
-			t.Fatalf("got %v, want the context's error", err)
-		}
+		errs = append(errs, err)
+	}
+	if len(errs) != 1 || !errors.Is(errs[0], context.Canceled) {
+		t.Fatalf("a cancelled dispatch yielded %v, want the context's error alone", errs)
 	}
 }
 

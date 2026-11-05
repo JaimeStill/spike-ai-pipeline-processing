@@ -44,9 +44,7 @@ func (in *inspection) zip(ctx context.Context) error {
 		}
 		in.zipEntry(f)
 		if ooxml {
-			if err := in.ooxmlPart(f); err != nil {
-				return err
-			}
+			in.ooxmlPart(f)
 		}
 	}
 	return nil
@@ -84,7 +82,7 @@ func driveLetter(name string) bool {
 
 // ooxmlPart checks one part of an OOXML package, by its name: a VBA project, a macro sheet, an
 // ActiveX control, or an OLE object; and a relationships part's external relationships.
-func (in *inspection) ooxmlPart(f *zip.File) error {
+func (in *inspection) ooxmlPart(f *zip.File) {
 	lower := strings.ToLower(f.Name)
 	base := path.Base(lower)
 	quoted := fmt.Sprintf("part %q", f.Name)
@@ -98,10 +96,9 @@ func (in *inspection) ooxmlPart(f *zip.File) error {
 	case strings.Contains(lower, "embeddings/") && strings.HasPrefix(base, "oleobject"):
 		in.flag(OLEObject, quoted)
 	}
-	if !strings.HasSuffix(lower, ".rels") || f.Flags&0x1 != 0 {
-		return nil
+	if strings.HasSuffix(lower, ".rels") && f.Flags&0x1 == 0 {
+		in.relationships(f)
 	}
-	return in.relationships(f)
 }
 
 // relationship is one Relationship element of a relationships part.
@@ -114,17 +111,17 @@ type relationship struct {
 // relationships checks a relationships part for an external relationship, other than a
 // hyperlink: a remote template, a linked picture, an OLE link. A part that doesn't open is
 // checked no further, and one that doesn't decode as far as it decodes.
-func (in *inspection) relationships(f *zip.File) error {
+func (in *inspection) relationships(f *zip.File) {
 	rc, err := f.Open()
 	if err != nil {
-		return nil
+		return
 	}
 	defer func() { _ = rc.Close() }()
 	d := xml.NewDecoder(io.LimitReader(rc, maxRels))
 	for {
 		tok, err := d.Token()
 		if err != nil {
-			return nil
+			return
 		}
 		start, ok := tok.(xml.StartElement)
 		if !ok || start.Name.Local != "Relationship" {
@@ -132,7 +129,7 @@ func (in *inspection) relationships(f *zip.File) error {
 		}
 		var rel relationship
 		if err := d.DecodeElement(&rel, &start); err != nil {
-			return nil
+			return
 		}
 		if typ := path.Base(rel.Type); strings.EqualFold(rel.TargetMode, "External") && typ != relHyperlink {
 			in.flag(ExternalRelationship, fmt.Sprintf("%s: %s %s", f.Name, typ, rel.Target))
