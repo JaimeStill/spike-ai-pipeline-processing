@@ -431,11 +431,14 @@ func (s *diskSampler) end() (int64, int64, error) {
 
 // dispatchJob is what a dispatching process dispatches: its inputs, over Workers workers, or, at
 // 0, the one input by Dispatch alone, in Work, a working directory, over a file index in Index.
+// Keep, removal off, has its caller call [dispatch.Event.Keep] on every event, so the dispatcher
+// removes none of the files it writes.
 type dispatchJob struct {
 	Inputs  []string `json:"inputs"`
 	Workers int      `json:"workers"`
 	Work    string   `json:"work"`
 	Index   string   `json:"index"`
+	Keep    bool     `json:"keep,omitzero"`
 }
 
 // inputDone is one input's own event, as a dispatch survey records it: its outcome, its outputs
@@ -454,6 +457,7 @@ type inputDone struct {
 // dispatchSurvey is what one dispatch found and cost.
 type dispatchSurvey struct {
 	Workers    int   `json:"workers"`
+	Keep       bool  `json:"keep,omitzero"`
 	InputBytes int64 `json:"input_bytes"`
 	// Parts counts every part's own event, the inputs' among them, and Counts them by "route ×
 	// outcome".
@@ -521,7 +525,8 @@ func (s *dispatchSurvey) take(in string, ev dispatch.Event, began time.Time) {
 }
 
 // dispatchJobOf is the dispatching process: it dispatches the job args[0] holds, as a caller
-// that persists nothing would, every output and part left to the dispatcher, and surveys it.
+// that persists nothing would, every output and part left to the dispatcher, or, with the job's
+// Keep, every one kept, and surveys it.
 func dispatchJobOf(ctx context.Context, args []string) (dispatchSurvey, error) {
 	var job dispatchJob
 	s := dispatchSurvey{Counts: map[string]int{}}
@@ -531,7 +536,7 @@ func dispatchJobOf(ctx context.Context, args []string) (dispatchSurvey, error) {
 	if err := json.Unmarshal([]byte(args[0]), &job); err != nil {
 		return s, err
 	}
-	s.Workers = job.Workers
+	s.Workers, s.Keep = job.Workers, job.Keep
 	for _, in := range job.Inputs {
 		info, err := os.Stat(in)
 		if err != nil {
@@ -561,12 +566,18 @@ func dispatchJobOf(ctx context.Context, args []string) (dispatchSurvey, error) {
 			if err != nil {
 				return s, err
 			}
+			if job.Keep {
+				ev.Keep()
+			}
 			s.take(job.Inputs[0], ev, began)
 		}
 	} else {
 		for pe, err := range d.Pool(ctx, slices.Values(inputsOf(job.Inputs)), job.Workers) {
 			if err != nil {
 				return s, fmt.Errorf("%s: %w", pe.Input.Path, err)
+			}
+			if job.Keep {
+				pe.Event.Keep()
 			}
 			s.take(pe.Input.Path, pe.Event, began)
 		}
@@ -930,10 +941,12 @@ func scaleStore(t *testing.T) (string, any) {
 }
 
 // dispatchWay dispatches the inputs args returns over workers, 0 for a Dispatch alone, in a
-// working directory and over a fresh file index, both in the run's directory.
-func dispatchWay(ctx context.Context, name string, workers int, inputs []string) way {
+// working directory and over a fresh file index, both in the run's directory, its caller keeping
+// every event's files when keep is set.
+func dispatchWay(ctx context.Context, name string, workers int, keep bool, inputs []string) way {
 	return way{name, func(dir string) (timedRun, error) {
-		job := dispatchJob{Inputs: inputs, Workers: workers, Work: filepath.Join(dir, "work"), Index: filepath.Join(dir, "index")}
+		job := dispatchJob{Inputs: inputs, Workers: workers, Keep: keep,
+			Work: filepath.Join(dir, "work"), Index: filepath.Join(dir, "index")}
 		if err := os.Mkdir(job.Work, 0o700); err != nil {
 			return timedRun{}, err
 		}
@@ -967,9 +980,11 @@ func surveyLine(s *dispatchSurvey) string {
 }
 
 // TestFindingsScaleDispatch dispatches the scale store through every stage that needs no model,
-// over a fresh file index each run, and times it beside the email adapter alone and mail alone,
-// each writing the store's attachments: the dispatcher's time, its peak memory and its children's,
-// and its working directory's peak bytes, the CLI's originals released as each is settled.
+// over a fresh file index each run, two ways: removal on, the CLI's originals released as each is
+// settled, and removal off, its caller calling Event.Keep on every event, so every file the
+// dispatcher writes stays. It times both beside the email adapter alone and mail alone, each
+// writing the store's attachments: the dispatcher's time, its peak memory and its children's, and
+// its working directory's peak bytes.
 func TestFindingsScaleDispatch(t *testing.T) {
 	path, record := scaleStore(t)
 	mail, err := exec.LookPath(email.MailSpec().Program)
@@ -978,7 +993,8 @@ func TestFindingsScaleDispatch(t *testing.T) {
 	}
 	ctx := t.Context()
 	res := measureWays(t, "scale", path, findingsRuns(t), []way{
-		dispatchWay(ctx, "dispatch", 0, []string{path}),
+		dispatchWay(ctx, "dispatch, removal on", 0, false, []string{path}),
+		dispatchWay(ctx, "dispatch, removal off", 0, true, []string{path}),
 		adapterWay(ctx, "email adapter, attachments", "email", func(d string) []string { return []string{path, d} },
 			func() any { return &readSurvey{} }),
 		cliWay(ctx, "mail, attachments", mail, func(d string) []string { return []string{"--attachments", d, path} }),
@@ -1288,7 +1304,7 @@ func TestFindingsPool(t *testing.T) {
 	var results []measuredInput
 	for _, workers := range []int{1, 2, 4, 8} {
 		name := fmt.Sprintf("pool %d", workers)
-		res := measureWays(t, name, store, 1, []way{dispatchWay(ctx, "dispatch", workers, inputs)})
+		res := measureWays(t, name, store, 1, []way{dispatchWay(ctx, "dispatch", workers, false, inputs)})
 		res.Input, res.Path, res.Size = name, "", 0
 		for _, rn := range res.Runs {
 			s := rn.Survey.(*dispatchSurvey)
