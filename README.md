@@ -679,7 +679,13 @@ directory and `Page.Media` the route per part; `document` streams pages, `PageIm
 CLI's lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's
 failures are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not
 a reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one
-refused; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which run
+refused; `audio` is a splitter, not a reader: `NewSplitter` refuses a missing or outdated ffmpeg or
+ffprobe, its `Request` names the source and no media directory, planning writing nothing, and
+`Splitter.Windows` takes a `WindowsRequest` whose `Dir` is the media directory, streaming a plan's
+windows as `WindowFile`s in plan order, `Concurrency` ffmpeg runs at once, each a 16 kHz mono WAV
+named by its SHA-256; the source is read in place rather than spooled, ffmpeg's failures are the
+Tool's `*tool.ExitError`, ffmpeg having no exit contract, and a window names no route, a speech
+model its one stage; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which run
 before a part's stage rather than as one.
 
 Known limits:

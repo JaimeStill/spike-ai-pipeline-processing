@@ -21,6 +21,15 @@
 // before it, and the range the two share is their seam. The same arguments give the same plan.
 // Splitter.Plan is Detect and then PlanWindows.
 //
+// Splitter.Windows cuts a plan's windows, a lazy iter.Seq2 of WindowFile in plan order, as a
+// WindowsRequest says: the source, the media directory the windows are written into and left, and
+// how many ffmpeg runs are in flight at once, zero meaning one. Each window is 16 kHz, SampleRate,
+// mono 16-bit PCM WAV, resampled and downmixed by ffmpeg from the audio stream Probe found, trimmed
+// to the window's samples so it is its span long to within one, its header the canonical 44 bytes
+// ffmpeg's -bitexact WAV carries, and named by the SHA-256 of its bytes; the same window is the
+// same file through either runner. A loop that stops early, or a context that ends, stops the runs
+// in flight, and the media directory keeps only the windows the stream yielded.
+//
 // Its exported identifiers:
 //
 //   - [FFmpegSpec] and [FFprobeSpec] declare ffmpeg and ffprobe for either runner's constructor.
@@ -32,6 +41,8 @@
 //   - [Splitter.Probe] reads a source's duration and audio stream, a [Source].
 //   - [Splitter.Detect] finds a source's silences, a [Detection], as a [Request] says.
 //   - [Splitter.Plan] plans a source's windows, as a Request says.
+//   - [Splitter.Windows] cuts a plan's windows as a [WindowsRequest] says, each a [WindowFile].
+//   - [SampleRate] is the windows' sample rate, 16 kHz.
 //   - [PlanWindows] plans the windows of a duration and its silences, running nothing.
 //   - [Plan] is a source's windows, each a [Window], ended as its [Cut] says, and their seams.
 //   - [Cut] is what ends a window: [CutSilence], [CutLimit], or [CutEnd].

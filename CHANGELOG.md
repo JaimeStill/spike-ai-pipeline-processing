@@ -22,6 +22,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   before it, with the seams they share; `Splitter.Plan` runs both. An invalid request is refused
   with `ErrRequest` before anything runs. A ~50 s LibriSpeech speech fixture and its transcript,
   CC BY 4.0, are in `audio/testdata`, rebuilt by `mise run fixtures:audio`.
+- `audio.Splitter.Windows` cuts a plan's windows, a lazy `iter.Seq2[WindowFile, error]` in plan
+  order, as a `WindowsRequest` says: the source, the media directory `Dir`, and `Concurrency`, the
+  ffmpeg runs in flight, zero meaning 1. Each window is resampled and downmixed by ffmpeg from the
+  stream `Probe` found to 16 kHz, `SampleRate`, mono 16-bit PCM, trimmed to its span's samples to
+  within one, and written as WAV with the canonical 44-byte header, the bytes of ffmpeg's own
+  `-bitexact` WAV, named by its SHA-256; the exec and container runners write the same bytes. A
+  `WindowFile` carries the window's index, the plan's count, its `Window`, path, SHA-256, and
+  samples. A loop that stops early or a context that ends stops the runs in flight, and the media
+  directory keeps only the windows yielded. A plan of another source, its duration not the
+  source's, is refused with `ErrRequest`.
 
 ### Changed
 

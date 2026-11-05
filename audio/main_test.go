@@ -3,13 +3,17 @@
 package audio_test
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
@@ -34,6 +38,16 @@ const (
 	silenceEnv = "AUDIO_TEST_SILENCEDETECT"
 	// failEnv, when set, makes an ffmpeg run write its value to stderr and exit 1.
 	failEnv = "AUDIO_TEST_FFMPEG_FAIL"
+	// failWindowEnv, when set, makes the window run whose first sample it names write a line to
+	// stderr and exit 1.
+	failWindowEnv = "AUDIO_TEST_WINDOW_FAIL"
+	// delaysEnv is a JSON object of how long, in milliseconds, a window run sleeps before writing
+	// its samples, by its first sample, "*" for the rest; none sleeps without it.
+	delaysEnv = "AUDIO_TEST_WINDOW_DELAYS"
+	// flightEnv, when set, names a directory each window run marks itself in, a file named by its
+	// process ID, while it sleeps; halfway through, it appends the number of runs marked there to
+	// the directory's counts file. A run that is killed leaves its mark.
+	flightEnv = "AUDIO_TEST_IN_FLIGHT"
 )
 
 func TestMain(m *testing.M) {
@@ -80,6 +94,9 @@ func standin(name string, args []string) int {
 		return 1
 	}
 	filter := args[slices.Index(args, "-af")+1]
+	if slices.Contains(args, "s16le") {
+		return standinWindow(filter)
+	}
 	switch {
 	case filter == "volumedetect":
 		fmt.Fprint(os.Stderr, os.Getenv(volumeEnv))
@@ -87,6 +104,85 @@ func standin(name string, args []string) int {
 		fmt.Fprint(os.Stderr, os.Getenv(silenceEnv))
 	}
 	return 0
+}
+
+// windowFilter matches a window run's filter, its first sample and the sample it ends before.
+var windowFilter = regexp.MustCompile(`^aresample=16000,atrim=start_sample=(\d+):end_sample=(\d+)$`)
+
+// standinWindow is the stand-in ffmpeg's window run on filter: it sleeps as delaysEnv says,
+// marked in flightEnv's directory, and writes the window's samples, windowSample's, to stdout as
+// 16-bit little-endian PCM.
+func standinWindow(filter string) int {
+	m := windowFilter.FindStringSubmatch(filter)
+	if m == nil {
+		fmt.Fprintf(os.Stderr, "stand-in: window filter %q\n", filter)
+		return 2
+	}
+	first, _ := strconv.Atoi(m[1])
+	end, _ := strconv.Atoi(m[2])
+	if os.Getenv(failWindowEnv) == m[1] {
+		fmt.Fprint(os.Stderr, "[aist#0:0/pcm_s16le] Error while filtering: Cannot allocate memory\n")
+		return 1
+	}
+	if err := sleepMarked(m[1]); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	pcm := make([]byte, 0, 2*(end-first))
+	for i := first; i < end; i++ {
+		pcm = binary.LittleEndian.AppendUint16(pcm, uint16(windowSample(i)))
+	}
+	if _, err := os.Stdout.Write(pcm); err != nil {
+		return 2
+	}
+	return 0
+}
+
+// windowSample is the stand-in's sample i of the source: it names its own place, so a window's
+// samples show which window they are.
+func windowSample(i int) int16 { return int16(i % 30011) }
+
+// sleepMarked sleeps as delaysEnv says for the window run whose first sample is first, marked in
+// flightEnv's directory when that is set.
+func sleepMarked(first string) error {
+	var delays map[string]int
+	if v := os.Getenv(delaysEnv); v != "" {
+		if err := json.Unmarshal([]byte(v), &delays); err != nil {
+			return err
+		}
+	}
+	ms, ok := delays[first]
+	if !ok {
+		ms = delays["*"]
+	}
+	d := time.Duration(ms) * time.Millisecond
+	dir := os.Getenv(flightEnv)
+	if dir == "" {
+		time.Sleep(d)
+		return nil
+	}
+	mark := filepath.Join(dir, strconv.Itoa(os.Getpid()))
+	if err := os.WriteFile(mark, nil, 0o600); err != nil {
+		return err
+	}
+	time.Sleep(d / 2)
+	marks, err := filepath.Glob(filepath.Join(dir, "[0-9]*"))
+	if err != nil {
+		return err
+	}
+	f, err := os.OpenFile(filepath.Join(dir, "counts"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintln(f, len(marks))
+	if cerr := f.Close(); err == nil {
+		err = cerr
+	}
+	if err != nil {
+		return err
+	}
+	time.Sleep(d - d/2)
+	return os.Remove(mark)
 }
 
 // logRun appends r to the log logEnv names.
