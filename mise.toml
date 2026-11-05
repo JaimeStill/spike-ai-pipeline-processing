@@ -255,3 +255,15 @@ exit "$failed"
 [tasks.findings-email]
 description = "Run the email finding on the fixtures and MIME inputs, plaso's store, the EMAIL_SCALE_STORE scale store, and the EMAIL_SCALE_MBOX scale mboxrd; keeps results only in EMAIL_FINDINGS_RESULTS"
 run = "scripts/findings-email.sh"
+
+# Task onenote's finding, in the integration and findings tiers: the tier's routes against the
+# hand truth and onenote's media routes; inspection over ~/docs; the page ink of
+# handwriting_recognition.one to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, beside
+# OneNote's own recognition; the onenote adapter beside the CLI on ONENOTE_LARGE's three large
+# sections; and the dispatcher over the ONENOTE_SCALE_STORE scale store, resumed, and through the
+# pool beside plaso's store, a byte copy of the scale store, and mail's fixtures, with their time,
+# peak memory, and peak disk. None of the stores is committed. An ONENOTE_FINDINGS_RESULTS the shell
+# sets keeps the run's results there; unset, the run keeps nothing. It isn't CI.
+[tasks.findings-onenote]
+description = "Run the onenote finding: routes, inspection, ink, the large sections, and the dispatcher over the ONENOTE_SCALE_STORE scale store; keeps results only in ONENOTE_FINDINGS_RESULTS"
+run = "scripts/findings-onenote.sh"

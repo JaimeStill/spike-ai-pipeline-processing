@@ -1,8 +1,9 @@
-//go:build integration && linux
+//go:build (integration || findings) && linux
 
-// Package visiontest holds the integration tier's vision helpers, which the test packages that
-// send pictures or pages to a model on the llama.cpp router share. It builds under the
-// integration tag alone, so no released file imports it or spike-ai-pipeline-client.
+// Package visiontest holds the integration and findings tiers' vision helpers, which the test
+// packages that send pictures or pages to a model on the llama.cpp router share. It builds under
+// the integration or findings tag alone, so no released file imports it or
+// spike-ai-pipeline-client.
 //
 // Its exported identifiers:
 //
