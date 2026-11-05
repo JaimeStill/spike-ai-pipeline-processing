@@ -79,7 +79,7 @@ The TIFF is 640x400, 8-bit RGB, LZW-compressed, written by GIMP.
 (`charts`, `comments`, `lists`, `media`, `notes`, `sections`, `tables`), four xlsx as `.xls`
 (`cells`, `drawings`, `formulas`, `merges`), and three pptx as `.ppt` (`bullets`, `slide-objects`,
 `slides`). `legacy/generate.sh` wrote them, running soffice as the office package runs it: in the
-package's default image, `LibreOfficeImage`
+picture package's default image, `picture.LibreOfficeImage`
 (`gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054`),
 LibreOffice 26.8.1.1, under the container runner's lockdown, with the filters `MS Word 97`,
 `MS Excel 97`, and `MS PowerPoint 97`. The script writes `legacy/generated/MANIFEST`, which

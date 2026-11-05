@@ -110,9 +110,67 @@ figure reads the caller's size rather than the program's whenever the caller is 
 A known limit: if processing itself is SIGKILLed, a running container runs on until its tool
 exits, and `--rm` removes it then.
 
-`document` prepares a PDF's pages for a model's vision, on Linux, the standard library, and
-`tool`. It provides pre-inference preparation only: a layer above sends the prepared pages to a
-model and owns the requests, retries, and any final step. Every system tool it runs is a
+`route` identifies content by its signature and names the stage it goes to next, on the standard
+library alone: pure functions, which run no stage and no program. `Identify` names the `Kind` a
+file's first `HeadLen` bytes begin, and `File` routes the file at a path by that kind, never by
+its stored MIME type, and by its name's extension only where the signature can't tell formats
+apart: within a ZIP or OLE2 container, for a cabinet, for an mbox's "From " line, which prose
+named with a text extension begins too, and for content of no signature. The routes are
+`Document`, a PDF; `Office`, an OOXML package office reads, a legacy OLE2 document, an ODF
+package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, and BMP as
+stored; `VisionConverted`, TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF; `Nested`, a .msg, a
+header-shaped .eml, a .pst, or an mbox; `OneNote`; `Archive`, ZIP, tar, gzip, zstd, 7z, and a
+cabinet; `Audio`; `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else,
+each with a reason in a few words. The caller, or a dispatcher, runs the stage, and reports "no
+processor yet" for one that doesn't exist: no stage takes WordPerfect, .xlsb, HEIC, WebP, AVIF,
+OneNote, archives, audio, video, or text yet.
+
+```go
+r, why, err := route.File(path, "report.pdf", "application/octet-stream")
+if err != nil {
+	return err
+}
+// r == route.Document, why == "PDF signature"
+```
+
+`picture` converts pictures to PNG for a model's vision and corrects page images for scan
+defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
+`NewConverter` over a `Config` of a magick Tool that `MagickSpec` declares, minimum
+`MagickMinimum`, 7.1, and a LibreOffice Tool that `LibreOfficeSpec` declares, minimum
+`LibreOfficeMinimum`, 24.2, run through the container runner in `LibreOfficeImage`, converts the
+pictures `route.VisionConverted` names that it knows, TIFF, EMF, WMF, and SVG, told by their
+signature. `Converter.Convert` converts one, such as a mail attachment, to a PNG in the `Request`'s
+working directory named by the picture's SHA-256; `Converter.ConvertBatch` converts several, the
+EMFs and WMFs in one soffice run, as office converts a document's pictures. Either Tool may be
+nil, and a picture that needs it is refused, with `ErrNoMagick` or `ErrNoLibreOffice`.
+
+```go
+mg, err := tool.NewExec(ctx, picture.MagickSpec())
+if err != nil {
+	return err
+}
+lo, err := tool.NewContainer(ctx, "", tool.Image{Ref: picture.LibreOfficeImage}, picture.LibreOfficeSpec())
+if err != nil {
+	return err
+}
+pics, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+if err != nil {
+	return err
+}
+png, err := pics.Convert(ctx, picture.Request{Dir: dir, Path: attachment})
+```
+
+The corrections stage, a `Corrector` built by `NewCorrector` over the magick Tool, runs a page
+image through ImageMagick for the corrections a request names: `Deskew`, `Despeckle`,
+`ContrastStretch`, `Unsharp`, and `Grayscale`, always in that order, one magick run a page. None is
+applied by default: the measurements found no correction that helps without hurting elsewhere.
+`Corrections`, `Correction.Description`, and `ParseCorrection` are the catalog for a prompt that
+lets a model choose corrections, and `Corrector.Assess` measures a page image, in one magick run,
+for the defects they fix: an `Assessment` of its size, skew, contrast, noise, sharpness, and color.
+
+`document` prepares a PDF's pages for a model's vision, on Linux, the standard library, `tool`,
+and `picture`. It provides pre-inference preparation only: a layer above sends the prepared pages
+to a model and owns the requests, retries, and any final step. Every system tool it runs is a
 `tool.Tool` the caller built, through either runner.
 
 A `Renderer` counts a PDF's pages and renders one page, 1-based, as PNG at a DPI, one process per
@@ -131,24 +189,15 @@ in fractions of the page such as a header or footer, cropped in gs's own PostScr
 page's pixels; the optional `RegionRenderer` interface names it, and `CheckRegion` refuses a region
 out of range (`ErrRegion`).
 
-The corrections stage, a `Corrector` built by `NewCorrector` over a magick Tool that `MagickSpec`
-declares, minimum `MagickMinimum`, 7.1, runs a page image through ImageMagick for the corrections a
-request names: `Deskew`, `Despeckle`, `ContrastStretch`, `Unsharp`, and `Grayscale`, always in that
-order, one magick run a page. None is applied by default: the measurements found no correction
-that helps without hurting elsewhere. `Corrections`, `Correction.Description`, and
-`ParseCorrection` are the catalog for a prompt that lets a model choose corrections, and
-`Corrector.Assess` measures a page image, in one magick run, for the defects they fix: an
-`Assessment` of its size, skew, contrast, noise, sharpness, and color.
-
-A `Preparer`, built by `NewPreparer` from a Renderer and an optional Corrector, puts the stages
-together. `Preparer.Images` streams a PDF's prepared pages as a lazy `iter.Seq2[PageImage, error]`:
-it spools the PDF, read from an `io.Reader`, into the working directory the `ImagesRequest` names,
-counts its pages, and renders and corrects each page at the request's DPI (150 by default) and
-concurrency, yielding each `PageImage`, its number, the page count, its PNG, and its text layer, in
-page order. A request may read each page's text layer (`Text`), skip rendering the pages that have
-one (`SkipText`), for the flow of text layer first, vision only for the pages without one, and
-render one `Region` of every page. A failed page yields its error and the stream carries on;
-breaking out of the range cancels the work in flight.
+A `Preparer`, built by `NewPreparer` from a Renderer and an optional `*picture.Corrector`, puts the
+stages together. `Preparer.Images` streams a PDF's prepared pages as a lazy
+`iter.Seq2[PageImage, error]`: it spools the PDF, read from an `io.Reader`, into the working
+directory the `ImagesRequest` names, counts its pages, and renders and corrects each page at the
+request's DPI (150 by default) and concurrency, yielding each `PageImage`, its number, the page
+count, its PNG, and its text layer, in page order. A request may read each page's text layer
+(`Text`), skip rendering the pages that have one (`SkipText`), for the flow of text layer first,
+vision only for the pages without one, and render one `Region` of every page. A failed page yields
+its error and the stream carries on; breaking out of the range cancels the work in flight.
 
 ```go
 gs, err := tool.NewExec(ctx, document.GhostscriptSpec())
@@ -177,28 +226,29 @@ help, where the instructions go, whether the staged two-pass flow pays, and what
 image tokens. The run results it cites are in `docs/findings/documents-results/`.
 
 `office` prepares office documents, docx, xlsx, and pptx, and the legacy doc, xls, and ppt, for a
-model, on Linux, the standard library, and `tool`. It runs spike-ai-pipeline-office's Open XML CLI
-and provides pre-inference preparation only. A `Converter`, built by `NewConverter` over a `Config`
-of Tools the caller built, needs an office Tool that `OfficeSpec` declares, minimum
-`OfficeMinimum`, 0.1.0; a LibreOffice Tool and a magick Tool are optional. `Converter.Convert`
-spools a document read from an `io.Reader` into the working directory the `Request` names, runs
-office once with a media directory there, and returns a `Result`: office's JSON model decoded
-into typed Go values that mirror its schema "1" (`JSON`, the default), or office's Markdown
-(`Markdown`), with the media list, office's stderr warnings, and, for a legacy document, the
-format it was converted from. A model of another schema is an error matching `ErrSchema`; a
-block kind the package doesn't know is kept with its raw JSON. office's exit codes 1 to 4 are an
-`*ExitError` that matches `ErrMediaNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`.
+model, on Linux, the standard library, `tool`, `route`, and `picture`. It runs
+spike-ai-pipeline-office's Open XML CLI and provides pre-inference preparation only. A `Converter`,
+built by `NewConverter` over a `Config` of Tools the caller built, needs an office Tool that
+`OfficeSpec` declares, minimum `OfficeMinimum`, 0.1.0; a LibreOffice Tool and a magick Tool are
+optional. `Converter.Convert` spools a document read from an `io.Reader` into the working directory
+the `Request` names, runs office once with a media directory there, and returns a `Result`: office's
+JSON model decoded into typed Go values that mirror its schema "1" (`JSON`, the default), or
+office's Markdown (`Markdown`), with the media list, office's stderr warnings, and, for a legacy
+document, the format it was converted from. A model of another schema is an error matching
+`ErrSchema`; a block kind the package doesn't know is kept with its raw JSON. office's exit codes 1
+to 4 are an `*ExitError` that matches `ErrMediaNotWritten`, `ErrUsage`, `ErrRefused`, or
+`ErrFailed`.
 
 ```go
 o, err := tool.NewExec(ctx, office.OfficeSpec())
 if err != nil {
 	return err
 }
-lo, err := tool.NewContainer(ctx, "", tool.Image{Ref: office.LibreOfficeImage}, office.LibreOfficeSpec())
+lo, err := tool.NewContainer(ctx, "", tool.Image{Ref: picture.LibreOfficeImage}, picture.LibreOfficeSpec())
 if err != nil {
 	return err
 }
-mg, err := tool.NewExec(ctx, office.MagickSpec())
+mg, err := tool.NewExec(ctx, picture.MagickSpec())
 if err != nil {
 	return err
 }
@@ -213,8 +263,9 @@ Pictures follow one standard: no stage re-encodes a picture lossily, and every c
 writes PNG. The media list has one `MediaFile` per file office wrote: office's stored name (the
 SHA-256 of its bytes and its extension), its content type, the file handed onward, and whether it
 was converted. A picture vision decodes, PNG, JPEG, GIF, or BMP, is handed on exactly as stored.
-EMF and WMF are rendered to PNG through LibreOffice's Draw export at `Request.MetafileScale`
-times 96 dpi, `DefaultMetafileScale`, 3, when it is zero and at most `MaxMetafileScale`, 8, and
+The `picture` package converts the rest, a document's in one batch. EMF and WMF are rendered to
+PNG through LibreOffice's Draw export at `Request.MetafileScale` times 96 dpi,
+`picture.DefaultMetafileScale`, 3, when it is zero and at most `picture.MaxMetafileScale`, 8, and
 trimmed to the picture through magick, since Draw places a metafile in the middle of an A4 page.
 TIFF is converted through magick, its first image alone. A converted picture is named by its
 original's SHA-256 with `.png`, written beside the original, which stays, and is the same bytes
@@ -225,8 +276,8 @@ A legacy document is one with the OLE2 compound-file signature and a legacy exte
 `Request.Name`: .doc and .dot become docx, .xls and .xlt xlsx, and .ppt, .pps, and .pot pptx.
 Given a LibreOffice Tool, `Convert` converts it to that OOXML format through soffice headless,
 then runs office on the result; without one it is refused with `ErrNoLibreOffice` before anything
-runs. `LibreOfficeSpec` declares soffice, minimum `LibreOfficeMinimum`, 24.2, and
-`LibreOfficeImage` is the default image a caller may replace:
+runs. `picture.LibreOfficeSpec` declares soffice, minimum `picture.LibreOfficeMinimum`, 24.2, and
+`picture.LibreOfficeImage` is the default image a caller may replace:
 gotenberg/gotenberg:8.39.0-libreoffice, LibreOffice 26.8.1.1, pinned by digest, which
 `mise run currency` scans. soffice runs in it under
 the container runner's full lockdown, with its user profile inside the mounted working directory.
@@ -236,7 +287,7 @@ element kind and format, the container's footprint, the picture conversions, and
 vision time and image tokens. The run results it cites are in `docs/findings/office-results/`.
 
 `email` reads mail stores, Outlook .pst stores and .msg messages, and MIME messages, .eml and
-mbox files, for a model, on Linux, the standard library, and `tool`. It runs
+mbox files, for a model, on Linux, the standard library, `tool`, and `route`. It runs
 spike-ai-pipeline-mail's CLI and provides pre-inference preparation only. A `Reader`, built by
 `NewReader` over a `Config` holding a mail Tool that `MailSpec` declares, minimum `MailMinimum`,
 0.2.0, reads one input per `Request`. `Reader.Read`
@@ -271,12 +322,12 @@ for rec, err := range s.Records() {
 	threads.Add(rec)
 	if msg, ok := rec.(*email.Message); ok {
 		for _, a := range msg.Attachments {
-			route, _, err := a.Route()
+			dest, _, err := a.Route()
 			if err != nil {
 				return err
 			}
-			switch route {
-			case email.RouteDocument, email.RouteOffice, email.RouteVision:
+			switch dest {
+			case route.Document, route.Office, route.Vision:
 				// hand a.Path to the route's stage
 			}
 		}
@@ -285,18 +336,18 @@ for rec, err := range s.Records() {
 roots := threads.Threads()
 ```
 
-Given an attachments directory, mail writes each distinct attachment content there once, named
-by its SHA-256, and `Attachment.Route` names the stage it goes to next, which the caller runs:
-`RouteDocument` for a PDF, `RouteOffice` for an office document (a ZIP with an OOXML extension, or
-an OLE2 file with a legacy one), `RouteVision` for PNG, JPEG, GIF, and BMP as stored,
-`RouteVisionConverted` for TIFF, EMF, and WMF, which `office.Converter.ConvertPicture` makes PNG
-first, `RouteNested` for an embedded message, an OLE2 file named .msg, or a by-value .eml, and
-`RouteUnrouted` for anything else. The route is decided by the content's signature, never the
-stored MIME type alone, which real stores get wrong: MsgKit stores an EMF as
-`application/octet-stream`, and Apache POI's `alfresco.gif` is a BMP. Content of no signature is a
-by-value .eml when its name has the .eml extension or its stored type is `message/rfc822` or
-`message/global`, and its header has the shape mail reads a message by: its first line a header
-field, and a From or Date field before the header block ends.
+Given an attachments directory, mail writes each distinct attachment content there once, named by
+its SHA-256, and `Attachment.Route` names the stage it goes to next, by `route.File` over the file
+mail wrote, which the caller runs: `route.Document` for a PDF, `route.Office` for an office
+document, `route.Vision` for PNG, JPEG, GIF, and BMP as stored, `route.VisionConverted` for TIFF,
+EMF, WMF, SVG, and the rest, which `picture.Converter.Convert` makes PNG first where it can,
+`route.Nested` for an embedded message, an OLE2 file named .msg, a by-value .eml, a .pst, or an
+mbox, `route.Unrouted` for anything no stage takes, and the other routes the `route` package names.
+The route is decided by the content's signature, never the stored MIME type alone, which real stores
+get wrong: MsgKit stores an EMF as `application/octet-stream`, and Apache POI's `alfresco.gif` is a
+BMP. Content of no signature is a by-value .eml when its name has the .eml extension or its stored
+type is `message/rfc822` or `message/global`, and its header has the shape mail reads a message by:
+its first line a header field, and a From or Date field before the header block ends.
 
 A `Threader`, fed each record while a Stream is read, keeps only each message's threading keys,
 and `Threader.Threads` builds the store's threads, `Thread` trees, by RFC 5256's REFERENCES
@@ -314,6 +365,43 @@ The adapter adds about 1 to 3% to mail's time, and its Go process peaks at 52 to
 17 .eml and mbox inputs, 29 of 29 threads and 13 of 13 routes right, and times a 2.7 GB mboxrd of
 the scale store's 50,000 messages, where the adapter adds 4.5 to 5.6% to mail's time and peaks at
 56 to 58 MiB.
+
+Every format package follows one adapter convention, so a dispatcher, and the next format, meet
+the same shape:
+
+- **Spec and Minimum.** A function returns the `tool.Spec` of each program the package runs, such
+  as `office.OfficeSpec`, beside a constant naming the oldest version it accepts, such as
+  `OfficeMinimum`.
+- **Config.** The Tools the caller built, through either runner, are the fields of a `Config`.
+- **A constructor that refuses.** `NewConverter`, `NewReader`, and their kind refuse a required
+  Tool that is missing, and any Tool older than the package's Minimum whatever its own Spec
+  declared, with a `*tool.VersionError` wrapping `tool.ErrTooOld`, so a missing or outdated tool
+  fails at startup.
+- **A Request with a media directory.** Each call takes a `Request` naming the working directory
+  the caller owns, which an input is spooled into and the media the CLI writes are written into
+  and left; an invalid request is refused before anything runs.
+- **Typed exit errors.** A CLI's exit codes 1 to 4 are an `*ExitError` carrying the CLI's message
+  and matching one shared set, through each package's `ErrNotWritten` (office's
+  `ErrMediaNotWritten`), `ErrUsage`, `ErrRefused`, and `ErrFailed`, so `errors.Is` matches office's
+  refusal through `email.ErrRefused` too. The contract lives in `internal/cli`, with the stderr
+  reader, the bounded buffer, and the spool every adapter shares.
+- **Warnings.** Each `<prog>: warning: <where>: <what>` line on stderr is a warning, and a call
+  with warnings has still succeeded.
+- **SHA-256 media naming.** A medium is named by the lowercase hex SHA-256 of its bytes and its
+  extension, and a converted picture's PNG by its original's, so the same content has the same
+  name on every run and across packages.
+- **`iter.Seq2` streaming.** The parts come as a lazy `iter.Seq2[T, error]` while the CLI runs,
+  memory following the part being read; a loop that stops early stops the CLI.
+- **A route per part.** Each part names the stage it goes to next, through `route`, which the
+  caller runs.
+
+Each package's deviations: `office` returns one `Result`, the whole model or Markdown, not a
+stream of lines, and its media list names no route yet; `email` follows the convention whole, its
+`Attachment.Route` the route per part; `document` streams pages, `PageImage`s, rather than a CLI's
+lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's failures
+are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not a
+reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one
+refused; and `route` is pure functions, with no Tool, Config, or Request.
 
 Known limits:
 
@@ -337,14 +425,14 @@ Known limits:
   picture that another covers, that sits off the slide or page, or that is cropped away still
   appears in the model and the Markdown and is handed onward to vision. In `slide-objects`'s
   slide 3, a blue square covers a red one at the same position, and both are listed.
-- A by-value .eml whose header isn't a message's shape, such as one that begins with an mbox's
-  "From " line, is unrouted, as is header-shaped content neither named .eml nor stored as
-  `message/rfc822` or `message/global`.
+- A by-value .eml whose header isn't a message's shape is unrouted, unless it begins with an
+  mbox's "From " line, which makes it an mbox; so is header-shaped content neither named .eml nor
+  stored as `message/rfc822` or `message/global`. An mbox named with a text extension is text.
 - mail reads every mbox as an mboxrd: an mboxcl's Content-Length is ignored, so an unquoted body
   line starting "From " starts a new message, and an mboxo body line that was ">From " loses its
   ">". An .eml's or an mbox's message has no class, no creation or modification time, and SMTP
   addresses alone. These are mail's, as its README states.
-- mail refuses an .ost, an `*ExitError` matching `ErrRefused`.
+- mail refuses an .ost, an `*ExitError` matching `ErrRefused`, and `route` leaves one unrouted.
 - In a .pst, an embedded message is nested without its content, which mail can't read; in a .msg
   it is nested in full.
 - A by-reference attachment has no content file, so it is unrouted.
@@ -380,8 +468,9 @@ names ([docs/findings/email.md](docs/findings/email.md), "Rerunning").
 The tests' vision harness, the bake-offs, the staged flow, and the findings tier are test code,
 not released.
 
-Host prerequisites: gs 10.0 or later and ImageMagick's magick 7.1 or later on PATH for `document`,
-and docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
+Host prerequisites: gs 10.0 or later on PATH for `document`; ImageMagick's magick 7.1 or later on
+PATH for `picture`, its conversions and its corrections, and so for `document`'s corrections; and
+docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice
 in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
 metafile trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, which mise pins from its
