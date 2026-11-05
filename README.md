@@ -179,6 +179,29 @@ caller's loop body returns, so a caller that persists an output sets its `Ref` a
 event carries it; then each part's file is removed unless the caller called `Event.Keep`, so the
 disk holds only the parts in flight.
 
+`Dispatcher.Pool` dispatches an iterator of inputs over N workers sharing the dispatcher's index,
+so content the inputs share is prepared once and seen by the rest, and yields every input's events
+as one sequence of `PoolEvent`s, each its `Input` and its `Event`. An input's events keep their
+order, and the inputs' interleave. The caller's loop body runs on one goroutine, and each worker
+waits for it to return before its dispatch goes on, so the entry is still recorded, and the files
+removed, after the body returns; a worker holds one event at most, so a slow loop holds the
+workers back and the disk holds what N dispatches have in flight. An error that stops one input's
+dispatch is yielded with that input and the others go on; ctx ending stops them all, its error
+yielded last.
+
+`Input.After` resumes a .pst or an mbox after a message, its node id or ordinal: the email stage
+passes it to mail as `--after`, mail 0.3.0 or later, and the store's event holds the store, its
+folders, and only the messages after it, with their attachments found. A resumed input's own entry
+is never recorded, its outputs being the tail alone. A caller resuming after a crash keeps a
+`FileIndex` that outlives the process, so the attachments recorded before the crash are seen; the
+cursor, the last message whose outputs it persisted; and an `email.Threader` saved with it by
+`MarshalBinary`. It restores the Threader by `UnmarshalBinary`, dispatches with `After` set to the
+cursor, and feeds the Threader the rest, whose threads are then the whole store's. A store's
+records reach the caller in the store's own event, after every attachment's, so the cursor
+advances as the caller persists that event's outputs; a crash before it leaves no cursor, and the
+store is dispatched whole again, its recorded attachments seen. The crashed dispatch's claim on the
+store waits out `FileOptions.Stale` before the resumed one takes it.
+
 The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader
 or converter the caller already built and the version of its Tools, which `dispatch.Versions`
 names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeStage`, office's
@@ -254,6 +277,13 @@ for ev, err := range d.Dispatch(ctx, dispatch.Input{Path: "mailbox.pst"}) {
 		return err
 	}
 	// send ev.Outputs on; each part's event comes before its parent's
+}
+for pe, err := range d.Pool(ctx, slices.Values(inputs), 4) {
+	if err != nil {
+		// pe.Input's dispatch stopped, or, with pe.Input zero, ctx ended
+		continue
+	}
+	// pe.Event is one of pe.Input's events, in that input's order
 }
 ```
 
@@ -416,7 +446,11 @@ spike-ai-pipeline-mail's CLI and provides pre-inference preparation only. A `Rea
 `NewReader` over a `Config` holding a mail Tool that `MailSpec` declares, minimum `MailMinimum`,
 0.2.0, reads one input per `Request`. `Reader.Read`
 returns a `Stream`, or refuses an invalid `Request`, one with no input or a path that can't be
-made absolute, with an error matching `ErrRequest` before anything runs. Ranging over
+made absolute, with an error matching `ErrRequest` before anything runs. A `Request`'s `After`
+resumes a .pst's or an mbox's read after the message whose id it is, through mail's `--after`: the
+store, its folders, and only the messages after it, the whole read's tail byte for byte. It needs
+mail `MailAfterMinimum`, 0.3.0, which `Read` checks only when `After` is set, refusing an older one
+with an error matching `ErrRequest` and `tool.ErrTooOld`. Ranging over
 `Stream.Records` runs mail once and yields each line it writes while it runs,
 decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
 `Store` first, then for a .pst each `Folder` before its `Message`s, and a `Skipped` record wherever
@@ -478,7 +512,11 @@ and `Threader.Threads` builds the store's threads, `Thread` trees, by RFC 5256's
 algorithm over Message-ID, In-Reply-To, and References, with a message that names no parent taking
 the one its conversation index names; placeholders for messages the store doesn't hold are pruned
 as RFC 5256 says, and roots with the same base subject are gathered. `Threads` builds them from a
-read's Records whole.
+read's Records whole. `Threader.MarshalBinary` saves its keys, in a versioned, deterministic
+format, and `UnmarshalBinary` restores them, so a read resumed with `After` threads whole: fed the
+records up to message K, saved, restored, and fed the read resumed after K, a Threader returns the
+whole read's threads, which the tests hold over the generated .pst, Tika's testPST.pst, and
+nine.mboxrd at several K.
 
 [docs/findings/email.md](docs/findings/email.md) records the threads and routes over every
 fixture against hand truth, what they come to on plaso's 59 MB store, and the adapter's time and
@@ -666,8 +704,8 @@ PATH for `picture`, its conversions and its corrections, and so for `document`'s
 docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice
 in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
-metafile trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, which mise pins from its
-GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote 0.1.0 or later, which mise
+metafile trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a
+read, which mise pins, at 0.3.0, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote 0.1.0 or later, which mise
 pins from its GitHub release for the tests. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and
 libvips. typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, and
 .NET, which mise installs, only to rebuild `email/testdata`'s built .msg, as their READMEs say.

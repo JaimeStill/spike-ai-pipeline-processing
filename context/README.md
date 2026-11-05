@@ -42,7 +42,8 @@ express; the spike's question and evidence live in the root repository's `contex
   typed schema "1" records, a .pst's or a .msg's, with mail's warnings and exit codes as errors;
   attachment routes by route.File, by content signature, never the stored type, from the attachments
   directory mail writes; and threads by RFC 5256's REFERENCES algorithm plus conversation-index
-  parents, from keys a Threader keeps while the stream is read. Its fixtures are mail's, copied at
+  parents, from keys a Threader keeps while the stream is read and saves and restores, so a read
+  resumed through mail 0.3.0's --after, Request.After, threads whole. Its fixtures are mail's, copied at
   its tag under a SHA-256 manifest, and a built .msg of this repository's office fixtures and, by
   value, one of mail's .msg fixtures. The integration tier carries each route to its real stage; the
   findings tier, whose results `docs/findings/email.md` records, scores threads and routes against
@@ -55,5 +56,11 @@ express; the spike's question and evidence live in the root repository's `contex
   onenote's public Interop-TestSuites and onenote.rs sets and expectations, copied at its tag under
   a SHA-256 manifest; the real-binary tests hold every read to them. Its media are named, not yet
   routed.
+- **dispatch**: an input and every part found in it walked to the caller's stages by route,
+  hashed, routed, and inspected first, the format packages' adapters and the zip stage among them,
+  under a content-addressed index, in memory or a directory, whose claims make one of concurrent
+  dispatches prepare shared content; a pool over N workers sharing the index, its events merged
+  onto the caller's goroutine, each worker held until the loop takes its event; and a store's read
+  resumed after a message, Input.After, its entry not recorded.
 - **audio**: windows cut at silences, concurrent transcription, and the seam merge.
 - **streams**: live and real-time-paced media, and chat streams, as events.
