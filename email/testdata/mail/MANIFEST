@@ -2,8 +2,8 @@
 # tests/golden, in golden/, at the tag, copied byte for byte by mise run fixtures:mail,
 # which reports any drift against this manifest. Each file's SHA-256 is below.
 repository https://github.com/JaimeStill/spike-ai-pipeline-mail
-tag v0.2.0
-commit e2ec844634f77c7db2dd141ccb7e77527d250272
+tag v0.3.0
+commit eb734073a960f2e8c15c8c120dd6a2e5d7b0624d
 80da257c69449439eb725769e562d9714bff4d5cc2ed5e97b7150ddae0b707f7  fixtures/generated/eml/01-plain.eml
 64391ec0f9866d2859eff23fed4507350d2a5bfd5443db21ac2d8beb8f0982d6  fixtures/generated/eml/02-reply-latin1.eml
 78db74762bc8f90de0fa83ae3b54502d0d80e35eac1dd070c27e4eb751ae759b  fixtures/generated/eml/03-html-inline-image.eml

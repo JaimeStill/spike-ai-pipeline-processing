@@ -5,8 +5,8 @@ The email package's fixtures. They are committed and never generated or fetched 
 ## mail
 
 `mail/` is a copy of [spike-ai-pipeline-mail](https://github.com/JaimeStill/spike-ai-pipeline-mail)'s
-committed fixtures and goldens at its tag `v0.2.0` (commit
-`e2ec844634f77c7db2dd141ccb7e77527d250272`), byte for byte: its `tests/fixtures/` in
+committed fixtures and goldens at its tag `v0.3.0` (commit
+`eb734073a960f2e8c15c8c120dd6a2e5d7b0624d`), byte for byte, the same files v0.2.0's were: its `tests/fixtures/` in
 `mail/fixtures/`, and its `tests/golden/`, mail's own stdout and stderr for each fixture, in
 `mail/golden/`. `mail/MANIFEST` pins the copy: the repository, the tag, the commit, and each file's
 SHA-256; the check verifies the copy against it offline. `mise run fixtures:mail` refreshes the copy

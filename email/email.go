@@ -10,9 +10,11 @@ import (
 	"fmt"
 	"io"
 	"iter"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
@@ -20,6 +22,11 @@ import (
 
 // MailMinimum is the oldest mail the Reader accepts.
 const MailMinimum = "0.2.0"
+
+// MailAfterMinimum is the oldest mail that resumes a read, mail's --after: Read refuses a
+// Request with After under an older one. A Reader without After needs MailMinimum alone, so a
+// caller that never resumes may stay on mail 0.2.0.
+const MailAfterMinimum = "0.3.0"
 
 // MailSpec declares mail's spike-ai-pipeline-mail, minimum 0.2.0, for either runner's
 // constructor. mail --version prints the version alone, as "0.2.0", and the pattern takes the
@@ -76,10 +83,20 @@ type Request struct {
 	// names its file there, and Attachment.Route sniffs it. Read makes it absolute. "" writes
 	// nothing, and routes nothing by content.
 	Attachments string
+	// After, when not zero, resumes the read of a .pst or an mbox after the message whose
+	// Message.ID it is: in a .pst its node id, in an mbox its 1-based ordinal. The resumed read is
+	// the tail of the whole read, as mail writes it byte for byte: the store, every folder, and
+	// every folder's skipped record, then only the messages after this one, with their skipped
+	// records. It needs mail MailAfterMinimum or later, and an id from 1 to 4,294,967,295, mail's
+	// range; Read refuses either otherwise. mail refuses After with a .msg or an .eml, a single
+	// message, as a usage error, an *ExitError matching ErrUsage, and an id that names no message
+	// in the store, a folder's among them, as an *ExitError matching ErrRefused.
+	After uint64
 }
 
-// ErrRequest is the cause of a request Read refuses before anything runs: one with no Input, or
-// whose Input or Attachments can't be made absolute.
+// ErrRequest is the cause of a request Read refuses before anything runs: one with no Input,
+// whose Input or Attachments can't be made absolute, or whose After is past mail's range or
+// given a mail older than MailAfterMinimum.
 var ErrRequest = errors.New("invalid request")
 
 // The outcomes of a mail run that exits nonzero, each its exit code's; an *ExitError matches its
@@ -123,19 +140,36 @@ type Stream struct {
 	mail *tool.Tool
 	ctx  context.Context
 	// input and dir are the request's Input and Attachments, made absolute; dir "" for none.
-	input    string
-	dir      string
+	input string
+	dir   string
+	// after is the request's After, 0 for none.
+	after    uint64
 	started  bool
 	warnings []string
 }
 
 // Read returns the read of req's input under ctx. It refuses an invalid request at once, with an
-// error wrapping ErrRequest: an empty Input, or an Input or Attachments that can't be made
-// absolute, which filepath.Abs does from the working directory. Nothing runs until the Stream's
-// Records are ranged over.
+// error wrapping ErrRequest: an empty Input, an Input or Attachments that can't be made absolute,
+// which filepath.Abs does from the working directory, or an After past 4,294,967,295; and an
+// After given a mail older than MailAfterMinimum, with an error wrapping ErrRequest and a
+// *tool.VersionError wrapping tool.ErrTooOld. Nothing runs until the Stream's Records are ranged
+// over.
 func (r *Reader) Read(ctx context.Context, req Request) (*Stream, error) {
 	if req.Input == "" {
 		return nil, fmt.Errorf("email: %w: no input", ErrRequest)
+	}
+	if req.After > math.MaxUint32 {
+		return nil, fmt.Errorf("email: %w: after %d, past mail's last id, %d", ErrRequest, req.After, uint64(math.MaxUint32))
+	}
+	if req.After != 0 {
+		m, err := tool.ParseVersion(MailAfterMinimum)
+		if err != nil {
+			return nil, err
+		}
+		if v := r.mail.Version(); v.Compare(m) < 0 {
+			verr := &tool.VersionError{Program: r.mail.Name(), Found: v.String(), Minimum: MailAfterMinimum, Err: tool.ErrTooOld}
+			return nil, fmt.Errorf("email: %w: after needs mail %s or later: %w", ErrRequest, MailAfterMinimum, verr)
+		}
 	}
 	input, err := filepath.Abs(req.Input)
 	if err != nil {
@@ -147,7 +181,7 @@ func (r *Reader) Read(ctx context.Context, req Request) (*Stream, error) {
 			return nil, fmt.Errorf("email: %w: attachments: %w", ErrRequest, err)
 		}
 	}
-	return &Stream{mail: r.mail, ctx: ctx, input: input, dir: dir}, nil
+	return &Stream{mail: r.mail, ctx: ctx, input: input, dir: dir, after: req.After}, nil
 }
 
 // Warnings returns mail's warnings, one per line it wrote to stderr as a warning, with mail's
@@ -192,10 +226,14 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 		return err
 	}
 	input, dir := s.input, s.dir
-	args := []string{input}
+	var args []string
 	if dir != "" {
-		args = []string{"--attachments", dir, input}
+		args = append(args, "--attachments", dir)
 	}
+	if s.after != 0 {
+		args = append(args, "--after", strconv.FormatUint(s.after, 10))
+	}
+	args = append(args, input)
 	ctx, cancel := context.WithCancel(s.ctx)
 	defer cancel()
 	// An *os.File passes straight to mail as its stdout, so no copy sits between them that Run
