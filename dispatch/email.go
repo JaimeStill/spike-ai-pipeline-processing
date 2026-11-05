@@ -202,16 +202,12 @@ func (w *emailWalk) message(m *email.Message, name, parent string) error {
 // attachment yields a, at where in the message named parent, as message says.
 func (w *emailWalk) attachment(a *email.Attachment, where, parent string) error {
 	if a.Path != "" {
-		ok, err := exists(a.Path)
+		f, ok, err := w.stash.find(a.Path, Found{Name: cmp.Or(a.Filename, a.File), MIME: a.MimeType, Where: where})
 		if err != nil {
 			return err
 		}
 		if ok {
-			path, err := w.stash.place(a.Path)
-			if err != nil {
-				return err
-			}
-			if !w.yield(PartItem(Found{Path: path, Name: cmp.Or(a.Filename, a.File), MIME: a.MimeType, Where: where}), nil) {
+			if !w.yield(PartItem(f), nil) {
 				return errStopped
 			}
 			return nil

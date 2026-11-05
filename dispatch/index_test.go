@@ -33,13 +33,16 @@ var (
 	stageB = dispatch.Identity{Name: "a", Version: "1.0", Config: "c2"}
 )
 
-// entry returns an entry with every field set, as recorded with outputs() appended.
+// entry returns an entry with every field set, as recorded with outputs() and kids() appended.
 func entry() dispatch.Entry {
-	return dispatch.Entry{
-		Outcome:  dispatch.Prepared,
-		Reason:   "why",
-		Outputs:  len(outputs()),
-		Children: []dispatch.Child{{SHA256: sum("child"), Name: "c.png", Where: "attachment 1", Size: 5, Route: route.Vision, Outcome: dispatch.Seen}},
+	return dispatch.Entry{Outcome: dispatch.Prepared, Reason: "why", Outputs: len(outputs()), Children: len(kids())}
+}
+
+// kids returns two children with every field set between them.
+func kids() []dispatch.Child {
+	return []dispatch.Child{
+		{SHA256: sum("child"), Name: "c.png", Where: "attachment 1", Size: 5, Route: route.Vision, Outcome: dispatch.Seen},
+		{SHA256: sum("other"), Size: 0, Outcome: dispatch.Failed},
 	}
 }
 
@@ -54,19 +57,22 @@ func outputs() []dispatch.Output {
 	}
 }
 
-// record appends outputs() to key's claim token holds and records entry(), its Outputs count
-// set wrong, which the index ignores; it returns the outputs it appended, which the test may
-// change to show the index shares no memory with them.
+// record appends outputs() and kids(), interleaved, to key's claim token holds and records
+// entry(), its counts set wrong, which the index ignores; it returns the outputs it appended,
+// which the test may change to show the index shares no memory with them.
 func record(t *testing.T, idx dispatch.Index, key dispatch.Key, token string) []dispatch.Output {
 	t.Helper()
 	in := outputs()
-	for _, o := range in {
+	for i, o := range in {
 		if err := idx.Append(t.Context(), key, token, o); err != nil {
+			t.Fatal(err)
+		}
+		if err := idx.AppendChild(t.Context(), key, token, kids()[i]); err != nil {
 			t.Fatal(err)
 		}
 	}
 	e := entry()
-	e.Outputs = 99
+	e.Outputs, e.Children = 99, 99
 	if err := idx.Record(t.Context(), key, token, e); err != nil {
 		t.Fatal(err)
 	}
@@ -86,10 +92,24 @@ func recorded(t *testing.T, idx dispatch.Index, key dispatch.Key) []dispatch.Out
 	return out
 }
 
+// children returns key's recorded children, read back from idx; an error fails the test.
+func children(t *testing.T, idx dispatch.Index, key dispatch.Key) []dispatch.Child {
+	t.Helper()
+	var out []dispatch.Child
+	for c, err := range idx.Children(t.Context(), key) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		out = append(out, c)
+	}
+	return out
+}
+
 // TestIndexContract: both shipped indexes keep the Index contract: lookups by key, the stage's
 // identity part of it; one claimant at a time, a claim ended by its own token only, and none
-// while the key is recorded; outputs appended under a claim, recorded in their order and counted
-// by the record, read back by Outputs, and dropped by a release; waits that return at once on an
+// while the key is recorded; outputs and children appended under a claim, interleaved, each
+// recorded in their order and counted by the record, read back by Outputs and Children, and
+// dropped by a release; waits that return at once on an
 // unclaimed or recorded key, wake on a record with its entry and on a release with none, and end
 // with their context; entries, outputs, and flags that share no memory with the caller's.
 func TestIndexContract(t *testing.T) {
@@ -112,6 +132,9 @@ func TestIndexContract(t *testing.T) {
 				}
 				if got := recorded(t, idx, key); len(got) != 0 {
 					t.Fatalf("outputs of an unrecorded key: %+v", got)
+				}
+				if got := children(t, idx, key); len(got) != 0 {
+					t.Fatalf("children of an unrecorded key: %+v", got)
 				}
 			})
 
@@ -155,17 +178,22 @@ func TestIndexContract(t *testing.T) {
 				if !reflect.DeepEqual(outs, outputs()) {
 					t.Fatalf("outputs:\n got %+v\nwant %+v", outs, outputs())
 				}
+				if got := children(t, idx, key); !reflect.DeepEqual(got, kids()) {
+					t.Fatalf("children:\n got %+v\nwant %+v", got, kids())
+				}
 				outs[0].Value[0] = 'Y'
 				outs[0].Meta["page"] = "changed"
-				got.Children[0].Name = "changed"
-				if again, _, _ := idx.Lookup(ctx, key); !reflect.DeepEqual(again, entry()) {
-					t.Fatalf("the index shares memory with a lookup: %+v", again)
-				}
 				if again := recorded(t, idx, key); !reflect.DeepEqual(again, outputs()) {
 					t.Fatalf("the index shares memory with its outputs: %+v", again)
 				}
-				// Outputs stops when its loop does.
+				// Outputs and Children stop when their loops do.
 				for _, err := range idx.Outputs(ctx, key) {
+					if err != nil {
+						t.Fatal(err)
+					}
+					break
+				}
+				for _, err := range idx.Children(ctx, key) {
 					if err != nil {
 						t.Fatal(err)
 					}
@@ -182,11 +210,14 @@ func TestIndexContract(t *testing.T) {
 				}
 			})
 
-			t.Run("release drops the pending outputs", func(t *testing.T) {
+			t.Run("release drops the pending outputs and children", func(t *testing.T) {
 				idx := newIndex(t, nil)
 				tok, _, _ := idx.Claim(ctx, key)
-				for _, o := range outputs() {
+				for i, o := range outputs() {
 					if err := idx.Append(ctx, key, tok, o); err != nil {
+						t.Fatal(err)
+					}
+					if err := idx.AppendChild(ctx, key, tok, kids()[i]); err != nil {
 						t.Fatal(err)
 					}
 				}
@@ -203,8 +234,8 @@ func TestIndexContract(t *testing.T) {
 				if err := idx.Record(ctx, key, tok, dispatch.Entry{Outcome: dispatch.NoProcessor}); err != nil {
 					t.Fatal(err)
 				}
-				if e, _, _ := idx.Lookup(ctx, key); e.Outputs != 0 || len(recorded(t, idx, key)) != 0 {
-					t.Fatalf("a record after a release holds the released outputs: %+v, %+v", e, recorded(t, idx, key))
+				if e, _, _ := idx.Lookup(ctx, key); e.Outputs != 0 || e.Children != 0 || len(recorded(t, idx, key)) != 0 || len(children(t, idx, key)) != 0 {
+					t.Fatalf("a record after a release holds the released outputs or children: %+v", e)
 				}
 			})
 

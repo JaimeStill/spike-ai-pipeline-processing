@@ -58,8 +58,9 @@ func TestDepthFirst(t *testing.T) {
 		{SHA256: sum(world["b.txt"]), Name: "b.txt", Where: "line 1", Size: int64(len(world["b.txt"])), Route: route.Text, Outcome: dispatch.Prepared},
 		{SHA256: sum(world["c.txt"]), Name: "c.txt", Where: "line 2", Size: int64(len(world["c.txt"])), Route: route.Text, Outcome: dispatch.Prepared},
 	}
-	if !slices.Equal(a.Children, want) {
-		t.Errorf("a's children:\n got %+v\nwant %+v", a.Children, want)
+	key := dispatch.Key{SHA256: a.Part.SHA256, Stage: f.text.Identity()}
+	if got := children(t, f.index, key); a.Children != len(want) || !slices.Equal(got, want) {
+		t.Errorf("a's %d children, read back:\n got %+v\nwant %+v", a.Children, got, want)
 	}
 }
 
@@ -238,8 +239,9 @@ func TestSeenAcrossInputs(t *testing.T) {
 			if len(shared.Outputs) != 1 || shared.Outputs[0].Ref != "ref:shared.txt" || shared.Outputs[0].Path != "" {
 				t.Errorf("shared.txt's outputs: %+v", shared.Outputs)
 			}
-			if len(shared.Children) != 1 || shared.Children[0].Name != "inner.txt" || shared.Children[0].SHA256 != sum("leaf") {
-				t.Errorf("shared.txt's children: %+v", shared.Children)
+			got := children(t, f.index, dispatch.Key{SHA256: shared.Part.SHA256, Stage: shared.Stage})
+			if shared.Children != 1 || len(got) != 1 || got[0].Name != "inner.txt" || got[0].SHA256 != sum("leaf") {
+				t.Errorf("shared.txt's %d children, read back: %+v", shared.Children, got)
 			}
 			pdf := byName(t, events, "javascript.pdf")
 			if !(inspect.Report{Flags: pdf.Part.Flags}).Has(inspect.PDFJavaScript) || string(pdf.Outputs[0].Value) != `{"name":"javascript.pdf"}` {

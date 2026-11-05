@@ -12,9 +12,9 @@ import (
 )
 
 // MemoryIndex is an [Index] in memory, for the dispatches of one process: a waiter wakes the
-// moment the claimant records or releases. It holds every recorded output, and a claim's pending
-// ones, in memory, so it suits a process whose inputs' outputs fit there; [FileIndex] holds them on
-// disk. Its zero value is not ready; [NewMemoryIndex] makes one.
+// moment the claimant records or releases. It holds every recorded output and child, and a
+// claim's pending ones, in memory, so it suits a process whose inputs' outputs fit there;
+// [FileIndex] holds them on disk. Its zero value is not ready; [NewMemoryIndex] makes one.
 type MemoryIndex struct {
 	mu      sync.Mutex
 	entries map[Key]memoryEntry
@@ -23,19 +23,21 @@ type MemoryIndex struct {
 	tokens  uint64
 }
 
-// memoryEntry is a recorded entry and its outputs, never changed once recorded: a later record
-// replaces it.
+// memoryEntry is a recorded entry, its outputs, and its children, never changed once recorded: a
+// later record replaces it.
 type memoryEntry struct {
-	entry   Entry
-	outputs []Output
+	entry    Entry
+	outputs  []Output
+	children []Child
 }
 
-// memoryClaim is a held claim: its token, a channel closed when it ends, and its pending
-// outputs.
+// memoryClaim is a held claim: its token, a channel closed when it ends, and its pending outputs
+// and children.
 type memoryClaim struct {
-	token   string
-	done    chan struct{}
-	pending []Output
+	token    string
+	done     chan struct{}
+	pending  []Output
+	children []Child
 }
 
 // errNotClaimed is a memory index's refusal of an append or record whose token doesn't hold the
@@ -51,12 +53,12 @@ func NewMemoryIndex() *MemoryIndex {
 	}
 }
 
-// Lookup returns key's entry, a copy, and whether there is one.
+// Lookup returns key's entry and whether there is one.
 func (m *MemoryIndex) Lookup(ctx context.Context, key Key) (Entry, bool, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	e, ok := m.entries[key]
-	return e.entry.clone(), ok, ctx.Err()
+	return e.entry, ok, ctx.Err()
 }
 
 // Outputs yields a copy of each of key's recorded outputs.
@@ -72,6 +74,25 @@ func (m *MemoryIndex) Outputs(ctx context.Context, key Key) iter.Seq2[Output, er
 				return
 			}
 			if !yield(o.clone(), nil) {
+				return
+			}
+		}
+	}
+}
+
+// Children yields each of key's recorded children.
+func (m *MemoryIndex) Children(ctx context.Context, key Key) iter.Seq2[Child, error] {
+	return func(yield func(Child, error) bool) {
+		m.mu.Lock()
+		// A recorded entry's children never change, so the slice is read outside the lock.
+		children := m.entries[key].children
+		m.mu.Unlock()
+		for _, c := range children {
+			if err := ctx.Err(); err != nil {
+				yield(Child{}, err)
+				return
+			}
+			if !yield(c, nil) {
 				return
 			}
 		}
@@ -125,8 +146,21 @@ func (m *MemoryIndex) Append(ctx context.Context, key Key, token string, o Outpu
 	return ctx.Err()
 }
 
-// Record records a copy of e as key's entry, with token's claim's pending outputs, and ends the
-// claim, refusing a token that doesn't hold it.
+// AppendChild appends c to token's claim's pending children, refusing a token that doesn't hold
+// key's claim.
+func (m *MemoryIndex) AppendChild(ctx context.Context, key Key, token string, c Child) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	claim, ok := m.claims[key]
+	if !ok || claim.token != token {
+		return errNotClaimed
+	}
+	claim.children = append(claim.children, c)
+	return ctx.Err()
+}
+
+// Record records e as key's entry, with token's claim's pending outputs and children, and ends
+// the claim, refusing a token that doesn't hold it.
 func (m *MemoryIndex) Record(ctx context.Context, key Key, token string, e Entry) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -134,14 +168,13 @@ func (m *MemoryIndex) Record(ctx context.Context, key Key, token string, e Entry
 	if !ok || c.token != token {
 		return errNotClaimed
 	}
-	e = e.clone()
-	e.Outputs = len(c.pending)
-	m.entries[key] = memoryEntry{entry: e, outputs: c.pending}
+	e.Outputs, e.Children = len(c.pending), len(c.children)
+	m.entries[key] = memoryEntry{entry: e, outputs: c.pending, children: c.children}
 	m.end(key, token)
 	return ctx.Err()
 }
 
-// Release ends token's claim of key, dropping its pending outputs.
+// Release ends token's claim of key, dropping its pending outputs and children.
 func (m *MemoryIndex) Release(ctx context.Context, key Key, token string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()

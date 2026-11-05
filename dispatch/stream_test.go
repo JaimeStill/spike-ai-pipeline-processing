@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
@@ -267,5 +268,122 @@ func TestStreamOrder(t *testing.T) {
 	}
 	if fmt.Sprint(got) != fmt.Sprint(want) {
 		t.Fatalf("events:\n got %q\nwant %q", got, want)
+	}
+}
+
+// brood is a stage that, for the input, finds n parts, each a file it writes as it finds it,
+// all of one content, named and placed by its index at length, so a child's reference is some
+// hundreds of bytes.
+type brood struct{ n int }
+
+func (b brood) Identity() dispatch.Identity {
+	return dispatch.Identity{Name: "brood", Version: "1", Config: fmt.Sprint(b.n)}
+}
+
+// broodName returns the name, or with where set, the place, of brood's child i.
+func broodName(i int, where bool) string {
+	label := "child"
+	if where {
+		label = "place"
+	}
+	return fmt.Sprintf("%s %08d %s.txt", label, i, strings.Repeat("x", 160))
+}
+
+func (b brood) Prepare(_ context.Context, p dispatch.Part, dir string) iter.Seq2[dispatch.Item, error] {
+	return func(yield func(dispatch.Item, error) bool) {
+		if p.Depth > 0 {
+			yield(dispatch.OutputItem(dispatch.Output{Kind: dispatch.TextOutput, Name: "leaf"}), nil)
+			return
+		}
+		for i := range b.n {
+			path := filepath.Join(dir, fmt.Sprintf("c%d.txt", i))
+			if err := os.WriteFile(path, []byte("leaf"), 0o600); err != nil {
+				yield(dispatch.Item{}, err)
+				return
+			}
+			if !yield(dispatch.PartItem(dispatch.Found{Path: path, Name: broodName(i, false), Where: broodName(i, true)}), nil) {
+				return
+			}
+		}
+	}
+}
+
+// childBound is the most the live heap may grow while 100,000 children stream through a
+// dispatch: their references alone, held, would take over 40 MB.
+const childBound = 12 << 20
+
+// TestStreamedChildren: 100,000 parts found in one input stream through a dispatch over a file
+// index, the first prepared and the rest seen, and the live heap stays within a bound far under
+// their references' size, so neither the dispatcher nor the index holds them. The input's event
+// counts them; the index's record counts them and reads them back, streamed, in the order found.
+// A second dispatch sees the input, its event counting the children it never reads.
+func TestStreamedChildren(t *testing.T) {
+	const n, every = 100_000, 10_000
+	s := brood{n: n}
+	d, idx, _ := floodDispatcher(t, s)
+	path := input(t, "brood.txt", "brood")
+
+	base := heap()
+	var peak uint64
+	i := 0
+	var last dispatch.Event
+	for ev, err := range d.Dispatch(t.Context(), dispatch.Input{Path: path}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ev.Output != nil {
+			continue
+		}
+		if ev.Part.Depth == 0 {
+			last = ev
+			continue
+		}
+		if want := dispatch.Seen; ev.Part.Where != broodName(i, true) || (i > 0 && ev.Outcome != want) {
+			t.Fatalf("child %d: %q, %s", i, ev.Part.Where, ev.Outcome)
+		}
+		i++
+		if i%every == 0 {
+			peak = max(peak, heap())
+		}
+	}
+	if i != n || last.Outcome != dispatch.Prepared || last.Children != n {
+		t.Fatalf("%d child events; the input %s, %d children", i, last.Outcome, last.Children)
+	}
+	if peak > base && peak-base > childBound {
+		t.Errorf("the live heap grew %d MB while %d children streamed, past %d MB", (peak-base)>>20, n, childBound>>20)
+	}
+
+	key := dispatch.Key{SHA256: last.Part.SHA256, Stage: s.Identity()}
+	e, ok, err := idx.Lookup(t.Context(), key)
+	if err != nil || !ok || e.Children != n {
+		t.Fatalf("the record: %+v, %v, %v", e, ok, err)
+	}
+	base, peak, i = heap(), 0, 0
+	for c, err := range idx.Children(t.Context(), key) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		wantOutcome := dispatch.Seen
+		if i == 0 {
+			wantOutcome = dispatch.Prepared
+		}
+		if c.Name != broodName(i, false) || c.Where != broodName(i, true) || c.SHA256 != sum("leaf") || c.Outcome != wantOutcome {
+			t.Fatalf("recorded child %d: %+v", i, c)
+		}
+		i++
+		if i%every == 0 {
+			peak = max(peak, heap())
+		}
+	}
+	if i != n {
+		t.Fatalf("the index read back %d children, want %d", i, n)
+	}
+	if peak > base && peak-base > childBound {
+		t.Errorf("the live heap grew %d MB while %d children were read back", (peak-base)>>20, n)
+	}
+
+	events := collect(t, d.Dispatch(t.Context(), dispatch.Input{Path: path}), nil)
+	if ev := events[len(events)-1]; len(events) != 1 || ev.Outcome != dispatch.Seen || ev.Children != n {
+		t.Fatalf("the seen input: %d events, %s, %d children", len(events), ev.Outcome, ev.Children)
 	}
 }

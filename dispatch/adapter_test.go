@@ -472,7 +472,7 @@ func TestEmailStage(t *testing.T) {
 		t.Errorf("folder 32962's meta %v", m)
 	}
 	recordThenMarkdown(t, pst, "message 2097156")
-	if len(pst.Children) != 3 {
+	if pst.Children != 3 {
 		t.Errorf("the .pst's children %+v", pst.Children)
 	}
 }

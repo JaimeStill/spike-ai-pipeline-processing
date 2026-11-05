@@ -123,8 +123,8 @@ func TestOfficeStageReal(t *testing.T) {
 	if ev := byName(t, events, emf+".png"); ev.Part.Where != "media "+emf+".emf, as PNG" {
 		t.Errorf("the EMF's PNG found at %q", ev.Part.Where)
 	}
-	if last := events[len(events)-1]; last.Part.Depth != 0 || len(last.Children) != 4 {
-		t.Errorf("the document: %s@%d, %d children", last.Part.Name, last.Part.Depth, len(last.Children))
+	if last := events[len(events)-1]; last.Part.Depth != 0 || last.Children != 4 {
+		t.Errorf("the document: %s@%d, %d children", last.Part.Name, last.Part.Depth, last.Children)
 	}
 }
 

@@ -163,18 +163,26 @@ func (w *onenoteWalk) page(p *onenote.Page) error {
 		if err != nil {
 			return fmt.Errorf("onenote stage: %s: %w", where, err)
 		}
-		if m.Path == "" {
+		f, ok := Found{Name: cmp.Or(m.Filename, m.File), Where: where}, false
+		switch {
+		case m.Path != "":
+			if f, ok, err = w.stash.find(m.Path, f); err != nil {
+				return err
+			}
+		case m.File != "" && m.File != "." && m.File != ".." && m.File == filepath.Base(m.File):
+			// A medium whose file isn't there may be one the stash released.
+			if f, ok, err = w.stash.find(filepath.Join(w.media, m.File), f); err != nil {
+				return err
+			}
+		}
+		if !ok {
 			rec := medium{m.Kind, m.File, m.Filename, m.Size, m.Type, m.Where, m.Route, m.Reason}
 			if err := w.output(record(where, rec, map[string]string{"reason": m.Reason})); err != nil {
 				return err
 			}
 			continue
 		}
-		path, err := w.stash.place(m.Path)
-		if err != nil {
-			return err
-		}
-		if !w.yield(PartItem(Found{Path: path, Name: cmp.Or(m.Filename, m.File), Where: where}), nil) {
+		if !w.yield(PartItem(f), nil) {
 			return errStopped
 		}
 	}

@@ -50,11 +50,12 @@ type FileOptions struct {
 // over by the next claimant, and a waiter polls the claim every [FileOptions.Poll].
 //
 // A claim's pending outputs are JSON lines appended, buffered, to a file of the claim's own
-// beside it in claims/, named by the key and the claim's token, so no output is held in memory
-// once it is written. Record syncs that file and renames it into entries/, named by the key and
-// the token too, before it writes the entry that names it, so an entry and its outputs are
-// replaced together; Release removes it. Outputs reads the file back one line at a time. A
-// takeover removes the stale claim's pending file, which a claimant that died leaves behind.
+// beside it in claims/, named by the key and the claim's token, and its pending children to a
+// second such file, so no output or child is held in memory once it is written. Record syncs each
+// file and renames it into entries/, named by the key and the token too, before it writes the
+// entry that names them, so an entry, its outputs, and its children are replaced together;
+// Release removes them. Outputs and Children read their file back one line at a time. A takeover
+// removes the stale claim's pending files, which a claimant that died leaves behind.
 //
 // Taking a stale claim over, and releasing one, are each a read then a rename or remove, not one
 // atomic step: around a takeover, two claimants may both come to hold the key, and the stale
@@ -73,8 +74,8 @@ type FileIndex struct {
 	pending map[string]*pendingFile
 }
 
-// pendingFile is a claim's open pending file, its buffered encoder, and how many outputs it
-// holds.
+// pendingFile is a claim's open pending file, its buffered encoder, and how many lines, outputs
+// or children, it holds.
 type pendingFile struct {
 	file *os.File
 	buf  *bufio.Writer
@@ -124,11 +125,13 @@ func keyName(key Key) string {
 }
 
 // fileEntry is an entry's file: the key it is for, so a reader can tell it is the key's, the
-// entry, and the name of its outputs' file in entries/, "" when it has none.
+// entry, and the names of its outputs' and its children's files in entries/, each "" when it has
+// none.
 type fileEntry struct {
-	Key     Key    `json:"key"`
-	Entry   Entry  `json:"entry"`
-	Outputs string `json:"outputs_file,omitzero"`
+	Key      Key    `json:"key"`
+	Entry    Entry  `json:"entry"`
+	Outputs  string `json:"outputs_file,omitzero"`
+	Children string `json:"children_file,omitzero"`
 }
 
 // entryPath returns key's entry file.
@@ -158,60 +161,78 @@ func (f *FileIndex) Lookup(ctx context.Context, key Key) (Entry, bool, error) {
 	return fe.Entry, ok, err
 }
 
-// Outputs reads key's outputs file one JSON line at a time. An entry replaced while its file is
-// opened is read again, once, so its replacement's outputs are read.
+// Outputs reads key's outputs file one JSON line at a time, as readLines says.
 func (f *FileIndex) Outputs(ctx context.Context, key Key) iter.Seq2[Output, error] {
-	return func(yield func(Output, error) bool) {
+	return readLines[Output](ctx, f, key, "outputs", func(fe fileEntry) string { return fe.Outputs })
+}
+
+// Children reads key's children file one JSON line at a time, as readLines says.
+func (f *FileIndex) Children(ctx context.Context, key Key) iter.Seq2[Child, error] {
+	return readLines[Child](ctx, f, key, "children", func(fe fileEntry) string { return fe.Children })
+}
+
+// readLines yields each JSON line of the file of key's entry that name picks, its what, decoded
+// as a T. An entry replaced while its file is opened is read again, once, so its replacement's
+// file is read.
+func readLines[T any](ctx context.Context, f *FileIndex, key Key, what string, name func(fileEntry) string) iter.Seq2[T, error] {
+	return func(yield func(T, error) bool) {
+		var zero T
 		var file *os.File
 		for range 2 {
 			fe, ok, err := f.readEntry(ctx, key)
 			if err != nil {
-				yield(Output{}, err)
+				yield(zero, err)
 				return
 			}
-			if !ok || fe.Outputs == "" {
+			if !ok || name(fe) == "" {
 				return
 			}
-			file, err = os.Open(filepath.Join(f.dir, entriesDir, fe.Outputs))
+			file, err = os.Open(filepath.Join(f.dir, entriesDir, name(fe)))
 			if err == nil {
 				break
 			}
 			if !errors.Is(err, fs.ErrNotExist) {
-				yield(Output{}, fmt.Errorf("dispatch: file index: outputs: %w", err))
+				yield(zero, fmt.Errorf("dispatch: file index: %s: %w", what, err))
 				return
 			}
 		}
 		if file == nil {
-			yield(Output{}, fmt.Errorf("dispatch: file index: entry %s's outputs are missing", keyName(key)))
+			yield(zero, fmt.Errorf("dispatch: file index: entry %s's %s are missing", keyName(key), what))
 			return
 		}
 		defer func() { _ = file.Close() }() // read only: a close error loses nothing
 		dec := json.NewDecoder(bufio.NewReader(file))
 		for {
 			if err := ctx.Err(); err != nil {
-				yield(Output{}, err)
+				yield(zero, err)
 				return
 			}
-			var o Output
-			err := dec.Decode(&o)
+			var v T
+			err := dec.Decode(&v)
 			if errors.Is(err, io.EOF) {
 				return
 			}
 			if err != nil {
-				yield(Output{}, fmt.Errorf("dispatch: file index: outputs: %w", err))
+				yield(zero, fmt.Errorf("dispatch: file index: %s: %w", what, err))
 				return
 			}
-			if !yield(o, nil) {
+			if !yield(v, nil) {
 				return
 			}
 		}
 	}
 }
 
-// pendingName returns the name of the pending file of key's claim token holds, in claims/, and
-// of the outputs file it becomes, in entries/.
+// pendingName returns the name of the pending outputs file of key's claim token holds, in
+// claims/, and of the outputs file it becomes, in entries/.
 func pendingName(key Key, token string) string {
 	return keyName(key) + "-" + token + ".jsonl"
+}
+
+// childrenName returns the name of the pending children file of key's claim token holds, in
+// claims/, and of the children file it becomes, in entries/.
+func childrenName(key Key, token string) string {
+	return keyName(key) + "-" + token + ".children.jsonl"
 }
 
 // claimFile is a claim's content: its token and when it was made, by the index's clock.
@@ -320,10 +341,12 @@ func (f *FileIndex) reclaim(key Key, path string, held claimFile) error {
 		return nil
 	}
 	if moved.Token != "" {
-		// The stale claim's pending outputs, which its claimant, dead, never records.
-		pending := filepath.Join(filepath.Dir(path), pendingName(key, moved.Token))
-		if err := os.Remove(pending); err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return fmt.Errorf("dispatch: file index: reclaim: %w", err)
+		// The stale claim's pending outputs and children, which its claimant, dead, never
+		// records.
+		for _, name := range []string{pendingName(key, moved.Token), childrenName(key, moved.Token)} {
+			if err := os.Remove(filepath.Join(filepath.Dir(path), name)); err != nil && !errors.Is(err, fs.ErrNotExist) {
+				return fmt.Errorf("dispatch: file index: reclaim: %w", err)
+			}
 		}
 	}
 	return nil
@@ -355,13 +378,22 @@ func (f *FileIndex) Wait(ctx context.Context, key Key) (Entry, bool, error) {
 	}
 }
 
-// Append encodes o as a line of token's pending file, which it opens on the claim's first
-// append.
+// Append encodes o as a line of token's pending outputs file, as appendLine says.
 func (f *FileIndex) Append(ctx context.Context, key Key, token string, o Output) error {
+	return f.appendLine(ctx, pendingName(key, token), o)
+}
+
+// AppendChild encodes c as a line of token's pending children file, as appendLine says.
+func (f *FileIndex) AppendChild(ctx context.Context, key Key, token string, c Child) error {
+	return f.appendLine(ctx, childrenName(key, token), c)
+}
+
+// appendLine encodes v as a line of the pending file name names in claims/, which it opens on
+// the file's first append.
+func (f *FileIndex) appendLine(ctx context.Context, name string, v any) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
-	name := pendingName(key, token)
 	f.mu.Lock()
 	p, ok := f.pending[name]
 	f.mu.Unlock()
@@ -376,17 +408,17 @@ func (f *FileIndex) Append(ctx context.Context, key Key, token string, o Output)
 		f.pending[name] = p
 		f.mu.Unlock()
 	}
-	if err := p.enc.Encode(o); err != nil {
+	if err := p.enc.Encode(v); err != nil {
 		return fmt.Errorf("dispatch: file index: append: %w", err)
 	}
 	p.n++
 	return nil
 }
 
-// closePending closes token's pending file, flushed and synced when commit is set, returning how
-// many outputs it holds; a claim that appended nothing has none.
-func (f *FileIndex) closePending(key Key, token string, commit bool) (int, bool, error) {
-	name := pendingName(key, token)
+// closePending closes the pending file name names, flushed and synced when commit is set,
+// returning how many lines it holds and whether it was open; a claim that appended nothing to it
+// has none.
+func (f *FileIndex) closePending(name string, commit bool) (int, bool, error) {
 	f.mu.Lock()
 	p, ok := f.pending[name]
 	delete(f.pending, name)
@@ -410,50 +442,70 @@ func (f *FileIndex) closePending(key Key, token string, commit bool) (int, bool,
 	return p.n, true, nil
 }
 
-// Record renames token's pending file into entries/, writes key's entry file naming it, removes
-// the outputs file of the entry it replaces, if any, then ends token's claim. A pending file a
-// takeover removed records nothing.
+// Record renames token's pending outputs and children files into entries/, writes key's entry
+// file naming them, removes the files of the entry it replaces, if any, then ends token's claim.
+// A pending file a takeover removed records nothing.
 func (f *FileIndex) Record(ctx context.Context, key Key, token string, e Entry) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
-	n, ok, err := f.closePending(key, token, true)
-	if err != nil {
-		return err
-	}
 	fe := fileEntry{Key: key, Entry: e}
-	fe.Entry.Outputs = n
-	if ok {
-		fe.Outputs = pendingName(key, token)
-		err := os.Rename(filepath.Join(f.dir, claimsDir, fe.Outputs), filepath.Join(f.dir, entriesDir, fe.Outputs))
+	var renamed []string
+	for _, pending := range []struct {
+		name  string
+		count *int
+		file  *string
+	}{
+		{pendingName(key, token), &fe.Entry.Outputs, &fe.Outputs},
+		{childrenName(key, token), &fe.Entry.Children, &fe.Children},
+	} {
+		n, ok, err := f.closePending(pending.name, true)
+		if err != nil {
+			return err
+		}
+		*pending.count = n
+		if !ok {
+			continue
+		}
+		*pending.file = pending.name
+		err = os.Rename(filepath.Join(f.dir, claimsDir, pending.name), filepath.Join(f.dir, entriesDir, pending.name))
 		if errors.Is(err, fs.ErrNotExist) {
 			// Taken over: the claim that replaced this one records the key.
+			for _, name := range renamed {
+				_ = os.Remove(filepath.Join(f.dir, entriesDir, name))
+			}
 			return f.Release(ctx, key, token)
 		}
 		if err != nil {
 			return fmt.Errorf("dispatch: file index: record: %w", err)
 		}
+		renamed = append(renamed, pending.name)
 	}
 	old, had, err := f.readEntry(context.WithoutCancel(ctx), key)
 	if err != nil {
-		// An entry that can't be read is replaced all the same; only its outputs file stays.
+		// An entry that can't be read is replaced all the same; only its files stay.
 		had = false
 	}
 	if err := writeJSON(f.entryPath(key), fe); err != nil {
 		return err
 	}
-	if had && old.Outputs != "" && old.Outputs != fe.Outputs {
-		_ = os.Remove(filepath.Join(f.dir, entriesDir, old.Outputs)) // a reader that has it open reads on
+	if had {
+		for _, name := range []string{old.Outputs, old.Children} {
+			if name != "" && name != fe.Outputs && name != fe.Children {
+				_ = os.Remove(filepath.Join(f.dir, entriesDir, name)) // a reader that has it open reads on
+			}
+		}
 	}
 	return f.Release(ctx, key, token)
 }
 
-// Release removes token's pending file, then key's claim file if token holds it.
+// Release removes token's pending files, then key's claim file if token holds it.
 func (f *FileIndex) Release(_ context.Context, key Key, token string) error {
-	if _, ok, _ := f.closePending(key, token, false); ok {
-		pending := filepath.Join(f.dir, claimsDir, pendingName(key, token))
-		if err := os.Remove(pending); err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return fmt.Errorf("dispatch: file index: release: %w", err)
+	for _, name := range []string{pendingName(key, token), childrenName(key, token)} {
+		if _, ok, _ := f.closePending(name, false); ok {
+			if err := os.Remove(filepath.Join(f.dir, claimsDir, name)); err != nil && !errors.Is(err, fs.ErrNotExist) {
+				return fmt.Errorf("dispatch: file index: release: %w", err)
+			}
 		}
 	}
 	path := f.claimPath(key)

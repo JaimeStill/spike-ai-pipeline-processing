@@ -189,8 +189,8 @@ func TestZipStage(t *testing.T) {
 	if got := wheres(events); !slices.Equal(got, want) {
 		t.Errorf("wheres:\n got %q\nwant %q", got, want)
 	}
-	if ev := byName(t, events, "inner.zip"); ev.Part.Route != route.Archive || ev.Stage.Name != "zip" || len(ev.Children) != 2 {
-		t.Errorf("inner.zip: %s by %v, %d children", ev.Part.Route, ev.Stage, len(ev.Children))
+	if ev := byName(t, events, "inner.zip"); ev.Part.Route != route.Archive || ev.Stage.Name != "zip" || ev.Children != 2 {
+		t.Errorf("inner.zip: %s by %v, %d children", ev.Part.Route, ev.Stage, ev.Children)
 	}
 	if ev := byName(t, events, unicode); ev.Part.Route != route.Text {
 		t.Errorf("%s routed %s, want text", unicode, ev.Part.Route)
@@ -209,8 +209,8 @@ func TestZipEncrypted(t *testing.T) {
 	events := dispatchAll(t, d, filepath.Join(inspectFixtures, "encrypted.zip"), nil)
 	wantSteps(t, events, []step{{"notes.txt", 1, dispatch.NoProcessor}, {"encrypted.zip", 0, dispatch.Encrypted}})
 	z := events[1]
-	if !strings.Contains(z.Reason, "1 of 2 entries") || z.Err == nil || len(z.Children) != 1 {
-		t.Errorf("encrypted.zip: %q, %v, %d children", z.Reason, z.Err, len(z.Children))
+	if !strings.Contains(z.Reason, "1 of 2 entries") || z.Err == nil || z.Children != 1 {
+		t.Errorf("encrypted.zip: %q, %v, %d children", z.Reason, z.Err, z.Children)
 	}
 	rec := outputNamed(t, z, dispatch.RecordOutput, "zip entry secret.txt")
 	if rec.Meta["check"] != string(inspect.ZIPEncrypted) || rec.Meta["reason"] != "encrypted" || rec.Meta["name"] != "secret.txt" {
@@ -415,8 +415,8 @@ func TestZipDocs(t *testing.T) {
 		d, _, work := zipDispatcher(t, inspect.Options{})
 		events := dispatchAll(t, d, docsArchive(t, "zip-in-zip.zip"), nil)
 		inner := byName(t, events, "inner.zip")
-		if inner.Outcome != dispatch.Prepared || inner.Part.Depth != 1 || len(inner.Children) != 6 {
-			t.Errorf("inner.zip: %s at depth %d, %d children", inner.Outcome, inner.Part.Depth, len(inner.Children))
+		if inner.Outcome != dispatch.Prepared || inner.Part.Depth != 1 || inner.Children != 6 {
+			t.Errorf("inner.zip: %s at depth %d, %d children", inner.Outcome, inner.Part.Depth, inner.Children)
 		}
 		if ev := byName(t, events, "docs/shapes.png"); ev.Part.Depth != 2 || ev.Outcome != dispatch.Prepared {
 			t.Errorf("the inner ZIP's picture: %s at depth %d", ev.Outcome, ev.Part.Depth)
@@ -459,8 +459,8 @@ func TestZipDocs(t *testing.T) {
 		if !maps.Equal(got, want) {
 			t.Errorf("entries' routes:\n got %v\nwant %v", got, want)
 		}
-		if last := events[len(events)-1]; last.Outcome != dispatch.Prepared || len(last.Children) != len(want) {
-			t.Errorf("mixed-bundle.zip: %s, %d children", last.Outcome, len(last.Children))
+		if last := events[len(events)-1]; last.Outcome != dispatch.Prepared || last.Children != len(want) {
+			t.Errorf("mixed-bundle.zip: %s, %d children", last.Outcome, last.Children)
 		}
 		wantEmpty(t, work)
 	})
