@@ -13,7 +13,9 @@ import (
 
 // TestFileRoutes: each kind takes its route, with its reason, whatever its name and stored type;
 // the name's extension, in any case, decides within a ZIP or OLE2 container and for a cabinet;
-// an ODF package is office's whatever its name; content of no signature is a message by the .eml
+// an ODF package, a WordPerfect document, and a ZIP named .xlsb are office's; a .pst and an mbox
+// are nested, but an mbox line in a file named with a text extension is text, and an .ost is
+// unrouted, its reason naming it; content of no signature is a message by the .eml
 // rule first, then text by its extension, then text by a byte order mark, and unrouted otherwise;
 // and an executable is unrouted, its reason naming it one.
 func TestFileRoutes(t *testing.T) {
@@ -42,7 +44,13 @@ func TestFileRoutes(t *testing.T) {
 		{"cabinet named .cab", mscf, "drivers.cab", "application/vnd.ms-cab-compressed", route.Archive, "cabinet signature without a .onepkg extension"},
 
 		{"zip", zipBytes, "a.zip", "application/zip", route.Archive, "ZIP signature without an OOXML extension or ODF mimetype"},
-		{"zip named .xlsb, which office doesn't read", zipBytes, "a.xlsb", "", route.Archive, "ZIP signature without an OOXML extension or ODF mimetype"},
+		{"zip named .xlsb, which office doesn't read yet", zipBytes, "a.xlsb", "", route.Office, "ZIP signature, .xlsb extension, an Excel binary workbook"},
+		{"zip named .XLSB", zipBytes, "A.XLSB", "", route.Office, "ZIP signature, .xlsb extension, an Excel binary workbook"},
+		{"ole2 named .xlsb", ole2Bytes, "a.xlsb", "", route.Unrouted, "OLE2 signature without a legacy or .msg extension"},
+		{"wordperfect", wordPerfect, "a.wpd", "application/vnd.wordperfect", route.Office, "WordPerfect signature, a WordPerfect document"},
+		{"wordperfect without a name", wordPerfect, "", "", route.Office, "WordPerfect signature, a WordPerfect document"},
+		{"tar", tarHeader("a.txt", "ustar\x0000"), "a.tar", "application/x-tar", route.Archive, "tar signature"},
+		{"tar named .txt", tarHeader("a.txt", "ustar  \x00"), "a.txt", "", route.Archive, "tar signature"},
 		{"zip named .docx", zipBytes, "a.DOCX", "", route.Office, "ZIP signature, .docx extension"},
 		{"gzip", "\x1f\x8b\x08\x00", "a.tar.gz", "application/gzip", route.Archive, "gzip signature"},
 		{"zstd", "\x28\xb5\x2f\xfd\x04", "a.tar.zst", "", route.Archive, "zstd signature"},
@@ -83,6 +91,15 @@ func TestFileRoutes(t *testing.T) {
 		{"eml with a byte order mark", "\xef\xbb\xbf" + headerShaped, "fwd.eml", "", route.Unrouted, "a message by its .eml extension, but not header-shaped"},
 		{"rfc822 named .txt", headerShaped, "fwd.txt", "message/rfc822", route.Nested, "a message by its message/rfc822 type, header-shaped"},
 		{"rfc822 named .txt, not header-shaped", "plain text", "fwd.txt", "message/rfc822", route.Unrouted, "a message by its message/rfc822 type, but not header-shaped"},
+
+		{"pst", pstHeader("SM"), "archive.pst", "application/vnd.ms-outlook", route.Nested, "PST signature, a .pst"},
+		{"pst without a name", pstHeader("SM"), "", "", route.Nested, "PST signature, a .pst"},
+		{"ost", pstHeader("SO"), "offline.ost", "", route.Unrouted, "PST signature with an .ost's client magic, an offline store mail refuses"},
+		{"ost named .pst", pstHeader("SO"), "archive.pst", "", route.Unrouted, "PST signature with an .ost's client magic, an offline store mail refuses"},
+		{"mbox", mboxBytes, "Inbox", "", route.Nested, `mbox "From " line`},
+		{"mbox named .mbox", mboxBytes, "a.mbox", "application/mbox", route.Nested, `mbox "From " line`},
+		{"mbox named .eml", mboxBytes, "a.eml", "message/rfc822", route.Nested, `mbox "From " line`},
+		{"mbox line named .txt, prose", "From the desk of Ann\n", "letter.txt", "text/plain", route.Text, "text by its .txt extension"},
 
 		{"pe", "MZ\x90\x00\x03\x00", "setup.exe", "application/x-msdownload", route.Unrouted, "PE signature, an executable"},
 		{"pe named .pdf", "MZ\x90\x00\x03\x00", "invoice.pdf", "application/pdf", route.Unrouted, "PE signature, an executable"},

@@ -152,8 +152,9 @@ const headerShaped = "From: ann@example.org\r\nSubject: x\r\n\r\nbody"
 // and whatever its parameters, and its header has mail's shape: its first line a field, and a
 // From or Date field, its name in any case, before the block ends at a blank line, a line that is
 // neither a field nor a folded continuation, the end of the input, or a line past 64 KiB. One so
-// named that isn't header-shaped is unrouted and says why, an mbox's "From " line first among
-// them; header-shaped content neither so named nor so stored is text by a text extension and
+// named that isn't header-shaped is unrouted and says why, among them an mbox's "From " line in
+// a file named with a text extension, which is an mbox by its signature otherwise;
+// header-shaped content neither so named nor so stored is text by a text extension and
 // unrouted otherwise; and content with a signature is routed by it, whatever its name or type.
 func TestFileMessages(t *testing.T) {
 	const notShaped = "but not header-shaped"
@@ -176,7 +177,8 @@ func TestFileMessages(t *testing.T) {
 		{"space before the colon, lower-case from, bare newlines", "Subject : hi\nfrom: ann@example.org\n", "a.eml", "", route.Nested, "header-shaped"},
 		{"date field without a newline", "date:x", "a.eml", "", route.Nested, "header-shaped"},
 		{"from field past 64 KiB on the first line", "From: " + long + "\r\n", "a.eml", "", route.Nested, "header-shaped"},
-		{"mbox separator first", "From ann@example.org Sat Jan  3 01:05:34 1996\nFrom: ann@example.org\n", "a.eml", "message/rfc822", route.Unrouted, notShaped},
+		{"mbox separator first, an mbox", "From ann@example.org Sat Jan  3 01:05:34 1996\nFrom: ann@example.org\n", "a.eml", "message/rfc822", route.Nested, `mbox "From " line`},
+		{"mbox separator first, named .txt", "From ann@example.org Sat Jan  3 01:05:34 1996\nFrom: ann@example.org\n", "a.txt", "message/rfc822", route.Unrouted, notShaped},
 		{"plain text", "plain text", "a.eml", "message/rfc822", route.Unrouted, notShaped},
 		{"empty", "", "a.eml", "", route.Unrouted, notShaped},
 		{"blank line first", "\r\nFrom: ann@example.org\r\n", "a.eml", "", route.Unrouted, notShaped},

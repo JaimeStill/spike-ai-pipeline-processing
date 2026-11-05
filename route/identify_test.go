@@ -43,13 +43,30 @@ func riffForm(form string) string {
 	return "RIFF\x24\x00\x00\x00" + form + "fmt "
 }
 
+// tarHeader returns a tar archive's first header, its member named name, with magic at offset
+// 257.
+func tarHeader(name, magic string) string {
+	b := make([]byte, 512)
+	copy(b, name)
+	copy(b[257:], magic)
+	return string(b)
+}
+
+// pstHeader returns a PST header's first bytes: the "!BDN" magic, a CRC, the client magic, and
+// version 23, Unicode.
+func pstHeader(client string) string {
+	return "!BDN\x00\x00\x00\x00" + client + "\x17\x00\x13\x00"
+}
+
 // Further constructed content, each its format's signature followed by filler.
 var (
-	oneSection = "\xe4\x52\x5c\x7b\x8c\xd8\xa7\x4d\xae\xb1\x53\x78\xd0\x29\x96\xd3" + strings.Repeat("\x00", 16)
-	oneTOC     = "\xa1\x2f\xff\x43\xd9\xef\x76\x4c\x9e\xe2\x10\xea\x57\x22\x76\x5f" + strings.Repeat("\x00", 16)
-	mscf       = "MSCF\x00\x00\x00\x00\x2c\x01\x00\x00"
-	svgPlain   = `<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>`
-	svgProlog  = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- a comment -->\n" +
+	wordPerfect = "\xffWPC\x10\x00\x00\x00\x01\x0a"
+	mboxBytes   = "From ann@example.org Sat Jan  3 01:05:34 1996\nFrom: ann@example.org\n\nbody\n"
+	oneSection  = "\xe4\x52\x5c\x7b\x8c\xd8\xa7\x4d\xae\xb1\x53\x78\xd0\x29\x96\xd3" + strings.Repeat("\x00", 16)
+	oneTOC      = "\xa1\x2f\xff\x43\xd9\xef\x76\x4c\x9e\xe2\x10\xea\x57\x22\x76\x5f" + strings.Repeat("\x00", 16)
+	mscf        = "MSCF\x00\x00\x00\x00\x2c\x01\x00\x00"
+	svgPlain    = `<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>`
+	svgProlog   = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- a comment -->\n" +
 		"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" +
 		"<svg xmlns=\"http://www.w3.org/2000/svg\">"
 )
@@ -87,6 +104,13 @@ func TestIdentify(t *testing.T) {
 		{"odf", odfText, route.ODF},
 		{"odf spreadsheet", zipEntry("mimetype", 0, "application/vnd.oasis.opendocument.spreadsheet"), route.ODF},
 		{"rtf", `{\rtf1\ansi`, route.RTF},
+		{"wordperfect", wordPerfect, route.WordPerfect},
+		{"pst", pstHeader("SM"), route.PST},
+		{"ost", pstHeader("SO"), route.OST},
+		{"mbox", mboxBytes, route.Mbox},
+		{"tar posix", tarHeader("a.txt", "ustar\x0000"), route.Tar},
+		{"tar gnu", tarHeader("a.txt", "ustar  \x00"), route.Tar},
+		{"tar whose first member is named like a pe", tarHeader("MZ.exe", "ustar\x0000"), route.Tar},
 		{"onestore section", oneSection, route.OneStore},
 		{"onestore table of contents", oneTOC, route.OneStore},
 		{"cabinet", mscf, route.MSCF},
@@ -141,6 +165,12 @@ func TestIdentify(t *testing.T) {
 		{"ftyp cut short", "\x00\x00\x00\x18ftyp", route.Unknown},
 		{"onestore guid cut short", oneSection[:8], route.Unknown},
 		{"cabinet with reserved bytes set", "MSCF\x01\x00\x00\x00", route.Unknown},
+		{"pst of another client", pstHeader("XX"), route.Unknown},
+		{"pst magic cut short", "!BDN\x00\x00\x00\x00S", route.Unknown},
+		{"from field, no mbox line", "From: ann@example.org\n", route.Unknown},
+		{"tar magic cut short", tarHeader("a.txt", "ustar")[:261], route.Unknown},
+		{"tar magic elsewhere", tarHeader("a.txt", "")[:256] + "ustar", route.Unknown},
+		{"wordperfect without its ff", "WPC\x10", route.Unknown},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

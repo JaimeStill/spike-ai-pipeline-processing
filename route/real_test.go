@@ -85,6 +85,7 @@ var docsRoutes = map[string]route.Route{
 	"image/webp":                  route.VisionConverted,
 	"image/avif":                  route.VisionConverted,
 	"application/vnd.ms-outlook":  route.Nested,
+	"application/mbox":            route.Nested,
 	"application/zip":             route.Archive,
 	"application/epub+zip":        route.Archive,
 	"application/gzip":            route.Archive,
@@ -106,7 +107,7 @@ var docsRoutes = map[string]route.Route{
 	"text/csv":                    route.Text,
 	"text/xml":                    route.Text,
 	"text/x-shellscript":          route.Unrouted,
-	"application/vnd.wordperfect": route.Unrouted,
+	"application/vnd.wordperfect": route.Office,
 }
 
 // docsFile is one of ~/docs' manifest's files: its path under ~/docs and its format.
@@ -116,8 +117,8 @@ type docsFile struct {
 }
 
 // TestFileDocs routes ~/docs' corpus, read only, when this machine has it: each file whose
-// format docsRoutes lists is routed so, but for a .pst, which is no OLE2 file, and an .xlsb, a
-// ZIP office doesn't read, which is an archive. A machine without ~/docs skips it.
+// format docsRoutes lists is routed so, a .pst nested by its signature and an .xlsb office's by
+// its extension among them. A machine without ~/docs skips it.
 func TestFileDocs(t *testing.T) {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -142,12 +143,6 @@ func TestFileDocs(t *testing.T) {
 		want, ok := docsRoutes[f.Format]
 		if !ok {
 			continue
-		}
-		switch filepath.Ext(f.Path) {
-		case ".pst":
-			want = route.Unrouted
-		case ".xlsb":
-			want = route.Archive
 		}
 		n++
 		got, why, err := route.File(filepath.Join(root, f.Path), filepath.Base(f.Path), f.Format)

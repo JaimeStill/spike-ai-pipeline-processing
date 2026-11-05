@@ -43,7 +43,8 @@
 // package's Convert; PNG, JPEG, GIF, and BMP to vision as stored; TIFF, EMF, and WMF to vision
 // once converted to PNG; an OLE2 file named .msg, or content of no routed signature that is named
 // .eml or stored as message/rfc822 or message/global and whose header has the shape mail reads a
-// message by, is nested, for the caller to read; a CSV or a text file is text; and so on.
+// message by, is nested, for the caller to read, as are a .pst and an mbox; a CSV or a text file
+// is text; and so on.
 //
 // Threads come from a store's messages: a Threader, fed each record while a Stream is read, keeps
 // their threading keys alone, so its memory follows the number of messages, never their bodies.
@@ -56,9 +57,9 @@
 // replies to, so a store without threading fields threads by subject alone. Each set of children
 // is ordered by sent date.
 //
-// Known limits: a by-value .eml whose header isn't a message's shape, such as one that begins with
-// an mbox's "From " line, is unrouted, and header-shaped content neither named .eml nor stored
-// as a message isn't nested; an .ost is refused by mail; in a .pst, an embedded message is nested
+// Known limits: a by-value .eml whose header isn't a message's shape is unrouted, unless it
+// begins with an mbox's "From " line, which makes it an mbox, and header-shaped content neither
+// named .eml nor stored as a message isn't nested; an .ost is refused by mail, and unrouted; in a .pst, an embedded message is nested
 // without its content, which mail can't read; a by-reference attachment has no content file, so
 // it is unrouted; and the stores mail's generator writes, its fixtures and its scale store, carry
 // no threading fields, so they thread by subject alone. mail's own limits reach MIME input: it

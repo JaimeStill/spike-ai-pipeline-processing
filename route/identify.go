@@ -35,6 +35,17 @@ const (
 	// ODF is a ZIP whose first entry, mimetype, stored uncompressed, names an OpenDocument type.
 	ODF Kind = "odf"
 	RTF Kind = "rtf"
+	// WordPerfect is a WordPerfect document, by its "\xFFWPC" prefix.
+	WordPerfect Kind = "wordperfect"
+
+	// PST is a .pst, by its "!BDN" magic and a .pst's client magic, "SM"; OST is the same magic
+	// with an .ost's, "SO". mail tells them apart the same way, and reads the first and refuses
+	// the second.
+	PST Kind = "pst"
+	OST Kind = "ost"
+	// Mbox is content whose first line begins "From ", an mbox's separator line, as mail sniffs
+	// one.
+	Mbox Kind = "mbox"
 
 	// OneStore is a OneNote section (.one) or table of contents (.onetoc2), by the file type
 	// GUID it begins with.
@@ -56,6 +67,8 @@ const (
 	Gzip     Kind = "gzip"
 	Zstd     Kind = "zstd"
 	SevenZip Kind = "7z"
+	// Tar is a POSIX or GNU tar archive, by the "ustar" magic at offset 257 of its first header.
+	Tar Kind = "tar"
 
 	PE      Kind = "pe"
 	ELF     Kind = "elf"
@@ -94,6 +107,8 @@ var (
 	zipSignature  = []byte("PK\x03\x04")
 	ole2Signature = []byte{0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1}
 	rtfSignature  = []byte(`{\rtf`)
+	wpSignature   = []byte("\xffWPC")
+	pstMagic      = []byte("!BDN")
 	// The OneStore file type GUIDs, as stored: a section's {7B5C52E4-D88C-4DA7-AEB1-5378D02996D3}
 	// and a table of contents' {43FF2FA1-EFD9-4C76-9EE2-10EA5722765F} ([MS-ONESTORE] 2.3.1).
 	oneSection    = []byte{0xe4, 0x52, 0x5c, 0x7b, 0x8c, 0xd8, 0xa7, 0x4d, 0xae, 0xb1, 0x53, 0x78, 0xd0, 0x29, 0x96, 0xd3}
@@ -110,6 +125,8 @@ var (
 	peSignature   = []byte("MZ")
 	elfSignature  = []byte("\x7fELF")
 	shebang       = []byte("#!")
+	mboxSeparator = []byte("From ")
+	tarMagic      = []byte("ustar")
 	utf8BOM       = []byte{0xef, 0xbb, 0xbf}
 	utf32LEBOM    = []byte{0xff, 0xfe, 0x00, 0x00}
 	utf32BEBOM    = []byte{0x00, 0x00, 0xfe, 0xff}
@@ -155,7 +172,9 @@ func Identify(head []byte) Kind {
 	return Unknown
 }
 
-// signatures are Identify's checks, in order: email's first, as v0.5.0 ordered them.
+// signatures are Identify's checks, in order: email's first, as v0.5.0 ordered them, then the
+// strong ones added since; the weak ones after them, an mbox's "From " line last but the byte
+// order marks.
 var signatures = []func([]byte) Kind{
 	prefix(pdfSignature, PDF),
 	prefix(pngSignature, PNG),
@@ -170,6 +189,8 @@ var signatures = []func([]byte) Kind{
 	isZIP,
 	prefix(ole2Signature, OLE2),
 	prefix(rtfSignature, RTF),
+	prefix(wpSignature, WordPerfect),
+	isPST,
 	prefix(oneSection, OneStore),
 	prefix(oneTOC, OneStore),
 	prefix(mscfSignature, MSCF),
@@ -182,12 +203,14 @@ var signatures = []func([]byte) Kind{
 	prefix(gzipSignature, Gzip),
 	prefix(zstdSignature, Zstd),
 	prefix(sevenZip, SevenZip),
+	isTar,
 	prefix(elfSignature, ELF),
 	isMachO,
 	prefix(peSignature, PE),
 	prefix(shebang, Shebang),
 	isMPEGFrame,
 	isSVG,
+	prefix(mboxSeparator, Mbox),
 	prefix(utf8BOM, UTF8BOM),
 	prefix(utf32LEBOM, UTF32BOM),
 	prefix(utf32BEBOM, UTF32BOM),
@@ -272,6 +295,31 @@ func odfMimetype(head []byte) string {
 		return ""
 	}
 	return mediaType
+}
+
+// isPST names a PST header by its client magic at offset 8, after the "!BDN" magic: PST for a
+// .pst's, "SM", and OST for an .ost's, "SO". A header of another client, or one too short to hold
+// it, is neither, as mail reads it.
+func isPST(head []byte) Kind {
+	if len(head) < 10 || !bytes.HasPrefix(head, pstMagic) {
+		return Unknown
+	}
+	switch string(head[8:10]) {
+	case "SM":
+		return PST
+	case "SO":
+		return OST
+	}
+	return Unknown
+}
+
+// isTar names a tar archive by its first header's magic, "ustar" at offset 257: POSIX's
+// "ustar\x00" and GNU's "ustar " alike. A pre-POSIX tar, which has no magic, isn't named.
+func isTar(head []byte) Kind {
+	if len(head) >= 262 && bytes.Equal(head[257:262], tarMagic) {
+		return Tar
+	}
+	return Unknown
 }
 
 // isRIFF names a RIFF file by its form type at offset 8: WAVE, AVI, or WEBP.

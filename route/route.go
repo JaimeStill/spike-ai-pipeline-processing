@@ -21,8 +21,11 @@ const (
 	// Office is an office document: a ZIP whose name has an OOXML extension office reads,
 	// .docx, .docm, .dotx, .dotm, .xlsx, .xlsm, .xltx, .xltm, .pptx, .pptm, .potx, .potm, or
 	// .ppsx; an OLE2 compound file whose name has a legacy extension, .doc or .dot, .xls or .xlt,
-	// .ppt, .pps, or .pot; an ODF package; or an RTF. Extensions are matched in any case, and the
-	// caller gives office's Convert the same name so it reads the same extension.
+	// .ppt, .pps, or .pot; an ODF package; an RTF; a WordPerfect document; or a ZIP whose name
+	// has the .xlsb extension, an Excel binary workbook. Extensions are matched in any case, and
+	// the caller gives office's Convert the same name so it reads the same extension. The last
+	// four go through LibreOffice; office's stage has no processor for the last two yet, which a
+	// dispatcher reports.
 	Office Route = "office"
 	// Vision is a picture a vision model decodes as stored: PNG, JPEG, GIF, or BMP.
 	Vision Route = "vision"
@@ -33,13 +36,15 @@ const (
 	// no routed signature whose name has the .eml extension, in any case, or whose stored MIME
 	// type is message/rfc822 or message/global, its parameters ignored, and whose header has the
 	// shape mail reads a message by: its first line a header field, and a From or Date field
-	// before its header block ends. The caller reads it with the email package's Reader.
+	// before its header block ends. It is a mail store too: a .pst, by its signature, and an
+	// mbox, by its first line's "From ", unless its name has a text extension, since prose may
+	// begin so too. The caller reads it with the email package's Reader.
 	Nested Route = "nested"
 	// OneNote is a OneNote section or table of contents, by its OneStore signature, or a cabinet
 	// whose name has the .onepkg extension, a OneNote package.
 	OneNote Route = "onenote"
-	// Archive is a ZIP that is neither an office document nor an ODF package, a gzip, zstd, or 7z
-	// archive, or a cabinet not named .onepkg.
+	// Archive is a ZIP that is neither an office document nor an ODF package, a tar, gzip, zstd,
+	// or 7z archive, or a cabinet not named .onepkg.
 	Archive Route = "archive"
 	// Audio is WAV, FLAC, MP3, Ogg, or M4A.
 	Audio Route = "audio"
@@ -49,10 +54,10 @@ const (
 	// that begins with a UTF-8, UTF-16, or UTF-32 byte order mark.
 	Text Route = "text"
 	// Unrouted is anything else: an executable, by a PE, ELF, or Mach-O signature or a "#!"
-	// line; an OLE2 compound file without a legacy or .msg extension; content named .eml or
-	// stored as a message whose header isn't a message's shape, such as one that begins with an
-	// mbox's "From " line; HTML, by its .html, .htm, or .xhtml extension, web content no stage
-	// takes yet; and other content of no routed signature.
+	// line; an OLE2 compound file without a legacy or .msg extension; an .ost, an offline store
+	// mail refuses; content named .eml or stored as a message whose header isn't a message's
+	// shape; HTML, by its .html, .htm, or .xhtml extension, web content no stage takes yet; and
+	// other content of no routed signature.
 	Unrouted Route = "unrouted"
 )
 
@@ -96,37 +101,42 @@ var kindRoutes = map[Kind]struct {
 	route Route
 	why   string
 }{
-	PDF:      {Document, "PDF signature"},
-	PNG:      {Vision, "PNG signature"},
-	JPEG:     {Vision, "JPEG signature"},
-	GIF:      {Vision, "GIF signature"},
-	BMP:      {Vision, "BMP signature"},
-	TIFF:     {VisionConverted, "TIFF signature"},
-	EMF:      {VisionConverted, "EMF signature"},
-	WMF:      {VisionConverted, "WMF signature"},
-	SVG:      {VisionConverted, "SVG root element"},
-	HEIC:     {VisionConverted, "HEIC brand"},
-	WebP:     {VisionConverted, "WebP signature"},
-	AVIF:     {VisionConverted, "AVIF brand"},
-	ODF:      {Office, "ODF mimetype entry"},
-	RTF:      {Office, "RTF signature"},
-	OneStore: {OneNote, "OneStore signature"},
-	WAV:      {Audio, "WAV signature"},
-	FLAC:     {Audio, "FLAC signature"},
-	MP3:      {Audio, "MP3 signature"},
-	Ogg:      {Audio, "Ogg signature"},
-	M4A:      {Audio, "M4A brand"},
-	MP4:      {Video, "MP4 brand"},
-	MKV:      {Video, "Matroska signature"},
-	WebM:     {Video, "WebM signature"},
-	AVI:      {Video, "AVI signature"},
-	Gzip:     {Archive, "gzip signature"},
-	Zstd:     {Archive, "zstd signature"},
-	SevenZip: {Archive, "7z signature"},
-	PE:       {Unrouted, "PE signature, an executable"},
-	ELF:      {Unrouted, "ELF signature, an executable"},
-	MachO:    {Unrouted, "Mach-O signature, an executable"},
-	Shebang:  {Unrouted, `"#!" line, an executable script`},
+	PDF:  {Document, "PDF signature"},
+	PNG:  {Vision, "PNG signature"},
+	JPEG: {Vision, "JPEG signature"},
+	GIF:  {Vision, "GIF signature"},
+	BMP:  {Vision, "BMP signature"},
+	TIFF: {VisionConverted, "TIFF signature"},
+	EMF:  {VisionConverted, "EMF signature"},
+	WMF:  {VisionConverted, "WMF signature"},
+	SVG:  {VisionConverted, "SVG root element"},
+	HEIC: {VisionConverted, "HEIC brand"},
+	WebP: {VisionConverted, "WebP signature"},
+	AVIF: {VisionConverted, "AVIF brand"},
+	ODF:  {Office, "ODF mimetype entry"},
+	RTF:  {Office, "RTF signature"},
+	// WordPerfect goes through LibreOffice, which office's stage has no processor for yet.
+	WordPerfect: {Office, "WordPerfect signature, a WordPerfect document"},
+	PST:         {Nested, "PST signature, a .pst"},
+	OST:         {Unrouted, "PST signature with an .ost's client magic, an offline store mail refuses"},
+	Tar:         {Archive, "tar signature"},
+	OneStore:    {OneNote, "OneStore signature"},
+	WAV:         {Audio, "WAV signature"},
+	FLAC:        {Audio, "FLAC signature"},
+	MP3:         {Audio, "MP3 signature"},
+	Ogg:         {Audio, "Ogg signature"},
+	M4A:         {Audio, "M4A brand"},
+	MP4:         {Video, "MP4 brand"},
+	MKV:         {Video, "Matroska signature"},
+	WebM:        {Video, "WebM signature"},
+	AVI:         {Video, "AVI signature"},
+	Gzip:        {Archive, "gzip signature"},
+	Zstd:        {Archive, "zstd signature"},
+	SevenZip:    {Archive, "7z signature"},
+	PE:          {Unrouted, "PE signature, an executable"},
+	ELF:         {Unrouted, "ELF signature, an executable"},
+	MachO:       {Unrouted, "Mach-O signature, an executable"},
+	Shebang:     {Unrouted, `"#!" line, an executable script`},
 }
 
 // boms are the byte order marks' names, for Text's reason.
@@ -136,7 +146,7 @@ var boms = map[Kind]string{UTF8BOM: "UTF-8", UTF16BOM: "UTF-16", UTF32BOM: "UTF-
 // It reads the file's first [HeadLen] bytes for a signature, which decides whatever mimeType,
 // its stored MIME type, says. The extension is name's, in any case, which may differ from
 // path's, as a file named by its SHA-256 does; it decides within a ZIP or OLE2 container, for a
-// cabinet, and, with mimeType, whether content of no signature is a message, whose header File
+// cabinet, whether an mbox's first line is text's instead, and, with mimeType, whether content of no signature is a message, whose header File
 // then reads further, line by line, a line at most 64 KiB, and else whether it is text. It
 // returns an error, as os reports it, when the file can't be opened or read.
 func File(path, name, mimeType string) (Route, string, error) {
@@ -169,16 +179,21 @@ func File(path, name, mimeType string) (Route, string, error) {
 }
 
 // byKind routes content of kind, named with ext, its name's extension lowercased, which decides
-// only within a ZIP or OLE2 container and for a cabinet. It returns no route for content of no
-// routed signature, a byte order mark's included, which File decides.
+// only within a ZIP or OLE2 container, for a cabinet, and for an mbox. It returns no route for
+// content of no routed signature, a byte order mark's included, and for an mbox named with a
+// text extension, which File decides.
 func byKind(kind Kind, ext string) (Route, string) {
 	if r, ok := kindRoutes[kind]; ok {
 		return r.route, r.why
 	}
 	switch kind {
 	case ZIP:
-		if ooxmlExtensions[ext] {
+		switch {
+		case ooxmlExtensions[ext]:
 			return Office, "ZIP signature, " + ext + " extension"
+		case ext == ".xlsb":
+			// An Excel binary workbook, which office doesn't read: it goes through LibreOffice.
+			return Office, "ZIP signature, .xlsb extension, an Excel binary workbook"
 		}
 		return Archive, "ZIP signature without an OOXML extension or ODF mimetype"
 	case OLE2:
@@ -189,6 +204,12 @@ func byKind(kind Kind, ext string) (Route, string) {
 			return Nested, "OLE2 signature, .msg extension"
 		}
 		return Unrouted, "OLE2 signature without a legacy or .msg extension"
+	case Mbox:
+		// "From " is a weak signature, which prose begins too: a text extension decides first.
+		if textExtensions[ext] {
+			return "", ""
+		}
+		return Nested, `mbox "From " line`
 	case MSCF:
 		if ext == ".onepkg" {
 			return OneNote, "cabinet signature, .onepkg extension"
