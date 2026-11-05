@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -38,15 +39,16 @@ type Config struct {
 	// Office is office's spike-ai-pipeline-office, typically built from OfficeSpec. It is
 	// required.
 	Office *tool.Tool
-	// LibreOffice is LibreOffice's soffice, typically built from LibreOfficeSpec through the
-	// container runner in LibreOfficeImage. It converts legacy documents to OOXML; nil leaves the
-	// Converter without one, and a legacy document is then refused with ErrNoLibreOffice. It
-	// renders EMF and WMF pictures to PNG too, with Magick; without either, they have no file
-	// handed onward.
+	// LibreOffice is LibreOffice's soffice, typically built from picture.LibreOfficeSpec through
+	// the container runner in picture.LibreOfficeImage. It converts legacy documents to OOXML;
+	// nil leaves the Converter without one, and a legacy document is then refused with
+	// ErrNoLibreOffice. It renders EMF and WMF pictures to PNG too, through the picture package,
+	// with Magick; without either, they have no file handed onward.
 	LibreOffice *tool.Tool
-	// Magick is ImageMagick's magick, typically built from MagickSpec. It converts TIFF pictures
-	// to PNG, and trims an EMF or WMF picture's rendered page to the picture; nil leaves the
-	// Converter without one, and a TIFF, EMF, or WMF then has no file handed onward.
+	// Magick is ImageMagick's magick, typically built from picture.MagickSpec. It converts TIFF
+	// pictures to PNG, and trims an EMF or WMF picture's rendered page to the picture, through
+	// the picture package; nil leaves the Converter without one, and a TIFF, EMF, or WMF then has
+	// no file handed onward.
 	Magick *tool.Tool
 }
 
@@ -57,12 +59,14 @@ type Converter struct {
 	office      *tool.Tool
 	libreoffice *tool.Tool
 	magick      *tool.Tool
+	pictures    *picture.Converter
 }
 
-// NewConverter builds a Converter over cfg's Tools. It refuses a nil Office, and an Office whose
-// version is older than OfficeMinimum, a LibreOffice older than LibreOfficeMinimum, or a Magick
-// older than MagickMinimum, whatever minimum the Tool's own Spec declared, with a
-// *tool.VersionError wrapping tool.ErrTooOld.
+// NewConverter builds a Converter over cfg's Tools, and the picture package's Converter over its
+// LibreOffice and Magick. It refuses a nil Office, and an Office whose version is older than
+// OfficeMinimum, a LibreOffice older than picture.LibreOfficeMinimum, or a Magick older than
+// picture.MagickMinimum, whatever minimum the Tool's own Spec declared, with a *tool.VersionError
+// wrapping tool.ErrTooOld.
 func NewConverter(cfg Config) (*Converter, error) {
 	if cfg.Office == nil {
 		return nil, errors.New("office: no office tool")
@@ -70,17 +74,11 @@ func NewConverter(cfg Config) (*Converter, error) {
 	if err := atLeast(cfg.Office, OfficeMinimum); err != nil {
 		return nil, err
 	}
-	if cfg.LibreOffice != nil {
-		if err := atLeast(cfg.LibreOffice, LibreOfficeMinimum); err != nil {
-			return nil, err
-		}
+	pictures, err := picture.NewConverter(picture.Config{Magick: cfg.Magick, LibreOffice: cfg.LibreOffice})
+	if err != nil {
+		return nil, err
 	}
-	if cfg.Magick != nil {
-		if err := atLeast(cfg.Magick, MagickMinimum); err != nil {
-			return nil, err
-		}
-	}
-	return &Converter{office: cfg.Office, libreoffice: cfg.LibreOffice, magick: cfg.Magick}, nil
+	return &Converter{office: cfg.Office, libreoffice: cfg.LibreOffice, magick: cfg.Magick, pictures: pictures}, nil
 }
 
 // atLeast refuses t when its version is older than minimum, with a *tool.VersionError wrapping
@@ -131,9 +129,9 @@ type Request struct {
 	// docx, xlsx, or pptx before office runs. "" names no extension.
 	Name string
 	// MetafileScale is the scale the document's EMF and WMF pictures are rendered at, a multiple
-	// of their size at 96 dpi: zero is DefaultMetafileScale, 3, and it may be at most
-	// MaxMetafileScale, 8. A negative scale, or one above MaxMetafileScale, is refused before
-	// anything runs.
+	// of their size at 96 dpi: zero is picture.DefaultMetafileScale, 3, and it may be at most
+	// picture.MaxMetafileScale, 8. A negative scale, or one above picture.MaxMetafileScale, is
+	// refused before anything runs, with an error matching picture.ErrScale.
 	MetafileScale int
 }
 
@@ -236,7 +234,8 @@ const stderrLimit = 1 << 20
 // GIF, or BMP, is handed on as stored, as is any kind the standard names no converter for. EMF and
 // WMF are rendered to PNG at req.MetafileScale through the LibreOffice converter, all of a
 // document's in one soffice run, and each trimmed to its picture through magick; TIFF is
-// converted through magick. Each PNG is named by the stored name's SHA-256 and .png, and written
+// converted through magick; the picture package converts them, in one batch, each picture copied
+// into a directory of its own. Each PNG is named by the stored name's SHA-256 and .png, and written
 // into the media directory beside the stored file, which stays. A picture whose converter the
 // Converter wasn't given, for EMF and WMF either of LibreOffice and magick, is listed with no
 // file handed onward, and the conversion still succeeds; a picture conversion that fails fails
@@ -244,7 +243,8 @@ const stderrLimit = 1 << 20
 // each converted picture's stored name is swapped for its PNG's wherever it appears, which
 // rewrites its links without parsing the Markdown; every other link stays as office wrote it.
 //
-// A MetafileScale below zero or above MaxMetafileScale is an error before anything runs. A JSON
+// A MetafileScale below zero or above picture.MaxMetafileScale is an error matching
+// picture.ErrScale before anything runs. A JSON
 // model whose schema isn't Schema is an error matching ErrSchema, naming the schema.
 // office's exit codes 1 to 4 are an *ExitError matching the code's error. When ctx ends the run,
 // the error matches ctx's, as every Tool run's does. A conversion that fails removes its media
@@ -253,9 +253,9 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 	if req.Format != JSON && req.Format != Markdown {
 		return nil, fmt.Errorf("office: unknown format %v", req.Format)
 	}
-	scale, err := metafileScale(req.MetafileScale)
+	scale, err := picture.CheckMetafileScale(req.MetafileScale)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("office: %w", err)
 	}
 	if err := ctx.Err(); err != nil {
 		return nil, err

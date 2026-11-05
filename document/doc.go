@@ -1,10 +1,11 @@
 //go:build linux
 
 // Package document prepares a PDF's pages for a model's vision: each page rendered to PNG, and
-// the page image corrected for scan defects. It provides pre-inference preparation only; a layer
-// above sends the prepared pages to a model and owns the requests, retries, and any final step.
-// The package builds on Linux only, on the standard library and this module's tool package; every
-// system tool it runs is a tool.Tool the caller built.
+// the page image corrected for scan defects through the picture package's corrections stage. It
+// provides pre-inference preparation only; a layer above sends the prepared pages to a model and
+// owns the requests, retries, and any final step. The package builds on Linux only, on the
+// standard library and this module's tool and picture packages; every system tool it runs is a
+// tool.Tool the caller built.
 //
 // A Renderer works per page. Count returns a PDF's page count, and Render writes one page, 1-based,
 // as PNG at a DPI to a writer, one process per page. A renderer counts pages with a tool from its
@@ -26,30 +27,23 @@
 // through either runner, GhostscriptSpec declaring it, and refuses one older than 10.0.
 // Ghostscript is AGPL-licensed, and the package runs it as a separate program, never linked.
 //
-// The corrections stage, a Corrector, runs a page image through ImageMagick's operators for the
-// corrections a request names: Deskew (-deskew 40%), Despeckle (-despeckle), ContrastStretch
-// (-contrast-stretch 0.5%x0.5%), Unsharp (-unsharp 0x1), and Grayscale (-colorspace Gray), always
-// in that order, however the caller lists them. A page is one magick run, PNG on stdin to PNG on
-// stdout, and no corrections runs nothing. NewCorrector takes a magick Tool built through either
-// runner, MagickSpec declaring it, and refuses one older than 7.1. The stage works on any page
-// image, not only a rendered one. Corrections lists them in that order, each with its name,
-// String, and its one-line Description for a prompt, and ParseCorrection reads a name back,
-// without regard to case. Assess measures a page image for the defects the corrections fix, in
-// one magick run: its skew, contrast, noise, sharpness, and color, and its size, an Assessment a
-// layer above chooses corrections by.
+// The corrections stage is the picture package's Corrector, over ImageMagick's magick: a request
+// names its corrections, picture.Correction values, and each page's image goes through them in
+// one magick run. Its catalog, Corrections, and Assess, which measures a page image for the
+// defects the corrections fix, are the picture package's too.
 //
 // A Preparer puts the stages together, built at the composition root from a Renderer and,
-// optionally, a Corrector. Images streams a PDF's prepared pages: it spools the PDF, read from an
-// io.Reader, into the working directory the ImagesRequest names, which the caller owns, counts its
-// pages, and renders and corrects each page, yielding a PageImage of its number, the page count,
-// and its PNG. A request may read each page's text layer into its PageImage, and skip rendering
-// the pages that have one, for the flow of text layer first, vision only for the pages without
-// one; and it may render one Region of every page. At most the request's concurrency of pages
-// are being prepared at once, and pages come back in page order, a failed page as its number and
-// count with its error, the stream carrying on. A refused request, a failed spool or count, or an
-// ended context is the stream's one error. The stream is lazy, breaking out of it cancels the work
-// in flight and returns once that work has ended, and the spooled PDF is removed when it ends. The
-// package sets no size limit on a page's image.
+// optionally, a picture.Corrector. Images streams a PDF's prepared pages: it spools the PDF, read
+// from an io.Reader, into the working directory the ImagesRequest names, which the caller owns,
+// counts its pages, and renders and corrects each page, yielding a PageImage of its number, the
+// page count, and its PNG. A request may read each page's text layer into its PageImage, and skip
+// rendering the pages that have one, for the flow of text layer first, vision only for the pages
+// without one; and it may render one Region of every page. At most the request's concurrency of
+// pages are being prepared at once, and pages come back in page order, a failed page as its number
+// and count with its error, the stream carrying on. A refused request, a failed spool or count, or
+// an ended context is the stream's one error. The stream is lazy, breaking out of it cancels the
+// work in flight and returns once that work has ended, and the spooled PDF is removed when it
+// ends. The package sets no size limit on a page's image.
 //
 // Its exported identifiers:
 //
@@ -71,22 +65,8 @@
 //   - [GhostscriptMinimum] is the oldest gs the renderer accepts, 10.0.
 //   - [ErrDPI] and [ErrPageRange] are the refusals' causes: a DPI of zero or less, and a page
 //     below 1, or past the last for Text and for a caller that holds the count.
-//   - [Correction] is one scan correction: [Deskew], [Despeckle], [ContrastStretch], [Unsharp],
-//     or [Grayscale].
-//   - [Correction.String] returns a correction's name.
-//   - [Correction.Description] returns a correction's one-line description for a prompt.
-//   - [Corrections] lists every correction in the fixed order.
-//   - [ParseCorrection] returns the correction a name names, without regard to case.
-//   - [Corrector] is the corrections stage.
-//   - [NewCorrector] builds the corrections stage over a magick Tool.
-//   - [Corrector.Correct] runs a page image through the corrections a request names.
-//   - [Corrector.Assess] measures a page image for the defects the corrections fix.
-//   - [Assessment] is a page image's measures: size, skew, contrast, noise, sharpness, and color.
-//   - [GrayscaleColored] is the most of a page that may be colored for it to be grayscale.
-//   - [MagickSpec] declares ImageMagick's magick for either runner's constructor.
-//   - [MagickMinimum] is the oldest magick the stage accepts, 7.1.
 //   - [Preparer] prepares a PDF's pages for a model's vision.
-//   - [NewPreparer] builds a Preparer over a Renderer and an optional Corrector.
+//   - [NewPreparer] builds a Preparer over a Renderer and an optional picture.Corrector.
 //   - [ImagesRequest] is one PDF's run through Images: its working directory, DPI, corrections,
 //     concurrency, text layers, and region.
 //   - [PageImage] is one prepared page's number, the page count, its PNG, and its text layer.

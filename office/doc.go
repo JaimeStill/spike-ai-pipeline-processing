@@ -4,8 +4,8 @@
 // ppt, for a model through office, spike-ai-pipeline-office: a document in, office's JSON model or
 // its Markdown out, with the pictures the document embeds. It provides pre-inference preparation
 // only; a layer above sends what it returns to a model. The package builds on Linux only, on the
-// standard library and this module's tool package; every program it runs is a tool.Tool the
-// caller built.
+// standard library and this module's tool, route, and picture packages; every program it runs is
+// a tool.Tool the caller built.
 //
 // A Converter is built at the composition root over an office Tool, OfficeSpec declaring it.
 // NewConverter refuses one older than 0.1.0, and the Tool's own construction a missing one, so a
@@ -21,13 +21,14 @@
 // A legacy document, .doc, .xls, or .ppt and their templates and shows, is one with the OLE2
 // compound-file signature whose Request.Name has a legacy extension. Given a LibreOffice Tool in
 // the Config, Convert converts it first, in the request's working directory, to the OOXML format
-// its extension names, and runs office on that; the Result's ConvertedFrom names the legacy
-// format. Without one, a legacy document is refused with ErrNoLibreOffice before anything runs.
-// Any other OLE2 file, such as an encrypted OOXML package, goes to office, which refuses it.
-// LibreOfficeSpec declares soffice, minimum 24.2, and LibreOfficeImage is the default image the
-// container runner runs it in, under its full lockdown: no network, the caller's uid:gid, every
-// capability dropped. Each conversion gives soffice a user profile of its own inside the working
-// directory, which the runner mounts, and removes it with the converted document when it ends.
+// its extension names, and runs office on that; the Result's ConvertedFrom names the legacy format.
+// Without one, a legacy document is refused with ErrNoLibreOffice before anything runs. Any other
+// OLE2 file, such as an encrypted OOXML package, goes to office, which refuses it. The picture
+// package's LibreOfficeSpec declares soffice, minimum 24.2, and its LibreOfficeImage is the default
+// image the container runner runs it in, under its full lockdown: no network, the caller's uid:gid,
+// every capability dropped. Each conversion gives soffice a user profile of its own inside the
+// working directory, which the runner mounts, and removes it with the converted document when it
+// ends.
 //
 // A JSON result, the default, is the model decoded through encoding/json/v2 into a Document of
 // typed values that mirror schema "1": each Block by its kind, each Inline by its kind. A model
@@ -49,23 +50,24 @@
 // Pictures follow one standard, and no conversion encodes a picture lossily: each writes PNG. A
 // picture vision decodes, PNG, JPEG, GIF, or BMP, is handed on exactly as stored, as is any kind
 // the standard names no converter for. EMF and WMF are rendered to PNG through the LibreOffice
-// Tool, all of a document's in one soffice run with LibreOffice's Draw PNG export, and each
-// trimmed to its picture through a magick Tool; TIFF is converted through magick, its first image
-// alone. MagickSpec declares magick, minimum 7.1. A converted picture's PNG is named by the
-// stored name's stem, its SHA-256, and .png, and written into the media directory beside the
-// stored file, which stays; magick writes it without the time of the run, so a picture converted
-// twice is the same bytes both times. A picture whose converter the Config didn't give, for EMF
-// and WMF either of LibreOffice and magick, is listed with no file handed onward, and the
-// conversion still succeeds; a picture conversion that fails fails the conversion.
+// Tool, all of a document's in one soffice run with LibreOffice's Draw PNG export, and each trimmed
+// to its picture through a magick Tool; TIFF is converted through magick, its first image alone.
+// The picture package converts them, in one batch, each picture copied into a directory of its own,
+// and its MagickSpec declares magick, minimum 7.1. A converted picture's PNG is named by the stored
+// name's stem, its SHA-256, and .png, and written into the media directory beside the stored file,
+// which stays; magick writes it without the time of the run, so a picture converted twice is the
+// same bytes both times. A picture whose converter the Config didn't give, for EMF and WMF either
+// of LibreOffice and magick, is listed with no file handed onward, and the conversion still
+// succeeds; a picture conversion that fails fails the conversion.
 //
 // Draw places a metafile at its own size, at 96 dpi, in the middle of a page, so a metafile is
-// rendered as a page at Request.MetafileScale times 96 dpi, DefaultMetafileScale, 3, when it is
-// zero and at most MaxMetafileScale, 8, and magick's -trim then crops the page to the picture:
-// what differs from the color of the page's corners. The page is A4 whatever the paper of the
-// system soffice runs on, since the run's profile gives LibreOffice a British English locale, so
-// at the default scale it is 2382x3369 pixels. The trim has two known limits: it removes a border
-// the picture itself has in the page's white, so a picture framed in white comes out without its
-// frame, and a picture that is all white comes out as a single pixel.
+// rendered as a page at Request.MetafileScale times 96 dpi, picture.DefaultMetafileScale, 3, when
+// it is zero and at most picture.MaxMetafileScale, 8, and magick's -trim then crops the page to the
+// picture: what differs from the color of the page's corners. The page is A4 whatever the paper of
+// the system soffice runs on, since the run's profile gives LibreOffice a British English locale,
+// so at the default scale it is 2382x3369 pixels. The trim has two known limits: it removes a
+// border the picture itself has in the page's white, so a picture framed in white comes out without
+// its frame, and a picture that is all white comes out as a single pixel.
 //
 // In a Markdown result each converted picture's stored name is swapped for its PNG's wherever it
 // appears, without parsing the Markdown, so its links name the PNG; a link to any other picture
@@ -78,41 +80,20 @@
 // office's). A conversion whose context ends returns an error matching the context's, as every
 // Tool run does.
 //
-// Converter.ConvertPicture converts one picture outside a document, such as a mail attachment the
-// email package routes to route.VisionConverted, through the same code a document's picture takes.
-// The PictureRequest names the picture's file, a TIFF, EMF, or WMF told by its content's
-// signature, never its name; the working directory, which the caller owns; and the scale an EMF
-// or WMF is rendered at, as a Request's. The picture is copied under its SHA-256 into a directory
-// of its own in the working directory, so either runner's mount holds it, and the PNG is written
-// into the working directory, named by the picture's SHA-256 and .png; the copy's directory is
-// removed however the call ends, and the picture's own file is never changed. Unlike Convert, a
-// missing converter is an error, before anything runs: an EMF or WMF without the LibreOffice Tool
-// matches ErrNoLibreOffice, and any of the three without magick ErrNoMagick.
+// One picture outside a document, such as a mail attachment the email package routes to
+// route.VisionConverted, is the picture package's to convert, through the same code a document's
+// picture takes: its Converter's Convert.
 //
 // Its exported identifiers:
 //
 //   - [OfficeSpec] declares office's spike-ai-pipeline-office for either runner's constructor.
 //   - [OfficeMinimum] is the oldest office the Converter accepts, 0.1.0.
-//   - [LibreOfficeSpec] declares LibreOffice's soffice for either runner's constructor.
-//   - [LibreOfficeMinimum] is the oldest LibreOffice the Converter accepts, 24.2.
-//   - [LibreOfficeImage] is the default image soffice runs in through the container runner.
-//   - [MagickSpec] declares ImageMagick's magick for either runner's constructor.
-//   - [MagickMinimum] is the oldest magick the Converter accepts, 7.1.
-//   - [DefaultMetafileScale] is the scale EMF and WMF pictures are rendered at by default, 3.
-//   - [MaxMetafileScale] is the largest scale a Request may render them at, 8.
-//   - [ErrNoLibreOffice] is the cause of a legacy document's refusal without a LibreOffice Tool,
-//     and of an EMF's or WMF's in ConvertPicture.
-//   - [ErrNoMagick] is the cause of a TIFF's, EMF's, or WMF's refusal in ConvertPicture without a
-//     magick Tool.
+//   - [ErrNoLibreOffice] is the cause of a legacy document's refusal without a LibreOffice Tool.
 //   - [Config] is the Tools a Converter is built over: office, LibreOffice for legacy documents
 //     and, with magick, EMF and WMF pictures, and magick for TIFF pictures.
 //   - [Converter] converts office documents through office.
 //   - [NewConverter] builds a Converter over a Config.
 //   - [Converter.Convert] converts one document as a Request says.
-//   - [Converter.ConvertPicture] converts one TIFF, EMF, or WMF file, told by its signature, to
-//     a PNG named by its SHA-256, as a PictureRequest says, through Convert's own conversion.
-//   - [PictureRequest] is one picture's conversion: its working directory, where the PNG is
-//     written, the picture's path, and the scale an EMF or WMF is rendered at.
 //   - [Request] is one document's conversion: its working directory, its format, its file name,
 //     and the scale its EMF and WMF pictures are rendered at.
 //   - [Format] is a conversion's rendering: [JSON] or [Markdown].

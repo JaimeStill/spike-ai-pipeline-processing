@@ -18,6 +18,7 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
@@ -29,30 +30,34 @@ var stagedRoutes = []route.Route{
 	route.Document, route.Office, route.Vision, route.VisionConverted, route.Nested,
 }
 
-// stageConverter builds an office Converter over the real office the mise pins, soffice in
-// office's pinned image, office.LibreOfficeImage, through the container runner, which pulls the
-// image when it isn't present, and the host's magick, as office's own integration tier builds
-// its, and logs soffice's and magick's versions.
-func stageConverter(t *testing.T) *office.Converter {
+// stageConverter builds an office Converter over the real office the mise pins, soffice in the
+// picture package's pinned image, picture.LibreOfficeImage, through the container runner, which
+// pulls the image when it isn't present, and the host's magick, as office's own integration tier
+// builds its, and a picture Converter over the same soffice and magick, and logs their versions.
+func stageConverter(t *testing.T) (*office.Converter, *picture.Converter) {
 	t.Helper()
 	o, err := tool.NewExec(t.Context(), office.OfficeSpec())
 	if err != nil {
 		t.Fatalf("office, which mise pins, run the tier through mise run integration: %v", err)
 	}
-	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: office.LibreOfficeImage}, office.LibreOfficeSpec())
+	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: picture.LibreOfficeImage}, picture.LibreOfficeSpec())
 	if err != nil {
 		t.Fatal(err)
 	}
-	mg, err := tool.NewExec(t.Context(), office.MagickSpec())
+	mg, err := tool.NewExec(t.Context(), picture.MagickSpec())
 	if err != nil {
 		t.Fatalf("magick, a host prerequisite for TIFF: %v", err)
 	}
-	t.Logf("soffice %s in %s, magick %s", lo.Version(), office.LibreOfficeImage, mg.Version())
+	t.Logf("soffice %s in %s, magick %s", lo.Version(), picture.LibreOfficeImage, mg.Version())
 	c, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
 	if err != nil {
 		t.Fatal(err)
 	}
-	return c
+	pc, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return c, pc
 }
 
 // stagePreparer builds document's released preparation over the host's gs, through the exec
@@ -81,6 +86,7 @@ type stages struct {
 	t        *testing.T
 	reader   *email.Reader
 	office   *office.Converter
+	picture  *picture.Converter
 	document *document.Preparer
 	// seen are the routes the fixtures' attachments take; ran, those whose stage ran.
 	seen, ran map[route.Route]int
@@ -91,7 +97,7 @@ type stages struct {
 	// once whichever attachments carry it; it holds the attachment that first did.
 	done map[string]string
 	// pictures are the distinct pictures for vision, by File, in the order first seen.
-	pictures map[string]*picture
+	pictures map[string]*visionPicture
 	order    []string
 	// mime is set while a MIME input, .eml or mbox, is read, the messages it nests included;
 	// mimeDispatched counts the attachments those reads dispatched.
@@ -114,7 +120,7 @@ type stages struct {
 //   - route.Office: office's Convert given the attachment's name, a legacy document through
 //     soffice in office's pinned image first;
 //   - route.Vision: the picture as stored, gathered for vision;
-//   - route.VisionConverted: office's ConvertPicture, and its PNG gathered for vision;
+//   - route.VisionConverted: the picture package's Convert, and its PNG gathered for vision;
 //   - route.Nested: a message nested under its record, which mail read with its parent, its own
 //     attachments dispatched in turn; a by-value .msg or .eml file read through the CLI again,
 //     into an attachments directory of its own, and its messages' attachments dispatched; a
@@ -134,15 +140,17 @@ type stages struct {
 // skipped as already sent.
 func TestRoutesToStages(t *testing.T) {
 	c := visiontest.Router(t)
+	oc, pc := stageConverter(t)
 	s := &stages{
 		t:        t,
 		reader:   realReader(t),
-		office:   stageConverter(t),
+		office:   oc,
+		picture:  pc,
 		document: stagePreparer(t),
 		seen:     map[route.Route]int{},
 		ran:      map[route.Route]int{},
 		done:     map[string]string{},
-		pictures: map[string]*picture{},
+		pictures: map[string]*visionPicture{},
 	}
 	inputs := []string{filepath.Join(builtDir, builtMsg)}
 	stores, mime := realInputs(t)
@@ -183,7 +191,7 @@ func TestRoutesToStages(t *testing.T) {
 		t.Errorf("%d MIME inputs read, no attachment of theirs dispatched", len(mime))
 	}
 
-	pictures := make([]*picture, 0, len(s.order))
+	pictures := make([]*visionPicture, 0, len(s.order))
 	for _, file := range s.order {
 		pictures = append(pictures, s.pictures[file])
 	}
@@ -367,18 +375,18 @@ func (s *stages) stored(a *email.Attachment, source string) {
 		t.Errorf("%s: content type %s, want a picture's", source, ct)
 		return
 	}
-	s.gather(a.File, &picture{data: data, contentType: ct, sources: []string{source}})
+	s.gather(a.File, &visionPicture{data: data, contentType: ct, sources: []string{source}})
 	s.ran[route.Vision]++
 	t.Logf("recorded: stage vision, %s: %s %s, %d bytes, as stored", source, ct, visiontest.PixelSize(data), len(data))
 }
 
-// converted runs office's ConvertPicture over a's picture and gathers its PNG for vision,
+// converted runs the picture package's Convert over a's picture and gathers its PNG for vision,
 // recording the PNG's size and the wall time. The PNG must be named by a's SHA-256 and decode.
 func (s *stages) converted(a *email.Attachment, source string) {
 	t := s.t
 	dir := t.TempDir()
 	start := time.Now()
-	out, err := s.office.ConvertPicture(t.Context(), office.PictureRequest{Dir: dir, Path: a.Path})
+	out, err := s.picture.Convert(t.Context(), picture.Request{Dir: dir, Path: a.Path})
 	elapsed := time.Since(start)
 	if err != nil {
 		t.Errorf("%s: %v", source, err)
@@ -396,7 +404,7 @@ func (s *stages) converted(a *email.Attachment, source string) {
 		t.Errorf("%s: its PNG doesn't decode: %v", source, err)
 		return
 	}
-	s.gather(a.File, &picture{data: data, contentType: "image/png", sources: []string{source}})
+	s.gather(a.File, &visionPicture{data: data, contentType: "image/png", sources: []string{source}})
 	s.ran[route.VisionConverted]++
 	t.Logf("recorded: stage vision-converted, %s: %d bytes -> png %s, %d bytes: %v wall",
 		source, sizeOf(a), visiontest.PixelSize(data), len(data), elapsed.Round(time.Millisecond))
@@ -429,7 +437,7 @@ func (s *stages) nested(a *email.Attachment, source, why string) {
 
 // gather adds a distinct picture for vision under file, its attachment's content's name, and
 // notes it among the MIME inputs' pictures sent when a MIME input is being read.
-func (s *stages) gather(file string, p *picture) {
+func (s *stages) gather(file string, p *visionPicture) {
 	s.pictures[file] = p
 	s.order = append(s.order, file)
 	if s.mime {

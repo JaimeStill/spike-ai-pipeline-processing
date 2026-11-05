@@ -5,8 +5,7 @@ package document
 import "strings"
 
 // limitedBuffer is a writer that keeps the first limit bytes written to it and discards the rest,
-// for a tool's output that the package reads only the start of: Assess's measures and Text's
-// stderr.
+// for a tool's output that the package reads only the start of: Text's stderr.
 type limitedBuffer struct {
 	strings.Builder
 	limit int

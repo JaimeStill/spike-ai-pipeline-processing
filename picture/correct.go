@@ -1,6 +1,6 @@
 //go:build linux
 
-package document
+package picture
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"io"
 	"maps"
 	"math"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -91,23 +90,7 @@ func ParseCorrection(name string) (Correction, error) {
 			return c, nil
 		}
 	}
-	return 0, fmt.Errorf("document: unknown correction %q", name)
-}
-
-// MagickMinimum is the oldest ImageMagick the corrections stage accepts.
-const MagickMinimum = "7.1"
-
-// MagickSpec declares ImageMagick's magick, minimum 7.1, for either runner's constructor.
-// magick -version prints "Version: ImageMagick 7.1.2-34 Q16-HDRI ...", and the pattern takes
-// the dotted part before the patch level. A caller that needs another program path or a
-// KillAfter period sets them on the Spec returned.
-func MagickSpec() tool.Spec {
-	return tool.Spec{
-		Program:        "magick",
-		VersionArgs:    []string{"-version"},
-		VersionPattern: regexp.MustCompile(`Version: ImageMagick (\d+(?:\.\d+)*)`),
-		Minimum:        MagickMinimum,
-	}
+	return 0, fmt.Errorf("picture: unknown correction %q", name)
 }
 
 // Corrector is the corrections stage: it runs a page image through the ImageMagick operators of
@@ -122,14 +105,10 @@ type Corrector struct {
 // tool.ErrTooOld.
 func NewCorrector(magick *tool.Tool) (*Corrector, error) {
 	if magick == nil {
-		return nil, errors.New("document: corrector: no magick tool")
+		return nil, errors.New("picture: corrector: no magick tool")
 	}
-	minimum, err := tool.ParseVersion(MagickMinimum)
-	if err != nil {
+	if err := atLeast(magick, MagickMinimum); err != nil {
 		return nil, err
-	}
-	if v := magick.Version(); v.Compare(minimum) < 0 {
-		return nil, &tool.VersionError{Program: magick.Name(), Found: v.String(), Minimum: MagickMinimum, Err: tool.ErrTooOld}
 	}
 	return &Corrector{magick: magick}, nil
 }
@@ -143,7 +122,7 @@ func NewCorrector(magick *tool.Tool) (*Corrector, error) {
 func (c *Corrector) Correct(ctx context.Context, corrections []Correction, in io.Reader, out io.Writer) error {
 	for _, corr := range corrections {
 		if _, ok := known[corr]; !ok {
-			return fmt.Errorf("document: unknown correction %v", corr)
+			return fmt.Errorf("picture: unknown correction %v", corr)
 		}
 	}
 	if len(corrections) == 0 {
@@ -238,7 +217,7 @@ func parseAssessment(out string) (Assessment, error) {
 		}
 		name, value, ok := strings.Cut(line, "=")
 		if _, seen := values[name]; !ok || seen {
-			return Assessment{}, fmt.Errorf("document: assess: magick printed %q", out)
+			return Assessment{}, fmt.Errorf("picture: assess: magick printed %q", out)
 		}
 		values[name] = value
 	}
@@ -249,19 +228,19 @@ func parseAssessment(out string) (Assessment, error) {
 		"sharpness": &a.Sharpness, "colored": &a.Colored,
 	}
 	if len(values) != len(ints)+len(floats) {
-		return Assessment{}, fmt.Errorf("document: assess: magick printed %q", out)
+		return Assessment{}, fmt.Errorf("picture: assess: magick printed %q", out)
 	}
 	for name, p := range ints {
 		v, err := strconv.Atoi(values[name])
 		if err != nil {
-			return Assessment{}, fmt.Errorf("document: assess: %s in magick's %q: %w", name, out, err)
+			return Assessment{}, fmt.Errorf("picture: assess: %s in magick's %q: %w", name, out, err)
 		}
 		*p = v
 	}
 	for name, p := range floats {
 		v, err := strconv.ParseFloat(values[name], 64)
 		if err != nil || math.IsNaN(v) || math.IsInf(v, 0) {
-			return Assessment{}, fmt.Errorf("document: assess: %s in magick's %q is no number", name, out)
+			return Assessment{}, fmt.Errorf("picture: assess: %s in magick's %q is no number", name, out)
 		}
 		*p = v
 	}

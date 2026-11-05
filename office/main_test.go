@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -419,7 +420,7 @@ func legacyConverter(t *testing.T) (*office.Converter, func() []standinRun) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	lo, err := tool.NewExec(t.Context(), office.LibreOfficeSpec())
+	lo, err := tool.NewExec(t.Context(), picture.LibreOfficeSpec())
 	if err != nil {
 		t.Fatal(err)
 	}

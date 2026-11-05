@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
-	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
@@ -19,16 +19,12 @@ import (
 // input.
 const standinPNG = "\x89PNG\r\n\x1a\nconverted: "
 
-// pictureStandin is the stand-in office or magick, name, that ConvertPicture's Converter is built
-// over. With its version flag alone it prints office's version, 0.1.0, or magick's version line,
-// 7.1.2-34. Otherwise, as magick, it appends its arguments to the log file and writes standinPNG
-// and its input, its first argument with any format prefix and frame suffix, "tiff:path[0]", to
-// its output, its last argument, "png:path". The stand-in office never converts.
+// pictureStandin is the stand-in magick that the picture package's Converter is built over.
+// With -version alone it prints magick's version line, 7.1.2-34. Otherwise it appends its
+// arguments to the log file and writes standinPNG and its input, its first argument with any
+// format prefix and frame suffix, "tiff:path[0]", to its output, its last argument, "png:path".
 func pictureStandin(name string, args []string) int {
 	switch {
-	case name == "spike-ai-pipeline-office" && len(args) == 1 && args[0] == "--version":
-		fmt.Println("0.1.0")
-		return 0
 	case name == "magick" && len(args) == 1 && args[0] == "-version":
 		fmt.Println("Version: ImageMagick 7.1.2-34 Q16-HDRI x86_64 https://imagemagick.org")
 		return 0
@@ -56,30 +52,24 @@ func pictureStandin(name string, args []string) int {
 	return 0
 }
 
-// pictureConverter builds an office Converter over the stand-in office and magick, through the
-// exec runner, with no LibreOffice, and returns it with magick's run log. The stand-in mail is
-// linked too, so the PATH it makes the whole of serves a Reader as well.
-func pictureConverter(t *testing.T) (*office.Converter, func() [][]string) {
+// pictureConverter builds a picture Converter over the stand-in magick, through the exec runner,
+// with no LibreOffice, and returns it with magick's run log. The stand-in mail is linked too, so
+// the PATH it makes the whole of serves a Reader as well.
+func pictureConverter(t *testing.T) (*picture.Converter, func() [][]string) {
 	t.Helper()
 	runs := installStandin(t, "0.2.0")
 	exe, err := os.Executable()
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"spike-ai-pipeline-office", "magick"} {
-		if err := os.Symlink(exe, filepath.Join(os.Getenv("PATH"), name)); err != nil {
-			t.Fatal(err)
-		}
+	if err := os.Symlink(exe, filepath.Join(os.Getenv("PATH"), "magick")); err != nil {
+		t.Fatal(err)
 	}
-	o, err := tool.NewExec(t.Context(), office.OfficeSpec())
+	mg, err := tool.NewExec(t.Context(), picture.MagickSpec())
 	if err != nil {
 		t.Fatal(err)
 	}
-	mg, err := tool.NewExec(t.Context(), office.MagickSpec())
-	if err != nil {
-		t.Fatal(err)
-	}
-	c, err := office.NewConverter(office.Config{Office: o, Magick: mg})
+	c, err := picture.NewConverter(picture.Config{Magick: mg})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,10 +78,10 @@ func pictureConverter(t *testing.T) (*office.Converter, func() [][]string) {
 
 // TestRouteVisionConvertedPicture: a TIFF attachment, written into the attachments directory as
 // mail names it, its SHA-256 and stored extension, routes route.VisionConverted, and the caller
-// converts it through office's ConvertPicture into a directory of its own: the PNG is that
+// converts it through the picture package's Convert into a directory of its own: the PNG is that
 // directory's file named by the attachment's SHA-256 and .png, from one magick run on the TIFF's
-// bytes, and the attachment's file is kept as mail wrote it. How office invokes magick is
-// office's own tests' to prove.
+// bytes, and the attachment's file is kept as mail wrote it. How picture invokes magick is
+// picture's own tests' to prove.
 func TestRouteVisionConvertedPicture(t *testing.T) {
 	c, runs := pictureConverter(t)
 	attachments := t.TempDir()
@@ -103,7 +93,7 @@ func TestRouteVisionConvertedPicture(t *testing.T) {
 	}
 
 	out := t.TempDir()
-	png, err := c.ConvertPicture(t.Context(), office.PictureRequest{Dir: out, Path: a.Path})
+	png, err := c.Convert(t.Context(), picture.Request{Dir: out, Path: a.Path})
 	if err != nil {
 		t.Fatal(err)
 	}

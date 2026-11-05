@@ -17,6 +17,7 @@ import (
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -267,9 +268,9 @@ var candidates = []candidate{
 		build: func(t *testing.T) *cliRenderer {
 			// magick renders a PDF through its gs delegate, which must be present and current.
 			hostTool(t, document.GhostscriptSpec())
-			magick := hostTool(t, document.MagickSpec())
+			magick := hostTool(t, picture.MagickSpec())
 			return &cliRenderer{
-				render: magick, launcher: launcherTool(t, document.MagickSpec()),
+				render: magick, launcher: launcherTool(t, picture.MagickSpec()),
 				// magick's PDF delegate renders with alpha; flattening on white keeps the page
 				// opaque, as the other renderers' are. Its page index is 0-based.
 				args: func(pdf string, page, dpi int) []string {

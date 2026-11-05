@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // pagePNG is the stand-in renderer's page: the PNG signature and a tail that names the page.
@@ -351,7 +352,7 @@ func TestImagesCorrectFails(t *testing.T) {
 	f := newFixture(t, 3)
 	f.withCorrector(t)
 	t.Setenv(failEnv, "magick: no decode delegate")
-	f.req.Corrections = []document.Correction{document.Deskew}
+	f.req.Corrections = []picture.Correction{picture.Deskew}
 	pages, errs := f.images(t.Context())
 	if len(pages) != 3 {
 		t.Fatalf("the stream yielded %d pages, want 3", len(pages))
@@ -457,7 +458,7 @@ func TestImagesContextEnds(t *testing.T) {
 func TestImagesCorrections(t *testing.T) {
 	f := newFixture(t, 2)
 	runs := f.withCorrector(t)
-	f.req.Corrections = []document.Correction{document.Grayscale, document.Deskew}
+	f.req.Corrections = []picture.Correction{picture.Grayscale, picture.Deskew}
 	pages, errs := f.images(t.Context())
 	if err := errors.Join(errs...); err != nil || len(pages) != 2 {
 		t.Fatalf("the stream yielded %d pages, %v, want 2 and no error", len(pages), err)
@@ -495,8 +496,8 @@ func TestImagesRefusals(t *testing.T) {
 		"no directory":       func(r *document.ImagesRequest) { r.Dir = "" },
 		"negative dpi":       func(r *document.ImagesRequest) { r.DPI = -1 },
 		"negative workers":   func(r *document.ImagesRequest) { r.Concurrency = -2 },
-		"no corrector":       func(r *document.ImagesRequest) { r.Corrections = []document.Correction{document.Deskew} },
-		"unknown correction": func(r *document.ImagesRequest) { r.Corrections = []document.Correction{0} },
+		"no corrector":       func(r *document.ImagesRequest) { r.Corrections = []picture.Correction{picture.Deskew} },
+		"unknown correction": func(r *document.ImagesRequest) { r.Corrections = []picture.Correction{0} },
 	}
 	for name, change := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -637,7 +638,7 @@ func TestImagesSkipText(t *testing.T) {
 	runs := f.withCorrector(t)
 	f.req.Concurrency = 2
 	f.req.SkipText = true
-	f.req.Corrections = []document.Correction{document.Deskew}
+	f.req.Corrections = []picture.Correction{picture.Deskew}
 	f.render.texts = map[int]string{1: "The Harbor Survey\n", 2: "  \n\n", 4: "Page 4"}
 	pages, errs := f.images(t.Context())
 	if err := errors.Join(errs...); err != nil || len(pages) != 4 {

@@ -1,6 +1,6 @@
 //go:build linux
 
-package document_test
+package picture_test
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -18,33 +18,33 @@ import (
 var page = []byte("\x89PNG\r\n\x1a\nnot really a page")
 
 // all is every correction, in the fixed order.
-var all = []document.Correction{
-	document.Deskew, document.Despeckle, document.ContrastStretch, document.Unsharp, document.Grayscale,
+var all = []picture.Correction{
+	picture.Deskew, picture.Despeckle, picture.ContrastStretch, picture.Unsharp, picture.Grayscale,
 }
 
 func TestCorrectOperators(t *testing.T) {
 	cases := []struct {
-		corrections []document.Correction
+		corrections []picture.Correction
 		want        []string
 	}{
-		{[]document.Correction{document.Deskew}, []string{"-deskew", "40%"}},
-		{[]document.Correction{document.Despeckle}, []string{"-despeckle"}},
-		{[]document.Correction{document.ContrastStretch}, []string{"-contrast-stretch", "0.5%x0.5%"}},
-		{[]document.Correction{document.Unsharp}, []string{"-unsharp", "0x1"}},
-		{[]document.Correction{document.Grayscale}, []string{"-colorspace", "Gray"}},
+		{[]picture.Correction{picture.Deskew}, []string{"-deskew", "40%"}},
+		{[]picture.Correction{picture.Despeckle}, []string{"-despeckle"}},
+		{[]picture.Correction{picture.ContrastStretch}, []string{"-contrast-stretch", "0.5%x0.5%"}},
+		{[]picture.Correction{picture.Unsharp}, []string{"-unsharp", "0x1"}},
+		{[]picture.Correction{picture.Grayscale}, []string{"-colorspace", "Gray"}},
 		{all, []string{
 			"-deskew", "40%", "-despeckle", "-contrast-stretch", "0.5%x0.5%", "-unsharp", "0x1",
 			"-colorspace", "Gray",
 		}},
 		// The order the caller lists them in, and repeats, change nothing.
-		{[]document.Correction{
-			document.Grayscale, document.Unsharp, document.Grayscale, document.ContrastStretch,
-			document.Despeckle, document.Deskew, document.Unsharp,
+		{[]picture.Correction{
+			picture.Grayscale, picture.Unsharp, picture.Grayscale, picture.ContrastStretch,
+			picture.Despeckle, picture.Deskew, picture.Unsharp,
 		}, []string{
 			"-deskew", "40%", "-despeckle", "-contrast-stretch", "0.5%x0.5%", "-unsharp", "0x1",
 			"-colorspace", "Gray",
 		}},
-		{[]document.Correction{document.Grayscale, document.Deskew}, []string{"-deskew", "40%", "-colorspace", "Gray"}},
+		{[]picture.Correction{picture.Grayscale, picture.Deskew}, []string{"-deskew", "40%", "-colorspace", "Gray"}},
 	}
 	for _, tc := range cases {
 		t.Run(names(tc.corrections), func(t *testing.T) {
@@ -85,7 +85,7 @@ func TestCorrectOneRunPerPage(t *testing.T) {
 // TestCorrectEmptyRunsNothing checks that no corrections copy the page without running magick.
 func TestCorrectEmptyRunsNothing(t *testing.T) {
 	c, runs := standinCorrector(t)
-	for _, corrections := range [][]document.Correction{nil, {}} {
+	for _, corrections := range [][]picture.Correction{nil, {}} {
 		var out bytes.Buffer
 		if err := c.Correct(t.Context(), corrections, bytes.NewReader(page), &out); err != nil {
 			t.Fatal(err)
@@ -103,9 +103,9 @@ func TestCorrectEmptyRunsNothing(t *testing.T) {
 // runs, even beside valid ones.
 func TestCorrectRefusesUnknown(t *testing.T) {
 	c, runs := standinCorrector(t)
-	for _, bad := range []document.Correction{0, document.Grayscale + 1, -1} {
+	for _, bad := range []picture.Correction{0, picture.Grayscale + 1, -1} {
 		var out bytes.Buffer
-		err := c.Correct(t.Context(), []document.Correction{document.Deskew, bad}, bytes.NewReader(page), &out)
+		err := c.Correct(t.Context(), []picture.Correction{picture.Deskew, bad}, bytes.NewReader(page), &out)
 		if err == nil || !strings.Contains(err.Error(), bad.String()) {
 			t.Errorf("Correct with %v returned %v, want an error naming it", bad, err)
 		}
@@ -135,7 +135,7 @@ func TestCorrectMagickFails(t *testing.T) {
 func TestNewCorrectorVersion(t *testing.T) {
 	// A Spec with a lower minimum lets the stand-in's old version through the runner; the
 	// stage's own check still refuses it.
-	lenient := document.MagickSpec()
+	lenient := picture.MagickSpec()
 	lenient.Minimum = "6"
 	for _, tc := range []struct {
 		version string
@@ -150,7 +150,7 @@ func TestNewCorrectorVersion(t *testing.T) {
 	} {
 		t.Run(tc.version, func(t *testing.T) {
 			tl, _ := standinMagick(t, tc.version, lenient)
-			c, err := document.NewCorrector(tl)
+			c, err := picture.NewCorrector(tl)
 			if tc.ok {
 				if err != nil || c == nil {
 					t.Errorf("NewCorrector over %s returned %v, %v, want a stage", tc.version, c, err)
@@ -158,9 +158,9 @@ func TestNewCorrectorVersion(t *testing.T) {
 				return
 			}
 			var verr *tool.VersionError
-			if !errors.As(err, &verr) || !errors.Is(err, tool.ErrTooOld) || verr.Minimum != document.MagickMinimum {
+			if !errors.As(err, &verr) || !errors.Is(err, tool.ErrTooOld) || verr.Minimum != picture.MagickMinimum {
 				t.Errorf("NewCorrector over %s returned %v, want a *tool.VersionError, ErrTooOld, minimum %s",
-					tc.version, err, document.MagickMinimum)
+					tc.version, err, picture.MagickMinimum)
 			}
 			if c != nil {
 				t.Errorf("NewCorrector over %s returned a stage with its error", tc.version)
@@ -170,7 +170,7 @@ func TestNewCorrectorVersion(t *testing.T) {
 }
 
 func TestNewCorrectorNil(t *testing.T) {
-	if c, err := document.NewCorrector(nil); err == nil || c != nil {
+	if c, err := picture.NewCorrector(nil); err == nil || c != nil {
 		t.Errorf("NewCorrector(nil) returned %v, %v, want an error", c, err)
 	}
 }
@@ -179,14 +179,14 @@ func TestNewCorrectorNil(t *testing.T) {
 // construction, through the runner.
 func TestMagickSpecRefusesOld(t *testing.T) {
 	installMagick(t, "7.0.11-14")
-	_, err := tool.NewExec(t.Context(), document.MagickSpec())
+	_, err := tool.NewExec(t.Context(), picture.MagickSpec())
 	if !errors.Is(err, tool.ErrTooOld) {
 		t.Errorf("NewExec(MagickSpec()) over 7.0.11-14 returned %v, want ErrTooOld", err)
 	}
 }
 
 // names names corrections for a subtest, joined by +.
-func names(cs []document.Correction) string {
+func names(cs []picture.Correction) string {
 	n := make([]string, len(cs))
 	for i, c := range cs {
 		n[i] = c.String()
@@ -197,12 +197,12 @@ func names(cs []document.Correction) string {
 // TestCorrectionsCatalog checks the catalog: every correction in the fixed order, each with its
 // name and a one-line description, and a value that is no correction with neither.
 func TestCorrectionsCatalog(t *testing.T) {
-	got := document.Corrections()
+	got := picture.Corrections()
 	if !slices.Equal(got, all) {
 		t.Fatalf("Corrections() = %v, want %v", got, all)
 	}
 	got[0] = 0 // The slice is the caller's own.
-	if document.Corrections()[0] != document.Deskew {
+	if picture.Corrections()[0] != picture.Deskew {
 		t.Error("changing Corrections()'s slice changed the catalog")
 	}
 	names := map[string]bool{}
@@ -216,7 +216,7 @@ func TestCorrectionsCatalog(t *testing.T) {
 			t.Errorf("%s's description is %q, want one line saying when to use it", name, desc)
 		}
 	}
-	for _, bad := range []document.Correction{0, document.Grayscale + 1} {
+	for _, bad := range []picture.Correction{0, picture.Grayscale + 1} {
 		if d := bad.Description(); d != "" {
 			t.Errorf("%v's description is %q, want none", bad, d)
 		}
@@ -228,14 +228,14 @@ func TestCorrectionsCatalog(t *testing.T) {
 func TestParseCorrection(t *testing.T) {
 	for _, c := range all {
 		for _, name := range []string{c.String(), strings.ToLower(c.String()), strings.ToUpper(c.String())} {
-			got, err := document.ParseCorrection(name)
+			got, err := picture.ParseCorrection(name)
 			if err != nil || got != c {
 				t.Errorf("ParseCorrection(%q) = %v, %v, want %v", name, got, err, c)
 			}
 		}
 	}
 	for _, name := range []string{"", "sharpen", "Deskew ", "Correction(1)", "contrast stretch"} {
-		got, err := document.ParseCorrection(name)
+		got, err := picture.ParseCorrection(name)
 		if err == nil || !strings.Contains(err.Error(), fmt.Sprintf("%q", name)) || got != 0 {
 			t.Errorf("ParseCorrection(%q) = %v, %v, want an error naming it", name, got, err)
 		}
@@ -253,19 +253,19 @@ const assessOutput = "width=1275\nheight=1650\nskew=-2.488338848312285\ncolored=
 func TestAssess(t *testing.T) {
 	cases := []struct {
 		name, out string
-		want      document.Assessment
+		want      picture.Assessment
 	}{
-		{"skewed", assessOutput, document.Assessment{
+		{"skewed", assessOutput, picture.Assessment{
 			Width: 1275, Height: 1650, Skew: -2.488338848312285, Contrast: 0.108651,
 			Noise: 0.00404191, Sharpness: 0.0461152, Colored: 0, Grayscale: true,
 		}},
 		{"colored", "width=850\nheight=1100\nskew=-0\ncolored=0.00257635\ncontrast=0.49\nsharpness=0.03\nnoise=9.42593e-05\n",
-			document.Assessment{
+			picture.Assessment{
 				Width: 850, Height: 1100, Skew: 0, Contrast: 0.49, Noise: 9.42593e-05,
 				Sharpness: 0.03, Colored: 0.00257635, Grayscale: false,
 			}},
 		{"in any order", "noise=0\nsharpness=0\ncontrast=0\ncolored=0.0009\nskew=7\nheight=2\nwidth=1\n",
-			document.Assessment{Width: 1, Height: 2, Skew: 7, Colored: 0.0009, Grayscale: true}},
+			picture.Assessment{Width: 1, Height: 2, Skew: 7, Colored: 0.0009, Grayscale: true}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -303,7 +303,7 @@ func TestAssessMalformed(t *testing.T) {
 			c, _ := standinCorrector(t)
 			t.Setenv(stdoutEnv, out)
 			got, err := c.Assess(t.Context(), bytes.NewReader(page))
-			if err == nil || got != (document.Assessment{}) {
+			if err == nil || got != (picture.Assessment{}) {
 				t.Errorf("Assess with magick printing %q = %+v, %v, want an error", out, got, err)
 			}
 		})

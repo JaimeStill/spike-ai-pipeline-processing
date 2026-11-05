@@ -10,6 +10,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/goldentest"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // goldenCorrections is the golden file of the corrected pages' sums and their assessments',
@@ -59,7 +60,7 @@ func TestGoldenCorrections(t *testing.T) {
 			}
 			for _, corr := range all {
 				var out bytes.Buffer
-				if err := c.Correct(t.Context(), []document.Correction{corr}, bytes.NewReader(rendered.Bytes()), &out); err != nil {
+				if err := c.Correct(t.Context(), []picture.Correction{corr}, bytes.NewReader(rendered.Bytes()), &out); err != nil {
 					t.Fatal(err)
 				}
 				got[fmt.Sprintf("correct/%s/page-1/%s", set, corr)] = goldentest.Sum(goldentest.CanonicalPNG(out.Bytes()))

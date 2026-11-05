@@ -19,6 +19,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // Evidence 11, the corrections matrix: `mise run bakeoff-corrections` runs TestCorrections once
@@ -39,19 +40,19 @@ import (
 // matrixCell is one cell of the matrix: its name and the corrections it applies.
 type matrixCell struct {
 	name        string
-	corrections []document.Correction
+	corrections []picture.Correction
 }
 
 // matrixCells are the seven cells, in the order the tables give them: none, each correction
 // alone, and all five together.
 var matrixCells = []matrixCell{
 	{"none", nil},
-	{"Deskew", []document.Correction{document.Deskew}},
-	{"Despeckle", []document.Correction{document.Despeckle}},
-	{"ContrastStretch", []document.Correction{document.ContrastStretch}},
-	{"Unsharp", []document.Correction{document.Unsharp}},
-	{"Grayscale", []document.Correction{document.Grayscale}},
-	{"all", []document.Correction{document.Deskew, document.Despeckle, document.ContrastStretch, document.Unsharp, document.Grayscale}},
+	{"Deskew", []picture.Correction{picture.Deskew}},
+	{"Despeckle", []picture.Correction{picture.Despeckle}},
+	{"ContrastStretch", []picture.Correction{picture.ContrastStretch}},
+	{"Unsharp", []picture.Correction{picture.Unsharp}},
+	{"Grayscale", []picture.Correction{picture.Grayscale}},
+	{"all", []picture.Correction{picture.Deskew, picture.Despeckle, picture.ContrastStretch, picture.Unsharp, picture.Grayscale}},
 }
 
 var (
@@ -155,8 +156,8 @@ func TestCorrections(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	magick := hostTool(t, document.MagickSpec())
-	corr, err := document.NewCorrector(magick)
+	magick := hostTool(t, picture.MagickSpec())
+	corr, err := picture.NewCorrector(magick)
 	if err != nil {
 		t.Fatal(err)
 	}

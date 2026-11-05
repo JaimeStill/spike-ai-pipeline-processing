@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // TestImagesHost checks the released preparation on the host's tools: Images over the host's gs
@@ -21,7 +22,7 @@ func TestImagesHost(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for name, corrections := range map[string][]document.Correction{"none": nil, "all": all} {
+	for name, corrections := range map[string][]picture.Correction{"none": nil, "all": all} {
 		t.Run(name, func(t *testing.T) {
 			req := document.ImagesRequest{Dir: t.TempDir(), Corrections: corrections, Concurrency: 4}
 			start := time.Now()

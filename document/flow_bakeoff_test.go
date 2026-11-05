@@ -19,6 +19,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // Ruling N of task documents, the staged flow the inference layer will follow, in the bake-off
@@ -84,7 +85,7 @@ type flowCell struct {
 	// VisionCalls is how many vision requests the page took.
 	VisionCalls int `json:"vision_calls"`
 	// Assessment is the page's measures, for a page the flow sent.
-	Assessment *document.Assessment `json:"assessment,omitempty"`
+	Assessment *picture.Assessment `json:"assessment,omitempty"`
 	// Quality and Reason are the first pass's judgement; Asked the corrections it named, as it
 	// named them; Applied those ParseCorrection read, in the stage's order; Unknown the rest.
 	Quality string   `json:"quality,omitempty"`
@@ -154,7 +155,7 @@ func firstPassTemplate() *protocol.Request {
 
 // firstPassPrompt is the text beside a page's image in its first pass: the first pass's
 // instructions, then the page's figures.
-func firstPassPrompt(a document.Assessment) string {
+func firstPassPrompt(a picture.Assessment) string {
 	return firstPassInstructions() + "\n" + figures(a)
 }
 
@@ -165,8 +166,8 @@ func TestFlow(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	magick := hostTool(t, document.MagickSpec())
-	corr, err := document.NewCorrector(magick)
+	magick := hostTool(t, picture.MagickSpec())
+	corr, err := picture.NewCorrector(magick)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -234,7 +235,7 @@ func asked(cl flowCell) string {
 // page's cell of run, scored against its truth. Images prepares the pages first, reading each
 // page's text layer and rendering only the pages without one; a page that fails in preparation
 // is t's error, and its cell scores as an empty transcription, incomplete.
-func flowRun(t *testing.T, v *vision, corr *document.Corrector, s fixtureSet, run int) []flowCell {
+func flowRun(t *testing.T, v *vision, corr *picture.Corrector, s fixtureSet, run int) []flowCell {
 	t.Helper()
 	f, err := os.Open(s.pdf)
 	if err != nil {
@@ -286,7 +287,7 @@ func flowRun(t *testing.T, v *vision, corr *document.Corrector, s fixtureSet, ru
 
 // flowPage takes one prepared page through the flow, setting cl's text, status, and how it got
 // there. A step that fails is t's error, and leaves cl incomplete.
-func flowPage(t *testing.T, v *vision, corr *document.Corrector, img document.PageImage, cl *flowCell) {
+func flowPage(t *testing.T, v *vision, corr *picture.Corrector, img document.PageImage, cl *flowCell) {
 	t.Helper()
 	if img.PNG == nil && document.HasText(img.Text) {
 		cl.Source = "text-layer"
@@ -657,7 +658,7 @@ func reportCorrections(t *testing.T, set string, flows []flowResult) {
 	}
 	t.Logf("recorded: flow %s: %d first passes, judged %v; %d flagged with corrections, %d unknown names dropped; second pass helped %d, hurt %d, same %d",
 		set, sent, judged, flagged, unknown, helped, hurt, same)
-	for _, c := range document.Corrections() {
+	for _, c := range picture.Corrections() {
 		pages := byCorrection[c.String()]
 		t.Logf("recorded: flow %s: %s asked %d times: %s", set, c, len(pages), strings.Join(pages, " "))
 	}

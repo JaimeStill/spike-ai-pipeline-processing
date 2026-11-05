@@ -2,10 +2,11 @@
 # generate regenerates the generated legacy fixtures: each of office's generated OOXML fixtures in
 # ../ooxml (the *.libreoffice.* ones) saved by LibreOffice as .doc, .xls, or .ppt into generated/,
 # named as its original with the legacy extension. LibreOffice runs as the office package runs
-# it: soffice in the package's default image, LibreOfficeImage in ../../libreoffice.go, under the
-# container runner's lockdown (no network, the caller's uid:gid, every capability dropped), with
-# a user profile of its own in the mounted working directory. It needs docker, a laptop
-# prerequisite that the check never runs, and pulls the image when it isn't present.
+# it: soffice in the default image, the picture package's LibreOfficeImage in
+# ../../../picture/spec.go, under the container runner's lockdown (no network, the caller's
+# uid:gid, every capability dropped), with a user profile of its own in the mounted working
+# directory. It needs docker, a laptop prerequisite that the check never runs, and pulls the image
+# when it isn't present.
 #
 # It writes generated/MANIFEST: the image, soffice's --version line, and each file's SHA-256.
 # LibreOffice's binary formats carry the time they were saved, so a regeneration's sums differ;
@@ -13,8 +14,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-# The image's reference, from the Go literal the package declares, its two halves joined.
-image=$(tr '\n' ' ' <../../libreoffice.go | sed -E 's/"[[:space:]]*\+[[:space:]]*"//g' |
+# The image's reference, from the Go literal the picture package declares, its two halves joined.
+image=$(tr '\n' ' ' <../../../picture/spec.go | sed -E 's/"[[:space:]]*\+[[:space:]]*"//g' |
 	grep -oE 'gotenberg/gotenberg:[^"@]+@sha256:[0-9a-f]{64}')
 
 work=$(mktemp -d)

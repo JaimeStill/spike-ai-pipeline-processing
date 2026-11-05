@@ -9,6 +9,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/goldentest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // goldenPictures is the golden file of the converted pictures' sums, recorded before the
@@ -16,13 +17,13 @@ import (
 const goldenPictures = "testdata/golden/pictures.sha256"
 
 // TestGoldenPictures converts every fixture that may hold pictures as Markdown through the real
-// office, soffice in the default image, and the host's magick, and every picture of
-// exportPictures through ConvertPicture, at the default scale and at 1, and asserts that each
-// converted picture's PNG, and each Markdown, is byte for byte what it was when the golden file
-// was recorded, at the commit before the picture package took the conversion over. The PNGs are
-// compared whole: magick writes them without the time of the run.
+// office, soffice in the default image, and the host's magick, and every picture of exportPictures
+// through the picture package's Convert, office's ConvertPicture before, at the default scale and
+// at 1, and asserts that each converted picture's PNG, and each Markdown, is byte for byte what it
+// was when the golden file was recorded, at the commit before the picture package took the
+// conversion over. The PNGs are compared whole: magick writes them without the time of the run.
 func TestGoldenPictures(t *testing.T) {
-	c := fullConverter(t)
+	c, pc := fullConverters(t)
 	got := map[string]string{}
 	for _, pattern := range pictureFixtures {
 		paths, err := filepath.Glob(filepath.Join("testdata", pattern))
@@ -60,7 +61,7 @@ func TestGoldenPictures(t *testing.T) {
 			t.Fatal(err)
 		}
 		for _, scale := range []int{0, 1} {
-			out, err := c.ConvertPicture(t.Context(), office.PictureRequest{Dir: t.TempDir(), Path: path, MetafileScale: scale})
+			out, err := pc.Convert(t.Context(), picture.Request{Dir: t.TempDir(), Path: path, MetafileScale: scale})
 			if err != nil {
 				t.Fatalf("%s: %v", p.entry, err)
 			}

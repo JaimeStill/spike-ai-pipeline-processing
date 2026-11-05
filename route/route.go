@@ -51,7 +51,8 @@ const (
 	// Unrouted is anything else: an executable, by a PE, ELF, or Mach-O signature or a "#!"
 	// line; an OLE2 compound file without a legacy or .msg extension; content named .eml or
 	// stored as a message whose header isn't a message's shape, such as one that begins with an
-	// mbox's "From " line; and other content of no routed signature.
+	// mbox's "From " line; HTML, by its .html, .htm, or .xhtml extension, web content no stage
+	// takes yet; and other content of no routed signature.
 	Unrouted Route = "unrouted"
 )
 
@@ -80,12 +81,14 @@ var legacyExtensions = map[string]bool{
 }
 
 // textExtensions are the extensions that name content of no signature text: plain text, tables,
-// structured data, markup, subtitles, and logs.
+// structured data, markup, subtitles, and logs. HTML, .html, .htm, and .xhtml, is none of them:
+// it is web content, which no stage takes yet, so it is unrouted, but for one whose root element
+// is an SVG's, which is an SVG.
 var textExtensions = map[string]bool{
 	".txt": true, ".text": true, ".csv": true, ".tsv": true, ".tab": true,
 	".json": true, ".ndjson": true, ".jsonl": true, ".xml": true, ".yaml": true, ".yml": true,
-	".toml": true, ".ini": true, ".md": true, ".markdown": true, ".html": true, ".htm": true,
-	".xhtml": true, ".srt": true, ".vtt": true, ".log": true,
+	".toml": true, ".ini": true, ".md": true, ".markdown": true, ".srt": true, ".vtt": true,
+	".log": true,
 }
 
 // kindRoutes are the routes of the kinds whose signature decides alone, with their reasons.

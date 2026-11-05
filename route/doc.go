@@ -32,5 +32,6 @@
 //   - [Video]: MP4, Matroska, WebM, or AVI.
 //   - [Text]: content of no signature named with a text extension, such as .txt, .csv, or
 //     .json, or marked by a byte order mark.
-//   - [Unrouted]: anything else, an executable among it, whose reason names it an executable.
+//   - [Unrouted]: anything else, an executable among it, whose reason names it an executable, and
+//     HTML, which is web content, not text, unless its root element is an SVG's.
 package route

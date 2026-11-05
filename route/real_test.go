@@ -19,16 +19,17 @@ var testdataRoutes = map[string]route.Route{
 	".docx": route.Office, ".xlsx": route.Office, ".pptx": route.Office,
 	".doc": route.Office, ".xls": route.Office, ".ppt": route.Office,
 	".wav":  route.Audio,
+	".svg":  route.VisionConverted,
 	".json": route.Text, ".md": route.Text, ".txt": route.Text,
 	".sh": route.Unrouted, ".typ": route.Unrouted,
 }
 
-// TestFileTestdata routes the repository's own testdata, the office, document, and tool
+// TestFileTestdata routes the repository's own testdata, the office, document, picture, and tool
 // packages' fixtures: each file is routed as its extension says it should be, a script by its
 // "#!" line.
 func TestFileTestdata(t *testing.T) {
 	n := 0
-	for _, dir := range []string{"../office/testdata", "../document/testdata", "../tool/testdata"} {
+	for _, dir := range []string{"../office/testdata", "../document/testdata", "../picture/testdata", "../tool/testdata"} {
 		err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 			if err != nil || d.IsDir() {
 				return err
@@ -101,7 +102,7 @@ var docsRoutes = map[string]route.Route{
 	"application/json":            route.Text,
 	"application/x-ndjson":        route.Text,
 	"application/x-subrip":        route.Text,
-	"application/xhtml+xml":       route.Text,
+	"application/xhtml+xml":       route.Unrouted,
 	"text/csv":                    route.Text,
 	"text/xml":                    route.Text,
 	"text/x-shellscript":          route.Unrouted,
