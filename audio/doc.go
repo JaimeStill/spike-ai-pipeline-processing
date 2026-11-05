@@ -30,6 +30,16 @@
 // same file through either runner. A loop that stops early, or a context that ends, stops the runs
 // in flight, and the media directory keeps only the windows the stream yielded.
 //
+// Join merges the windows' transcripts, one string for each in plan order, into one Transcript,
+// as a JoinRequest says: each seam with Hugging Face transformers' best-offset merge, the later
+// window's head slid over the earlier window's tail, the best-scoring offset that matches at least
+// 2 words, compared lowercased with their punctuation dropped, taken, and the two spliced at the
+// middle of the overlap it aligns. The search is bounded to SeamWords words each side,
+// DefaultSeamWords, 16, by default, the reach of a 2 s overlap, so a phrase repeated further away
+// is never the splice. A seam that matches fewer than 2 words, as one beside a failed window's
+// empty transcript does, is concatenated whole. Each seam is reported as a Seam, matched or not,
+// with where in the transcript's words it is; the same transcripts give the same Transcript.
+//
 // Its exported identifiers:
 //
 //   - [FFmpegSpec] and [FFprobeSpec] declare ffmpeg and ffprobe for either runner's constructor.
@@ -50,5 +60,8 @@
 //   - [WindowLimit] is the longest a window may be, 30 s.
 //   - [DefaultOverlap], [DefaultMinSilence], and [DefaultBelow] are a Request's defaults.
 //   - [CheckOverlap] returns the overlap a request asks for, or refuses it.
+//   - [Join] merges window transcripts into a [Transcript], as a [JoinRequest] says, each seam
+//     reported as a [Seam].
+//   - [DefaultSeamWords] is a JoinRequest's default seam word bound, 16.
 //   - [ErrRequest] is a refused request's cause; [ErrNoAudio] a source's with no audio stream.
 package audio

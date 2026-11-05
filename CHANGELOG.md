@@ -32,6 +32,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   samples. A loop that stops early or a context that ends stops the runs in flight, and the media
   directory keeps only the windows yielded. A plan of another source, its duration not the
   source's, is refused with `ErrRequest`.
+- `audio.Join` merges the windows' transcripts, one string for each in plan order, into one
+  `Transcript`, its `Words` as the windows gave them and `Text` them spaced, as a `JoinRequest`
+  says. Each seam is merged by Hugging Face transformers' best-offset merge,
+  `_find_longest_common_sequence`, over words compared lowercased with their punctuation dropped:
+  the offset that scores best on matches over offset plus a small tie-break, matching at least 2
+  words, is spliced at the middle of the overlap it aligns. The search reaches `SeamWords` words
+  into each window, `DefaultSeamWords`, 16, by default, so a repeat beyond the overlap is never the
+  splice; a seam matching fewer than 2 words, as one beside an empty transcript does, is
+  concatenated whole. Each `Seam` reports whether it matched, the words matched and aligned, and
+  its position in the words. A `SeamWords` below 0, or 1, is refused with `ErrRequest`.
 
 ### Changed
 
