@@ -261,7 +261,14 @@ func TestConcurrentDispatch(t *testing.T) {
 			go run(input(t, "first.txt", content))
 			<-f.text.entered
 			go run(input(t, "second.txt", content))
-			<-idx.waiting
+			// A second dispatch that enters the stage, rather than waiting on the claim, is a
+			// duplicate prepare.
+			select {
+			case <-idx.waiting:
+			case name := <-f.text.entered:
+				close(f.text.release)
+				t.Fatalf("%s entered the stage while another dispatch held the claim", name)
+			}
 			close(f.text.release)
 			outcomes := map[dispatch.Outcome]int{}
 			for range 2 {

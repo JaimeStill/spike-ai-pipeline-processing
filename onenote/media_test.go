@@ -222,7 +222,11 @@ func TestMediaNotPlain(t *testing.T) {
 		t.Fatal(err)
 	}
 	page := decodePage(t, `{"content":[{"kind":"image","file":"../up.png"},{"kind":"image","file":".."}]}`)
-	for _, m := range collectMedia(t, page, dir) {
+	media := collectMedia(t, page, dir)
+	if len(media) != 2 {
+		t.Fatalf("%d media, want 2", len(media))
+	}
+	for _, m := range media {
 		if m.Path != "" || m.Route != route.Unrouted || m.Reason != "its file name isn't a plain file name" {
 			t.Errorf("%s: path %q, %s, %q; want no path, unrouted", m.File, m.Path, m.Route, m.Reason)
 		}

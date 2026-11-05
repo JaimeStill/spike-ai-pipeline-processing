@@ -540,7 +540,7 @@ func TestOneNoteStage(t *testing.T) {
 
 	events = dispatchAll(t, d, filepath.Join(onenoteFixtures, "New Section 1.one"), nil)
 	img := events[0]
-	if filepath.Base(img.Part.Name) == "" || img.Part.SHA256+".jpg" != jpg || img.Outcome != dispatch.Seen || img.Recorded != dispatch.Prepared {
+	if img.Part.SHA256+".jpg" != jpg || img.Outcome != dispatch.Seen || img.Recorded != dispatch.Prepared {
 		t.Errorf("the shared image: %s %s, recorded %s", img.Part.Name, img.Outcome, img.Recorded)
 	}
 	if last := events[len(events)-1]; last.Part.Depth != 0 || last.Outcome != dispatch.Prepared {
