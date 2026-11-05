@@ -132,7 +132,7 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
 that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, archives other
-than ZIP, audio, video, or text yet.
+than ZIP, video, or text yet.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -242,11 +242,14 @@ PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; 
 mail's records, each message's attachments found as parts, then its record, then its Markdown,
 an embedded message mail gives no file for prepared inline in its attachment's place; and
 `OneNoteStage`, onenote's records, each page's record then its Markdown, and each of its media
-found as a part. A found part's `Where` names its place, such as `message 2097220, attachment 1`
+found as a part; and `AudioStage`, an audio part's plan, a record, then each window cut at a
+silence, a 16 kHz mono WAV, an audio output in plan order whose Meta carries its index, span, cut,
+and seams, for a layer above to transcribe and join with `audio.Join`. A found part's `Where` names its place, such as `message 2097220, attachment 1`
 or `page {...}, page ink`, and it is dispatched again, so a PDF attached to a message reaches the
 document stage and a page's ink becomes a PNG. Kinds no adapter reads yet, ODF, RTF,
-WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet. An encrypted OOXML package, which
-office refuses, is encrypted.
+WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet, as is video, and audio when the
+caller, with no ffmpeg, registers no audio stage. An encrypted OOXML package, which office refuses,
+is encrypted; a source with no audio stream fails, its error wrapping `audio.ErrNoAudio`.
 
 `ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry at a
 time: each file entry is written into the part's directory under its content's SHA-256 and found as
@@ -290,6 +293,13 @@ notes, err := dispatch.NewOneNoteStage(dispatch.OneNoteConfig{Reader: nr, Versio
 if err != nil {
 	return err
 }
+// The audio stage's Splitter is over ffmpeg and ffprobe; Concurrency windows are cut at once.
+speech, err := dispatch.NewAudioStage(dispatch.AudioConfig{
+	Splitter: sp, Version: dispatch.Versions(ff, fp), Concurrency: 4,
+})
+if err != nil {
+	return err
+}
 // The zip stage enforces the bomb rule as written under the dispatcher's inspect.Options.
 archives, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: opts})
 if err != nil {
@@ -299,7 +309,7 @@ d, err := dispatch.New(dispatch.Config{
 	Stages: dispatch.Stages{
 		route.Document: docs, route.Office: offices, route.VisionConverted: pictures,
 		route.Vision: dispatch.NewVisionStage(), route.Nested: mail, route.OneNote: notes,
-		route.Archive: archives,
+		route.Archive: archives, route.Audio: speech,
 	},
 	Index: dispatch.NewMemoryIndex(), Dir: work, Inspect: opts,
 })

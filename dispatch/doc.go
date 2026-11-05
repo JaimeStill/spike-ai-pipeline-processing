@@ -1,7 +1,7 @@
 // Package dispatch walks an input and every part found in it to the stages that prepare them,
 // on the standard library and this module's route and inspect packages, and, for the format
 // packages' adapters, which build on Linux only, on document, office, picture, email, onenote,
-// and tool. It never calls a model: it reports what each part is and what its stage prepared,
+// audio, and tool. It never calls a model: it reports what each part is and what its stage prepared,
 // for a layer above to send on. The stages are the caller's, registered by route; the format
 // packages' adapters are stages.
 //
@@ -64,7 +64,7 @@
 // A [Stage] names its [Identity], its name, its tool's version, and its configuration's hash,
 // and prepares one part: Prepare yields [Item]s, each an [Output] it prepared or a [Found] part,
 // a file it wrote into the directory the dispatcher made for the part. An Output is text,
-// Markdown, an image, or a record, held in a file or inline, with the stage's metadata.
+// Markdown, an image, a record, or audio, held in a file or inline, with the stage's metadata.
 //
 // # Adapters
 //
@@ -94,6 +94,16 @@
 //   - [OneNoteStage], for route.OneNote: onenote's records, a page's record followed by its
 //     Markdown, and each of its media found as a part, "page <id>, <where>"; a medium onenote
 //     wrote no content for is a record.
+//   - [AudioStage], for route.Audio: a WAV, FLAC, MP3, Ogg, or M4A through audio's Splitter, its
+//     plan a record, an [AudioPlan], then each window cut in a silence, a 16 kHz mono WAV, an
+//     audio output in plan order, its Meta its index, span, cut, and seams, so a layer above
+//     transcribes each and joins their transcripts by audio.Join. It prepares; it transcribes
+//     nothing. A source with no audio stream fails, its error wrapping audio.ErrNoAudio, and a
+//     failed window fails the part once the other windows are yielded. A caller with no ffmpeg
+//     and ffprobe has no Splitter and registers no audio stage, so its audio is no processor yet.
+//
+// No adapter takes route.Video yet: a video part is no processor yet, as is every part whose
+// route has no stage registered.
 //
 // Where a stage yields a record and its Markdown, per message or page, the record comes first,
 // then the Markdown of the same name.
@@ -257,13 +267,16 @@
 //     workers, yielding [PoolEvent]s.
 //   - [Stage], its [Identity], and [HashConfig] for an identity's configuration hash; a stage
 //     yields [Item]s, made by [OutputItem] and [PartItem], each an [Output] of an [OutputKind],
-//     [TextOutput], [MarkdownOutput], [ImageOutput], or [RecordOutput], or a [Found] part, and
+//     [TextOutput], [MarkdownOutput], [ImageOutput], [RecordOutput], or [AudioOutput], or a
+//     [Found] part, and
 //     ends with [ErrNoProcessor] or [ErrEncrypted] to name its outcome.
-//   - The adapters, on Linux: [DocumentStage], [OfficeStage], [PictureStage], [EmailStage], and
-//     [OneNoteStage], made by [NewDocumentStage], [NewOfficeStage], [NewPictureStage],
-//     [NewEmailStage], and [NewOneNoteStage] over a [DocumentConfig], [OfficeConfig],
-//     [PictureConfig], [EmailConfig], and [OneNoteConfig]; [VisionStage], made by
-//     [NewVisionStage]; and [Versions], a stage's tools' version.
+//   - The adapters, on Linux: [DocumentStage], [OfficeStage], [PictureStage], [EmailStage],
+//     [OneNoteStage], and [AudioStage], made by [NewDocumentStage], [NewOfficeStage],
+//     [NewPictureStage], [NewEmailStage], [NewOneNoteStage], and [NewAudioStage] over a
+//     [DocumentConfig], [OfficeConfig], [PictureConfig], [EmailConfig], [OneNoteConfig], and
+//     [AudioConfig]; the audio stage's plan record an [AudioPlan] of [AudioWindow]s and
+//     [AudioSpan]s; [VisionStage], made by [NewVisionStage]; and [Versions], a stage's tools'
+//     version.
 //   - [ZipStage], made by [NewZipStage] over a [ZipConfig], on any platform.
 //   - [Index], keyed by a [Key], holding [Entry]s, each counting its outputs and its [Child]ren,
 //     both appended under a claim and read back streamed; the shipped

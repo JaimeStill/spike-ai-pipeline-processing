@@ -42,6 +42,19 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   splice; a seam matching fewer than 2 words, as one beside an empty transcript does, is
   concatenated whole. Each `Seam` reports whether it matched, the words matched and aligned, and
   its position in the words. A `SeamWords` below 0, or 1, is refused with `ErrRequest`.
+- `dispatch.AudioStage`, for `route.Audio`, a WAV, FLAC, MP3, Ogg, or M4A, prepares speech for a
+  layer above to transcribe, running no model: built by `NewAudioStage` over an `AudioConfig`, the
+  caller's `audio.Splitter`, its tools' `Version`, the `audio.Request` every plan is made under,
+  its overlap and silence settings, and the windows' `Concurrency`. It yields the part's plan first,
+  a record named `plan`, an `AudioPlan` of the source's stream, its silences, and its
+  `AudioWindow`s and seams, each an `AudioSpan` in seconds; then each window in plan order, a new
+  `AudioOutput`, `window N`, a 16 kHz mono WAV named by its SHA-256, its Meta its index, the
+  plan's count, its span, cut, samples, and the seams it shares with its neighbours. A failed
+  window fails the part once the others are yielded, and a source with no audio stream fails with
+  `audio.ErrNoAudio`. The identity hashes the overlap and detection settings, defaults applied,
+  not the concurrency. A caller with no ffmpeg registers no audio stage, so audio stays no
+  processor yet, as video does. The integration tier dispatches its fixtures through it too: the
+  tool package's WAV and onenote's embedded MP3 are now prepared.
 
 ### Changed
 

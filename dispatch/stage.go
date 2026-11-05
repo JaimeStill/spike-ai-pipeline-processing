@@ -126,6 +126,8 @@ const (
 	// RecordOutput is a structured record, as JSON, such as a mail message or an office document's
 	// model.
 	RecordOutput OutputKind = "record"
+	// AudioOutput is audio prepared for a model's audio input, such as a speech window's WAV.
+	AudioOutput OutputKind = "audio"
 )
 
 // Output is one thing a stage prepared for a model: its kind, a name the stage gives it, such as

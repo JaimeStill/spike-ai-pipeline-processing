@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
@@ -21,10 +22,10 @@ import (
 // builtMSG is email's built .msg, attaching a docx, a legacy xls, a TIFF, an EMF, and a .msg.
 var builtMSG = filepath.Join("..", "email", "testdata", "built", "msg", "office-attachments.msg")
 
-// allStages returns every adapter, over this machine's gs and magick, LibreOffice through the
-// container runner in its pinned image, and the office, mail, and onenote mise pins (the last two
-// through emailStage and onenoteStage), as a composition root wires them: the document stage
-// reading each page's text layer.
+// allStages returns every adapter, over this machine's gs, magick, ffmpeg, and ffprobe,
+// LibreOffice through the container runner in its pinned image, and the office, mail, and onenote
+// mise pins (the last two through emailStage and onenoteStage), as a composition root wires them:
+// the document stage reading each page's text layer.
 func allStages(t *testing.T) dispatch.Stages {
 	t.Helper()
 	gs := pinned(t, document.GhostscriptSpec())
@@ -65,6 +66,15 @@ func allStages(t *testing.T) dispatch.Stages {
 	if err != nil {
 		t.Fatal(err)
 	}
+	ff, fp := pinned(t, audio.FFmpegSpec()), pinned(t, audio.FFprobeSpec())
+	splitter, err := audio.NewSplitter(audio.Config{FFmpeg: ff, FFprobe: fp})
+	if err != nil {
+		t.Fatal(err)
+	}
+	audios, err := dispatch.NewAudioStage(dispatch.AudioConfig{Splitter: splitter, Version: dispatch.Versions(ff, fp)})
+	if err != nil {
+		t.Fatal(err)
+	}
 	return dispatch.Stages{
 		route.Document:        docs,
 		route.Office:          offices,
@@ -72,6 +82,7 @@ func allStages(t *testing.T) dispatch.Stages {
 		route.Vision:          dispatch.NewVisionStage(),
 		route.Nested:          emailStage(t),
 		route.OneNote:         onenoteStage(t),
+		route.Audio:           audios,
 	}
 }
 

@@ -71,5 +71,9 @@ express; the spike's question and evidence live in the root repository's `contex
   records inspection over ~/docs and vision's reading of OneNote ink, scored by internal/textscore
   as document's bake-offs are, and times the onenote adapter and the dispatcher, resumed and pooled,
   over mail's scale store.
-- **audio**: windows cut at silences, concurrent transcription, and the seam merge.
+- **audio**: pre-inference preparation of speech: package audio over ffmpeg and ffprobe, through
+  either runner, probes a source, plans windows of at most 30 s cut at the middle of silences with
+  2 s seams, cuts them concurrently as 16 kHz mono WAV named by SHA-256, and joins the windows'
+  transcripts at the seams; dispatch's audio stage yields a part's plan as a record and its
+  windows as audio outputs. Transcription is test code.
 - **streams**: live and real-time-paced media, and chat streams, as events.

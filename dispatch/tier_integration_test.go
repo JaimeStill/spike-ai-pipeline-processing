@@ -24,7 +24,8 @@ import (
 // The integration tier's run of every fixture through Dispatch against the real stages: office
 // over the office CLI, LibreOffice in its pinned image for the legacy formats, and magick; the
 // document stage over gs; the email stage over mail; the onenote stage over onenote; the picture
-// stage over magick and LibreOffice; the vision stage; and the zip stage. Each route is held to
+// stage over magick and LibreOffice; the vision stage; the audio stage over ffmpeg and ffprobe;
+// and the zip stage. Each route is held to
 // testdata/tier-routes.tsv, the hand route truth, and a sample of the image outputs is sent to
 // Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, which set A loads.
 
