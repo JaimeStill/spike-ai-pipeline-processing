@@ -47,7 +47,8 @@ type ZipConfig struct {
 // An entry the stage can't write is a [RecordOutput] named by its place, "zip entry <name>", its
 // Meta naming the entry and why, never dropped:
 //
-//   - an encrypted entry, which archive/zip can't decrypt, its Meta's check "zip-encrypted";
+//   - an encrypted entry, which archive/zip can't decrypt, its Meta's check "zip-encrypted" and
+//     its outcome "encrypted";
 //   - an entry whose written bytes pass both the bomb ratio, against its compressed size, and the
 //     bomb size, the thresholds of [ZipConfig.Inspect], whatever its central directory declares:
 //     its writing stops there and its partial file is removed, its Meta's check "zip-bomb", its
@@ -173,8 +174,11 @@ func (s *ZipStage) entry(ctx context.Context, f *zip.File, dir string) (Item, er
 		if rec.Check != "" {
 			meta["check"], meta["class"], meta["evidence"] = rec.Check, rec.Class, rec.Evidence
 		}
-		if rec.Check == string(inspect.ZIPBomb) {
+		switch rec.Check {
+		case string(inspect.ZIPBomb):
 			meta["outcome"] = string(Quarantined)
+		case string(inspect.ZIPEncrypted):
+			meta["outcome"] = string(Encrypted)
 		}
 		o, err := record(where, rec, meta)
 		return OutputItem(o), err

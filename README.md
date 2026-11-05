@@ -248,11 +248,11 @@ document stage and a page's ink becomes a PNG. Kinds no adapter reads yet, ODF, 
 WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet. An encrypted OOXML package, which
 office refuses, is encrypted.
 
-`ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry
-at a time: each file entry is written into the part's directory under its content's SHA-256 and
-found as a part, `zip entry <name>`, its stored name only ever a name, so a nested ZIP is
-dispatched again and its entries below it. A directory is no part. An encrypted entry is a
-record, and the ZIP encrypted once its other entries are dispatched. The stage enforces the zip
+`ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry at a
+time: each file entry is written into the part's directory under its content's SHA-256 and found as
+a part, `zip entry <name>`, its stored name only ever a name, so a nested ZIP is dispatched again
+and its entries below it. A directory is no part. An encrypted entry is a record, recorded
+encrypted, and the ZIP encrypted once its other entries are dispatched. The stage enforces the zip
 bomb rule again on the bytes it writes, under `ZipConfig.Inspect`, the dispatcher's
 `inspect.Options`: an entry past both thresholds as written, whatever its central directory
 declares, is stopped, its partial file removed, and recorded quarantined with its evidence. A ZIP

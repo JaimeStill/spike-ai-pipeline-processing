@@ -203,7 +203,8 @@ func TestZipStage(t *testing.T) {
 
 // TestZipEncrypted dispatches inspect's encrypted.zip, an ordinary entry beside an encrypted one:
 // inspect flags it and lets it proceed; the ordinary entry is a part; the encrypted one is a
-// record naming it; and the ZIP is encrypted, its reason counting its encrypted entries.
+// record naming it, its outcome encrypted; and the ZIP is encrypted, its reason counting its
+// encrypted entries.
 func TestZipEncrypted(t *testing.T) {
 	d, _, work := zipDispatcher(t, inspect.Options{})
 	events := dispatchAll(t, d, filepath.Join(inspectFixtures, "encrypted.zip"), nil)
@@ -213,7 +214,8 @@ func TestZipEncrypted(t *testing.T) {
 		t.Errorf("encrypted.zip: %q, %v, %d children", z.Reason, z.Err, z.Children)
 	}
 	rec := outputNamed(t, z, dispatch.RecordOutput, "zip entry secret.txt")
-	if rec.Meta["check"] != string(inspect.ZIPEncrypted) || rec.Meta["reason"] != "encrypted" || rec.Meta["name"] != "secret.txt" {
+	if rec.Meta["check"] != string(inspect.ZIPEncrypted) || rec.Meta["reason"] != "encrypted" || rec.Meta["name"] != "secret.txt" ||
+		rec.Meta["outcome"] != string(dispatch.Encrypted) {
 		t.Errorf("secret.txt's record meta %v", rec.Meta)
 	}
 	wantEmpty(t, work)

@@ -102,11 +102,11 @@
 // archive/zip, on any platform, one entry at a time, each file entry written into the part's
 // directory under its content's SHA-256 and found as a part, named by its stored name, "zip
 // entry <name>"; the stored name is never a path. A directory's entry is no part. An encrypted
-// entry is a record, and the ZIP, once its other entries are dispatched, [Encrypted]. The stage
-// enforces inspect's zip bomb rule again on the bytes it writes, under the thresholds of the
-// inspect.Options its [ZipConfig] is given, which should be the dispatcher's: an entry past both
-// is stopped, its partial file removed, and recorded quarantined, with its evidence, whatever
-// its central directory declared. A tar, gzip, zstd, or 7z archive, or a cabinet, has no
+// entry is a record, recorded encrypted, and the ZIP, once its other entries are dispatched,
+// [Encrypted]. The stage enforces inspect's zip bomb rule again on the bytes it writes, under the
+// thresholds of the inspect.Options its [ZipConfig] is given, which should be the dispatcher's:
+// an entry past both is stopped, its partial file removed, and recorded quarantined, with its
+// evidence, whatever its central directory declared. A tar, gzip, zstd, or 7z archive, or a cabinet, has no
 // processor yet. Its identity is "zip", this package's version of it, and a hash of its
 // thresholds. A ZIP with a traversing, absolute, or drive letter name, or a symbolic link, is
 // quarantined by inspect before the stage runs; under a policy that lets it proceed, the stage
