@@ -997,7 +997,8 @@ func TestFindingsScaleDispatch(t *testing.T) {
 // cursorCaller is a caller dispatching a mail store by the cursor rule of the package doc's
 // "Resuming a store", as storeCaller is, but for the Threader: storeCaller saves it at every
 // message, which costs a marshal of every message's threading keys so far, each message, and so
-// grows with the square of the store; cursorCaller saves it only when asked, with the cursor.
+// grows with the square of the store, as the doc says; cursorCaller saves it only when asked,
+// with the cursor.
 type cursorCaller struct {
 	// committed are the committed message outputs, as "kind name"; messages counts the messages
 	// among them.

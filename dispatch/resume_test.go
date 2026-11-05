@@ -24,7 +24,9 @@ import (
 // it gathers each message's outputs, those named "message ...", and commits them, its cursor
 // advanced to the message's id and its Threader, fed each message record of the read's own,
 // saved with it, once the message's last output has come, its Markdown, or its record when the
-// record's Meta says none follows.
+// record's Meta says none follows. It saves a checkpoint at every message, N = 1, which the
+// doc advises against for a large store: the fixtures' few messages make every message a crash
+// point the test can resume from, and test code alone uses it.
 type storeCaller struct {
 	// committed are the committed message outputs, as "kind name".
 	committed []string

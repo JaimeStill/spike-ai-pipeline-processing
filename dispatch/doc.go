@@ -78,7 +78,8 @@
 //     page's text layer a text output and its image a PNG, under the request the caller gives.
 //   - [OfficeStage], for route.Office: office's Markdown, and each medium office wrote, a
 //     converted picture as its PNG, found as a part. ODF, RTF, WordPerfect, an Excel binary
-//     workbook, and a legacy document without LibreOffice have no processor yet.
+//     workbook, and a legacy document without LibreOffice have no processor yet; an encrypted
+//     OOXML package, which office refuses, ends with [ErrEncrypted].
 //   - [PictureStage], for route.VisionConverted: a TIFF, EMF, WMF, or SVG to a PNG through
 //     picture's Converter. HEIC, WebP, and AVIF, and a picture whose tool the Converter lacks,
 //     have no processor yet.
@@ -212,8 +213,8 @@
 // A caller resuming a large store after a crash combines three things it keeps as it goes: a
 // [FileIndex] in a directory that outlives the process, which holds the entries and flags of the
 // parts recorded before the crash, so the resumed dispatch sees each attachment already prepared;
-// the cursor, the id of the last message whose outputs it has persisted; and an email.Threader
-// saved by its MarshalBinary with that cursor, fed every message up to it.
+// the cursor, the id of the last message whose outputs it has persisted; and an email.Threader,
+// fed every message up to the cursor, saved by its MarshalBinary together with it: a checkpoint.
 //
 // The store's outputs stream as the email stage reads them, so the cursor advances while the
 // store is dispatched. For each message, in mail's order, the caller has, as events: each of its
@@ -222,20 +223,29 @@
 // table's order; then the message's record, its Meta "id" the message's store id; then its
 // Markdown, when the record's Meta "markdown" says "follows". The message's last output, its
 // Markdown or, with none, its record, is the last of everything the message holds, so the caller
-// persists the message's outputs as they come and, at its last, sets the cursor to its id and
-// saves the Threader, fed the message's record, decoded into an email.Message, with it. A
-// message record whose Meta has "embedded_in" is an inline message's, part of its parent's, and
-// is fed to no Threader. Outputs of the message past the cursor that a crash interrupts come
-// again on resuming, so the caller discards or overwrites what it had of that message.
+// persists the message's outputs as they come and feeds the Threader the message's record,
+// decoded into an email.Message; at the message's last output the message is done, and its id is
+// the cursor. A message record whose Meta has "embedded_in" is an inline message's, part of its
+// parent's, and is fed to no Threader.
+//
+// The caller saves the cursor and the Threader together every N messages, or on a timer, not at
+// every message: each save marshals every message's keys so far, so saving at every message grows
+// with the square of the store. Task onenote's finding, docs/findings/onenote.md, measured one
+// save at 3.5 ms at 25,000 messages, about 3 minutes of saving over a 50,000-message store whose
+// dispatch took 16 s. The cursor rule stays exact: a checkpoint is saved only at a message's last
+// output, its cursor that message's id and its Threader fed exactly the messages up to it. Every
+// message past the checkpoint's cursor comes again on resuming, those persisted after the
+// checkpoint and the one a crash interrupted alike, so the caller discards or overwrites what it
+// had of them and feeds the restored Threader each of their records once.
 //
 // To resume, the caller restores the Threader by UnmarshalBinary and dispatches the store, over
-// the same index directory, with After set to the cursor: every part prepared before the crash
-// is seen, the message past the cursor's included, and once the store's event is done, the
-// Threader's threads are the whole store's. A process that died leaves its claims and pending
-// outputs in the index's directory until they are [FileOptions.Stale], so the resumed dispatch
-// waits that out before it claims the store, or a part in flight at the crash, and the takeover
-// removes the dead claim's pending outputs; a dispatch whose loop stopped, rather than died,
-// released them.
+// the same index directory, with After set to the checkpoint's cursor: every part prepared before
+// the crash is seen, the parts of the messages past the cursor included, and once the store's
+// event is done, the Threader's threads are the whole store's. A process that died leaves its
+// claims and pending outputs in the index's directory until they are [FileOptions.Stale], so the
+// resumed dispatch waits that out before it claims the store, or a part in flight at the crash,
+// and the takeover removes the dead claim's pending outputs; a dispatch whose loop stopped, rather
+// than died, released them.
 //
 // Its exported identifiers:
 //
