@@ -483,7 +483,7 @@ Given a LibreOffice Tool, `Convert` converts it to that OOXML format through sof
 then runs office on the result; without one it is refused with `ErrNoLibreOffice` before anything
 runs. `picture.LibreOfficeSpec` declares soffice, minimum `picture.LibreOfficeMinimum`, 24.2, and
 `picture.LibreOfficeImage` is the default image a caller may replace:
-gotenberg/gotenberg:8.39.0-libreoffice, LibreOffice 26.8.1.1, pinned by digest, which
+gotenberg/gotenberg:9.0.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest, which
 `mise run currency` scans. soffice runs in it under
 the container runner's full lockdown, with its user profile inside the mounted working directory.
 

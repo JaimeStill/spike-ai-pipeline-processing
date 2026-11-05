@@ -6,6 +6,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The default LibreOffice image, `picture.LibreOfficeImage`, moves to
+  gotenberg/gotenberg:9.0.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest. soffice runs in
+  it headless as before, through the container runner's lockdown, with no change of path,
+  arguments, or filters. Its metafile renders differ from 26.8.1.1's below a pixel.
+
 ## [v0.6.0] - 2026-11-05
 
 ### Breaking changes

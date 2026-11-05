@@ -13,7 +13,8 @@ import (
 )
 
 // goldenPictures is the golden file of the converted pictures' sums, recorded before the
-// conversion moved into the picture package.
+// conversion moved into the picture package, its metafile renders recorded again on Gotenberg
+// 9.0.0's LibreOffice, with no code changed.
 const goldenPictures = "testdata/golden/pictures.sha256"
 
 // TestGoldenPictures converts every fixture that may hold pictures as Markdown through the real
@@ -21,7 +22,8 @@ const goldenPictures = "testdata/golden/pictures.sha256"
 // through the picture package's Convert, office's ConvertPicture before, at the default scale and
 // at 1, and asserts that each converted picture's PNG, and each Markdown, is byte for byte what it
 // was when the golden file was recorded, at the commit before the picture package took the
-// conversion over. The PNGs are compared whole: magick writes them without the time of the run.
+// conversion over, or for a metafile's PNG, when the image moved to Gotenberg 9.0.0. The PNGs are
+// compared whole: magick writes them without the time of the run.
 func TestGoldenPictures(t *testing.T) {
 	c, pc := fullConverters(t)
 	got := map[string]string{}

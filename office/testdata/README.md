@@ -79,7 +79,7 @@ The TIFF is 640x400, 8-bit RGB, LZW-compressed, written by GIMP.
 (`charts`, `comments`, `lists`, `media`, `notes`, `sections`, `tables`), four xlsx as `.xls`
 (`cells`, `drawings`, `formulas`, `merges`), and three pptx as `.ppt` (`bullets`, `slide-objects`,
 `slides`). `legacy/generate.sh` wrote them, running soffice as the office package runs it: in the
-picture package's default image, `picture.LibreOfficeImage`
+picture package's default image at the time, `picture.LibreOfficeImage`
 (`gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054`),
 LibreOffice 26.8.1.1, under the container runner's lockdown, with the filters `MS Word 97`,
 `MS Excel 97`, and `MS PowerPoint 97`. The script writes `legacy/generated/MANIFEST`, which
@@ -130,8 +130,12 @@ What they hold:
 
 `golden/pictures.sha256` holds the SHA-256 of every picture `TestGoldenPictures`, in the
 integration tier, converts, and of each Markdown it writes, recorded at commit `aa71cc8`, before
-the picture package took the conversion over, so the move is proved to change no byte. The test
-compares a run's sums against it. Setting `GOLDEN_RECORD=1` records the sums in place of comparing,
+the picture package took the conversion over, so the move is proved to change no byte. The
+twelve sums of the EMF and WMF renders were recorded again when `picture.LibreOfficeImage` moved
+from Gotenberg 8.39.0 (LibreOffice 26.8.1.1) to 9.0.0 (LibreOffice 26.8.2.2), with no code
+changed: the new release rasterizes the metafiles differently below a pixel, the EMF's page one
+pixel shorter at the default scale, and the renders read the same. The test compares a run's sums
+against it. Setting `GOLDEN_RECORD=1` records the sums in place of comparing,
 and is done only at a commit before the code the sums guard changes, so they hold what that code
 wrote; it is never done to make a failing test pass, since a failure is the change the sums exist
 to catch.

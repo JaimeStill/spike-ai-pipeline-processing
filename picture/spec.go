@@ -33,16 +33,16 @@ func MagickSpec() tool.Spec {
 const LibreOfficeMinimum = "24.2"
 
 // LibreOfficeImage is the default image soffice runs in through the container runner:
-// Gotenberg's 8.39.0 LibreOffice image, which carries LibreOffice 26.8.1.1, pinned by its
+// Gotenberg's 9.0.0 LibreOffice image, which carries LibreOffice 26.8.2.2, pinned by its
 // multi-arch index digest. soffice runs in it under the runner's full lockdown, with no
 // relaxation, so tool.Image{Ref: LibreOfficeImage} is the whole of it. A caller may run another
 // image, or soffice on the host through the exec runner.
-const LibreOfficeImage = "gotenberg/gotenberg:8.39.0-libreoffice@sha256:" +
-	"4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054"
+const LibreOfficeImage = "gotenberg/gotenberg:9.0.0-libreoffice@sha256:" +
+	"7f8d54f6ec37e95b68f9297f726213e200dd99439b4ae41241dbdca1d0474270"
 
 // LibreOfficeSpec declares LibreOffice's soffice, minimum 24.2, for either runner's constructor;
 // the container runner makes it the entrypoint in place of the image's own. soffice --version
-// prints "LibreOffice 26.8.1.1 680(Build:1)", after any warnings of its desktop libraries on
+// prints "LibreOffice 26.8.2.2 680(Build:2)", after any warnings of its desktop libraries on
 // stderr, and the pattern takes the dotted numbers after the name. A caller that needs another
 // program path or a KillAfter period sets them on the Spec returned.
 func LibreOfficeSpec() tool.Spec {
