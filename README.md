@@ -173,19 +173,27 @@ an output event, `ev.Output` set, as the stage yields it, among the subtrees of 
 and each part's own event, after its outputs and its descendants', carries its outcome: prepared,
 no processor yet, seen, cycle, quarantined, encrypted, failed, or limited, only under a cap the
 caller set, with a count of its outputs and its children. The dispatcher holds nothing of an
-output once the loop body returns for it, so a store of millions of messages streams through in
-the memory of one. An `Index`, content-addressed, records a stage's outputs by the content's
+output once the loop body returns for it, nor of a found part once its event is done but the
+`Child` reference it appends to its parent's pending entry by `Index.AppendChild`, so a store of
+millions of messages and attachments streams through in the memory of one. An `Index`, content-addressed, records a stage's outputs by the content's
 SHA-256 and the stage's identity, and the flags by the SHA-256 alone, so content it holds is seen,
 its outputs streamed back from the index as output events, neither inspected nor prepared again;
 a claim makes one of two concurrent dispatches prepare it while the other waits. Each output is
 appended to the claim's pending entry by `Index.Append` once the loop body returns for its event,
 so a caller that persists it sets `ev.Output.Ref` and a later seen part's output carries it; the
 part's own event commits the entry by `Record`, or `Release` drops it when the part fails or the
-loop stops, and `Index.Outputs` reads it back streamed. `MemoryIndex` and `FileIndex`, a
-directory of records written by atomic rename, O_EXCL claim files reclaimed once stale, and a
-pending file of JSON lines per claim, renamed beside its entry when recorded, ship. Each part's
-file and working directory are removed once its own event is done, unless the caller called
-`Event.Keep`, so the disk holds only the parts in flight.
+loop stops, and `Index.Outputs` and `Index.Children` read its outputs and children back
+streamed. `MemoryIndex` and `FileIndex`, a directory of records written by atomic rename, O_EXCL
+claim files reclaimed once stale, and two pending files of JSON lines per claim, its outputs and
+its children, renamed beside its entry when recorded, ship. Each part's file and working directory
+are removed once its own event is done, unless the caller called `Event.Keep`, so the disk holds
+only the parts in flight. A stage holding content later records name again, as the email and
+onenote stages hold what mail and onenote write once per distinct content, gives each `Found`
+part its SHA-256 and a `Release`, which the dispatcher calls once the index holds the content's
+entry and the caller kept nothing of it: the stage removes its original, and a later record is
+found with no file and seen from the index, so a store's directory holds the attachments of the
+messages in flight. Content the dispatcher didn't settle, failed, limited, quarantined, or with no
+stage for its route, keeps its original for the next record naming it.
 
 `Dispatcher.Pool` dispatches an iterator of inputs over N workers sharing the dispatcher's index,
 so content the inputs share is prepared once and seen by the rest, and yields every input's events
