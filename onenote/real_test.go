@@ -234,12 +234,13 @@ func realInputs(t *testing.T) []string {
 // TestReal runs the real pinned onenote over every section and notebook among the copied
 // fixtures, each of which sections.json or notebooks.json expects. Each read yields one record
 // per line onenote writes for the same input, of the line's kind, none unknown, each marshalling
-// back to its line's fields; its exit code is the expectation's, a refusal an ExitError matching
-// ErrRefused with the expected reason. A section's read is a section input's notebook, its
+// back to its line byte for byte; its exit code is the expectation's, a refusal an ExitError
+// matching ErrRefused with the expected reason. A section's read is a section input's notebook, its
 // section, and its pages, each with the expected id, level, title, times, author, and container
 // counts; a notebook's is the expected notebook and entries, sections with their pages and
 // skipped sections in order, with the expected warnings, their prefix taken off. Between them
-// the fixtures give notebook, section, page, and skipped records and warnings.
+// the fixtures give notebook, section, page, and skipped records and warnings, and every kind
+// of container, item, and block but an embedded file container and an ink block, each typed.
 func TestReal(t *testing.T) {
 	tl := realTool(t)
 	r := realReader(t, tl)
@@ -260,7 +261,7 @@ func TestReal(t *testing.T) {
 	if want := len(sections) + len(notebooks); len(inputs) != want {
 		t.Errorf("%d inputs, the expectations %d", len(inputs), want)
 	}
-	kinds := map[string]bool{}
+	kinds, content := map[string]bool{}, map[string]bool{}
 	warned := false
 	for _, rel := range inputs {
 		t.Run(rel, func(t *testing.T) {
@@ -280,6 +281,11 @@ func TestReal(t *testing.T) {
 			checkLines(t, recs, lines)
 			for _, rec := range recs {
 				kinds[rec.Line()] = true
+				if p, ok := rec.(*onenote.Page); ok {
+					for kind := range contentKinds(p.Content) {
+						content[kind] = true
+					}
+				}
 			}
 			if len(s.Warnings()) > 0 {
 				warned = true
@@ -301,11 +307,23 @@ func TestReal(t *testing.T) {
 	if !warned {
 		t.Error("no fixture gives a warning")
 	}
+	// The fixtures hold no embedded file container, ink block, paragraph ink, or empty cell;
+	// TestContent decodes and marshals those.
+	for _, kind := range []string{
+		"container title", "container outline", "container image", "container ink",
+		"item element", "item group",
+		"block paragraph", "block table", "block image", "block embedded_file",
+		"run text", "run math", "tag", "list",
+	} {
+		if !content[kind] {
+			t.Errorf("no fixture's content gives a %s", kind)
+		}
+	}
 }
 
 // cliLines runs tl, onenote, on input itself, outside the package, and returns each line it
-// writes to stdout, decoded, and its exit code.
-func cliLines(t *testing.T, tl *tool.Tool, input string) ([]map[string]any, int) {
+// writes to stdout, as written, less its newline, and its exit code.
+func cliLines(t *testing.T, tl *tool.Tool, input string) ([]string, int) {
 	t.Helper()
 	var stdout bytes.Buffer
 	code := 0
@@ -315,21 +333,20 @@ func cliLines(t *testing.T, tl *tool.Tool, input string) ([]map[string]any, int)
 	} else if err != nil {
 		t.Fatal(err)
 	}
-	var lines []map[string]any
+	var lines []string
 	for line := range strings.Lines(stdout.String()) {
-		var m map[string]any
-		if err := jsonv2.Unmarshal([]byte(line), &m); err != nil {
-			t.Fatalf("onenote's line %q: %v", line, err)
-		}
-		lines = append(lines, m)
+		lines = append(lines, strings.TrimSuffix(line, "\n"))
 	}
 	return lines, code
 }
 
 // checkLines checks recs, a read's records, against want, onenote's own lines for the same
-// input: there is one record per line, in order and of the line's kind, none of an unknown kind,
-// and each marshals back to its line's fields, less "line".
-func checkLines(t *testing.T, recs []onenote.Record, want []map[string]any) {
+// input: there is one record per line, in order, none of an unknown kind, and each, its content
+// typed through and through, marshals back through encoding/json/v2 to its line byte for byte,
+// once its "line" field, which a record gives as its Line rather than a field, is put back in
+// front, where onenote writes it. Every container, item, and block among them is of a kind the
+// package types.
+func checkLines(t *testing.T, recs []onenote.Record, want []string) {
 	t.Helper()
 	if len(recs) != len(want) {
 		t.Fatalf("%d records, onenote's %d lines", len(recs), len(want))
@@ -337,16 +354,33 @@ func checkLines(t *testing.T, recs []onenote.Record, want []map[string]any) {
 	for i, rec := range recs {
 		if _, ok := rec.(*onenote.UnknownRecord); ok {
 			t.Errorf("record %d: unknown kind %s", i, rec.Line())
+			continue
 		}
-		line := maps.Clone(want[i])
-		if kind := line["line"]; kind != rec.Line() {
-			t.Errorf("record %d: kind %s, onenote's %v", i, rec.Line(), kind)
+		if got := lineOf(t, rec); got != want[i] {
+			t.Errorf("record %d marshals to\n%s\nonenote's line is\n%s", i, got, want[i])
 		}
-		delete(line, "line")
-		if got := marshalled(t, rec); !reflect.DeepEqual(got, line) {
-			t.Errorf("record %d marshals to\n%v\nonenote's line is\n%v", i, got, line)
+		if p, ok := rec.(*onenote.Page); ok {
+			for kind := range contentKinds(p.Content) {
+				if strings.HasPrefix(kind, "unknown ") {
+					t.Errorf("record %d: %s", i, kind)
+				}
+			}
 		}
 	}
+}
+
+// lineOf returns rec as onenote's line for it: rec marshalled, its "line" field in front.
+func lineOf(t *testing.T, rec onenote.Record) string {
+	t.Helper()
+	data, err := jsonv2.Marshal(rec)
+	if err != nil {
+		t.Fatal(err)
+	}
+	line := `{"line":` + strconv.Quote(rec.Line())
+	if string(data) == "{}" {
+		return line + "}"
+	}
+	return line + "," + string(data[1:])
 }
 
 // marshalled returns rec marshalled through encoding/json/v2 and decoded back as a JSON object.
@@ -394,24 +428,17 @@ func checkSection(t *testing.T, want sectionTruth, recs []onenote.Record, err er
 			!p.CreationTime.Equal(wp.CreationTime) || !p.ModificationTime.Equal(wp.ModificationTime) || p.Author != wp.Author {
 			t.Errorf("page %d %+v, want %+v", i, p, wp)
 		}
-		if got := containerCounts(t, p); !maps.Equal(got, wp.Content) {
+		if got := containerCounts(p); !maps.Equal(got, wp.Content) {
 			t.Errorf("page %d containers %v, want %v", i, got, wp.Content)
 		}
 	}
 }
 
-// containerCounts counts p's containers by kind, from its Content.
-func containerCounts(t *testing.T, p *onenote.Page) map[string]int {
-	t.Helper()
-	var containers []struct {
-		Kind string `json:"kind"`
-	}
-	if err := jsonv2.Unmarshal(p.Content, &containers); err != nil {
-		t.Fatalf("page %s content: %v", p.ID, err)
-	}
+// containerCounts counts p's containers by kind, from its typed Content.
+func containerCounts(p *onenote.Page) map[string]int {
 	counts := map[string]int{}
-	for _, c := range containers {
-		counts[c.Kind]++
+	for _, c := range p.Content {
+		counts[c.Kind()]++
 	}
 	return counts
 }
@@ -472,8 +499,9 @@ type contentTruth struct {
 }
 
 // TestRealContent: every content field content.json expects is in the page the real onenote's
-// read yields for each of its files, at its pointer into the page marshalled back, with its
-// value, and every field it expects absent is absent: the content a Page keeps as JSON is
+// read yields for each of its files, with its value, and every field it expects absent is
+// absent, at its pointer both into the page marshalled back and into the typed Page itself,
+// through its Go fields, its containers, items, and blocks, and their Kind: the typed content is
 // onenote's whole.
 func TestRealContent(t *testing.T) {
 	r := realReader(t, realTool(t))
@@ -490,9 +518,10 @@ func TestRealContent(t *testing.T) {
 				t.Fatalf("%s: %v", file, err)
 			}
 			var page map[string]any
+			var typed *onenote.Page
 			for _, rec := range recs {
 				if p, ok := rec.(*onenote.Page); ok && p.ID == want.Page {
-					page = marshalled(t, p)
+					page, typed = marshalled(t, p), p
 				}
 			}
 			if page == nil {
@@ -507,6 +536,13 @@ func TestRealContent(t *testing.T) {
 					t.Errorf("%s, page %s, %s: %v, want none", file, want.Page, f.Pointer, got)
 				case f.Raw != nil && (!found || !reflect.DeepEqual(got, f.Raw)):
 					t.Errorf("%s, page %s, %s: %v (found %t), want %v", file, want.Page, f.Pointer, got, found, f.Raw)
+				}
+				got, found = typedPointer(t, typed, f.Pointer)
+				switch {
+				case f.Raw == nil && found:
+					t.Errorf("%s, page %s, typed %s: %v, want none", file, want.Page, f.Pointer, got)
+				case f.Raw != nil && (!found || !reflect.DeepEqual(got, f.Raw)):
+					t.Errorf("%s, page %s, typed %s: %v (found %t), want %v", file, want.Page, f.Pointer, got, found, f.Raw)
 				}
 			}
 		}
@@ -578,4 +614,107 @@ func TestRealMedia(t *testing.T) {
 	if inked == 0 {
 		t.Error("no page with ink")
 	}
+}
+
+// unionLists are the content lists whose elements a pointer's index names by their kind.
+var unionLists = map[reflect.Type]bool{
+	reflect.TypeFor[onenote.Containers](): true,
+	reflect.TypeFor[onenote.Items]():      true,
+	reflect.TypeFor[onenote.Blocks]():     true,
+}
+
+// typedPointer resolves the JSON pointer p in page's Go values, rather than in its JSON: a
+// token names a struct field by its JSON name, an embedded struct's among them, an index a
+// list's element, and "kind" a container's, item's, or block's Kind. It returns the value found
+// marshalled and decoded back, an element of a content list with its kind, reporting whether p
+// names a value: a field marshalled with omitzero names none when it is zero.
+func typedPointer(t *testing.T, page *onenote.Page, p string) (any, bool) {
+	t.Helper()
+	v := reflect.ValueOf(page)
+	// list and index are the content list v was taken from, if any, so it marshals with its
+	// kind.
+	var list reflect.Value
+	index := -1
+	for token := range strings.SplitSeq(strings.TrimPrefix(p, "/"), "/") {
+		if token == "kind" {
+			k, ok := v.Interface().(interface{ Kind() string })
+			if !ok {
+				return nil, false
+			}
+			v, list, index = reflect.ValueOf(k.Kind()), reflect.Value{}, -1
+			continue
+		}
+		for v.Kind() == reflect.Interface || v.Kind() == reflect.Pointer {
+			if v.IsNil() {
+				return nil, false
+			}
+			v = v.Elem()
+		}
+		switch v.Kind() {
+		case reflect.Slice:
+			i, err := strconv.Atoi(token)
+			if err != nil || i < 0 || i >= v.Len() {
+				return nil, false
+			}
+			if unionLists[v.Type()] {
+				list, index = v, i
+			} else {
+				list, index = reflect.Value{}, -1
+			}
+			v = v.Index(i)
+		case reflect.Struct:
+			field, ok := jsonField(v, token)
+			if !ok {
+				return nil, false
+			}
+			v, list, index = field, reflect.Value{}, -1
+		default:
+			return nil, false
+		}
+	}
+	target := v.Interface()
+	if index >= 0 {
+		target = list.Slice(index, index+1).Interface()
+	}
+	data, err := jsonv2.Marshal(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got any
+	if err := jsonv2.Unmarshal(data, &got); err != nil {
+		t.Fatal(err)
+	}
+	if index >= 0 {
+		got = got.([]any)[0]
+	}
+	return got, true
+}
+
+// jsonField returns v's field whose JSON name is name, looking through its embedded structs,
+// reporting whether it has one that marshals: a zero field tagged omitzero doesn't.
+func jsonField(v reflect.Value, name string) (reflect.Value, bool) {
+	for i := range v.NumField() {
+		sf := v.Type().Field(i)
+		tag, opts, _ := strings.Cut(sf.Tag.Get("json"), ",")
+		field := v.Field(i)
+		if (sf.Anonymous && tag == "") || strings.Contains(opts, "embed") {
+			if field.Kind() == reflect.Pointer {
+				if field.IsNil() {
+					continue
+				}
+				field = field.Elem()
+			}
+			if found, ok := jsonField(field, name); ok {
+				return found, true
+			}
+			continue
+		}
+		if tag == name {
+			if strings.Contains(opts, "omitzero") && field.IsZero() {
+				return reflect.Value{}, false
+			}
+			return field, true
+		}
+	}
+	return reflect.Value{}, false
 }

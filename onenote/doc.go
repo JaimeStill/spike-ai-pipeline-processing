@@ -21,10 +21,18 @@
 // onenote's stdout reaches the package through a pipe and is decoded one line at a time, so
 // memory follows the record being read, never the notebook. Each line is decoded through
 // encoding/json/v2 into the typed value of its kind, Notebook, SectionGroup, Section, Page, or
-// Skipped, which mirror schema "1". A Page's own fields are typed: its ids, level, title,
-// times, author, ink, recognised ink text, and Markdown; its containers, Content, are the JSON
-// onenote writes. A line of a kind the package doesn't know is kept as an UnknownRecord, never
-// an error. A notebook line of any other schema is an error matching ErrSchema that names the
+// Skipped, which mirror schema "1". A Page is typed through and through: its ids, level,
+// title, times, author, ink, recognised ink text, Markdown, and Content, its containers, each
+// by its kind (title, outline, image, embedded file, ink), holding items (elements and groups)
+// that hold blocks (paragraphs with their runs, equations among them, note tags, list markers,
+// and handwriting; tables of cells; images; embedded files; ink). Each field is left out, or
+// nil, where onenote leaves it out, and kept where onenote writes a zero, so a decoded line
+// marshals back through encoding/json/v2 to onenote's own bytes once its "line" is put back in
+// front; the numbers onenote writes as Rust's f32 are a Float, which marshals as onenote writes
+// them. A Page's Markdown is onenote's, its links as onenote wrote them. A line of a kind the
+// package doesn't know is kept as an UnknownRecord, and a container, item, or block of a kind it
+// doesn't know as an Unknown holding its JSON, never an error, and either marshals back as it
+// came. A notebook line of any other schema is an error matching ErrSchema that names the
 // schema. A loop that stops early stops onenote.
 //
 // Each line onenote writes to stderr as a warning is one of the Stream's Warnings, its prefix
@@ -68,6 +76,15 @@
 //   - [ErrSchema] is the cause of a notebook line of another schema.
 //   - [Record] is one of onenote's lines, its Line the line's kind: [Notebook],
 //     [SectionGroup], [Section], [Page], [Skipped], or [UnknownRecord].
-//   - [Ink], [Bounds], and [Word] are a page's ink record, its strokes' box, and a recognised
-//     word of its ink text.
+//   - [Ink], [Bounds], and [Word] are an ink record, its strokes' box, and a recognised word
+//     of a page's ink text.
+//   - [Containers], [Items], and [Blocks] are a page's content, an outline's items, and an
+//     element's blocks, each element of [Container], [Item], or [Block], by its Kind.
+//   - [Title], [Outline], [ImageContainer], [EmbeddedFileContainer], and [InkContainer] are
+//     the containers, each with its [Offsets].
+//   - [Element] and [Group] are the items.
+//   - [Paragraph], [Table], [Image], [EmbeddedFile], and [InkBlock] are the blocks; a
+//     paragraph holds its [List], its [Tag]s, and its [Run]s, and a table its [Cell]s.
+//   - [Unknown] is a container, item, or block of a kind the package doesn't know.
+//   - [Float] is one of onenote's f32 numbers, an offset or a bound.
 package onenote

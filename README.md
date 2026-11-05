@@ -408,9 +408,17 @@ runs. Ranging over `Stream.Records` runs onenote once and yields each line it wr
 runs, decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
 `Notebook` first, then the notebook's entries depth-first, each `SectionGroup` before what it
 holds and each `Section` before its `Page`s, then a `Skipped` record for each section onenote
-couldn't read. A `Page`'s own fields are typed, its ids, level, title, times, author, `Ink`,
-recognised `InkText`, and Markdown; its containers, `Content`, are the JSON onenote writes. A
-notebook line of another schema is an error matching `ErrSchema`. onenote's warnings are the
+couldn't read. A `Page` is typed through and through: its ids, level, title, times, author,
+`Ink`, recognised `InkText`, Markdown, and `Content`, its `Containers`, each by its `Kind`
+(`Title`, `Outline`, `ImageContainer`, `EmbeddedFileContainer`, `InkContainer`), down through
+their `Items` (`Element`, `Group`) and `Blocks` (`Paragraph` with its `Run`s, equations among
+them, `Tag`s, `List` marker, and handwriting; `Table` of `Cell`s; `Image`; `EmbeddedFile`;
+`InkBlock`). A field onenote leaves out is left out, and a zero onenote writes is kept, so each
+record marshals back through encoding/json/v2 to onenote's own line, byte for byte, once its
+`line` field is put back in front; onenote's f32 numbers are a `Float`, which marshals as
+onenote writes them. A page's Markdown is onenote's, links untouched. A container, item, or block
+of a kind the package doesn't know is an `Unknown` holding its JSON, which marshals back as it
+came. A notebook line of another schema is an error matching `ErrSchema`. onenote's warnings are the
 Stream's `Warnings`, and its exit codes 1 to 4 are an `*ExitError` that matches `ErrNotWritten`,
 `ErrUsage`, `ErrRefused`, or `ErrFailed`, the errors email's and office's match too.
 
@@ -469,8 +477,8 @@ the same shape:
 Each package's deviations: `office` returns one `Result`, the whole model or Markdown, not a
 stream of lines, and its media list names no route yet; `email` follows the convention whole, its
 `Attachment.Route` the route per part; `onenote` follows it but for the route per part, its
-`Request.Media` the media directory, its pages' content kept as onenote's JSON, so the images
-and embedded files it names aren't routed yet; `document` streams pages, `PageImage`s, rather than a CLI's
+`Request.Media` the media directory, its pages' content typed, but the images and embedded
+files it names aren't routed yet; `document` streams pages, `PageImage`s, rather than a CLI's
 lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's failures
 are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not a
 reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one

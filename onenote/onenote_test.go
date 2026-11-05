@@ -79,8 +79,8 @@ const fullLines = `{"line":"notebook","schema":"1","input":"notebook","name":"Wo
 `
 
 // TestRead: the stand-in's lines are yielded in its order, each decoded into its typed record,
-// every top-level field of schema "1" set, a page's content kept as its JSON; a line of an
-// unknown kind is kept with its JSON. onenote runs once, on the input made absolute.
+// every top-level field of schema "1" set, a page's content into its typed containers; a line
+// of an unknown kind is kept with its JSON. onenote runs once, on the input made absolute.
 func TestRead(t *testing.T) {
 	r, runs := standinReader(t)
 	t.Setenv(stdoutEnv, fullLines)
@@ -116,18 +116,20 @@ func TestRead(t *testing.T) {
 	if !ok {
 		t.Fatalf("record 3 %#v", recs[3])
 	}
-	if want := `[{"kind":"title","offset_horizontal":0.0,"offset_vertical":0.0,"items":[]},{"kind":"ink","strokes":2}]`; string(page.Content) != want {
-		t.Errorf("content %s, want %s", page.Content, want)
-	}
+	zero := onenote.Float(0)
+	lcid := 1031
 	want := &onenote.Page{
 		ID: "5eaf76b1-8dde-8745-a8a7-1a9865cc478a", Section: "07e1868e-e7d0-c24e-85c6-7cbe04486764",
 		Level: 2, Title: "Test Page",
 		CreationTime: at("2020-10-27T10:47:23Z"), ModificationTime: at("2020-10-27T10:52:39Z"),
-		Author:  "Markus Siemens",
-		Content: page.Content,
-		Ink:     &onenote.Ink{File: "95c9.svg", Strokes: 62, Bounds: &onenote.Bounds{X: 1363, Width: 16563.5, Height: 15749}},
+		Author: "Markus Siemens",
+		Content: onenote.Containers{
+			&onenote.Title{OffsetHorizontal: &zero, OffsetVertical: &zero, Items: onenote.Items{}},
+			&onenote.InkContainer{Strokes: 2},
+		},
+		Ink: &onenote.Ink{File: "95c9.svg", Strokes: 62, Bounds: &onenote.Bounds{X: 1363, Width: 16563.5, Height: 15749}},
 		InkText: [][]onenote.Word{
-			{{Text: "Hello", Alternatives: []string{"Hallo", "Hell"}, Language: 1031}},
+			{{Text: "Hello", Alternatives: []string{"Hallo", "Hell"}, Language: &lcid}},
 			{{Text: "World"}},
 		},
 		Markdown: "# Test Page",

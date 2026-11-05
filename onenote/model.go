@@ -90,10 +90,10 @@ type Page struct {
 	ModificationTime time.Time `json:"modification_time,omitzero"`
 	// Author is the author, as stored.
 	Author string `json:"author,omitzero"`
-	// Content is its containers, the title area first, then the rest in stored order, as the
-	// JSON array onenote writes, a copy the record owns: their outlines, paragraphs, runs,
-	// tables, images, embedded files, and ink, as onenote's README gives schema "1".
-	Content jsontext.Value `json:"content,omitzero"`
+	// Content is its containers, the title area first, then the rest in stored order, typed:
+	// their outlines' items, blocks, paragraphs, runs, tables, images, embedded files, and ink,
+	// as onenote's README gives schema "1".
+	Content Containers `json:"content,omitzero"`
 	// Ink is the page's own ink, every ink container's strokes in one drawing; nil for none.
 	Ink *Ink `json:"ink,omitzero"`
 	// InkText is the page's recognised ink text: lines, each a list of words.
@@ -108,19 +108,20 @@ type Ink struct {
 	// File is the SVG's name in the media directory: the lowercase hex SHA-256 of its bytes and
 	// ".svg".
 	File string `json:"file,omitzero"`
-	// Strokes is its stroke count.
-	Strokes int `json:"strokes,omitzero"`
-	// Bounds is the box its strokes' points span before their pens' width is added; nil when
-	// its strokes have no points.
+	// Strokes is its stroke count, written even when zero.
+	Strokes int `json:"strokes"`
+	// Bounds is the box its strokes' points span before their pens' width is added. onenote
+	// writes no ink record for strokes without points, so it has one; nil leaves it out.
 	Bounds *Bounds `json:"bounds,omitzero"`
 }
 
-// Bounds is a box in ink units of 0.01 mm: a page's ink in the page's coordinates.
+// Bounds is a box in ink units of 0.01 mm: a page's ink, and an ink container's, in the page's
+// coordinates; ink in a paragraph or an outline in its own.
 type Bounds struct {
-	X      float64 `json:"x"`
-	Y      float64 `json:"y"`
-	Width  float64 `json:"width"`
-	Height float64 `json:"height"`
+	X      Float `json:"x"`
+	Y      Float `json:"y"`
+	Width  Float `json:"width"`
+	Height Float `json:"height"`
 }
 
 // Word is one recognised word of ink text.
@@ -129,8 +130,8 @@ type Word struct {
 	Text string `json:"text,omitzero"`
 	// Alternatives are its other guesses, best first.
 	Alternatives []string `json:"alternatives,omitzero"`
-	// Language is a Windows LCID, as stored: 1031 is German, Germany.
-	Language int `json:"language,omitzero"`
+	// Language is a Windows LCID, as stored: 1031 is German, Germany; nil when none is stored.
+	Language *int `json:"language,omitzero"`
 }
 
 // Skipped is a skipped line: a section inside a notebook that onenote couldn't read, such as a
@@ -186,8 +187,8 @@ type lineHead struct {
 
 // decodeLine decodes one line, raw, into its record. first says whether it is the read's first
 // line, which must be the notebook line, whose schema must be Schema. raw is the decoder's
-// buffer, valid only until its next read, so an UnknownRecord keeps a copy, and a Page's
-// Content is one, as encoding/json/v2 copies a jsontext.Value it decodes into.
+// buffer, valid only until its next read, so an UnknownRecord keeps a copy, as does an Unknown in
+// a Page's Content; everything else decoded is copied out of it.
 func decodeLine(raw jsontext.Value, first bool) (Record, error) {
 	var head lineHead
 	if err := json.Unmarshal(raw, &head); err != nil {
