@@ -53,8 +53,9 @@ func leftIn(t *testing.T, dir string) []string {
 // TestPool: 4 workers over 40 inputs, each finding its own part and one every input shares, in
 // a different place. The shared content is prepared exactly once, every other dispatch's part
 // seen, carrying the Ref the caller set on the prepared part's output event, which the index
-// records only once the part's own event's body has returned. Each input's events come in its own dispatch's order, each with its
-// input, and every input is prepared; the working directory is empty once the pool returns.
+// records only once the part's own event's body has returned. Each input's events come in its
+// own dispatch's order, each with its input, and every input is prepared; the working directory
+// is empty once the pool returns.
 func TestPool(t *testing.T) {
 	const n, workers = 40, 4
 	world := map[string]string{"shared.txt": "leaf shared"}

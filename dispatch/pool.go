@@ -32,9 +32,9 @@ type poolItem struct {
 // Each worker waits for the caller's loop body to return before its dispatch goes on, so the
 // dispatcher's contract holds as it does for one dispatch: an output is appended to its part's
 // pending entry as the body left it, its Ref set and [Event.Keep] called, the part's entry is
-// recorded, and its files are removed, only once the body has returned. A worker holds at most one event the loop hasn't taken, so a
-// slow loop holds every worker back, and the disk holds at most what workers dispatches hold, the
-// files of the parts each has in flight.
+// recorded, and its files are removed, only once the body has returned. A worker holds at most
+// one event the loop hasn't taken, so a slow loop holds every worker back, and the disk holds at
+// most what workers dispatches hold, the files of the parts each has in flight.
 //
 // An error that stops one input's dispatch, its input unreadable or the index failing, is
 // yielded with that input, its Event zero, and the other inputs go on. Once ctx ends, the pool

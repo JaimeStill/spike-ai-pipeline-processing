@@ -22,8 +22,9 @@ import (
 var builtMSG = filepath.Join("..", "email", "testdata", "built", "msg", "office-attachments.msg")
 
 // allStages returns every adapter, over this machine's gs and magick, LibreOffice through the
-// container runner in its pinned image, and the office, mail, and onenote mise pins (the last two through emailStage and onenoteStage), as a
-// composition root wires them: the document stage reading each page's text layer.
+// container runner in its pinned image, and the office, mail, and onenote mise pins (the last two
+// through emailStage and onenoteStage), as a composition root wires them: the document stage
+// reading each page's text layer.
 func allStages(t *testing.T) dispatch.Stages {
 	t.Helper()
 	gs := pinned(t, document.GhostscriptSpec())

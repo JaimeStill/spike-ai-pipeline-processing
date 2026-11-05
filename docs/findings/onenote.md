@@ -76,6 +76,10 @@ outcome:
 | vision-converted | seen | 5 |
 | **All** | | **225** |
 
+The run predates `1a74b6c`, which routes an encrypted OOXML package to office: one of the 8
+unrouted parts is `inspect/testdata/encrypted.xlsx`, which the truth has held office, encrypted,
+since. The log here is the run's.
+
 The tier's vision sample sent one image output per stage and part kind, 11 images, to Gemma 4
 26B-A4B: all completed, in 5.175 s, 2,217 image tokens. The page ink of `New Section 1.one`, a
 980x121 PNG, was among them.
