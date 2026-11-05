@@ -133,6 +133,35 @@ if err != nil {
 // r == route.Document, why == "PDF signature"
 ```
 
+`inspect` inspects every part before its stage, on the standard library and `route` alone, and
+says whether it may go on. The safety standard is that unsafe means unsafe to read. `Inspect`
+reads the file at a path, with its name, streaming, its memory bounded whatever the file's size,
+and returns a `Report`: the part's `route.Kind`, its `Flag`s, each a `Check`, a `Class`, and its
+evidence, and a `Verdict`. A flag of class `Active` is content that could act, or that a reader
+can't see into, and the part proceeds by default, since no stage executes it: a signature that
+disagrees with the extension, a polyglot, executable content or an executable or double
+extension, an OOXML package's VBA project, macro sheet, ActiveX controls, OLE objects, and
+external relationships other than hyperlinks, the PDF names pdfid counts, hex-escaped forms
+included, an SVG's scripts, event handlers, external hrefs, and foreignObjects, and encrypted
+content, which is only unreadable. A flag of class `Unsafe` quarantines the part by default: no
+stage runs, its content is kept, and it is reported with its evidence. Those are a ZIP entry with
+a ".." element, an absolute path, or a drive letter, a symbolic link entry, an entry past both
+1,000:1 and 1 GiB expanded by its central directory's declared sizes, the thresholds `Options`
+sets, and a central directory that can't be read. `Options.Policy` overrides any check's action.
+The report is a function of the bytes and the name, so an index may record it by SHA-256. A
+container's members are inspected as parts of their own once a stage extracts them, and the ZIP
+stage enforces the bomb rule again on the bytes it writes, since a declared size may lie.
+
+```go
+rep, err := inspect.Inspect(ctx, path, "invoice.pdf.exe", inspect.Options{})
+if err != nil {
+	return err
+}
+if rep.Verdict == inspect.Quarantine {
+	// keep the content, run no stage, and report rep.Flags
+}
+```
+
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
 `NewConverter` over a `Config` of a magick Tool that `MagickSpec` declares, minimum
@@ -401,7 +430,8 @@ stream of lines, and its media list names no route yet; `email` follows the conv
 lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's failures
 are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not a
 reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one
-refused; and `route` is pure functions, with no Tool, Config, or Request.
+refused; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which
+run before a part's stage rather than as one.
 
 Known limits:
 
@@ -440,6 +470,8 @@ Known limits:
   fields, so they thread by subject alone.
 - The container runner's limit above: a SIGKILLed processing leaves a running container to its
   tool's exit.
+- `inspect` reads what pdfid reads: a PDF name inside a compressed object stream is unseen. A
+  legacy OLE2 document's macros and an ODF package's scripts aren't checked.
 
 The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
 under the race detector, and lint, the integration, bakeoff, and findings tags included. `mise run

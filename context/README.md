@@ -14,6 +14,10 @@ express; the spike's question and evidence live in the root repository's `contex
   named, pure functions on the standard library: a .pst and an mbox nested, an .ost unrouted,
   WordPerfect and .xlsb office's though office has no processor for them yet, for a dispatcher to
   report.
+- **inspection**: package inspect, every part inspected before its stage on the standard library,
+  pure functions of its bytes and name: active content flagged and let proceed, content unsafe to
+  read (ZIP traversal, absolute paths, symlinks, bombs by declared sizes) quarantined, a caller's
+  policy over either; no stage calls it yet, which the dispatcher will.
 - **pictures**: package picture, TIFF, EMF, WMF, and SVG converted to PNG, one picture or a batch,
   named by SHA-256, EMF and WMF through soffice in the default gotenberg image and trimmed by
   magick; and the corrections stage, ImageMagick corrections in a fixed order, their catalog for a
