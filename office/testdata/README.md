@@ -125,3 +125,13 @@ What they hold:
   formula.
 - `basic_test_ppt_file.ppt`: two slides, a title and a two-line subtitle, then a title and three
   bulleted lines, each slide with a line of speaker notes.
+
+## Golden sums
+
+`golden/pictures.sha256` holds the SHA-256 of every picture `TestGoldenPictures`, in the
+integration tier, converts, and of each Markdown it writes, recorded at commit `aa71cc8`, before
+the picture package took the conversion over, so the move is proved to change no byte. The test
+compares a run's sums against it. Setting `GOLDEN_RECORD=1` records the sums in place of comparing,
+and is done only at a commit before the code the sums guard changes, so they hold what that code
+wrote; it is never done to make a failing test pass, since a failure is the change the sums exist
+to catch.

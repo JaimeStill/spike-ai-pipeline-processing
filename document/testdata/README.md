@@ -116,3 +116,13 @@ c78b22d17c06925c3ed829a4d3cf163b61fa4f741ad33625df302aa039321b53  scanned/page-4
 75184a354cef398e536a1953112aa930879cafd6a99260fe325f8960e8188f59  scanned/page-6.txt
 3697cea8fba85a5696ee7dd941854ee7edc3e998fb02ec1ff74f404b2be8b573  scanned/page-7.txt
 ```
+
+## Golden sums
+
+`golden/corrections.sha256` holds the SHA-256 of every corrected page `TestGoldenCorrections`,
+in the integration tier, writes, each without the chunks that carry the time of the run, and of
+each page's assessment, recorded at commit `aa71cc8`, before the picture package took the
+corrections stage over, so the move is proved to change no byte. The test compares a run's sums
+against it. Setting `GOLDEN_RECORD=1` records the sums in place of comparing, and is done only at a
+commit before the code the sums guard changes, so they hold what that code wrote; it is never done
+to make a failing test pass, since a failure is the change the sums exist to catch.
