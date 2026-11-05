@@ -2,6 +2,7 @@ package dispatch_test
 
 import (
 	"context"
+	"path/filepath"
 	"reflect"
 	"sync"
 	"testing"
@@ -32,24 +33,65 @@ var (
 	stageB = dispatch.Identity{Name: "a", Version: "1.0", Config: "c2"}
 )
 
-// entry returns an entry with every field set.
+// entry returns an entry with every field set, as recorded with outputs() appended.
 func entry() dispatch.Entry {
 	return dispatch.Entry{
-		Outcome: dispatch.Prepared,
-		Reason:  "why",
-		Outputs: []dispatch.Output{{
-			Kind: dispatch.RecordOutput, Name: "page 1", MediaType: "application/json", Path: "/kept/out.json",
-			Value: []byte(`{"a":1}`), Meta: map[string]string{"page": "1"}, Ref: "ref-1",
-		}},
+		Outcome:  dispatch.Prepared,
+		Reason:   "why",
+		Outputs:  len(outputs()),
 		Children: []dispatch.Child{{SHA256: sum("child"), Name: "c.png", Where: "attachment 1", Size: 5, Route: route.Vision, Outcome: dispatch.Seen}},
 	}
 }
 
+// outputs returns two outputs with every field set between them.
+func outputs() []dispatch.Output {
+	return []dispatch.Output{
+		{
+			Kind: dispatch.RecordOutput, Name: "page 1", MediaType: "application/json", Path: "/kept/out.json",
+			Value: []byte(`{"a":1}`), Meta: map[string]string{"page": "1"}, Ref: "ref-1",
+		},
+		{Kind: dispatch.MarkdownOutput, Name: "page 1", Value: []byte("# One")},
+	}
+}
+
+// record appends outputs() to key's claim token holds and records entry(), its Outputs count
+// set wrong, which the index ignores; it returns the outputs it appended, which the test may
+// change to show the index shares no memory with them.
+func record(t *testing.T, idx dispatch.Index, key dispatch.Key, token string) []dispatch.Output {
+	t.Helper()
+	in := outputs()
+	for _, o := range in {
+		if err := idx.Append(t.Context(), key, token, o); err != nil {
+			t.Fatal(err)
+		}
+	}
+	e := entry()
+	e.Outputs = 99
+	if err := idx.Record(t.Context(), key, token, e); err != nil {
+		t.Fatal(err)
+	}
+	return in
+}
+
+// recorded returns key's recorded outputs, read back from idx; an error fails the test.
+func recorded(t *testing.T, idx dispatch.Index, key dispatch.Key) []dispatch.Output {
+	t.Helper()
+	var out []dispatch.Output
+	for o, err := range idx.Outputs(t.Context(), key) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		out = append(out, o)
+	}
+	return out
+}
+
 // TestIndexContract: both shipped indexes keep the Index contract: lookups by key, the stage's
 // identity part of it; one claimant at a time, a claim ended by its own token only, and none
-// while the key is recorded; waits that return at once on an unclaimed or recorded key, wake on
-// a record with its entry and on a release with none, and end with their context; entries and
-// flags that share no memory with the caller's.
+// while the key is recorded; outputs appended under a claim, recorded in their order and counted
+// by the record, read back by Outputs, and dropped by a release; waits that return at once on an
+// unclaimed or recorded key, wake on a record with its entry and on a release with none, and end
+// with their context; entries, outputs, and flags that share no memory with the caller's.
 func TestIndexContract(t *testing.T) {
 	for name, newIndex := range indexes() {
 		t.Run(name, func(t *testing.T) {
@@ -67,6 +109,9 @@ func TestIndexContract(t *testing.T) {
 				}
 				if _, ok, err := idx.Flags(ctx, key.SHA256); err != nil || ok {
 					t.Fatalf("flags: %v, %v", ok, err)
+				}
+				if got := recorded(t, idx, key); len(got) != 0 {
+					t.Fatalf("outputs of an unrecorded key: %+v", got)
 				}
 			})
 
@@ -99,20 +144,32 @@ func TestIndexContract(t *testing.T) {
 			t.Run("record", func(t *testing.T) {
 				idx := newIndex(t, nil)
 				tok, _, _ := idx.Claim(ctx, key)
-				in := entry()
-				if err := idx.Record(ctx, key, tok, in); err != nil {
-					t.Fatal(err)
-				}
-				in.Outputs[0].Value[0] = 'X'
-				in.Outputs[0].Meta["page"] = "changed"
+				in := record(t, idx, key, tok)
+				in[0].Value[0] = 'X'
+				in[0].Meta["page"] = "changed"
 				got, ok, err := idx.Lookup(ctx, key)
 				if err != nil || !ok || !reflect.DeepEqual(got, entry()) {
 					t.Fatalf("lookup: %+v, %v, %v", got, ok, err)
 				}
-				got.Outputs[0].Value[0] = 'Y'
+				outs := recorded(t, idx, key)
+				if !reflect.DeepEqual(outs, outputs()) {
+					t.Fatalf("outputs:\n got %+v\nwant %+v", outs, outputs())
+				}
+				outs[0].Value[0] = 'Y'
+				outs[0].Meta["page"] = "changed"
 				got.Children[0].Name = "changed"
 				if again, _, _ := idx.Lookup(ctx, key); !reflect.DeepEqual(again, entry()) {
 					t.Fatalf("the index shares memory with a lookup: %+v", again)
+				}
+				if again := recorded(t, idx, key); !reflect.DeepEqual(again, outputs()) {
+					t.Fatalf("the index shares memory with its outputs: %+v", again)
+				}
+				// Outputs stops when its loop does.
+				for _, err := range idx.Outputs(ctx, key) {
+					if err != nil {
+						t.Fatal(err)
+					}
+					break
 				}
 				if _, ok, _ := idx.Lookup(ctx, other); ok {
 					t.Fatal("another stage's key is recorded")
@@ -122,6 +179,32 @@ func TestIndexContract(t *testing.T) {
 				}
 				if got, ok, err := idx.Wait(ctx, key); err != nil || !ok || !reflect.DeepEqual(got, entry()) {
 					t.Fatalf("wait on a recorded key: %+v, %v, %v", got, ok, err)
+				}
+			})
+
+			t.Run("release drops the pending outputs", func(t *testing.T) {
+				idx := newIndex(t, nil)
+				tok, _, _ := idx.Claim(ctx, key)
+				for _, o := range outputs() {
+					if err := idx.Append(ctx, key, tok, o); err != nil {
+						t.Fatal(err)
+					}
+				}
+				if err := idx.Release(ctx, key, tok); err != nil {
+					t.Fatal(err)
+				}
+				if _, ok, _ := idx.Lookup(ctx, key); ok {
+					t.Fatal("a released claim's outputs were recorded")
+				}
+				tok, ok, err := idx.Claim(ctx, key)
+				if err != nil || !ok {
+					t.Fatalf("claim after release: %v, %v", ok, err)
+				}
+				if err := idx.Record(ctx, key, tok, dispatch.Entry{Outcome: dispatch.NoProcessor}); err != nil {
+					t.Fatal(err)
+				}
+				if e, _, _ := idx.Lookup(ctx, key); e.Outputs != 0 || len(recorded(t, idx, key)) != 0 {
+					t.Fatalf("a record after a release holds the released outputs: %+v, %+v", e, recorded(t, idx, key))
 				}
 			})
 
@@ -137,9 +220,7 @@ func TestIndexContract(t *testing.T) {
 					done <- e
 				}()
 				time.Sleep(5 * time.Millisecond)
-				if err := idx.Record(ctx, key, tok, entry()); err != nil {
-					t.Fatal(err)
-				}
+				record(t, idx, key, tok)
 				if e := <-done; !reflect.DeepEqual(e, entry()) {
 					t.Fatalf("wait's entry: %+v", e)
 				}
@@ -246,15 +327,18 @@ func TestConcurrentDispatch(t *testing.T) {
 			f.text.entered = make(chan string, 1)
 			f.text.release = make(chan struct{})
 			content := "block"
-			results := make(chan []dispatch.Event, 2)
+			results := make(chan []dispatched, 2)
 			run := func(path string) {
-				var events []dispatch.Event
+				var g gatherer
+				var events []dispatched
 				for ev, err := range f.d.Dispatch(t.Context(), dispatch.Input{Path: path}) {
 					if err != nil {
 						t.Error(err)
 						break
 					}
-					events = append(events, ev)
+					if d, ok := g.add(t, ev); ok {
+						events = append(events, d)
+					}
 				}
 				results <- events
 			}
@@ -309,9 +393,20 @@ func (c *clock) advance(d time.Duration) {
 	c.t = c.t.Add(d)
 }
 
+// pendingIn returns the pending files in a file index's claims directory.
+func pendingIn(t *testing.T, dir string) []string {
+	t.Helper()
+	names, err := filepath.Glob(filepath.Join(dir, "claims", "*.jsonl"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return names
+}
+
 // TestFileIndexStale: a file index's claim older than its stale timeout is taken over by the
-// next claimant, and a waiter on it returns; the old claimant's release leaves the new claim.
-// Two file indexes on one directory share their claims and entries, as two processes would.
+// next claimant, its pending outputs removed, and a waiter on it returns; the old claimant's
+// record then records nothing and its release leaves the new claim, which records. Two file
+// indexes on one directory share their claims and entries, as two processes would.
 func TestFileIndexStale(t *testing.T) {
 	ctx := t.Context()
 	dir := t.TempDir()
@@ -329,6 +424,12 @@ func TestFileIndexStale(t *testing.T) {
 	old, ok, err := a.Claim(ctx, key)
 	if err != nil || !ok {
 		t.Fatalf("claim: %v, %v", ok, err)
+	}
+	if err := a.Append(ctx, key, old, outputs()[1]); err != nil {
+		t.Fatal(err)
+	}
+	if got := pendingIn(t, dir); len(got) != 1 {
+		t.Fatalf("pending files %q, want the claim's", got)
 	}
 	c.advance(time.Minute)
 	if _, ok, _ := b.Claim(ctx, key); ok {
@@ -351,17 +452,27 @@ func TestFileIndexStale(t *testing.T) {
 	if err != nil || !ok || tok == old {
 		t.Fatalf("reclaim: %q, %v, %v", tok, ok, err)
 	}
-	if err := a.Release(ctx, key, old); err != nil {
-		t.Fatal(err)
+	if got := pendingIn(t, dir); len(got) != 0 {
+		t.Fatalf("pending files %q after the takeover, want the stale claim's removed", got)
+	}
+	if err := a.Record(ctx, key, old, entry()); err != nil {
+		t.Fatalf("the stale claimant's record: %v", err)
+	}
+	if _, ok, _ := a.Lookup(ctx, key); ok {
+		t.Fatal("the stale claimant's record, its pending outputs removed, was recorded")
 	}
 	if _, ok, _ := a.Claim(ctx, key); ok {
 		t.Fatal("the stale claimant's release ended the new claim")
 	}
-	if err := b.Record(ctx, key, tok, entry()); err != nil {
-		t.Fatal(err)
-	}
+	record(t, b, key, tok)
 	if got, ok, err := a.Lookup(ctx, key); err != nil || !ok || !reflect.DeepEqual(got, entry()) {
 		t.Fatalf("the other index's lookup: %+v, %v, %v", got, ok, err)
+	}
+	if got := recorded(t, a, key); !reflect.DeepEqual(got, outputs()) {
+		t.Fatalf("the other index's outputs: %+v", got)
+	}
+	if got := pendingIn(t, dir); len(got) != 0 {
+		t.Fatalf("pending files %q after the record", got)
 	}
 }
 

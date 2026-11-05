@@ -52,8 +52,8 @@ func leftIn(t *testing.T, dir string) []string {
 
 // TestPool: 4 workers over 40 inputs, each finding its own part and one every input shares, in
 // a different place. The shared content is prepared exactly once, every other dispatch's part
-// seen, carrying the Ref the caller set on the prepared event, which the index records only once
-// the loop body has returned. Each input's events come in its own dispatch's order, each with its
+// seen, carrying the Ref the caller set on the prepared part's output event, which the index
+// records only once the part's own event's body has returned. Each input's events come in its own dispatch's order, each with its
 // input, and every input is prepared; the working directory is empty once the pool returns.
 func TestPool(t *testing.T) {
 	const n, workers = 40, 4
@@ -70,7 +70,8 @@ func TestPool(t *testing.T) {
 	})
 
 	byInput := map[string][]step{}
-	var shared []dispatch.Event
+	gatherers := map[string]*gatherer{}
+	var shared []dispatched
 	for pe, err := range f.d.Pool(t.Context(), slices.Values(inputs), workers) {
 		if err != nil {
 			t.Fatal(err)
@@ -79,18 +80,29 @@ func TestPool(t *testing.T) {
 		if ev.Part.Depth == 0 && ev.Part.Path != pe.Input.Path {
 			t.Errorf("input %s's event is %s's", pe.Input.Path, ev.Part.Path)
 		}
-		byInput[pe.Input.Path] = append(byInput[pe.Input.Path], step{ev.Part.Name, ev.Part.Depth, ev.Outcome})
-		if ev.Part.Name != "shared.txt" {
-			continue
-		}
-		if ev.Outcome == dispatch.Prepared {
+		if ev.Part.Name == "shared.txt" && ev.Outcome != dispatch.Seen {
+			// The prepared one, recorded only once its own event's body returns.
 			key := dispatch.Key{SHA256: ev.Part.SHA256, Stage: ev.Stage}
 			if _, ok, err := f.index.Lookup(t.Context(), key); err != nil || ok {
-				t.Errorf("shared.txt recorded before the loop body returned: %t, %v", ok, err)
+				t.Errorf("shared.txt recorded before its event's body returned: %t, %v", ok, err)
 			}
-			ev.Outputs[0].Ref = "ref-shared"
+			if ev.Output != nil {
+				ev.Output.Ref = "ref-shared"
+			}
 		}
-		shared = append(shared, ev)
+		g := gatherers[pe.Input.Path]
+		if g == nil {
+			g = &gatherer{}
+			gatherers[pe.Input.Path] = g
+		}
+		d, ok := g.add(t, ev)
+		if !ok {
+			continue
+		}
+		byInput[pe.Input.Path] = append(byInput[pe.Input.Path], step{ev.Part.Name, ev.Part.Depth, ev.Outcome})
+		if ev.Part.Name == "shared.txt" {
+			shared = append(shared, d)
+		}
 	}
 
 	if got := f.text.called("shared.txt"); got != 1 {
@@ -192,7 +204,10 @@ func TestPoolCancel(t *testing.T) {
 			errs = append(errs, err)
 			continue
 		}
-		t.Errorf("an event of %s after the stages blocked", pe.Event.Part.Name)
+		// Each input's first output comes before its stage blocks.
+		if pe.Event.Output == nil {
+			t.Errorf("an event of %s after the stages blocked", pe.Event.Part.Name)
+		}
 	}
 	if len(errs) != 1 || !errors.Is(errs[0], context.Canceled) {
 		t.Errorf("errors %v, want context.Canceled alone", errs)
@@ -212,11 +227,13 @@ func TestPoolCancel(t *testing.T) {
 	}
 }
 
-// TestPoolBackPressure: a loop that holds its first event holds every worker at its own: once
-// each worker's input is prepared, no more is, and the working directory holds no more than a
-// part directory per worker, the held event's files among them. The event's part file is there
-// while the body holds it. Once the loop goes on, every input is prepared, and the working
-// directory is empty when the pool returns. Stopping early then stops every worker.
+// TestPoolBackPressure: a loop that holds its first event, an input's first output, holds every
+// worker at its own: once each worker's input has yielded its first output, no more is prepared,
+// and the working directory holds no more than a part directory per worker, the held event's
+// files among them. The event's part file is there while the body holds it. Once the loop goes
+// on, every input is prepared, each yielding four events, its output, its part's output, its
+// part's, and its own, and the working directory is empty when the pool returns. Stopping early
+// then stops every worker.
 func TestPoolBackPressure(t *testing.T) {
 	const n, workers = 30, 3
 	world := map[string]string{}
@@ -241,19 +258,19 @@ func TestPoolBackPressure(t *testing.T) {
 		}
 		// Every worker comes to an event of its own, then waits on this loop.
 		deadline := time.Now().Add(10 * time.Second)
-		for f.text.total() < 2*workers && time.Now().Before(deadline) {
+		for f.text.total() < workers && time.Now().Before(deadline) {
 			time.Sleep(time.Millisecond)
 		}
 		time.Sleep(100 * time.Millisecond)
-		if got := f.text.total(); got != 2*workers {
-			t.Errorf("%d parts prepared while the loop held its first event, want %d: an input and its part per worker", got, 2*workers)
+		if got := f.text.total(); got != workers {
+			t.Errorf("%d parts prepared while the loop held its first event, want %d: an input per worker", got, workers)
 		}
-		if left := leftIn(t, f.dir); len(left) > 2*workers {
-			t.Errorf("the working directory holds %d entries while the loop held its first event, want at most %d", len(left), 2*workers)
+		if left := leftIn(t, f.dir); len(left) > workers {
+			t.Errorf("the working directory holds %d entries while the loop held its first event, want at most %d", len(left), workers)
 		}
 	}
-	if events != 2*n || f.text.total() != 2*n {
-		t.Errorf("%d events and %d parts prepared, want %d of each", events, f.text.total(), 2*n)
+	if events != 4*n || f.text.total() != 2*n {
+		t.Errorf("%d events and %d parts prepared, want %d and %d", events, f.text.total(), 4*n, 2*n)
 	}
 	if left := leftIn(t, f.dir); len(left) != 0 {
 		t.Errorf("the working directory holds %q", left)

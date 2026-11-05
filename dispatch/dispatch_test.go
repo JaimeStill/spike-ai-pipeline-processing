@@ -224,8 +224,8 @@ func TestSeenAcrossInputs(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			f := newFixture(t, world, newIndex(t, nil), dispatch.Limits{})
 			dispatchAll(t, f.d, input(t, "one.txt", "file shared.txt\ncopy javascript.pdf"), func(ev *dispatch.Event) {
-				for i := range ev.Outputs {
-					ev.Outputs[i].Ref = "ref:" + ev.Part.Name
+				if ev.Output != nil {
+					ev.Output.Ref = "ref:" + ev.Part.Name
 				}
 			})
 			events := dispatchAll(t, f.d, input(t, "two.txt", "copy javascript.pdf\nfile shared.txt"), nil)
@@ -254,8 +254,9 @@ func TestSeenAcrossInputs(t *testing.T) {
 }
 
 // TestRemoval: each part's file, and its working directory with its outputs' files, is there
-// while the caller's loop body runs and gone once it returns, unless the caller kept it; a file
-// the caller moved away is no error; the input is never removed.
+// while the caller's loop body runs for each of its events, its outputs' and its own, and gone
+// once its own event's body returns, unless the caller kept it in its own event; a file the caller
+// moved away is no error; the input is never removed.
 func TestRemoval(t *testing.T) {
 	world := map[string]string{"keep.txt": "leaf keep", "move.txt": "leaf move", "drop.txt": "leaf drop"}
 	f := newFixture(t, world, nil, dispatch.Limits{})
@@ -264,20 +265,24 @@ func TestRemoval(t *testing.T) {
 	paths := map[string][]string{}
 	dispatchAll(t, f.d, path, func(ev *dispatch.Event) {
 		files := []string{ev.Part.Path}
-		for _, o := range ev.Outputs {
-			files = append(files, o.Path)
+		if ev.Output != nil {
+			files = append(files, ev.Output.Path)
 		}
 		for _, p := range files {
 			if _, err := os.Stat(p); err != nil {
 				t.Errorf("%s: %s missing in the loop's body: %v", ev.Part.Name, p, err)
 			}
 		}
-		paths[ev.Part.Name] = files
-		switch ev.Part.Name {
-		case "keep.txt":
+		for _, p := range files {
+			if !slices.Contains(paths[ev.Part.Name], p) {
+				paths[ev.Part.Name] = append(paths[ev.Part.Name], p)
+			}
+		}
+		switch {
+		case ev.Part.Name == "keep.txt" && ev.Output == nil:
 			ev.Keep()
-		case "move.txt":
-			if err := os.Rename(ev.Outputs[0].Path, moved); err != nil {
+		case ev.Part.Name == "move.txt" && ev.Output != nil:
+			if err := os.Rename(ev.Output.Path, moved); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -342,12 +347,17 @@ func TestStopEarly(t *testing.T) {
 	world := map[string]string{"b.txt": "file d.txt", "d.txt": "leaf", "c.txt": "leaf c"}
 	f := newFixture(t, world, nil, dispatch.Limits{})
 	path := input(t, "top.txt", "file b.txt\nfile c.txt")
+	// The loop stops at the first part's own event, d.txt's, the outputs of top.txt, b.txt, and
+	// d.txt before it.
 	for ev, err := range f.d.Dispatch(t.Context(), dispatch.Input{Path: path}) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		if ev.Output != nil {
+			continue
+		}
 		if ev.Part.Name != "d.txt" {
-			t.Fatalf("first event %s", ev.Part.Name)
+			t.Fatalf("first part's event %s", ev.Part.Name)
 		}
 		break
 	}
@@ -384,9 +394,13 @@ func TestRecordFails(t *testing.T) {
 			errs = append(errs, err)
 			continue
 		}
-		events = append(events, ev)
+		if ev.Output == nil {
+			events = append(events, ev)
+		}
 	}
-	wantSteps(t, events, []step{{"b.txt", 1, dispatch.Prepared}})
+	if len(events) != 1 || events[0].Part.Name != "b.txt" || events[0].Outcome != dispatch.Prepared {
+		t.Fatalf("events %+v, want b.txt prepared alone", events)
+	}
 	if len(errs) != 1 || !errors.Is(errs[0], errRecord) {
 		t.Fatalf("errors: %v", errs)
 	}

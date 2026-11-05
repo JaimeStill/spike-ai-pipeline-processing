@@ -46,30 +46,43 @@ const (
 	Limited Outcome = "limited"
 )
 
-// Event is what the dispatcher reports of one part, once its outcome is known: the part, its
-// outcome and why, the error a [Failed] part came to, the identity of the stage its route has,
-// if any, and the stage's outputs and the parts it found, as references. A [Seen] event carries
-// the entry the index recorded, its outcome in Recorded.
+// Event is what the dispatcher reports of one part: an output its stage prepared, as the stage
+// yields it, or, once its outcome is known, the part's own event.
 //
-// The caller's loop owns the event until its body returns. It may persist the outputs and set
-// each one's Ref through the Outputs slice, as ev.Outputs[i].Ref = key, and the index records
-// them so; and it may call [Event.Keep] to keep the part's file and its outputs' files, which the
-// dispatcher otherwise removes once the body returns.
+// An output event has Output set: the part it belongs to, as far as it is known, the identity of
+// its stage, and the output. The dispatcher yields each as its stage yields it, among the events
+// of the parts the stage finds, in the stage's order, and holds nothing of it once the caller's
+// loop body returns, but for what it appends to the part's pending entry in the index: the output
+// as the body left it, so a caller that persists it sets its Ref, as ev.Output.Ref = key, and the
+// index records the Ref. A [Seen] part's recorded outputs are output events too, streamed from
+// the index before its own event, each with its Outcome [Seen] and the entry's in Recorded, the
+// Ref the caller set when it was prepared on it; a prepared output's event has no Outcome.
+//
+// A part's own event has Output nil, and follows its outputs' events and every part found in it:
+// the part, its outcome and why, the error a [Failed] part came to, the identity of the stage its
+// route has, if any, how many outputs it yielded, and the parts it found, as references. A [Seen]
+// event carries the entry the index recorded, its outcome in Recorded.
+//
+// The caller's loop owns the event until its body returns. It may call [Event.Keep] to keep the
+// event's files, which the dispatcher otherwise removes once the part's own event is done.
 type Event struct {
 	Part     Part
+	Output   *Output
 	Outcome  Outcome
 	Reason   string
 	Err      error
 	Stage    Identity
 	Recorded Outcome
-	Outputs  []Output
+	Outputs  int
 	Children []Child
 	keep     *bool
 }
 
-// Keep keeps the event's files: the part's file and its outputs' files are not removed when the
-// caller's loop moves past the event, and the index records the outputs' paths. The caller then
-// owns them. A file the caller moved away is not missed: the dispatcher's removal ignores it.
+// Keep keeps the event's files. Called in an output event, it keeps the output's file, and the
+// index records its path; called in a part's own event, it keeps the part's file and its working
+// directory, the files of all its outputs among them, though the index records the path only of
+// an output kept in its own event. The caller then owns them. A file the caller moved away is not
+// missed: the dispatcher's removal ignores it.
 func (e Event) Keep() {
 	if e.keep != nil {
 		*e.keep = true
@@ -152,9 +165,10 @@ type Input struct {
 	After uint64
 }
 
-// Dispatch dispatches in and every part its stages find in it, depth-first, yielding each
-// part's event once its outcome is known: a part's event follows the events of every part found
-// in it, so the input's is last. An error that stops the dispatch, as the input unreadable, the
+// Dispatch dispatches in and every part its stages find in it, depth-first, yielding each output
+// a stage prepares as its own event, as the stage yields it, and each part's event once its
+// outcome is known: a part's event follows its outputs' and the events of every part found in it,
+// so the input's is last. An error that stops the dispatch, as the input unreadable, the
 // index failing, a file the dispatcher can't remove, or ctx ending, is yielded alone, last; a
 // part that fails is a [Failed] event, and the dispatch goes on. A loop that stops early stops
 // the stages, releases every claim, and removes the files the dispatch made.
@@ -207,7 +221,7 @@ func (r *run) fatal(err error) result {
 // unless the caller kept them, and returns the part's result. record, when not nil, runs once the
 // caller's loop body returns, before the removal, to record the entry; its failure stops the
 // dispatch once the removal is done.
-func (r *run) emit(ev Event, dir string, complete bool, record func(Event, bool) error) result {
+func (r *run) emit(ev Event, dir string, complete bool, record func(Event) error) result {
 	var keep bool
 	ev.keep = &keep
 	if !r.yield(ev, nil) {
@@ -219,7 +233,7 @@ func (r *run) emit(ev Event, dir string, complete bool, record func(Event, bool)
 	}, complete: complete}
 	var err error
 	if record != nil {
-		err = record(ev, keep)
+		err = record(ev)
 	}
 	if keep || ev.Outcome == Quarantined {
 		r.kept[ev.Part.Path] = true
@@ -412,7 +426,7 @@ func (r *run) staged(p Part, stage Stage, failed func(error) result) result {
 			return r.fatal(err)
 		}
 		if ok {
-			return r.seen(p, id, e)
+			return r.seen(p, id, key, e)
 		}
 		t, claimed, err := idx.Claim(r.ctx, key)
 		if err != nil {
@@ -425,7 +439,7 @@ func (r *run) staged(p Part, stage Stage, failed func(error) result) result {
 		if e, ok, err = idx.Wait(r.ctx, key); err != nil {
 			return r.fatal(err)
 		} else if ok {
-			return r.seen(p, id, e)
+			return r.seen(p, id, key, e)
 		}
 	}
 	// Until the entry is recorded, any way out releases the claim, under a context of its own so
@@ -453,6 +467,12 @@ func (r *run) staged(p Part, stage Stage, failed func(error) result) result {
 	if err != nil {
 		return r.fatal(fmt.Errorf("dispatch: %w", err))
 	}
+	// A resumed read's outputs are its tail alone, no entry of the content's: nothing is
+	// appended.
+	var add func(Output) error
+	if p.After == 0 {
+		add = func(o Output) error { return idx.Append(r.ctx, key, token, o) }
+	}
 	ev := Event{Part: p, Stage: id}
 	complete := true
 	var stageErr error
@@ -464,7 +484,8 @@ func (r *run) staged(p Part, stage Stage, failed func(error) result) result {
 		}
 		switch {
 		case item.Output != nil:
-			ev.Outputs = append(ev.Outputs, *item.Output)
+			r.output(p, id, *item.Output, add)
+			ev.Outputs++
 		case item.Part != nil:
 			// Once the dispatch is stopped there is no parent event to report the child in.
 			if res := r.part(*item.Part, p.SHA256, p.Depth+1); !r.stopped {
@@ -498,17 +519,11 @@ func (r *run) staged(p Part, stage Stage, failed func(error) result) result {
 	default:
 		ev.Outcome, ev.Reason, ev.Err, complete = Failed, stageErr.Error(), stageErr, false
 	}
-	record := func(ev Event, keep bool) error {
-		// A resumed read's outputs are its tail alone, no entry of the content's.
+	record := func(ev Event) error {
 		if !complete || p.After != 0 {
 			return nil
 		}
-		e := Entry{Outcome: ev.Outcome, Reason: ev.Reason, Outputs: slices.Clone(ev.Outputs), Children: ev.Children}
-		if !keep {
-			for i := range e.Outputs {
-				e.Outputs[i].Path = ""
-			}
-		}
+		e := Entry{Outcome: ev.Outcome, Reason: ev.Reason, Outputs: ev.Outputs, Children: ev.Children}
 		if err := idx.Record(context.WithoutCancel(r.ctx), key, token, e); err != nil {
 			return err
 		}
@@ -525,16 +540,57 @@ func encrypted(flags []inspect.Flag) bool {
 	})
 }
 
-// seen emits p's event as content the index holds, e its entry under id, its flags the index's.
-func (r *run) seen(p Part, id Identity, e Entry) result {
-	flags, _, err := r.d.cfg.Index.Flags(r.ctx, p.SHA256)
+// output yields o as an output event of p's, prepared by the stage id names, then, once the
+// caller's loop body returns, appends it to p's pending entry by add, when not nil, as the body
+// left it, its Path cleared unless the body kept it. An append that fails stops the dispatch.
+func (r *run) output(p Part, id Identity, o Output, add func(Output) error) {
+	r.yieldOutput(Event{Part: p, Stage: id, Output: &o}, add)
+}
+
+// yieldOutput yields ev, an output event, as output says.
+func (r *run) yieldOutput(ev Event, add func(Output) error) {
+	var keep bool
+	ev.keep = &keep
+	if !r.yield(ev, nil) {
+		r.stopped = true
+		return
+	}
+	rec := *ev.Output
+	if keep && rec.Path != "" {
+		r.kept[rec.Path] = true
+	} else {
+		rec.Path = ""
+	}
+	if add == nil {
+		return
+	}
+	if err := add(rec); err != nil {
+		r.fatal(err)
+	}
+}
+
+// seen emits p's event as content the index holds under key, e its entry under id, its flags the
+// index's: each recorded output an output event, streamed from the index, then p's own.
+func (r *run) seen(p Part, id Identity, key Key, e Entry) result {
+	idx := r.d.cfg.Index
+	flags, _, err := idx.Flags(r.ctx, p.SHA256)
 	if err != nil {
 		return r.fatal(err)
 	}
 	p.Flags = flags
+	n := 0
+	for o, err := range idx.Outputs(r.ctx, key) {
+		if err != nil {
+			return r.fatal(err)
+		}
+		if r.yieldOutput(Event{Part: p, Stage: id, Output: &o, Outcome: Seen, Recorded: e.Outcome}, nil); r.stopped {
+			return result{}
+		}
+		n++
+	}
 	ev := Event{
 		Part: p, Outcome: Seen, Reason: "recorded by " + id.String(), Err: nil, Stage: id,
-		Recorded: e.Outcome, Outputs: e.Outputs, Children: e.Children,
+		Recorded: e.Outcome, Outputs: n, Children: e.Children,
 	}
 	return r.emit(ev, "", true, nil)
 }

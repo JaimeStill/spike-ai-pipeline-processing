@@ -121,7 +121,7 @@ func newDispatcher(t *testing.T, stages dispatch.Stages, index dispatch.Index) *
 
 // recordThenMarkdown fails the test unless ev's record named name comes right before its
 // Markdown of the same name, the order the email and onenote stages yield a message or a page in.
-func recordThenMarkdown(t *testing.T, ev dispatch.Event, name string) {
+func recordThenMarkdown(t *testing.T, ev dispatched, name string) {
 	t.Helper()
 	i := slices.IndexFunc(ev.Outputs, func(o dispatch.Output) bool { return o.Name == name })
 	if i < 0 || i+1 >= len(ev.Outputs) || ev.Outputs[i].Kind != dispatch.RecordOutput ||
@@ -274,10 +274,7 @@ func TestDocumentStage(t *testing.T) {
 	pdf := input(t, "three.pdf", "%PDF-1.7\n%%EOF\n")
 	d := newDispatcher(t, dispatch.Stages{route.Document: documentStage(t, &pages{n: 3, empty: 2})}, dispatch.NewMemoryIndex())
 	events := dispatchAll(t, d, pdf, func(ev *dispatch.Event) {
-		for _, o := range ev.Outputs {
-			if o.Kind != dispatch.ImageOutput {
-				continue
-			}
+		if o := ev.Output; o != nil && o.Kind == dispatch.ImageOutput {
 			b, err := os.ReadFile(o.Path)
 			if err != nil || !bytes.HasPrefix(b, []byte(route.PNGSignature)) {
 				t.Errorf("%s: %v, %d bytes", o.Name, err, len(b))
@@ -408,7 +405,8 @@ func TestOfficeStage(t *testing.T) {
 // index. The .msg's message is a record and Markdown, its picture a part prepared by the vision
 // stage; the .pst's store, folders, and messages are records, a message's Meta naming its folder's
 // path, and its picture, the same content, is seen; its text and CSV attachments, which no stage
-// takes, are no processor yet. Every part is found where its message says.
+// takes, are no processor yet. Every part is found where its message says, and its event comes
+// before the message's record, which comes right before its Markdown and says one follows.
 func TestEmailStage(t *testing.T) {
 	index := dispatch.NewMemoryIndex()
 	d := newDispatcher(t, dispatch.Stages{route.Nested: emailStage(t), route.Vision: dispatch.NewVisionStage()}, index)
@@ -431,7 +429,27 @@ func TestEmailStage(t *testing.T) {
 	recordThenMarkdown(t, msg, "message")
 	outputNamed(t, msg, dispatch.RecordOutput, "store")
 
-	events = dispatchAll(t, d, filepath.Join(mailFixtures, "generated", "pst", "mailbox.pst"), nil)
+	// order is every event's label, in the order the loop takes them: an output's kind and name,
+	// a part's own event's Where.
+	var order []string
+	events = dispatchAll(t, d, filepath.Join(mailFixtures, "generated", "pst", "mailbox.pst"), func(ev *dispatch.Event) {
+		switch {
+		case ev.Output != nil && ev.Part.Depth == 0:
+			order = append(order, string(ev.Output.Kind)+" "+ev.Output.Name)
+		case ev.Output == nil && ev.Part.Depth == 1:
+			order = append(order, ev.Part.Where)
+		}
+	})
+	// A message's attachments come before its record, its record right before its Markdown,
+	// which the record's Meta says follows, and the next message after both.
+	for _, id := range []string{"2097220", "2097252", "2097380"} {
+		at := slices.Index(order, "message "+id+", attachment 1")
+		rec := slices.Index(order, "record message "+id)
+		if at < 0 || rec != at+1 || order[rec+1] != "markdown message "+id ||
+			(rec+2 < len(order) && strings.HasPrefix(order[rec+2], "message "+id)) {
+			t.Errorf("message %s's events, in order %q: want its attachment, its record, then its Markdown", id, order)
+		}
+	}
 	wantSteps(t, events, []step{
 		{moth, 1, dispatch.Seen},
 		{csv, 1, dispatch.NoProcessor},
@@ -447,7 +465,7 @@ func TestEmailStage(t *testing.T) {
 		t.Errorf("moth.png: recorded %s by %v", ev.Recorded, ev.Stage)
 	}
 	pst := events[len(events)-1]
-	if m := outputNamed(t, pst, dispatch.RecordOutput, "message 2097220").Meta; m["folder"] != "Top of Personal Folders/Inbox/Projects/2026" || m["id"] != "2097220" {
+	if m := outputNamed(t, pst, dispatch.RecordOutput, "message 2097220").Meta; m["folder"] != "Top of Personal Folders/Inbox/Projects/2026" || m["id"] != "2097220" || m["markdown"] != "follows" {
 		t.Errorf("message 2097220's meta %v", m)
 	}
 	if m := outputNamed(t, pst, dispatch.RecordOutput, "folder 32962").Meta; m["path"] != "Top of Personal Folders/Inbox/Projects/2026" {
@@ -509,13 +527,7 @@ func TestEmailResume(t *testing.T) {
 
 	index := dispatch.NewMemoryIndex()
 	d := newDispatcher(t, stages, index)
-	var resumed []dispatch.Event
-	for ev, err := range d.Dispatch(t.Context(), dispatch.Input{Path: path, After: after}) {
-		if err != nil {
-			t.Fatal(err)
-		}
-		resumed = append(resumed, ev)
-	}
+	resumed := collect(t, d.Dispatch(t.Context(), dispatch.Input{Path: path, After: after}), nil)
 	store := resumed[len(resumed)-1]
 	if store.Outcome != dispatch.Prepared || store.Part.After != after {
 		t.Fatalf("the resumed store: %s, after %d", store.Outcome, store.Part.After)

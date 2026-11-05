@@ -88,10 +88,8 @@ func wantPNG(t *testing.T, o dispatch.Output) {
 func TestDocumentStageReal(t *testing.T) {
 	d := newDispatcher(t, allStages(t), dispatch.NewMemoryIndex())
 	events := dispatchAll(t, d, filepath.Join("..", "document", "testdata", "clean.pdf"), func(ev *dispatch.Event) {
-		for _, o := range ev.Outputs {
-			if o.Kind == dispatch.ImageOutput {
-				wantPNG(t, o)
-			}
+		if o := ev.Output; o != nil && o.Kind == dispatch.ImageOutput {
+			wantPNG(t, *o)
 		}
 	})
 	wantSteps(t, events, []step{{"clean.pdf", 0, dispatch.Prepared}})
@@ -134,8 +132,8 @@ func TestOfficeStageReal(t *testing.T) {
 func TestPictureStageReal(t *testing.T) {
 	d := newDispatcher(t, allStages(t), dispatch.NewMemoryIndex())
 	events := dispatchAll(t, d, filepath.Join("..", "picture", "testdata", "shapes.svg"), func(ev *dispatch.Event) {
-		if len(ev.Outputs) == 1 {
-			wantPNG(t, ev.Outputs[0])
+		if ev.Output != nil {
+			wantPNG(t, *ev.Output)
 		}
 	})
 	wantSteps(t, events, []step{{"shapes.svg", 0, dispatch.Prepared}})
@@ -151,10 +149,8 @@ func TestPictureStageReal(t *testing.T) {
 func TestEmailStageReal(t *testing.T) {
 	d := newDispatcher(t, allStages(t), dispatch.NewMemoryIndex())
 	events := dispatchAll(t, d, builtMSG, func(ev *dispatch.Event) {
-		if ev.Part.Route == route.VisionConverted {
-			for _, o := range ev.Outputs {
-				wantPNG(t, o)
-			}
+		if ev.Part.Route == route.VisionConverted && ev.Output != nil {
+			wantPNG(t, *ev.Output)
 		}
 	})
 	top := map[string]route.Route{
@@ -172,7 +168,7 @@ func TestEmailStageReal(t *testing.T) {
 			delete(top, ev.Part.Name)
 		}
 		// Post-order: a part's parent's event comes after it.
-		if ev.Part.Depth > 0 && !slices.ContainsFunc(events[i+1:], func(p dispatch.Event) bool { return p.Part.SHA256 == ev.Part.Parent }) {
+		if ev.Part.Depth > 0 && !slices.ContainsFunc(events[i+1:], func(p dispatched) bool { return p.Part.SHA256 == ev.Part.Parent }) {
 			t.Errorf("event %d, %s@%d, comes after its parent's", i, ev.Part.Name, ev.Part.Depth)
 		}
 	}
@@ -197,11 +193,11 @@ func TestEmailStageReal(t *testing.T) {
 func TestOneNoteStageReal(t *testing.T) {
 	d := newDispatcher(t, allStages(t), dispatch.NewMemoryIndex())
 	events := dispatchAll(t, d, filepath.Join(onenoteFixtures, "handwriting_recognition.one"), func(ev *dispatch.Event) {
-		if ev.Part.Route == route.VisionConverted && len(ev.Outputs) == 1 {
-			wantPNG(t, ev.Outputs[0])
+		if ev.Part.Route == route.VisionConverted && ev.Output != nil {
+			wantPNG(t, *ev.Output)
 		}
 	})
-	var ink *dispatch.Event
+	var ink *dispatched
 	for i := range events {
 		if strings.HasSuffix(events[i].Part.Where, ", page ink") {
 			ink = &events[i]

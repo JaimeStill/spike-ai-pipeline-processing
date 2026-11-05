@@ -116,9 +116,10 @@ const (
 // of it, such as a page's number and count.
 //
 // Ref is the caller's: the dispatcher never sets it. A caller that persists an output sets its
-// Ref, through the event's Outputs slice, to its own key for it, and the index records the Ref,
-// so a later [Seen] event carries the caller's key rather than a file the dispatcher has since
-// removed. The recorded output keeps its Path only when the caller kept the event's files.
+// Ref, through its output event's Output, to its own key for it, and the index records the Ref,
+// so a later [Seen] part's output event carries the caller's key rather than a file the
+// dispatcher has since removed. The recorded output keeps its Path only when the caller kept the
+// output's file in its event.
 type Output struct {
 	Kind      OutputKind        `json:"kind"`
 	Name      string            `json:"name,omitzero"`

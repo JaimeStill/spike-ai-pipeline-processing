@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"maps"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -32,18 +33,24 @@ type EmailConfig struct {
 // message, "message <id>", or "message" for a .msg's or an .eml's, which has none, then its
 // derived Markdown body, when it has one, a [MarkdownOutput] of the same name, the Meta of both
 // naming its id, its folder's path, its subject, and its Message-ID, and an embedded one's the
-// message it is embedded in; each skipped record, "skipped <kind>", its Meta naming its reason;
-// and a record of a kind email doesn't know, by its kind. mail's warnings, when it gave any, are
-// a last record, "warnings", a JSON array.
+// message it is embedded in, and the record's Meta "markdown" saying "follows" when a Markdown
+// follows it; each skipped record, "skipped <kind>", its Meta naming its reason; and a record of a
+// kind email doesn't know, by its kind. mail's warnings, when it gave any, are a last record,
+// "warnings", a JSON array.
 //
-// Each attachment whose content mail wrote is a [Found] part, the dispatcher's to route and
-// inspect again, named by its filename and typed by its stored MIME type, its Where naming its
-// message and its place, "message <id>, attachment <n>". An embedded message whose content is no
-// file, as a .msg's or an .eml's is, mail giving no bytes of it, is prepared inline, as a message
-// of its own: its record and Markdown named by its place, "message <id>, attachment <n>", and its
-// own attachments found below it, "message <id>, attachment <n>, attachment <m>", at any depth.
-// An attachment with neither, by reference, not read, or a .pst's embedded message listed by its
-// metadata alone, is a record named by its place, its Meta naming why it has no content.
+// A message's attachments come before its own outputs, in their order: mail writes a message's
+// attachments before its line, so each is a part dispatched, every part found in it with it,
+// before the message's record and Markdown are yielded, and the message's last output, its
+// Markdown or, with none, its record, is the last of everything the message holds. Each
+// attachment whose content mail wrote is a [Found] part, the dispatcher's to route and inspect
+// again, named by its filename and typed by its stored MIME type, its Where naming its message
+// and its place, "message <id>, attachment <n>". An embedded message whose content is no file, as
+// a .msg's or an .eml's is, mail giving no bytes of it, is prepared inline, as a message of its
+// own, in its place among the attachments: its own attachments found below it, "message <id>,
+// attachment <n>, attachment <m>", at any depth, then its record and Markdown, named by its place,
+// "message <id>, attachment <n>". An attachment with neither, by reference, not read, or a .pst's
+// embedded message listed by its metadata alone, is a record named by its place, its Meta naming
+// why it has no content.
 //
 // A part with an After, an [Input.After], is read from the message after it, as email.Request's
 // After says: the store, every folder, and the messages after it, which needs mail 0.3.0 or
@@ -149,10 +156,18 @@ func (w *emailWalk) record(rec email.Record) error {
 	return fmt.Errorf("email stage: a record of type %T", rec)
 }
 
-// message yields m's record and Markdown, named name, and its attachments: each file found, each
-// embedded message without one prepared inline below name, and each other a record. parent is
-// the name of the message m is embedded in, "" for a message of the read's own.
+// message yields m's attachments, then its record and Markdown, named name: each attachment's
+// file found, each embedded message without one prepared inline below name, and each other a
+// record. parent is the name of the message m is embedded in, "" for a message of the read's own.
+// Its own outputs come last, so a caller that has persisted them has had every part of m.
 func (w *emailWalk) message(m *email.Message, name, parent string) error {
+	for i := range m.Attachments {
+		a := &m.Attachments[i]
+		where := name + ", attachment " + strconv.Itoa(i+1)
+		if err := w.attachment(a, where, name); err != nil {
+			return err
+		}
+	}
 	meta := map[string]string{"subject": m.Subject}
 	if m.ID != 0 {
 		meta["id"] = strconv.FormatUint(m.ID, 10)
@@ -166,18 +181,18 @@ func (w *emailWalk) message(m *email.Message, name, parent string) error {
 	if parent != "" {
 		meta["embedded_in"] = parent
 	}
-	if err := w.output(record(name, m, meta)); err != nil {
+	md := m.Body.Derived.Markdown
+	recMeta := meta
+	if md != "" {
+		// The record says a Markdown follows it, so a caller knows which output is m's last.
+		recMeta = maps.Clone(meta)
+		recMeta["markdown"] = "follows"
+	}
+	if err := w.output(record(name, m, recMeta)); err != nil {
 		return err
 	}
-	if md := m.Body.Derived.Markdown; md != "" {
+	if md != "" {
 		if err := w.output(markdown(name, md, meta), nil); err != nil {
-			return err
-		}
-	}
-	for i := range m.Attachments {
-		a := &m.Attachments[i]
-		where := name + ", attachment " + strconv.Itoa(i+1)
-		if err := w.attachment(a, where, name); err != nil {
 			return err
 		}
 	}
