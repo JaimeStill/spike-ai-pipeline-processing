@@ -1,0 +1,243 @@
+# The integration tier's route truth, written by hand from the fixtures, not from a dispatch's
+# output: the route and outcome TestTierRoutes expects of every committed fixture input, each
+# dispatched through every adapter in the order the test lists them, over one file index, and of
+# the found parts that matter. One row per line, tab-separated:
+#
+#   input    the input's path under the repository's root
+#   place    where the part was found: "-" for the input itself, else each Where from the input's
+#            child down to the part, joined by " > "; "*" matches any run of characters
+#   name     the part's name; "*" matches any run of characters
+#   route    the route the part must have
+#   outcome  the outcome the part must come to
+#
+# A found part's row matches at least one event, and every event it matches has its route and
+# outcome. Content the index already holds is seen: the fixtures share attachments and media,
+# and an input dispatched after another holding the same bytes sees them.
+
+# document: the three fixture sets, through gs, each page's text layer and PNG.
+document/testdata/clean.pdf	-	*	document	prepared
+document/testdata/degraded.pdf	-	*	document	prepared
+document/testdata/scanned.pdf	-	*	document	prepared
+
+# office, OOXML: every document is office's; its pictures are found as stored, a PNG or JPEG
+# vision's, and a metafile as its PNG, which office converts with LibreOffice and magick. office's
+# generator draws the same two PNGs into drawings.libreoffice.xlsx, media.libreoffice.docx, and
+# slide-objects.libreoffice.pptx, their members' SHA-256s beginning 0fcca33b and 10a86bd7: the
+# workbook, dispatched first, prepares them, and the other two see them.
+office/testdata/ooxml/bullets.libreoffice.pptx	-	*	office	prepared
+office/testdata/ooxml/cells.libreoffice.xlsx	-	*	office	prepared
+office/testdata/ooxml/charts.libreoffice.docx	-	*	office	prepared
+office/testdata/ooxml/comments.libreoffice.docx	-	*	office	prepared
+office/testdata/ooxml/drawings.libreoffice.xlsx	-	*	office	prepared
+office/testdata/ooxml/drawings.libreoffice.xlsx	media *.png	*.png	vision	prepared
+office/testdata/ooxml/formulas.libreoffice.xlsx	-	*	office	prepared
+office/testdata/ooxml/lists.libreoffice.docx	-	*	office	prepared
+office/testdata/ooxml/media.libreoffice.docx	-	*	office	prepared
+office/testdata/ooxml/media.libreoffice.docx	media 0fcca33b*.png	*.png	vision	seen
+office/testdata/ooxml/media.libreoffice.docx	media 10a86bd7*.png	*.png	vision	seen
+office/testdata/ooxml/media.libreoffice.docx	media df026100*.png	*.png	vision	prepared
+office/testdata/ooxml/media.libreoffice.docx	media *.emf, as PNG	*.png	vision	prepared
+office/testdata/ooxml/merges.libreoffice.xlsx	-	*	office	prepared
+office/testdata/ooxml/notes.libreoffice.docx	-	*	office	prepared
+office/testdata/ooxml/sections.libreoffice.docx	-	*	office	prepared
+office/testdata/ooxml/slide-objects.libreoffice.pptx	-	*	office	prepared
+office/testdata/ooxml/slide-objects.libreoffice.pptx	media *.png	*.png	vision	seen
+office/testdata/ooxml/slides.libreoffice.pptx	-	*	office	prepared
+office/testdata/ooxml/tables.libreoffice.docx	-	*	office	prepared
+office/testdata/ooxml/with-drawing.xlsx	-	*	office	prepared
+office/testdata/ooxml/with-drawing.xlsx	media *.jpeg	*.jpeg	vision	prepared
+office/testdata/ooxml/with-drawing.xlsx	media *.png	*.png	vision	prepared
+office/testdata/ooxml/with-drawing.xlsx	media *.emf, as PNG	*.png	vision	prepared
+office/testdata/ooxml/with-drawing.xlsx	media *.wmf, as PNG	*.png	vision	prepared
+office/testdata/ooxml/word-with-attachments.docx	-	*	office	prepared
+office/testdata/ooxml/word-with-attachments.docx	media *.emf, as PNG	*.png	vision	prepared
+office/testdata/ooxml/word-with-attachments.docx	media *.wmf, as PNG	*.png	vision	prepared
+
+# office, legacy: LibreOffice in its pinned image converts each, generated and real.
+office/testdata/legacy/generated/bullets.libreoffice.ppt	-	*	office	prepared
+office/testdata/legacy/generated/cells.libreoffice.xls	-	*	office	prepared
+office/testdata/legacy/generated/charts.libreoffice.doc	-	*	office	prepared
+office/testdata/legacy/generated/comments.libreoffice.doc	-	*	office	prepared
+office/testdata/legacy/generated/drawings.libreoffice.xls	-	*	office	prepared
+office/testdata/legacy/generated/formulas.libreoffice.xls	-	*	office	prepared
+office/testdata/legacy/generated/lists.libreoffice.doc	-	*	office	prepared
+office/testdata/legacy/generated/media.libreoffice.doc	-	*	office	prepared
+office/testdata/legacy/generated/merges.libreoffice.xls	-	*	office	prepared
+office/testdata/legacy/generated/notes.libreoffice.doc	-	*	office	prepared
+office/testdata/legacy/generated/sections.libreoffice.doc	-	*	office	prepared
+office/testdata/legacy/generated/slide-objects.libreoffice.ppt	-	*	office	prepared
+office/testdata/legacy/generated/slides.libreoffice.ppt	-	*	office	prepared
+office/testdata/legacy/generated/tables.libreoffice.doc	-	*	office	prepared
+office/testdata/legacy/real/SampleSS.xls	-	*	office	prepared
+office/testdata/legacy/real/basic_test_ppt_file.ppt	-	*	office	prepared
+office/testdata/legacy/real/simple-table.doc	-	*	office	prepared
+
+# office, the TIFF picture: magick converts it, and its PNG is vision's.
+office/testdata/pictures/tiff.docx	-	*	office	prepared
+office/testdata/pictures/tiff.docx	media *.tiff, as PNG	*.png	vision	prepared
+
+# picture: each SVG to its PNG through magick; the script-bearing one's flags are active, which
+# proceed by default.
+picture/testdata/ink.svg	-	*	vision-converted	prepared
+picture/testdata/script-bearing.svg	-	*	vision-converted	prepared
+picture/testdata/shapes.svg	-	*	vision-converted	prepared
+
+# email, the generated messages as .eml: moth.png first prepared here; the CSV and the text
+# attachment are text, which no stage takes yet.
+email/testdata/mail/fixtures/generated/eml/01-plain.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml	message, attachment *	moth.png	vision	prepared
+email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	message, attachment *	отчёт.csv	text	no processor yet
+email/testdata/mail/fixtures/generated/eml/05-japanese.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/eml/06-chinese.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	message, attachment *	note-g.txt	text	no processor yet
+
+# email, the same messages as .msg: moth.png is seen; the forwarded message is a file of its own,
+# the email stage's again.
+email/testdata/mail/fixtures/generated/msg/01-plain.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg	message, attachment *	moth.png	vision	seen
+email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	message, attachment *	отчёт.csv	text	no processor yet
+email/testdata/mail/fixtures/generated/msg/05-japanese.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/msg/06-chinese.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment *	note-g.txt	text	no processor yet
+email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment *	Notes on the engine (draft).eml	nested	prepared
+
+# email, the generated store: the same attachments again.
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	-	*	nested	prepared
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	moth.png	vision	seen
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	отчёт.csv	text	no processor yet
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	note-g.txt	text	no processor yet
+
+# email, the MIME inputs: an .eml, an mboxrd, and the rlug mbox. mbox.rlug-0 to -4 are its
+# messages one a file, each beginning with its header, no "From " line, and named with no .eml
+# extension: route takes a bare message as one only by that extension or a stored message type,
+# so each is unrouted.
+email/testdata/mail/fixtures/mime/eml/09-threading.eml	-	*	nested	prepared
+email/testdata/mail/fixtures/mime/nine.mboxrd	-	*	nested	prepared
+email/testdata/mail/fixtures/mime/nine.mboxrd	message *, attachment *	moth.png	vision	seen
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug	-	*	nested	prepared
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0	-	*	unrouted	no processor yet
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1	-	*	unrouted	no processor yet
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2	-	*	unrouted	no processor yet
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3	-	*	unrouted	no processor yet
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4	-	*	unrouted	no processor yet
+
+# email, the public .msg files: a BMP stored as alfresco.gif is vision's by its signature; an
+# embedded message's PDF is the document stage's; Outlook 2003's eleven JPEGs are vision's.
+email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg	message, attachment *	alfresco.gif	vision	prepared
+email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg	message, attachment *	smbprn.00009008.KdcPjl.pdf	document	prepared
+email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	-	*	nested	prepared
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment *	*.jpg	vision	prepared
+
+# email, the public stores: libyal's outlook.pst holds Outlook 2003's JPEGs twice, seen; the
+# passworded store's password protects nothing mail reads.
+email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst	-	*	nested	prepared
+email/testdata/mail/fixtures/pst/java-libpst/passworded.pst	-	*	nested	prepared
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	-	*	nested	prepared
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message *, attachment *	*.jpg	vision	seen
+email/testdata/mail/fixtures/pst/tika/testPST.pst	-	*	nested	prepared
+email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst	-	*	nested	prepared
+
+# email, the built message, as its .eml source and as the .msg: the docx and the xls are office
+# fixtures dispatched above, seen; the TIFF and the EMF as attached are the picture stage's; the
+# attached .msg is a copy of generated/msg/03-html-inline-image.msg, dispatched above, seen. The
+# .msg's attachments are the source's, byte for byte, all seen.
+email/testdata/built/eml/office-attachments.eml	-	*	nested	prepared
+email/testdata/built/eml/office-attachments.eml	message, attachment *	minutes.docx	office	seen
+email/testdata/built/eml/office-attachments.eml	message, attachment *	budget.xls	office	seen
+email/testdata/built/eml/office-attachments.eml	message, attachment *	scan.tif	vision-converted	prepared
+email/testdata/built/eml/office-attachments.eml	message, attachment *	diagram.emf	vision-converted	prepared
+email/testdata/built/eml/office-attachments.eml	message, attachment *	forwarded.msg	nested	seen
+email/testdata/built/msg/office-attachments.msg	-	*	nested	prepared
+email/testdata/built/msg/office-attachments.msg	message, attachment *	minutes.docx	office	seen
+email/testdata/built/msg/office-attachments.msg	message, attachment *	budget.xls	office	seen
+email/testdata/built/msg/office-attachments.msg	message, attachment *	scan.tif	vision-converted	seen
+email/testdata/built/msg/office-attachments.msg	message, attachment *	diagram.emf	vision-converted	seen
+email/testdata/built/msg/office-attachments.msg	message, attachment *	forwarded.msg	nested	seen
+
+# onenote, Interop-TestSuites: sections and notebooks; the encrypted section is refused, and
+# skipped inside its notebook. A page's embedded picture, Chrysanthemum.jpg, is vision's, and its
+# embedded file, testing.docx, office's, seen again through the notebook; onenote's content.json
+# names both.
+onenote/testdata/onenote/fixtures/interop/Resources/AlternativePackaging.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/Resources/AlternativePackaging.onetoc2	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/Resources/NoSection.onetoc2	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/Resources/Open Notebook.onetoc2	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/SUT/Encryption.one	-	*	onenote	failed
+onenote/testdata/onenote/fixtures/interop/SUT/FileSyncWOPI_OneNoteWithODB.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/SUT/FileSyncWOPI_OneNoteWithODB.one	page *, outline *	Chrysanthemum.jpg	vision	prepared
+onenote/testdata/onenote/fixtures/interop/SUT/InvalidData.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/SUT/OneWithFileData.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/SUT/OneWithFileData.one	page *, outline *	testing.docx	office	prepared
+onenote/testdata/onenote/fixtures/interop/SUT/OneWithoutFileData.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/SUT/Open Notebook.onetoc2	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/interop/SUT/Open Notebook.onetoc2	page *, outline *	testing.docx	office	seen
+
+# onenote, onenote.rs: New Section 1 is dispatched first, its picture and its ink prepared there;
+# handwriting_recognition holds the same page, 5eaf76b1, so the same picture, seen, but its ink
+# is that page's 62 ink containers, where New Section 1's is one: another SVG, prepared. New
+# Section Group's second section holds a page's image container, dummy_1.png, vision's, and an
+# embedded MP3, audio, which no stage takes yet; its notebook sees the picture and has no stage
+# for the MP3 again.
+onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page *, *	*.jpg	vision	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page *, page ink	*.svg	vision-converted	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/Open Notebook.onetoc2	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	page *, *	*.jpg	vision	seen
+onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	page *, page ink	*.svg	vision-converted	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 1.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page *, image container *	dummy_1.png	vision	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page *, outline *	ff-16b-2c-44100hz.mp3	audio	no processor yet
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page *, image container *	dummy_1.png	vision	seen
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page *, outline *	ff-16b-2c-44100hz.mp3	audio	no processor yet
+onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/OneNote_DeletedPages.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/Open Notebook.onetoc2	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 2.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 3.one	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	-	*	onenote	prepared
+onenote/testdata/onenote/fixtures/onenote-rs/object-revision/Open Notebook.onetoc2	-	*	onenote	prepared
+
+# inspect's hazards: a ZIP with an unsafe entry name, a symbolic link, or a declared bomb is
+# quarantined; the 8 MiB bomb is under the default size, so the zip stage writes its zeros, which
+# no stage takes; the encrypted ZIP's readable entry is dispatched and the ZIP is encrypted; the
+# other hazards' flags are active, which proceed to their stages.
+inspect/testdata/absolute.zip	-	*	archive	quarantined
+inspect/testdata/bomb.zip	-	*	archive	prepared
+inspect/testdata/bomb.zip	zip entry zeros.bin	zeros.bin	unrouted	no processor yet
+inspect/testdata/declared-bomb.zip	-	*	archive	quarantined
+inspect/testdata/encrypted.xlsx	-	*	unrouted	no processor yet
+inspect/testdata/encrypted.zip	-	*	archive	encrypted
+inspect/testdata/encrypted.zip	zip entry notes.txt	notes.txt	text	no processor yet
+inspect/testdata/hyperlink.docx	-	*	office	prepared
+inspect/testdata/invoice.pdf.exe	-	*	unrouted	no processor yet
+inspect/testdata/javascript.pdf	-	*	document	prepared
+inspect/testdata/macro.docm	-	*	office	prepared
+inspect/testdata/mismatch.pdf	-	*	vision	prepared
+inspect/testdata/polyglot.jpg	-	*	vision	prepared
+inspect/testdata/polyglot.png	-	*	vision	prepared
+inspect/testdata/script.svg	-	*	vision-converted	prepared
+inspect/testdata/symlink.zip	-	*	archive	quarantined
+inspect/testdata/traversal.zip	-	*	archive	quarantined
+
+# tool: a WAV, audio, which no stage takes yet.
+tool/testdata/tone.wav	-	*	audio	no processor yet
