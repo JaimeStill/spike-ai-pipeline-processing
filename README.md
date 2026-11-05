@@ -184,12 +184,23 @@ or converter the caller already built and the version of its Tools, which `dispa
 names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeStage`, office's
 Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF, EMF, WMF, or SVG to
 PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
-mail's records, each message's Markdown, and each attachment found as a part, an embedded message
-mail gives no file for prepared inline; and `OneNoteStage`, onenote's records, each page's
-Markdown, and each of its media found as a part. A found part's `Where` names its place, such as
+mail's records, each message's record then its Markdown, and each attachment found as a part,
+an embedded message mail gives no file for prepared inline; and `OneNoteStage`, onenote's
+records, each page's record then its Markdown, and each of its media found as a part. A found part's `Where` names its place, such as
 `message 2097220, attachment 1` or `page {...}, page ink`, and it is dispatched again, so a PDF
 attached to a message reaches the document stage and a page's ink becomes a PNG. Kinds no adapter
 reads yet, ODF, RTF, WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet.
+
+`ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry
+at a time: each file entry is written into the part's directory under its content's SHA-256 and
+found as a part, `zip entry <name>`, its stored name only ever a name, so a nested ZIP is
+dispatched again and its entries below it. A directory is no part. An encrypted entry is a
+record, and the ZIP encrypted once its other entries are dispatched. The stage enforces the zip
+bomb rule again on the bytes it writes, under `ZipConfig.Inspect`, the dispatcher's
+`inspect.Options`: an entry past both thresholds as written, whatever its central directory
+declares, is stopped, its partial file removed, and recorded quarantined with its evidence. A ZIP
+with an unsafe name or a symbolic link is quarantined by `inspect` before the stage runs. A tar,
+gzip, zstd, or 7z archive, or a cabinet, is no processor yet.
 
 ```go
 render, err := document.NewGhostscript(gs)
@@ -222,12 +233,18 @@ notes, err := dispatch.NewOneNoteStage(dispatch.OneNoteConfig{Reader: nr, Versio
 if err != nil {
 	return err
 }
+// The zip stage enforces the bomb rule as written under the dispatcher's inspect.Options.
+archives, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: opts})
+if err != nil {
+	return err
+}
 d, err := dispatch.New(dispatch.Config{
 	Stages: dispatch.Stages{
 		route.Document: docs, route.Office: offices, route.VisionConverted: pictures,
 		route.Vision: dispatch.NewVisionStage(), route.Nested: mail, route.OneNote: notes,
+		route.Archive: archives,
 	},
-	Index: dispatch.NewMemoryIndex(), Dir: work,
+	Index: dispatch.NewMemoryIndex(), Dir: work, Inspect: opts,
 })
 if err != nil {
 	return err
