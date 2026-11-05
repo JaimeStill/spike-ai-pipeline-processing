@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/onenote"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -717,4 +718,94 @@ func jsonField(v reflect.Value, name string) (reflect.Value, bool) {
 		}
 	}
 	return reflect.Value{}, false
+}
+
+// mediaRoutes is the hand route truth of every file the real onenote writes into a media
+// directory over the copied fixtures, by its name: two JPEGs and a PNG, vision; the .docx,
+// office's; the .mp3 recording of type audio, audio; and the two pages' ink SVGs,
+// vision-converted.
+var mediaRoutes = map[string]route.Route{
+	"954f7d96502b5c5fe2e98a5045bca7f5e9ba11e3dbf92a5c0214a6aa4c7f2208.jpg":  route.Vision,
+	"d6d4898c203cbff35fe92e844bbf404064293314a71d1e6b24e907334e5bdff9.jpg":  route.Vision,
+	"b7702e05282d4dfffe233281443536319d4739946f54ebce194230df8805b650.png":  route.Vision,
+	"8e99dc44681b8399608f7a181e44d3e41dc36fbacd35a9cfb2d1fc330ac68459.docx": route.Office,
+	"d2318cc34b6254cdc2db84b931adad166a4b2b701b4241c27b338b959ac738b0.mp3":  route.Audio,
+	"95c93a747acbbbeeb6d345faf0d17e86669bc7cdd0854155b588c58a7556d194.svg":  route.VisionConverted,
+	"d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg":  route.VisionConverted,
+}
+
+// TestRealMediaRoutes runs the real pinned onenote with a media directory of its own over every
+// section and notebook among the copied fixtures. Every file it writes is named by exactly one
+// Medium of the read's pages, none missing and none extra, each with its Path there, the route
+// mediaRoutes gives it, and where it sits; the .mp3 is a recording of type audio, and the ink
+// SVGs are the pages' own ink. Between them the fixtures write every file mediaRoutes names.
+func TestRealMediaRoutes(t *testing.T) {
+	r := realReader(t, realTool(t))
+	seen := map[string]bool{}
+	for _, rel := range realInputs(t) {
+		t.Run(rel, func(t *testing.T) {
+			dir := t.TempDir()
+			recs, err := collect(r.Read(t.Context(), onenote.Request{Input: filepath.Join(fixtures, rel), Media: dir}))
+			if err != nil && !errors.Is(err, onenote.ErrRefused) {
+				t.Fatal(err)
+			}
+			named := map[string]int{}
+			for _, rec := range recs {
+				p, ok := rec.(*onenote.Page)
+				if !ok {
+					continue
+				}
+				for m, err := range p.Media(dir) {
+					if err != nil {
+						t.Fatalf("page %s, %s: %v", p.ID, m.Where, err)
+					}
+					named[m.File]++
+					if m.Where == "" {
+						t.Errorf("page %s, %s: no place", p.ID, m.File)
+					}
+					if want := filepath.Join(dir, m.File); m.Path != want {
+						t.Errorf("page %s, %s: path %q, want %q", p.ID, m.Where, m.Path, want)
+					}
+					want, ok := mediaRoutes[m.File]
+					if !ok {
+						t.Errorf("page %s, %s: %s has no route truth", p.ID, m.Where, m.File)
+					} else if m.Route != want {
+						t.Errorf("page %s, %s: %s routed %s (%s), want %s", p.ID, m.Where, m.File, m.Route, m.Reason, want)
+					}
+					switch filepath.Ext(m.File) {
+					case ".mp3":
+						if m.Kind != onenote.EmbeddedFileMedium || m.Type != "audio" {
+							t.Errorf("%s: a %s of type %q, want an audio recording", m.File, m.Kind, m.Type)
+						}
+					case ".svg":
+						if m.Kind != onenote.InkMedium || m.Where != "page ink" {
+							t.Errorf("%s: a %s at %s, want the page's ink", m.File, m.Kind, m.Where)
+						}
+					}
+				}
+			}
+			entries, err := os.ReadDir(dir)
+			if err != nil {
+				t.Fatal(err)
+			}
+			written := map[string]bool{}
+			for _, e := range entries {
+				written[e.Name()] = true
+				seen[e.Name()] = true
+				if named[e.Name()] != 1 {
+					t.Errorf("%s: written, named by %d media, want 1", e.Name(), named[e.Name()])
+				}
+			}
+			for file := range named {
+				if !written[file] {
+					t.Errorf("%q: named by a medium, not written", file)
+				}
+			}
+		})
+	}
+	for _, file := range slices.Sorted(maps.Keys(mediaRoutes)) {
+		if !seen[file] {
+			t.Errorf("%s: no fixture writes it", file)
+		}
+	}
 }

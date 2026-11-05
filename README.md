@@ -397,8 +397,8 @@ the scale store's 50,000 messages, where the adapter adds 4.5 to 5.6% to mail's 
 56 to 58 MiB.
 
 `onenote` reads OneNote sections, .one files from desktop OneNote or OneDrive, .onetoc2 notebooks
-and notebook directories, and .onepkg packages, for a model, on Linux, the standard library, and
-`tool`. It runs spike-ai-pipeline-onenote's CLI and provides pre-inference preparation only. A
+and notebook directories, and .onepkg packages, for a model, on Linux, the standard library,
+`tool`, and `route`. It runs spike-ai-pipeline-onenote's CLI and provides pre-inference preparation only. A
 `Reader`, built by `NewReader` over a `Config` holding a onenote Tool that `OneNoteSpec`
 declares, minimum `OneNoteMinimum`, 0.1.0, reads one input per `Request`, with an optional
 `Media` directory onenote writes each distinct image, embedded file, and ink drawing into, named
@@ -421,6 +421,16 @@ of a kind the package doesn't know is an `Unknown` holding its JSON, which marsh
 came. A notebook line of another schema is an error matching `ErrSchema`. onenote's warnings are the
 Stream's `Warnings`, and its exit codes 1 to 4 are an `*ExitError` that matches `ErrNotWritten`,
 `ErrUsage`, `ErrRefused`, or `ErrFailed`, the errors email's and office's match too.
+`Page.Media(dir)` iterates, as an `iter.Seq2[Medium, error]`, every image, embedded file, and ink
+drawing the page names, wherever it sits: its image and embedded file containers, items nested at
+any depth, table cells, table in table, paragraph handwriting, ink blocks, and the page's own ink.
+Each `Medium` gives its `Kind` (`ImageMedium`, `EmbeddedFileMedium`, `InkMedium`), its record's
+fields and the record, `Where` it sits, such as `outline 2, item 1, block 3, table cell r1c2,
+item 1, block 1` or `page ink`, and, in the read's media directory, its `Path` and the `Route`
+`route.File` gives it, with a `Reason`. Ink is vision-converted, an SVG, its reason naming it
+OneNote ink; a recording, an embedded file of type `audio` or `video`, is routed by its signature
+first and by its type only when no signature is known in it. A medium onenote wrote no content
+for, or read without a media directory, is unrouted, with no `Path`.
 
 ```go
 n, err := tool.NewExec(ctx, onenote.OneNoteSpec())
@@ -440,7 +450,13 @@ for rec, err := range s.Records() {
 		return err
 	}
 	if page, ok := rec.(*onenote.Page); ok {
-		// hand page.Markdown, and the media it names in dir, onward
+		// hand page.Markdown onward, and each of its media to its route's stage
+		for m, err := range page.Media(dir) {
+			if err != nil {
+				return err
+			}
+			dispatch(m.Route, m.Path, m.Where)
+		}
 	}
 }
 ```
@@ -476,9 +492,8 @@ the same shape:
 
 Each package's deviations: `office` returns one `Result`, the whole model or Markdown, not a
 stream of lines, and its media list names no route yet; `email` follows the convention whole, its
-`Attachment.Route` the route per part; `onenote` follows it but for the route per part, its
-`Request.Media` the media directory, its pages' content typed, but the images and embedded
-files it names aren't routed yet; `document` streams pages, `PageImage`s, rather than a CLI's
+`Attachment.Route` the route per part; `onenote` follows it whole, its
+`Request.Media` the media directory and `Page.Media` the route per part; `document` streams pages, `PageImage`s, rather than a CLI's
 lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's failures
 are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not a
 reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one

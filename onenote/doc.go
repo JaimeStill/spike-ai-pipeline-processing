@@ -5,7 +5,8 @@
 // for a model through onenote, spike-ai-pipeline-onenote: an input in, its records streamed out
 // as typed Go values while onenote runs. It provides pre-inference preparation only; a layer
 // above sends what it returns to a model. The package builds on Linux only, on the standard
-// library and this module's tool package; the program it runs is a tool.Tool the caller built.
+// library and this module's tool and route packages; the program it runs is a tool.Tool the
+// caller built.
 //
 // A Reader is built at the composition root over a onenote Tool, OneNoteSpec declaring it.
 // NewReader refuses one older than 0.1.0, and the Tool's own construction a missing one, so a
@@ -48,6 +49,20 @@
 // ink drawing there once, named by its SHA-256, before the line that names it; without one it
 // writes nothing to disk, and the records name the files all the same.
 //
+// A Page's Media iterates every image, embedded file, and ink drawing it names, wherever it
+// sits: its image and embedded file containers, its title's and outlines' items at any depth, an
+// element's children and groups among them, their blocks, a table's cells, table in table, a
+// paragraph's handwriting, ink blocks, and the page's own Ink, last. Each is a Medium: its kind,
+// its record's file, filename, size, and type, the record itself, where it sits, such as
+// "outline 2, item 1, block 3, table cell r1c2, item 1, block 1" or "page ink", for a dispatcher
+// to report a part's origin, and, given the read's media directory, its Path there and the route
+// route.File gives its content. Ink is an SVG, route.VisionConverted, its reason naming it
+// OneNote ink. A recording, an embedded file of type "audio" or "video", is routed by its
+// signature first, and by its type only when route.Identify knows no signature in it, so bytes
+// an executable's stay unrouted whatever the record says. A medium onenote wrote no content for,
+// or read without a media directory, is still yielded, unrouted, with no Path, its reason
+// saying so.
+//
 // Known limits: they are onenote's, as its README states. A password-protected section is
 // refused as an input, and skipped inside a notebook; a page is read at its latest revision
 // only; merged table cells are read as their own; a section that fails inside a section group is
@@ -87,4 +102,6 @@
 //     paragraph holds its [List], its [Tag]s, and its [Run]s, and a table its [Cell]s.
 //   - [Unknown] is a container, item, or block of a kind the package doesn't know.
 //   - [Float] is one of onenote's f32 numbers, an offset or a bound.
+//   - [Page.Media] iterates a page's media, each a [Medium] of its [MediumKind]:
+//     [ImageMedium], [EmbeddedFileMedium], or [InkMedium].
 package onenote
