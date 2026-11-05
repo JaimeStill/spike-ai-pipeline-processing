@@ -12,7 +12,7 @@
 // any adapter's error, and keeps its own ExitError type, whose Is and Error are [Is] and
 // [ExitText].
 //
-// Its identifiers:
+// Its exported identifiers:
 //
 //   - [ErrNotWritten], [ErrUsage], [ErrRefused], and [ErrFailed] are exit codes 1 to 4.
 //   - [Outcome] returns an exit code's error.

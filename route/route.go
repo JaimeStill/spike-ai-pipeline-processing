@@ -146,9 +146,10 @@ var boms = map[Kind]string{UTF8BOM: "UTF-8", UTF16BOM: "UTF-16", UTF32BOM: "UTF-
 // It reads the file's first [HeadLen] bytes for a signature, which decides whatever mimeType,
 // its stored MIME type, says. The extension is name's, in any case, which may differ from
 // path's, as a file named by its SHA-256 does; it decides within a ZIP or OLE2 container, for a
-// cabinet, whether an mbox's first line is text's instead, and, with mimeType, whether content of no signature is a message, whose header File
-// then reads further, line by line, a line at most 64 KiB, and else whether it is text. It
-// returns an error, as os reports it, when the file can't be opened or read.
+// cabinet, whether an mbox's first line is text's instead, and, with mimeType, whether content
+// of no signature is a message, whose header File then reads further, line by line, a line at
+// most 64 KiB, and else whether it is text. It returns an error, as os reports it, when the file
+// can't be opened or read.
 func File(path, name, mimeType string) (Route, string, error) {
 	head, err := readHead(path)
 	if err != nil {

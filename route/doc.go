@@ -40,4 +40,20 @@
 //   - [Unrouted]: anything else, an executable among it, whose reason names it an executable; an
 //     .ost, whose reason names it, since mail refuses one; and HTML, which is web content, not
 //     text, unless its root element is an SVG's.
+//
+// Its exported identifiers:
+//
+//   - [Kind] names the format a signature identifies, [Unknown] for none: [PDF]; [PNG], [JPEG],
+//     [GIF], and [BMP]; [TIFF], [EMF], [WMF], [SVG], [HEIC], [WebP], and [AVIF]; [ZIP], [OLE2],
+//     [ODF], [RTF], and [WordPerfect]; [PST], [OST], and [Mbox]; [OneStore] and [MSCF]; [WAV],
+//     [FLAC], [MP3], [Ogg], and [M4A]; [MP4], [MKV], [WebM], and [AVI]; [Gzip], [Zstd],
+//     [SevenZip], and [Tar]; [PE], [ELF], [MachO], and [Shebang]; and [UTF8BOM], [UTF16BOM],
+//     and [UTF32BOM].
+//   - [Identify] names the Kind a file's first bytes begin.
+//   - [HeadLen] is the most of a file's first bytes Identify reads.
+//   - [PNGSignature] is the eight bytes every PNG begins with.
+//   - [Route] names the stage content goes to next: [Document], [Office], [Vision],
+//     [VisionConverted], [Nested], [OneNote], [Archive], [Audio], [Video], [Text], or
+//     [Unrouted].
+//   - [File] routes the file at a path, and says why.
 package route
