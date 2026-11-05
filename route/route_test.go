@@ -108,7 +108,7 @@ func TestFileSignatures(t *testing.T) {
 		{"zip named for a macro slide show office doesn't read", zipBytes, "a.ppsm", "", route.Archive},
 		{"zip named for a legacy format", zipBytes, "a.doc", "application/msword", route.Archive},
 		{"ole2 without an extension", ole2Bytes, "attachment", "", route.Unrouted},
-		{"ole2 named for ooxml, an encrypted package", ole2Bytes, "secret.docx", "", route.Unrouted},
+		{"ole2 named for ooxml without an EncryptedPackage stream", ole2Bytes, "secret.docx", "", route.Unrouted},
 		{"ole2 named .bin", ole2Bytes, "a.bin", "application/msword", route.Unrouted},
 		{"legacy name without the signature", "plain text", "notes.doc", "application/msword", route.Unrouted},
 		{"ooxml name without the signature", "plain text", "notes.docx", "", route.Unrouted},

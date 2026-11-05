@@ -225,7 +225,7 @@ inspect/testdata/absolute.zip	-	*	archive	quarantined
 inspect/testdata/bomb.zip	-	*	archive	prepared
 inspect/testdata/bomb.zip	zip entry zeros.bin	zeros.bin	unrouted	no processor yet
 inspect/testdata/declared-bomb.zip	-	*	archive	quarantined
-inspect/testdata/encrypted.xlsx	-	*	unrouted	no processor yet
+inspect/testdata/encrypted.xlsx	-	*	office	encrypted
 inspect/testdata/encrypted.zip	-	*	archive	encrypted
 inspect/testdata/encrypted.zip	zip entry notes.txt	notes.txt	text	no processor yet
 inspect/testdata/hyperlink.docx	-	*	office	prepared

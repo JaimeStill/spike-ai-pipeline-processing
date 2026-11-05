@@ -21,7 +21,9 @@ const (
 	// Office is an office document: a ZIP whose name has an OOXML extension office reads,
 	// .docx, .docm, .dotx, .dotm, .xlsx, .xlsm, .xltx, .xltm, .pptx, .pptm, .potx, .potm, or
 	// .ppsx; an OLE2 compound file whose name has a legacy extension, .doc or .dot, .xls or .xlt,
-	// .ppt, .pps, or .pot; an ODF package; an RTF; a WordPerfect document; or a ZIP whose name
+	// .ppt, .pps, or .pot; an encrypted OOXML package, an OLE2 compound file holding an
+	// EncryptedPackage stream whose name has one of the OOXML extensions or .xlsb, which office
+	// refuses as encrypted; an ODF package; an RTF; a WordPerfect document; or a ZIP whose name
 	// has the .xlsb extension, an Excel binary workbook. Extensions are matched in any case, and
 	// the caller gives office's Convert the same name so it reads the same extension. The last
 	// four go through LibreOffice; office's stage has no processor for the last two yet, which a
@@ -54,7 +56,8 @@ const (
 	// that begins with a UTF-8, UTF-16, or UTF-32 byte order mark.
 	Text Route = "text"
 	// Unrouted is anything else: an executable, by a PE, ELF, or Mach-O signature or a "#!"
-	// line; an OLE2 compound file without a legacy or .msg extension; an .ost, an offline store
+	// line; an OLE2 compound file without a legacy or .msg extension, nor an encrypted OOXML
+	// package's stream and name; an .ost, an offline store
 	// mail refuses; content named .eml or stored as a message whose header isn't a message's
 	// shape; HTML, by its .html, .htm, or .xhtml extension, web content no stage takes yet; and
 	// other content of no routed signature.
@@ -84,6 +87,21 @@ var legacyExtensions = map[string]bool{
 	".xls": true, ".xlt": true,
 	".ppt": true, ".pps": true, ".pot": true,
 }
+
+// encryptedPackageName is the directory entry name of an encrypted OOXML package's stream,
+// "EncryptedPackage", in UTF-16LE, with its terminating null, as an OLE2 directory entry begins.
+var encryptedPackageName = func() []byte {
+	const name = "EncryptedPackage"
+	b := make([]byte, 0, 2*len(name)+2)
+	for i := range len(name) {
+		b = append(b, name[i], 0)
+	}
+	return append(b, 0, 0)
+}()
+
+// ole2EntryLen is the length of an OLE2 directory entry. Every sector, the 512-byte header's
+// size or 4096 bytes, is a multiple of it, so every entry begins at a multiple of it.
+const ole2EntryLen = 128
 
 // textExtensions are the extensions that name content of no signature text: plain text, tables,
 // structured data, markup, subtitles, and logs. HTML, .html, .htm, and .xhtml, is none of them:
@@ -148,7 +166,9 @@ var boms = map[Kind]string{UTF8BOM: "UTF-8", UTF16BOM: "UTF-16", UTF32BOM: "UTF-
 // path's, as a file named by its SHA-256 does; it decides within a ZIP or OLE2 container, for a
 // cabinet, whether an mbox's first line is text's instead, and, with mimeType, whether content
 // of no signature is a message, whose header File then reads further, line by line, a line at
-// most 64 KiB, and else whether it is text. It returns an error, as os reports it, when the file
+// most 64 KiB, and else whether it is text. An OLE2 file named with an OOXML extension or .xlsb
+// is read whole, 128 bytes at a time, for an EncryptedPackage stream's directory entry. It
+// returns an error, as os reports it, when the file
 // can't be opened or read.
 func File(path, name, mimeType string) (Route, string, error) {
 	head, err := readHead(path)
@@ -157,6 +177,15 @@ func File(path, name, mimeType string) (Route, string, error) {
 	}
 	ext := strings.ToLower(filepath.Ext(name))
 	kind := Identify(head)
+	if kind == OLE2 && (ooxmlExtensions[ext] || ext == ".xlsb") {
+		encrypted, err := encryptedPackageFile(path)
+		if err != nil {
+			return "", "", err
+		}
+		if encrypted {
+			return Office, "OLE2 signature with an EncryptedPackage stream, " + ext + " extension, an encrypted OOXML package", nil
+		}
+	}
 	if route, why := byKind(kind, ext); route != "" {
 		return route, why, nil
 	}
@@ -233,6 +262,41 @@ func readHead(path string) ([]byte, error) {
 		return nil, err
 	}
 	return head[:n], nil
+}
+
+// encryptedPackageFile reports whether the OLE2 compound file at path holds an EncryptedPackage
+// stream, as an encrypted OOXML package does: whether a directory entry past the header, at a
+// multiple of ole2EntryLen, begins with the stream's name and its null. It reads the file once,
+// through its end or the entry, without following the directory's sector chain, so an entry's
+// name copied into a stream's data at such an offset counts too.
+func encryptedPackageFile(path string) (bool, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return false, err
+	}
+	defer func() { _ = f.Close() }()
+	br := bufio.NewReader(f)
+	entry := make([]byte, ole2EntryLen)
+	// The header's 512 bytes hold no entry.
+	if _, err := br.Discard(512); err != nil {
+		return false, ignoreEOF(err)
+	}
+	for {
+		if _, err := io.ReadFull(br, entry); err != nil {
+			return false, ignoreEOF(err)
+		}
+		if bytes.HasPrefix(entry, encryptedPackageName) {
+			return true, nil
+		}
+	}
+}
+
+// ignoreEOF returns nil for an error that ends a read at the end of its input, else err.
+func ignoreEOF(err error) error {
+	if errors.Is(err, io.EOF) || errors.Is(err, io.ErrUnexpectedEOF) {
+		return nil
+	}
+	return err
 }
 
 // messageNamed returns what names content a message, its ext, the .eml extension, else its

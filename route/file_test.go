@@ -2,6 +2,7 @@ package route_test
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -123,7 +124,8 @@ func TestFileRoutes(t *testing.T) {
 }
 
 // TestFileContainerExtensions: within a ZIP only the OOXML extensions office reads are office's,
-// within an OLE2 file only the legacy ones and .msg are routed, and outside a container an
+// within an OLE2 file without an EncryptedPackage stream only the legacy ones and .msg are
+// routed, and outside a container an
 // office or message extension decides nothing.
 func TestFileContainerExtensions(t *testing.T) {
 	dir := t.TempDir()
@@ -146,6 +148,61 @@ func TestFileContainerExtensions(t *testing.T) {
 	check(zipBytes, "a.msg", route.Archive)
 	check(ole2Bytes, "a.one", route.Unrouted)
 	check(zipBytes, "a.onepkg", route.Archive)
+}
+
+// ole2With returns an OLE2 compound file of size bytes, its header its signature alone, with
+// name, in UTF-16LE, at each of offsets, as a directory entry begins.
+func ole2With(size int, name string, offsets ...int) string {
+	b := make([]byte, size)
+	copy(b, ole2Bytes)
+	for _, off := range offsets {
+		for i := range len(name) {
+			b[off+2*i] = name[i]
+		}
+	}
+	return string(b)
+}
+
+// TestFileEncryptedPackage: an OLE2 file holding an EncryptedPackage stream's directory entry,
+// at any multiple of 128 bytes past the header, in a 512- or 4096-byte sector, named with an
+// OOXML extension or .xlsb, in any case, is an encrypted OOXML package, office's, its reason
+// naming it, as inspect's fixture is; a legacy name keeps its legacy reason, and another name,
+// an entry's name at another offset or within the header, or another stream's name, leaves it
+// unrouted.
+func TestFileEncryptedPackage(t *testing.T) {
+	const encryptedWhy = "OLE2 signature with an EncryptedPackage stream, %s extension, an encrypted OOXML package"
+	cases := []struct {
+		name, content, filename string
+		want                    route.Route
+		why                     string
+	}{
+		{"first entry", ole2With(1024, "EncryptedPackage", 512), "secret.xlsx", route.Office, fmt.Sprintf(encryptedWhy, ".xlsx")},
+		{"second entry, upper case", ole2With(1024, "EncryptedPackage", 640), "SECRET.DOCX", route.Office, fmt.Sprintf(encryptedWhy, ".docx")},
+		{"4096-byte sectors", ole2With(8192, "EncryptedPackage", 4096+384), "deck.pptm", route.Office, fmt.Sprintf(encryptedWhy, ".pptm")},
+		{"binary workbook", ole2With(1024, "EncryptedPackage", 768), "book.xlsb", route.Office, fmt.Sprintf(encryptedWhy, ".xlsb")},
+		{"legacy name", ole2With(1024, "EncryptedPackage", 512), "old.xls", route.Office, "OLE2 signature, .xls extension"},
+		{"no ooxml name", ole2With(1024, "EncryptedPackage", 512), "secret.bin", route.Unrouted, "OLE2 signature without a legacy or .msg extension"},
+		{"unaligned", ole2With(1024, "EncryptedPackage", 514), "secret.xlsx", route.Unrouted, "OLE2 signature without a legacy or .msg extension"},
+		{"within the header", ole2With(1024, "EncryptedPackage", 128), "secret.xlsx", route.Unrouted, "OLE2 signature without a legacy or .msg extension"},
+		{"a longer name", ole2With(1024, "EncryptedPackageX", 512), "secret.xlsx", route.Unrouted, "OLE2 signature without a legacy or .msg extension"},
+		{"another stream", ole2With(1024, "EncryptionInfo", 512), "secret.xlsx", route.Unrouted, "OLE2 signature without a legacy or .msg extension"},
+		{"header alone", ole2Bytes, "secret.xlsx", route.Unrouted, "OLE2 signature without a legacy or .msg extension"},
+		{"entry cut short", ole2With(512+40, "EncryptedPackage", 512), "secret.xlsx", route.Unrouted, "OLE2 signature without a legacy or .msg extension"},
+	}
+	dir := t.TempDir()
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			file := writeContent(t, dir, c.content+c.filename, filepath.Ext(c.filename))
+			got, why, err := route.File(filepath.Join(dir, file), c.filename, "")
+			if err != nil || got != c.want || why != c.why {
+				t.Errorf("route %q (%s), %v; want %q (%s)", got, why, err, c.want, c.why)
+			}
+		})
+	}
+	got, why, err := route.File("../inspect/testdata/encrypted.xlsx", "encrypted.xlsx", "")
+	if err != nil || got != route.Office || why != fmt.Sprintf(encryptedWhy, ".xlsx") {
+		t.Errorf("inspect's encrypted.xlsx: route %q (%s), %v; want office", got, why, err)
+	}
 }
 
 // TestFileErrors: a file that isn't there is an error matching fs.ErrNotExist, and one that is

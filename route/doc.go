@@ -15,13 +15,16 @@
 // extension only where the signature alone can't tell formats apart: within a ZIP or OLE2
 // container, for a cabinet, for an mbox's "From " line, which prose named with a text extension
 // begins too, and for content of no signature, which is a message by the .eml rule or text by
-// its extension. The routes:
+// its extension. An OLE2 file named with an OOXML extension or .xlsb is read whole for an
+// EncryptedPackage stream's directory entry. The routes:
 //
 //   - [Document]: a PDF, for the document package's stage.
 //   - [Office]: an office document: a ZIP named with an OOXML extension office reads, an OLE2
-//     compound file named with a legacy one, an ODF package, an RTF, a WordPerfect document, or
-//     a ZIP named .xlsb, an Excel binary workbook. The last four go through LibreOffice, and
-//     office's stage has no processor yet for the last two, which a dispatcher reports.
+//     compound file named with a legacy one, an encrypted OOXML package (an OLE2 compound file
+//     holding an EncryptedPackage stream, named with an OOXML extension or .xlsb), which office
+//     refuses as encrypted, an ODF package, an RTF, a WordPerfect document, or a ZIP named .xlsb,
+//     an Excel binary workbook. The last four go through LibreOffice, and office's stage has no
+//     processor yet for the last two, which a dispatcher reports.
 //   - [Vision]: a picture a vision model decodes as stored: PNG, JPEG, GIF, or BMP.
 //   - [VisionConverted]: a picture a vision model decodes only once converted to PNG: TIFF, EMF,
 //     WMF, SVG, HEIC, WebP, or AVIF.

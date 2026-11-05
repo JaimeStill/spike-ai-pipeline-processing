@@ -23,6 +23,7 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/onenote"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
@@ -360,6 +361,31 @@ func TestOfficeNoProcessor(t *testing.T) {
 		ev := dispatchAll(t, d, input(t, name, c.content), nil)[0]
 		if ev.Part.Route != route.Office || ev.Outcome != dispatch.NoProcessor || !strings.Contains(ev.Reason, c.reason) {
 			t.Errorf("%s: %s %s, %q; want no processor, %q", name, ev.Part.Route, ev.Outcome, ev.Reason, c.reason)
+		}
+	}
+}
+
+// TestOfficeEncrypted dispatches inspect's encrypted.xlsx, an OLE2 compound file holding an
+// EncryptedPackage stream, and the same bytes named .xlsb, through the pinned office: each is
+// routed office as an encrypted OOXML package, inspect flags it, and office's refusal ends the
+// stage with ErrEncrypted, so it is encrypted.
+func TestOfficeEncrypted(t *testing.T) {
+	stage := officeStage(t)
+	content, err := os.ReadFile(filepath.Join("..", "inspect", "testdata", "encrypted.xlsx"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"encrypted.xlsx", "encrypted.xlsb"} {
+		// An index of its own, so the same bytes aren't seen.
+		d := newDispatcher(t, dispatch.Stages{route.Office: stage}, dispatch.NewMemoryIndex())
+		events := dispatchAll(t, d, input(t, name, string(content)), nil)
+		wantSteps(t, events, []step{{name, 0, dispatch.Encrypted}})
+		ev := events[0]
+		if ev.Part.Route != route.Office || !strings.Contains(ev.Part.Reason, "an encrypted OOXML package") {
+			t.Errorf("%s: route %q (%s), want office as an encrypted OOXML package", name, ev.Part.Route, ev.Part.Reason)
+		}
+		if !(inspect.Report{Flags: ev.Part.Flags}).Has(inspect.OOXMLEncrypted) || !errors.Is(ev.Err, dispatch.ErrEncrypted) {
+			t.Errorf("%s: flags %+v, %v; want ooxml-encrypted and ErrEncrypted", name, ev.Part.Flags, ev.Err)
 		}
 	}
 }
