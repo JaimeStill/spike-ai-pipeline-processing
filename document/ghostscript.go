@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
@@ -176,7 +177,7 @@ func (g *Ghostscript) Text(ctx context.Context, pdf string, page int) (string, e
 		return "", fmt.Errorf("document: ghostscript: %w", err)
 	}
 	var out strings.Builder
-	stderr := limitedBuffer{limit: textStderrLimit}
+	stderr := cli.LimitedBuffer{Limit: textStderrLimit}
 	err = g.gs.Run(ctx, tool.Invocation{Args: textArgs(abs, page), Dir: filepath.Dir(abs), Stdout: &out, Stderr: &stderr})
 	if err != nil {
 		// Run keeps stderr for its *tool.ExitError only when the caller doesn't take it.

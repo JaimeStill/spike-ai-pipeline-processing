@@ -12,6 +12,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -107,7 +108,7 @@ func (c *Converter) soffice(ctx context.Context, dir, convertTo string, inputs [
 	}
 	profile := url.URL{Scheme: "file", Path: filepath.Join(work, "profile")}
 	outdir = filepath.Join(work, "out")
-	out := &limitedBuffer{limit: sofficeOutputLimit}
+	out := &cli.LimitedBuffer{Limit: sofficeOutputLimit}
 	args := []string{
 		"-env:UserInstallation=" + profile.String(),
 		"--headless", "--norestore",

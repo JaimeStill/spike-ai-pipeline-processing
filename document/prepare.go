@@ -12,6 +12,7 @@ import (
 	"slices"
 	"sync"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
@@ -106,9 +107,9 @@ func (p *Preparer) Images(ctx context.Context, pdf io.Reader, req ImagesRequest)
 			yield(PageImage{}, err)
 			return
 		}
-		path, remove, err := spool(req.Dir, pdf)
+		path, remove, err := cli.Spool(req.Dir, pdf, ".pdf")
 		if err != nil {
-			yield(PageImage{}, err)
+			yield(PageImage{}, fmt.Errorf("document: %w", err))
 			return
 		}
 		more := p.pages(ctx, path, req, yield)

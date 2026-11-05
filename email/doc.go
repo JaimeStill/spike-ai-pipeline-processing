@@ -29,8 +29,9 @@
 // off, and a read with skipped records and warnings succeeds. mail's exit codes 1 to 4 are an
 // *ExitError carrying mail's message, which matches its code's error through errors.Is:
 // ErrNotWritten, ErrUsage (a fault in this package), ErrRefused (with mail's reason, an .ost's
-// among them), or ErrFailed (a fault of mail's). A read whose context ends returns an error
-// matching the context's, as every Tool run does.
+// among them), or ErrFailed (a fault of mail's). Each is the exit error every CLI this module
+// runs shares, so office.ErrRefused matches mail's refusal, and ErrRefused office's. A read whose
+// context ends returns an error matching the context's, as every Tool run does.
 //
 // Given an attachments directory in its Request, mail writes each distinct attachment content
 // there once, named by its SHA-256, and each Attachment's Path names its file. Attachment.Route

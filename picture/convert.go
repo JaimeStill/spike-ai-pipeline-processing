@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
@@ -408,7 +409,7 @@ const magickOutputLimit = 64 << 10
 // is named name, and checks that it wrote one. An error names the picture and carries magick's
 // own message, its first line.
 func (c *Converter) runMagick(ctx context.Context, dir, name string, args []string, png string) error {
-	out := &limitedBuffer{limit: magickOutputLimit}
+	out := &cli.LimitedBuffer{Limit: magickOutputLimit}
 	err := c.magick.Run(ctx, tool.Invocation{
 		Args:   args,
 		Dir:    dir,

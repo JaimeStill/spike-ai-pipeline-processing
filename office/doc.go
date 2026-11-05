@@ -77,8 +77,9 @@
 // conversion with warnings succeeds. office's exit codes 1 to 4 are an *ExitError carrying
 // office's message, which matches its code's error through errors.Is: ErrMediaNotWritten,
 // ErrUsage (a fault in this package), ErrRefused (with office's reason), or ErrFailed (a fault of
-// office's). A conversion whose context ends returns an error matching the context's, as every
-// Tool run does.
+// office's). Each is the exit error every CLI this module runs shares, so email.ErrRefused matches
+// office's refusal, and ErrRefused mail's. A conversion whose context ends returns an error
+// matching the context's, as every Tool run does.
 //
 // One picture outside a document, such as a mail attachment the email package routes to
 // route.VisionConverted, is the picture package's to convert, through the same code a document's

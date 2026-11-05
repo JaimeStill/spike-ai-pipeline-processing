@@ -12,8 +12,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
@@ -161,27 +161,20 @@ type Result struct {
 }
 
 // The outcomes of an office run that exits nonzero, each its exit code's; an *ExitError matches
-// its code's through errors.Is.
+// its code's through errors.Is. Each is the shared exit error of every CLI this module runs, so
+// ErrRefused matches the email package's refusal too, and email.ErrRefused office's.
 var (
 	// ErrMediaNotWritten is exit code 1: office converted the document but couldn't write its
 	// media.
-	ErrMediaNotWritten = errors.New("media not written")
+	ErrMediaNotWritten = cli.ErrNotWritten
 	// ErrUsage is exit code 2: office refused its arguments, a fault in this package.
-	ErrUsage = errors.New("usage error")
+	ErrUsage = cli.ErrUsage
 	// ErrRefused is exit code 3: office refused the document, giving its reason.
-	ErrRefused = errors.New("refused")
+	ErrRefused = cli.ErrRefused
 	// ErrFailed is exit code 4: office failed in a way it expects of no document, a fault of
 	// office's own.
-	ErrFailed = errors.New("failed")
+	ErrFailed = cli.ErrFailed
 )
-
-// outcomes maps office's exit codes to their errors.
-var outcomes = map[int]error{
-	1: ErrMediaNotWritten,
-	2: ErrUsage,
-	3: ErrRefused,
-	4: ErrFailed,
-}
 
 // ExitError reports an office run that exited 1, 2, 3, or 4: its exit code and office's message.
 // It matches the code's error, ErrMediaNotWritten, ErrUsage, ErrRefused, or ErrFailed, through
@@ -195,19 +188,10 @@ type ExitError struct {
 	err     error
 }
 
-func (e *ExitError) Error() string {
-	msg := fmt.Sprintf("office: exit code %d", e.Code)
-	if outcome, ok := outcomes[e.Code]; ok {
-		msg = "office: " + outcome.Error()
-	}
-	if e.Message != "" {
-		msg += ": " + e.Message
-	}
-	return msg
-}
+func (e *ExitError) Error() string { return cli.ExitText("office", e.Code, e.Message) }
 
 // Is reports whether target is the error of e's exit code.
-func (e *ExitError) Is(target error) bool { return outcomes[e.Code] == target }
+func (e *ExitError) Is(target error) bool { return cli.Is(e.Code, target) }
 
 // Unwrap returns the Tool's *tool.ExitError.
 func (e *ExitError) Unwrap() error { return e.err }
@@ -276,9 +260,11 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 	if from != "" {
 		ext = "." + from
 	}
-	path, remove, err := spool(dir, br, ext)
+	// office tells the format from the content, so the spooled file has no extension but a
+	// legacy document's, which LibreOffice reads.
+	path, remove, err := cli.Spool(dir, br, ext)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("office: %w", err)
 	}
 	res, err := c.convertLegacy(ctx, dir, path, from, to, req.Format, scale)
 	if rerr := remove(); rerr != nil {
@@ -326,18 +312,18 @@ func (c *Converter) convert(ctx context.Context, dir, path string, format Format
 	}
 	res := &Result{MediaDir: media}
 	var stdout bytes.Buffer
-	stderr := &limitedBuffer{limit: stderrLimit}
+	stderr := &cli.LimitedBuffer{Limit: stderrLimit}
 	err = c.office.Run(ctx, tool.Invocation{
 		Args:   []string{path, "--format", format.String(), "--media", media},
 		Dir:    dir,
 		Stdout: &stdout,
 		Stderr: stderr,
 	})
-	lines, message := readStderr(stderr.String(), path)
+	lines, message := officeProgram.ReadStderr(stderr.String(), path, err == nil)
 	if err != nil {
 		var exit *tool.ExitError
 		if errors.As(err, &exit) && ctx.Err() == nil {
-			if _, ok := outcomes[exit.Code]; ok {
+			if cli.Outcome(exit.Code) != nil {
 				return res, &ExitError{Code: exit.Code, Message: message, err: err}
 			}
 		}
@@ -364,54 +350,9 @@ func (c *Converter) convert(ctx context.Context, dir, path string, format Format
 	return res, nil
 }
 
-// officePrefix begins each line office writes to stderr but its usage.
-const officePrefix = "spike-ai-pipeline-office: "
-
-// warningPrefix begins each of office's warnings, after officePrefix.
-const warningPrefix = "warning: "
-
-// readStderr reads office's stderr: each line that isn't blank, in order, and the run's message,
-// the first of them that isn't a warning. A warning is taken as the line with office's prefix,
-// the warning label, and the spooled document's path taken off; any other line with office's
-// prefix, its outcome's label, and the path. A run that exits zero writes only warnings, and any
-// other line it writes is taken as one too.
-func readStderr(stderr, path string) (lines []string, message string) {
-	for line := range strings.Lines(stderr) {
-		line = strings.TrimRight(line, "\r\n")
-		if strings.TrimSpace(line) == "" {
-			continue
-		}
-		rest, own := strings.CutPrefix(line, officePrefix)
-		if w, ok := strings.CutPrefix(rest, warningPrefix); own && ok {
-			lines = append(lines, strings.TrimPrefix(w, path+": "))
-			continue
-		}
-		if own {
-			for _, label := range outcomes {
-				if r, ok := strings.CutPrefix(rest, label.Error()+": "); ok {
-					rest = r
-					break
-				}
-			}
-			rest = strings.TrimPrefix(rest, path+": ")
-		}
-		lines = append(lines, rest)
-		if message == "" {
-			message = rest
-		}
-	}
-	return lines, message
-}
-
-// limitedBuffer is a writer that keeps the first limit bytes written to it and discards the rest.
-type limitedBuffer struct {
-	strings.Builder
-	limit int
-}
-
-func (b *limitedBuffer) Write(p []byte) (int, error) {
-	if room := b.limit - b.Len(); room > 0 {
-		b.Builder.Write(p[:min(len(p), room)])
-	}
-	return len(p), nil
+// officeProgram is office as its stderr shows it: each line begins with its name, and a
+// failure's with its outcome's label, which office writes as these.
+var officeProgram = cli.Program{
+	Name:   "spike-ai-pipeline-office",
+	Labels: []string{"media not written", "usage error", "refused", "failed"},
 }

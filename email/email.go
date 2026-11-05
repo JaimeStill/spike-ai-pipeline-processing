@@ -13,8 +13,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -83,26 +83,19 @@ type Request struct {
 var ErrRequest = errors.New("invalid request")
 
 // The outcomes of a mail run that exits nonzero, each its exit code's; an *ExitError matches its
-// code's through errors.Is.
+// code's through errors.Is. Each is the shared exit error of every CLI this module runs, so
+// ErrRefused matches the office package's refusal too, and office.ErrRefused mail's.
 var (
 	// ErrNotWritten is exit code 1: mail couldn't write its output, or an attachment's content.
-	ErrNotWritten = errors.New("not written")
+	ErrNotWritten = cli.ErrNotWritten
 	// ErrUsage is exit code 2: mail refused its arguments, a fault in this package.
-	ErrUsage = errors.New("usage error")
+	ErrUsage = cli.ErrUsage
 	// ErrRefused is exit code 3: mail refused the input before any output, giving its reason,
 	// such as an .ost's.
-	ErrRefused = errors.New("refused")
+	ErrRefused = cli.ErrRefused
 	// ErrFailed is exit code 4: a fault of mail's own.
-	ErrFailed = errors.New("failed")
+	ErrFailed = cli.ErrFailed
 )
-
-// outcomes maps mail's exit codes to their errors.
-var outcomes = map[int]error{
-	1: ErrNotWritten,
-	2: ErrUsage,
-	3: ErrRefused,
-	4: ErrFailed,
-}
 
 // ExitError reports a mail run that exited 1, 2, 3, or 4: its exit code and mail's message. It
 // matches the code's error, ErrNotWritten, ErrUsage, ErrRefused, or ErrFailed, through
@@ -116,19 +109,10 @@ type ExitError struct {
 	err     error
 }
 
-func (e *ExitError) Error() string {
-	msg := fmt.Sprintf("email: mail: exit code %d", e.Code)
-	if outcome, ok := outcomes[e.Code]; ok {
-		msg = "email: mail: " + outcome.Error()
-	}
-	if e.Message != "" {
-		msg += ": " + e.Message
-	}
-	return msg
-}
+func (e *ExitError) Error() string { return cli.ExitText("email: mail", e.Code, e.Message) }
 
 // Is reports whether target is the error of e's exit code.
-func (e *ExitError) Is(target error) bool { return outcomes[e.Code] == target }
+func (e *ExitError) Is(target error) bool { return cli.Is(e.Code, target) }
 
 // Unwrap returns the Tool's *tool.ExitError.
 func (e *ExitError) Unwrap() error { return e.err }
@@ -221,7 +205,7 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 		return fmt.Errorf("email: stdout: %w", err)
 	}
 	defer func() { _ = pr.Close() }()
-	stderr := &limitedBuffer{limit: stderrLimit}
+	stderr := &cli.LimitedBuffer{Limit: stderrLimit}
 	done := make(chan error, 1)
 	go func() {
 		err := s.mail.Run(ctx, tool.Invocation{Args: args, Stdout: pw, Stderr: stderr})
@@ -281,7 +265,7 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 	if runErr != nil {
 		return s.outcome(runErr, stderr.String(), input)
 	}
-	s.warnings, _ = readStderr(stderr.String(), input, true)
+	s.warnings, _ = mailProgram.ReadStderr(stderr.String(), input, true)
 	if first {
 		return errors.New("email: mail wrote no store line")
 	}
@@ -317,12 +301,12 @@ func (s *Stream) ended(runErr error) error {
 // unless the context ended the run; else err with mail's message, if any.
 func (s *Stream) outcome(err error, stderr, input string) error {
 	var message string
-	s.warnings, message = readStderr(stderr, input, false)
+	s.warnings, message = mailProgram.ReadStderr(stderr, input, false)
 	if s.ctx.Err() != nil {
 		return s.ended(err)
 	}
 	if exit, ok := errors.AsType[*tool.ExitError](err); ok {
-		if _, ok := outcomes[exit.Code]; ok {
+		if cli.Outcome(exit.Code) != nil {
 			return &ExitError{Code: exit.Code, Message: message, err: err}
 		}
 	}
@@ -332,52 +316,6 @@ func (s *Stream) outcome(err error, stderr, input string) error {
 	return fmt.Errorf("email: %w", err)
 }
 
-// mailPrefix begins each line mail writes to stderr but its usage.
-const mailPrefix = "spike-ai-pipeline-mail: "
-
-// The labels after mailPrefix: a warning's, and an error's for exit codes 1 to 4.
-const (
-	warningLabel = "warning: "
-	errorLabel   = "error: "
-)
-
-// readStderr reads the stderr of mail's run on input: its warnings, in order, and the run's
-// message, the first line that isn't blank or a warning. A warning is the line with mail's prefix
-// and the warning label taken off; the message, the line with mail's prefix, the error label, and
-// the input's path, which a refusal begins with, taken off. succeeded says the run exited zero,
-// which writes only warnings, so any other line is taken as one too.
-func readStderr(stderr, input string, succeeded bool) (warnings []string, message string) {
-	for line := range strings.Lines(stderr) {
-		line = strings.TrimRight(line, "\r\n")
-		if strings.TrimSpace(line) == "" {
-			continue
-		}
-		rest, own := strings.CutPrefix(line, mailPrefix)
-		if w, ok := strings.CutPrefix(rest, warningLabel); own && ok {
-			warnings = append(warnings, w)
-			continue
-		}
-		if r, ok := strings.CutPrefix(rest, errorLabel); own && ok {
-			rest = strings.TrimPrefix(r, input+": ")
-		}
-		if succeeded {
-			warnings = append(warnings, rest)
-		} else if message == "" {
-			message = rest
-		}
-	}
-	return warnings, message
-}
-
-// limitedBuffer is a writer that keeps the first limit bytes written to it and discards the rest.
-type limitedBuffer struct {
-	strings.Builder
-	limit int
-}
-
-func (b *limitedBuffer) Write(p []byte) (int, error) {
-	if room := b.limit - b.Len(); room > 0 {
-		b.Builder.Write(p[:min(len(p), room)])
-	}
-	return len(p), nil
-}
+// mailProgram is mail as its stderr shows it: each line but its usage begins with its name, and
+// a failure's, for exit codes 1 to 4, with its error label.
+var mailProgram = cli.Program{Name: "spike-ai-pipeline-mail", Labels: []string{"error"}}

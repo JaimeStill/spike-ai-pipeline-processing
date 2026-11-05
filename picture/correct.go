@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -199,8 +200,7 @@ const assessOutputLimit = 4 << 10
 // fails gives the Tool's error; output that doesn't hold every measure, each once and a number,
 // is an error quoting it.
 func (c *Corrector) Assess(ctx context.Context, in io.Reader) (Assessment, error) {
-	var out limitedBuffer
-	out.limit = assessOutputLimit
+	out := cli.LimitedBuffer{Limit: assessOutputLimit}
 	if err := c.magick.Run(ctx, tool.Invocation{Args: assessArgs, Stdin: in, Stdout: &out}); err != nil {
 		return Assessment{}, err
 	}
