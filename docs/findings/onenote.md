@@ -10,13 +10,16 @@ mail's 2.1 GB scale store, whole, resumed midway, and through the pool. They ans
 The onenote CLI's own fidelity and cost are onenote's
 [onenote-cli finding](https://github.com/JaimeStill/spike-ai-pipeline-onenote/blob/main/docs/findings/onenote-cli.md).
 
-Every number here comes from one recorded run, **findings-onenote 2026-11-05**: one run of
+Every number here but the scale store's dispatch comes from one recorded run, **findings-onenote
+2026-11-05**: one run of
 `mise run findings-onenote` on 2026-11-05 from 18:08:01 to 18:13:08 UTC, on the laptop (x86_64),
 at processing commit `96797c6`, with onenote 0.1.0, mail 0.3.0, and office 0.1.0 from the mise
 pins, Ghostscript 10.08.0, ImageMagick 7.1.2-34, and LibreOffice in its pinned image, against
 gb10-2's llama.cpp router, build b11669, serving set A. Its results are committed in
 [`onenote-results/`](onenote-results/README.md): the log verbatim, the tier's log, each test's
-JSON, and the ink's PNG.
+JSON, and the ink's PNG. The dispatcher over the scale store, removal on and off, comes from a
+second run of its test alone, **findings-onenote scale fdbdab0**, at processing commit `fdbdab0`
+with the same tools and store, its JSON and log committed beside the first run's.
 
 The packages release pre-inference preparation only. The vision requests here are test code: the
 integration tier's in `dispatch/tier_integration_test.go`, and the ink's in
@@ -31,8 +34,8 @@ integration tier's in `dispatch/tier_integration_test.go`, and the ink's in
 | What does inspection flag over ~/docs? | **Every hazard it has a check for**, 31 of 568 files flagged, all proceed under the default policy; the 200 MB zero ZIP is a bomb, quarantined, once the rule's size is lowered under it. Hazards with no flag: two OpenXML SDK macro-enabled files with no VBA part, the billion-laughs XML, and OneNote's encrypted and file-bearing sections. The clean fixtures yield none but the three documented. |
 | Does vision read OneNote ink? | **Yes, all 14 words, in every run**: CER 0.0278, WER 0.0714, its one word edit a stray mark read as "L". OneNote's stored recognition holds 4 of the 14 words, two "Hello World" lines: CER 0.6806, WER 0.7143. The truth is the session's draft, pending the architect's confirmation. |
 | What does the onenote adapter cost? | **Nothing measurable over the CLI.** Medians within 6% of the CLI's, either way, on all three large sections (1.38 to 1.43 s on `LargeData.one`, 0.28 to 0.32 s on the others). The adapter's own process peaks at 10.7 to 13.3 MiB; the CLI under it peaks where it does alone, 19.7 and 135.1 MiB. |
-| What does the dispatcher cost on the scale store? | **16.29 s against 14.12 s for the email adapter alone and 13.88 s for mail alone**, median of 3, 15% and 17% more. Its own process peaks at **35.9 MiB**, mail under it at 67.0 MiB, where mail alone peaks at 66.5 MiB. |
-| How much disk? | **15.8 MB at most** in the dispatch's working directory, the CLI's originals released as each is settled, against **1.88 GB** of attachments mail writes without release: 0.84% of it. The file index ends at 264 MB. |
+| What does the dispatcher cost on the scale store? | **15.61 s with removal on, 17.57 s with it off, against 13.72 s for the email adapter alone and 13.48 s for mail alone**, median of 3: removal on is 14% over the adapter. Its own process peaks at **36.8 MiB** on, 38.3 MiB off; mail under it at 67.0 MiB, where mail alone peaks at 66.8 MiB. |
+| How much disk? | **19.0 MB at most with removal on**, the CLI's originals released as each is settled, against **1.88 GB with removal off**, every attachment kept, the same bytes mail alone writes: 1.0% of it. The file index ends at 264 MB either way. |
 | Does a resumed dispatch hold together? | **Yes.** Stopped by the cursor rule after 25,000 messages and resumed with `Input.After`, it commits the whole dispatch's 100,000 message outputs, in order, none twice, and the Threader's 34,928 threads equal the whole read's. The resumed half takes **8.45 s, 0.54 of the whole's 15.74 s**. |
 | What does the pool buy? | **18.2 s at 2, 4, or 8 workers against 21.2 s at 1**, 228 MiB/s against 196 MiB/s over 4.35 GB of input: one store is most of the work, and its mail is serial. The copy of the scale store is **seen whole**, its 50,000 messages streamed from the index, and 26 attachments are seen. Peak memory 34.2 to 36.9 MiB, peak disk 17.2 to 18.2 MB, at every worker count. |
 
@@ -238,49 +241,67 @@ What the runs show:
 ### What was measured
 
 `TestFindingsScaleDispatch` dispatches mail's scale store, 2,141,594,624 bytes, 50,000 messages,
-three ways, three runs each, back to back:
+four ways, three runs each, back to back:
 
-- **dispatch**: a Dispatcher over every stage that needs no model, email, office, document,
-  picture, zip, vision passing through, and onenote, over a fresh file index each run, its loop
-  persisting nothing, as `findingStages` wires them. Its working directory is walked every 10 ms for
-  the bytes it holds, a hard link's once, the peak kept.
+- **dispatch, removal on**: a Dispatcher over every stage that needs no model, email, office,
+  document, picture, zip, vision passing through, and onenote, over a fresh file index each run,
+  its loop persisting nothing, as `findingStages` wires them, so the dispatcher removes each file
+  once its part is settled. Its working directory is walked every 10 ms for the bytes it holds, a
+  hard link's once, the peak kept.
+- **dispatch, removal off**: the same, its loop calling `Event.Keep` on every event, so the
+  dispatcher removes none of the files it writes; its working directory sampled the same way.
 - **email adapter, attachments**: an email Reader alone, its attachments written to a directory and
   each routed, no threads.
-- **mail, attachments**: mail alone with `--attachments`, stdout to /dev/null.
+- **mail, attachments**: mail alone with `--attachments`, stdout to /dev/null, for context: what
+  the CLI writes with nothing in front of it.
 
 The store is mail's generator's, in mail's checkout (mail `v0.3.0`), content SHA-256 the pin,
-`d40792a4…62b4`. Working directories and indexes were on tmpfs. There is no release switch: the
-dispatcher always releases the CLI's originals once settled, so the "release off" baseline is what
-mail writes with nothing released, the 1,877,202,474 bytes of its 21,202 attachment files, the
-email finding's 1.88 GB, which this run's mail and email adapter wrote again.
+`d40792a4…62b4`. Working directories and indexes were on tmpfs. The numbers are the run
+**findings-onenote scale fdbdab0**, `onenote-results/scale-dispatch-fdbdab0.json` and its log; the
+first run, `onenote-results/scale-dispatch.json`, measured removal on alone, at 16.290 s, 35.9
+MiB, and 15,782,168 bytes of peak disk, and had mail alone stand for removal off.
 
 ### Results
 
 | Way | Median wall, of 3 | Runs | Own peak, most of 3 | Children's peak | Own CPU, a run |
 |---|---|---|---|---|---|
-| dispatch | **16.290 s** | 16.156, 16.410, 16.290 s | **35.9 MiB** | 67.0 MiB (mail) | 5.6 to 5.7 s user, 1.5 s system |
-| email adapter, attachments | 14.116 s | 14.098, 14.116, 14.122 s | 19.1 MiB | 66.8 MiB (mail) | 1.7 s user, 0.3 s system |
-| mail, attachments | 13.875 s | 13.908, 13.875, 13.807 s | 66.5 MiB | | |
+| dispatch, removal on | **15.613 s** | 15.498, 15.613, 15.813 s | **36.8 MiB** | 67.0 MiB (mail) | 5.6 s user, 1.5 s system |
+| dispatch, removal off | **17.565 s** | 17.407, 17.565, 17.916 s | **38.3 MiB** | 66.7 MiB (mail) | 14.2 to 14.7 s user, 10.5 to 10.8 s system |
+| email adapter, attachments | 13.719 s | 13.717, 13.778, 13.719 s | 21.1 MiB | 66.3 MiB (mail) | 1.7 s user, 0.3 s system |
+| mail, attachments | 13.481 s | 13.538, 13.481, 13.315 s | 66.8 MiB | | |
 
-| Measure | Each of the 3 dispatches |
+| Measure | Each of the 6 dispatches |
 |---|---|
 | Parts | 21,203: the store, nested × prepared 1; its attachments, text × no processor yet 4,533 (the `.txt` and `.csv`), unrouted × no processor yet 16,669 |
 | Outputs | 100,018: the store's record, its 17 folders, and 50,000 messages' records and Markdown |
 | Failed | 0 |
-| Peak disk, the working directory | **15,782,168 bytes**, of 1,555 to 1,584 samples |
-| The file index once done | 21,206 files, 264,048,840 bytes |
+| Peak disk, removal on | **16,051,395 to 18,994,838 bytes**, of 1,496 to 1,530 samples |
+| Peak disk, removal off | **1,869,993,950 to 1,877,202,474 bytes**, of 546 to 554 samples; the working directory ends at 1,877,202,474 bytes in 21,202 files, mail's attachments byte for byte |
+| The file index once done | 21,206 files, 264,048,840 bytes, either way |
 
 What the runs show:
 
-- **The dispatcher adds 2.2 s to the email adapter's time, 15%, and 2.4 s to mail's, 17%.** Its
-  own CPU is 5.6 s user against the adapter's 1.7 s: hashing and inspecting every attachment,
-  which the adapter doesn't, and appending 100,018 outputs to the file index. It runs beside mail
-  through the pipe, so most of it overlaps mail's reading.
-- **Its memory is a store's worth of nothing**: 35.9 MiB at most, 16.8 MiB over the adapter's,
-  holding one event at a time; mail under it peaks where it does alone.
-- **Release holds the disk to the attachments in flight**: 15.8 MB at most against 1.88 GB, 119
-  times less. The index is the larger footprint, 264 MB, most of it the 50,000 messages' records
-  and Markdown, persisted as outputs, and each attachment's flags under its SHA-256.
+- **Removal on adds 1.9 s to the email adapter's time, 14%, and 2.1 s to mail's, 16%.** Its own
+  CPU is 5.6 s user against the adapter's 1.7 s: hashing and inspecting every attachment, which the
+  adapter doesn't, and appending 100,018 outputs to the file index. It runs beside mail through the
+  pipe, so most of it overlaps mail's reading.
+- **Removal holds the disk to the attachments in flight**: 19.0 MB at most with it on against 1.88
+  GB with it off, 99 times less. With removal off the working directory keeps every attachment
+  mail wrote, 1,877,202,474 bytes, exactly what mail alone writes; two of the three runs' peaks
+  fall a few MB under it, the last attachments landing after the last sample. The index is the
+  same 264 MB either way, most of it the 50,000 messages' records and Markdown, persisted as
+  outputs, and each attachment's flags under its SHA-256.
+- **Removal off costs time here, but much of it is the measurement's**: 17.57 s against 15.61 s,
+  and its own CPU 14.2 to 14.7 s user and 10.5 to 10.8 s system against 5.6 and 1.5 s. The disk
+  sampler runs in the dispatching process and walks the working directory every 10 ms; with
+  removal on it holds a few files, with removal off up to 21,202, so each walk is longer, the
+  samples fewer (about 550 against 1,500), and the process's CPU mostly the walks. The run doesn't
+  separate the sampler's share from the dispatcher's; removal itself is an unlink per settled file.
+- **Its memory is a store's worth of nothing**: 36.8 MiB at most with removal on, 38.3 MiB off,
+  15.7 MiB over the adapter's, holding one event at a time; mail under it peaks where it does
+  alone.
+- **The first run agrees**: removal on at 16.290 s, 35.9 MiB, 15.8 MB of peak disk, within 5% of
+  this run's time and inside its disk range.
 - **No attachment had a stage**: the generator's attachments are random bytes under typed names,
   which route by signature to unrouted, or text for the `.txt` and `.csv`, for which no stage is
   registered. The email finding counted all 21,202 unrouted under mail 0.1.0's run; route.Text
@@ -428,4 +449,6 @@ and clean fixtures' tests; and dispatch's findings-tagged tests, `TestFindingsIn
 `ONENOTE_SCALE_COPY` to `.state/findings/onenote/scale-copy.pst`, copied there when absent;
 `ONENOTE_PLASO_STORE` to `.state/findings/plaso/`, refused unless its SHA-256 is the pin; without
 `ONENOTE_SCALE_STORE` the scale store's tests skip. `ONENOTE_FINDINGS_RUNS` (3) sets the timed runs
-of each input each way. A plain run keeps nothing. The run above took 5 minutes 7 seconds.
+of each input each way. A plain run keeps nothing. The run above took 5 minutes 7 seconds. The
+scale run, findings-onenote scale fdbdab0, ran `TestFindingsScaleDispatch` alone, by the command
+[`onenote-results/README.md`](onenote-results/README.md) gives, in 3 minutes 5 seconds.

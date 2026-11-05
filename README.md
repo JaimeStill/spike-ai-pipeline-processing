@@ -326,15 +326,17 @@ for pe, err := range d.Pool(ctx, slices.Values(inputs), 4) {
 ```
 
 [docs/findings/onenote.md](docs/findings/onenote.md) records the dispatcher's routes over every
-committed fixture against the hand route truth, inspection over ~/docs' hazards, vision's reading
-of a OneNote page's ink beside OneNote's own recognition, the onenote adapter's cost beside the
-CLI on three large sections, and the dispatcher's time, peak memory, and peak disk over mail's
-2.1 GB scale store, resumed midway, and through the pool at 1 to 8 workers. Every route matched
-the truth; vision read all 14 of the ink's words; the dispatcher took 16.29 s on the scale store
-against the email adapter's 14.12 s, its own process peaking at 35.9 MiB and the disk at 15.8 MB,
-where mail alone writes 1.88 GB of attachments; and a resumed half took 0.54 of the whole. The run
-results it cites are in `docs/findings/onenote-results/`, recorded at commit `96797c6`, before an
-encrypted OOXML package was routed to office: its tier log has `encrypted.xlsx` unrouted.
+committed fixture against the hand route truth, inspection over ~/docs' hazards, vision's reading of
+a OneNote page's ink beside OneNote's own recognition, the onenote adapter's cost beside the CLI on
+three large sections, and the dispatcher's time, peak memory, and peak disk over mail's 2.1 GB scale
+store, resumed midway, and through the pool at 1 to 8 workers. Every route matched the truth; vision
+read all 14 of the ink's words; the dispatcher took 15.61 s on the scale store with removal on and
+17.57 s with it off, against the email adapter's 13.72 s, its own process peaking at 36.8 MiB and
+its working directory at 19.0 MB with removal on, 1.88 GB of attachments with it off; and a resumed
+half took 0.54 of the whole. The run results it cites are in `docs/findings/onenote-results/`,
+recorded at commit `96797c6`, before an encrypted OOXML package was routed to office: its tier log
+has `encrypted.xlsx` unrouted. The scale store's dispatch, removal on and off, is a later run at
+`fdbdab0`.
 
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by

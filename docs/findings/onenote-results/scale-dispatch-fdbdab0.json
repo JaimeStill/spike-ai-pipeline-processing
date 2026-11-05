@@ -1,0 +1,562 @@
+{
+  "record": {
+    "content_sha256": "d40792a45510dc0d4b7a3abc527848095d4f255bae26d853ee7f9a87119362b4",
+    "counts": {
+      "attachment_bytes": 1818207086,
+      "attachments": 17828,
+      "html": 34889,
+      "html_only": 4946,
+      "inline_images": 3374,
+      "largest_attachment": 16736336,
+      "messages": 50000,
+      "mime_bytes": 2690853493,
+      "replies": 14977
+    },
+    "mboxrd": {
+      "file": "scale.mboxrd",
+      "note": "The same messages in the same order, as an mboxrd, by scripts/mboxrd.sh's conventions: the separator line \"From MAILER-DAEMON Thu Jan  1 00:00:00 1970\" (LF) before each message, one more \"\u003e\" on each of its lines matching ^\u003e*From , and a blank line (LF) after it; the messages keep their CRLF. Its bytes are a function of the messages alone, so its SHA-256 is the same on every run with these parameters and tools.",
+      "sha256": "79f5ad34bd4962a1bd84974fd1b4e06bd06bbba7718e5db1321ea64dbb22fe1a",
+      "size": 2693103493
+    },
+    "note": "Written by the generator's scale mode (MISE_ENV=fixtures mise run scale); never committed. The messages are a function of the parameters alone: content_sha256 hashes each message's folder path and MIME bytes, in order, and is the same on every run with these parameters and tools. The .pst's bytes are not: PST Builder 1.3.0 writes a random store UID and search keys, so the store has no SHA-256 worth recording.",
+    "parameters": {
+      "attachment_bytes": "log-uniform from 256 to 524288",
+      "attachment_share": 0.18,
+      "attachments_per_message": "1 to 3, uniform",
+      "bodies": "plain only 30%, plain and HTML 60%, HTML only 10%; 1 to 6 paragraphs of 1 to 5 sentences of 4 to 17 words",
+      "folders": [
+        {
+          "path": "Inbox",
+          "weight": 30
+        },
+        {
+          "path": "Inbox/Projects/Engine",
+          "weight": 8
+        },
+        {
+          "path": "Inbox/Projects/Notes",
+          "weight": 6
+        },
+        {
+          "path": "Inbox/Projects/Été",
+          "weight": 3
+        },
+        {
+          "path": "Inbox/Lists",
+          "weight": 10
+        },
+        {
+          "path": "Sent Items",
+          "weight": 15
+        },
+        {
+          "path": "Archive/2024/Q1",
+          "weight": 5
+        },
+        {
+          "path": "Archive/2024/Q2",
+          "weight": 5
+        },
+        {
+          "path": "Archive/2024/Q3",
+          "weight": 5
+        },
+        {
+          "path": "Archive/2024/Q4",
+          "weight": 5
+        },
+        {
+          "path": "Archive/2025",
+          "weight": 6
+        },
+        {
+          "path": "Junk E-mail",
+          "weight": 2
+        }
+      ],
+      "inline_image_share": 0.1,
+      "large_attachment_bytes": "log-uniform from 1048576 to 16777216, one more attachment",
+      "large_attachment_share": 0.002,
+      "messages": 50000,
+      "people": 200,
+      "reply_share": 0.3,
+      "seed": 16
+    },
+    "parts": [
+      {
+        "file": "scale.pst",
+        "size": 2141594624
+      }
+    ],
+    "seconds": 37.5,
+    "tools": {
+      "MimeKit": "4.18.2",
+      "MsgKit": "3.0.6",
+      "OpenMcdf": "3.3.0",
+      "PstBuilder": "1.3.0",
+      "PstBuilder.Eml": "1.3.0",
+      "dotnet-runtime": "10.0.13",
+      "dotnet-sdk": "10.0.402"
+    }
+  },
+  "result": {
+    "input": "scale",
+    "path": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+    "size": 2141594624,
+    "floor": {
+      "max_rss": 12828672,
+      "user": 0,
+      "system": 2763000,
+      "wall": 2536806
+    },
+    "runs": [
+      {
+        "way": "dispatch, removal on",
+        "launched": {
+          "max_rss": 69505024,
+          "user": 15354828000,
+          "system": 5346938000,
+          "wall": 15498011388
+        },
+        "self": {
+          "max_rss": 38576128,
+          "user": 5580554000,
+          "system": 1510043000
+        },
+        "children": {
+          "max_rss": 69505024,
+          "user": 9773985000,
+          "system": 3834822000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2141594624,
+          "parts": 21203,
+          "counts": {
+            "nested × prepared": 1,
+            "text × no processor yet": 4533,
+            "unrouted × no processor yet": 16669
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 50000,
+          "seen_messages": 0,
+          "outputs": 100018,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+              "size": 2141594624,
+              "outcome": "prepared",
+              "outputs": 100018,
+              "children": 21202,
+              "at": 14984674349
+            }
+          ],
+          "elapsed": 14984894214,
+          "peak_disk": 17763874,
+          "disk_samples": 1496,
+          "index_files": 21206,
+          "index_bytes": 264048840
+        },
+        "written_files": 21206,
+        "written_bytes": 264048840
+      },
+      {
+        "way": "dispatch, removal on",
+        "launched": {
+          "max_rss": 70246400,
+          "user": 15360698000,
+          "system": 5484851000,
+          "wall": 15613094722
+        },
+        "self": {
+          "max_rss": 36540416,
+          "user": 5577254000,
+          "system": 1491499000
+        },
+        "children": {
+          "max_rss": 70246400,
+          "user": 9783137000,
+          "system": 3991255000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2141594624,
+          "parts": 21203,
+          "counts": {
+            "nested × prepared": 1,
+            "text × no processor yet": 4533,
+            "unrouted × no processor yet": 16669
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 50000,
+          "seen_messages": 0,
+          "outputs": 100018,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+              "size": 2141594624,
+              "outcome": "prepared",
+              "outputs": 100018,
+              "children": 21202,
+              "at": 15115019693
+            }
+          ],
+          "elapsed": 15115140865,
+          "peak_disk": 16051395,
+          "disk_samples": 1509,
+          "index_files": 21206,
+          "index_bytes": 264048840
+        },
+        "written_files": 21206,
+        "written_bytes": 264048840
+      },
+      {
+        "way": "dispatch, removal on",
+        "launched": {
+          "max_rss": 69742592,
+          "user": 15618275000,
+          "system": 5429257000,
+          "wall": 15812909618
+        },
+        "self": {
+          "max_rss": 37257216,
+          "user": 5618722000,
+          "system": 1497373000
+        },
+        "children": {
+          "max_rss": 69742592,
+          "user": 9999100000,
+          "system": 3929812000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2141594624,
+          "parts": 21203,
+          "counts": {
+            "nested × prepared": 1,
+            "text × no processor yet": 4533,
+            "unrouted × no processor yet": 16669
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 50000,
+          "seen_messages": 0,
+          "outputs": 100018,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+              "size": 2141594624,
+              "outcome": "prepared",
+              "outputs": 100018,
+              "children": 21202,
+              "at": 15313611863
+            }
+          ],
+          "elapsed": 15313760378,
+          "peak_disk": 18994838,
+          "disk_samples": 1530,
+          "index_files": 21206,
+          "index_bytes": 264048840
+        },
+        "written_files": 21206,
+        "written_bytes": 264048840
+      },
+      {
+        "way": "dispatch, removal off",
+        "launched": {
+          "max_rss": 69922816,
+          "user": 24530083000,
+          "system": 14674165000,
+          "wall": 17407473882
+        },
+        "self": {
+          "max_rss": 40124416,
+          "user": 14246858000,
+          "system": 10535757000
+        },
+        "children": {
+          "max_rss": 69922816,
+          "user": 10282830000,
+          "system": 4136133000
+        },
+        "survey": {
+          "workers": 0,
+          "keep": true,
+          "input_bytes": 2141594624,
+          "parts": 21203,
+          "counts": {
+            "nested × prepared": 1,
+            "text × no processor yet": 4533,
+            "unrouted × no processor yet": 16669
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 50000,
+          "seen_messages": 0,
+          "outputs": 100018,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+              "size": 2141594624,
+              "outcome": "prepared",
+              "outputs": 100018,
+              "children": 21202,
+              "at": 16857096131
+            }
+          ],
+          "elapsed": 16857281987,
+          "peak_disk": 1871275828,
+          "disk_samples": 546,
+          "index_files": 21206,
+          "index_bytes": 264048840
+        },
+        "written_files": 42408,
+        "written_bytes": 2141251314
+      },
+      {
+        "way": "dispatch, removal off",
+        "launched": {
+          "max_rss": 69767168,
+          "user": 24843272000,
+          "system": 14727714000,
+          "wall": 17565444824
+        },
+        "self": {
+          "max_rss": 39804928,
+          "user": 14398586000,
+          "system": 10537129000
+        },
+        "children": {
+          "max_rss": 69767168,
+          "user": 10444053000,
+          "system": 4189123000
+        },
+        "survey": {
+          "workers": 0,
+          "keep": true,
+          "input_bytes": 2141594624,
+          "parts": 21203,
+          "counts": {
+            "nested × prepared": 1,
+            "text × no processor yet": 4533,
+            "unrouted × no processor yet": 16669
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 50000,
+          "seen_messages": 0,
+          "outputs": 100018,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+              "size": 2141594624,
+              "outcome": "prepared",
+              "outputs": 100018,
+              "children": 21202,
+              "at": 17002706964
+            }
+          ],
+          "elapsed": 17002819448,
+          "peak_disk": 1869993950,
+          "disk_samples": 554,
+          "index_files": 21206,
+          "index_bytes": 264048840
+        },
+        "written_files": 42408,
+        "written_bytes": 2141251314
+      },
+      {
+        "way": "dispatch, removal off",
+        "launched": {
+          "max_rss": 69537792,
+          "user": 25326494000,
+          "system": 14992355000,
+          "wall": 17916380832
+        },
+        "self": {
+          "max_rss": 39948288,
+          "user": 14678994000,
+          "system": 10764291000
+        },
+        "children": {
+          "max_rss": 69537792,
+          "user": 10647500000,
+          "system": 4226285000
+        },
+        "survey": {
+          "workers": 0,
+          "keep": true,
+          "input_bytes": 2141594624,
+          "parts": 21203,
+          "counts": {
+            "nested × prepared": 1,
+            "text × no processor yet": 4533,
+            "unrouted × no processor yet": 16669
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 50000,
+          "seen_messages": 0,
+          "outputs": 100018,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+              "size": 2141594624,
+              "outcome": "prepared",
+              "outputs": 100018,
+              "children": 21202,
+              "at": 17235850304
+            }
+          ],
+          "elapsed": 17235964899,
+          "peak_disk": 1877202474,
+          "disk_samples": 554,
+          "index_files": 21206,
+          "index_bytes": 264048840
+        },
+        "written_files": 42408,
+        "written_bytes": 2141251314
+      },
+      {
+        "way": "email adapter, attachments",
+        "launched": {
+          "max_rss": 69120000,
+          "user": 11601864000,
+          "system": 3973746000,
+          "wall": 13717042680
+        },
+        "self": {
+          "max_rss": 20107264,
+          "user": 1654333000,
+          "system": 308782000
+        },
+        "children": {
+          "max_rss": 69120000,
+          "user": 9947530000,
+          "system": 3663306000
+        },
+        "survey": {
+          "records": {
+            "*email.Folder": 17,
+            "*email.Message": 50000,
+            "*email.Store": 1
+          },
+          "named": 21202,
+          "routes": {
+            "text": 4533,
+            "unrouted": 16669
+          },
+          "warnings": 0,
+          "elapsed": 13713467289
+        },
+        "written_files": 21202,
+        "written_bytes": 1877202474
+      },
+      {
+        "way": "email adapter, attachments",
+        "launched": {
+          "max_rss": 69464064,
+          "user": 11584367000,
+          "system": 4064127000,
+          "wall": 13777762639
+        },
+        "self": {
+          "max_rss": 22151168,
+          "user": 1664255000,
+          "system": 312051000
+        },
+        "children": {
+          "max_rss": 69464064,
+          "user": 9919329000,
+          "system": 3750913000
+        },
+        "survey": {
+          "records": {
+            "*email.Folder": 17,
+            "*email.Message": 50000,
+            "*email.Store": 1
+          },
+          "named": 21202,
+          "routes": {
+            "text": 4533,
+            "unrouted": 16669
+          },
+          "warnings": 0,
+          "elapsed": 13772634724
+        },
+        "written_files": 21202,
+        "written_bytes": 1877202474
+      },
+      {
+        "way": "email adapter, attachments",
+        "launched": {
+          "max_rss": 69517312,
+          "user": 11506389000,
+          "system": 4066242000,
+          "wall": 13718525248
+        },
+        "self": {
+          "max_rss": 19726336,
+          "user": 1665320000,
+          "system": 299534000
+        },
+        "children": {
+          "max_rss": 69517312,
+          "user": 9841068000,
+          "system": 3764797000
+        },
+        "survey": {
+          "records": {
+            "*email.Folder": 17,
+            "*email.Message": 50000,
+            "*email.Store": 1
+          },
+          "named": 21202,
+          "routes": {
+            "text": 4533,
+            "unrouted": 16669
+          },
+          "warnings": 0,
+          "elapsed": 13712916344
+        },
+        "written_files": 21202,
+        "written_bytes": 1877202474
+      },
+      {
+        "way": "mail, attachments",
+        "launched": {
+          "max_rss": 69742592,
+          "user": 9777975000,
+          "system": 3654903000,
+          "wall": 13537597296
+        },
+        "written_files": 21202,
+        "written_bytes": 1877202474
+      },
+      {
+        "way": "mail, attachments",
+        "launched": {
+          "max_rss": 69132288,
+          "user": 9713521000,
+          "system": 3665238000,
+          "wall": 13481130874
+        },
+        "written_files": 21202,
+        "written_bytes": 1877202474
+      },
+      {
+        "way": "mail, attachments",
+        "launched": {
+          "max_rss": 70021120,
+          "user": 9589000000,
+          "system": 3624333000,
+          "wall": 13314713841
+        },
+        "written_files": 21202,
+        "written_bytes": 1877202474
+      }
+    ]
+  }
+}

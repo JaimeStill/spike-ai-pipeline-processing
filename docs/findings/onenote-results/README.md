@@ -39,3 +39,31 @@ after its run.
 | `pool.json` | `TestFindingsPool` | The 41 inputs, and each worker count's run and survey, each input's own event with when it came |
 
 Times are in nanoseconds in the JSON; `max_rss`, `peak_disk`, and `index_bytes` are in bytes.
+
+## findings-onenote scale fdbdab0
+
+A second run, of `TestFindingsScaleDispatch` alone, added after the spec review to measure the
+dispatcher with removal off: named here **findings-onenote scale fdbdab0**, on 2026-11-05 from
+18:57:55 to 19:00:59 UTC, at processing commit `fdbdab0`
+(`fdbdab0fb5cbbc20774db9ceb6345f35fb5fd2c3`) on branch `onenote`, the commit that adds the way. It
+ran on the same host, with the same tools (the mise pins are unchanged since `96797c6`) and the same
+scale store, its content SHA-256 the pin, by:
+
+```sh
+GOWORK=off ONENOTE_SCALE_STORE=~/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst \
+ONENOTE_FINDINGS_RESULTS=<a directory> \
+mise exec -- go test -tags findings -count=1 -timeout 60m -v -run '^TestFindingsScaleDispatch$' ./dispatch/
+```
+
+The test wrote its `scale-dispatch.json` and the `-v` output to a directory outside the
+repository; they are committed here under the commit's name, so the first run's files stay as
+they were. Working directories and file indexes were on tmpfs, each removed after its run.
+
+| File | Test | What it records |
+|---|---|---|
+| `scale-dispatch-fdbdab0.log` | `TestFindingsScaleDispatch` | The run's `-v` output, verbatim |
+| `scale-dispatch-fdbdab0.json` | `TestFindingsScaleDispatch` | The generator's record and every run each way, four ways: `dispatch, removal on`, `dispatch, removal off` (its caller calls `Event.Keep` on every event), `email adapter, attachments`, and `mail, attachments`; a dispatch's survey holds its counts, peak disk, and index size, and `keep` marks removal off |
+
+A run's `written_files` and `written_bytes` are its whole directory once done, the working
+directory and the file index together: for removal off, the 1,877,202,474 bytes of kept
+attachments beside the index's 264,048,840.
