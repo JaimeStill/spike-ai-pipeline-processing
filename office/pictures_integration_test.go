@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -106,24 +107,36 @@ func TestPictures(t *testing.T) {
 // versions.
 func fullConverter(t *testing.T) *office.Converter {
 	t.Helper()
+	c, _ := fullConverters(t)
+	return c
+}
+
+// fullConverters builds fullConverter's Converter and a picture Converter over the same soffice
+// and magick.
+func fullConverters(t *testing.T) (*office.Converter, *picture.Converter) {
+	t.Helper()
 	o, err := tool.NewExec(t.Context(), office.OfficeSpec())
 	if err != nil {
 		t.Fatalf("office, which mise pins, run the tier through mise run integration: %v", err)
 	}
-	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: office.LibreOfficeImage}, office.LibreOfficeSpec())
+	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: picture.LibreOfficeImage}, picture.LibreOfficeSpec())
 	if err != nil {
 		t.Fatal(err)
 	}
-	mg, err := tool.NewExec(t.Context(), office.MagickSpec())
+	mg, err := tool.NewExec(t.Context(), picture.MagickSpec())
 	if err != nil {
 		t.Fatalf("magick, a host prerequisite for TIFF: %v", err)
 	}
-	t.Logf("soffice %s in %s, magick %s", lo.Version(), office.LibreOfficeImage, mg.Version())
+	t.Logf("soffice %s in %s, magick %s", lo.Version(), picture.LibreOfficeImage, mg.Version())
 	c, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
 	if err != nil {
 		t.Fatal(err)
 	}
-	return c
+	pc, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return c, pc
 }
 
 // convertTimed converts the fixture at path as Markdown, in a working directory of its own,
@@ -200,7 +213,7 @@ func logPicture(t *testing.T, fixture, media string, m office.MediaFile, timing 
 	}
 	b := img.Bounds()
 	if kind := strings.ToLower(filepath.Ext(m.Name)); (kind == ".emf" || kind == ".wmf") &&
-		(b.Dx() >= office.DefaultMetafileScale*794 || b.Dy() >= office.DefaultMetafileScale*1123) {
+		(b.Dx() >= picture.DefaultMetafileScale*794 || b.Dy() >= picture.DefaultMetafileScale*1123) {
 		t.Errorf("%s: its PNG is %dx%d, the page it was rendered on, not trimmed to the picture", m.Name, b.Dx(), b.Dy())
 	}
 	t.Logf("picture: %-34s %s… %-4s %7d B -> png %4dx%-4d %7d B  %s",

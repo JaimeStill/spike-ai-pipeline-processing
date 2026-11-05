@@ -9,7 +9,10 @@ shellcheck = "0.11.0"
 "github:JaimeStill/spike-ai-pipeline-office" = "0.1.0"
 # mail, from its GitHub release, for the email package's tests that run the real binary; mise
 # checks the archive against the release's digest.
-"github:JaimeStill/spike-ai-pipeline-mail" = "0.2.0"
+"github:JaimeStill/spike-ai-pipeline-mail" = "0.3.0"
+# onenote, from its GitHub release, for the onenote package's tests that run the real binary;
+# mise checks the archive against the release's digest.
+"github:JaimeStill/spike-ai-pipeline-onenote" = "0.1.0"
 
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
@@ -67,6 +70,13 @@ run = "scripts/currency.sh"
 [tasks."fixtures:mail"]
 description = "Refresh email's copy of mail's fixtures from mail's tag; reports drift against the manifest"
 run = "scripts/fixtures-mail.sh"
+
+# The onenote package's copy of onenote's fixtures and expectations, refreshed from onenote's tag
+# on the remote; it reports any drift against the copy's manifest. The check never fetches: it
+# verifies the copy against the manifest offline.
+[tasks."fixtures:onenote"]
+description = "Refresh onenote's copy of onenote's fixtures from onenote's tag; reports drift against the manifest"
+run = "scripts/fixtures-onenote.sh"
 
 # The email package's built .msg, rebuilt by mail's fixtures generator at its tag from an .eml
 # source that attaches this repository's own office fixtures. It needs network access and installs
@@ -245,3 +255,15 @@ exit "$failed"
 [tasks.findings-email]
 description = "Run the email finding on the fixtures and MIME inputs, plaso's store, the EMAIL_SCALE_STORE scale store, and the EMAIL_SCALE_MBOX scale mboxrd; keeps results only in EMAIL_FINDINGS_RESULTS"
 run = "scripts/findings-email.sh"
+
+# Task onenote's finding, in the integration and findings tiers: the tier's routes against the
+# hand truth and onenote's media routes; inspection over ~/docs; the page ink of
+# handwriting_recognition.one to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names, beside
+# OneNote's own recognition; the onenote adapter beside the CLI on ONENOTE_LARGE's three large
+# sections; and the dispatcher over the ONENOTE_SCALE_STORE scale store, resumed, and through the
+# pool beside plaso's store, a byte copy of the scale store, and mail's fixtures, with their time,
+# peak memory, and peak disk. None of the stores is committed. An ONENOTE_FINDINGS_RESULTS the shell
+# sets keeps the run's results there; unset, the run keeps nothing. It isn't CI.
+[tasks.findings-onenote]
+description = "Run the onenote finding: routes, inspection, ink, the large sections, and the dispatcher over the ONENOTE_SCALE_STORE scale store; keeps results only in ONENOTE_FINDINGS_RESULTS"
+run = "scripts/findings-onenote.sh"

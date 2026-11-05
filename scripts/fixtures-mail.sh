@@ -16,7 +16,7 @@ set -euo pipefail
 cd "$MISE_PROJECT_ROOT"
 
 repository=https://github.com/JaimeStill/spike-ai-pipeline-mail
-tag=v0.2.0
+tag=v0.3.0
 copy=email/testdata/mail
 manifest=$copy/MANIFEST
 

@@ -5,6 +5,8 @@ package office_test
 import (
 	"archive/zip"
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"image/png"
 	"io"
 	"os"
@@ -14,9 +16,10 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
-// exportPictures are the pictures TestConvertPictureReal extracts from the committed fixtures,
+// exportPictures are the pictures TestPictureConvertReal extracts from the committed fixtures,
 // one of each converted kind: the TIFF fixture's TIFF, an OLE object's EMF preview, and a sheet's
 // WMF.
 var exportPictures = []struct {
@@ -27,15 +30,16 @@ var exportPictures = []struct {
 	{"ooxml/with-drawing.xlsx", "xl/media/image5.wmf"},
 }
 
-// TestConvertPictureReal extracts a TIFF, an EMF, and a WMF from the committed fixtures, writes
+// TestPictureConvertReal extracts a TIFF, an EMF, and a WMF from the committed fixtures, writes
 // each as mail names an attachment, its SHA-256 and stored extension, outside the working
-// directory, and converts it through ConvertPicture with the real soffice in the default image
-// and the host's magick, twice, the second run in a later second than the first ended in. Each
-// gives the working directory's file named by its SHA-256 and .png, which image/png decodes, the
-// same bytes both times and the same bytes as Convert hands the picture on as within its
-// document, since both run one code path; the original is kept and nothing else is left.
-func TestConvertPictureReal(t *testing.T) {
-	c := fullConverter(t)
+// directory, and converts it through the picture package's Convert with the real soffice in the
+// default image and the host's magick, twice, the second run in a later second than the first ended
+// in. Each gives the working directory's file named by its SHA-256 and .png, which image/png
+// decodes, the same bytes both times and the same bytes as Convert hands the picture on as within
+// its document, since both run the picture package's one code path; the original is kept and
+// nothing else is left.
+func TestPictureConvertReal(t *testing.T) {
+	c, pc := fullConverters(t)
 	for _, p := range exportPictures {
 		t.Run(filepath.Base(p.entry), func(t *testing.T) {
 			data := extract(t, filepath.Join("testdata", p.fixture), p.entry)
@@ -50,7 +54,7 @@ func TestConvertPictureReal(t *testing.T) {
 					time.Sleep(time.Until(time.Now().Truncate(time.Second).Add(time.Second)))
 				}
 				dir := t.TempDir()
-				out, err := c.ConvertPicture(t.Context(), office.PictureRequest{Dir: dir, Path: path})
+				out, err := pc.Convert(t.Context(), picture.Request{Dir: dir, Path: path})
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -100,10 +104,16 @@ func TestConvertPictureReal(t *testing.T) {
 				t.Fatal(err)
 			}
 			if !bytes.Equal(within, pngs[0]) {
-				t.Errorf("ConvertPicture's PNG (%d B) isn't Convert's (%d B)", len(pngs[0]), len(within))
+				t.Errorf("picture's Convert's PNG (%d B) isn't office's Convert's (%d B)", len(pngs[0]), len(within))
 			}
 		})
 	}
+}
+
+// sha returns the lowercase hex SHA-256 of content.
+func sha(content string) string {
+	sum := sha256.Sum256([]byte(content))
+	return hex.EncodeToString(sum[:])
 }
 
 // extract returns the bytes of the entry named entry in the ZIP package at path.

@@ -79,7 +79,7 @@ The TIFF is 640x400, 8-bit RGB, LZW-compressed, written by GIMP.
 (`charts`, `comments`, `lists`, `media`, `notes`, `sections`, `tables`), four xlsx as `.xls`
 (`cells`, `drawings`, `formulas`, `merges`), and three pptx as `.ppt` (`bullets`, `slide-objects`,
 `slides`). `legacy/generate.sh` wrote them, running soffice as the office package runs it: in the
-package's default image, `LibreOfficeImage`
+picture package's default image, `picture.LibreOfficeImage`
 (`gotenberg/gotenberg:8.39.0-libreoffice@sha256:4c0eb92ef22e5d5fb0a49eac924b63d85d0b0334ea3365a1f5ca428f367b3054`),
 LibreOffice 26.8.1.1, under the container runner's lockdown, with the filters `MS Word 97`,
 `MS Excel 97`, and `MS PowerPoint 97`. The script writes `legacy/generated/MANIFEST`, which
@@ -125,3 +125,13 @@ What they hold:
   formula.
 - `basic_test_ppt_file.ppt`: two slides, a title and a two-line subtitle, then a title and three
   bulleted lines, each slide with a line of speaker notes.
+
+## Golden sums
+
+`golden/pictures.sha256` holds the SHA-256 of every picture `TestGoldenPictures`, in the
+integration tier, converts, and of each Markdown it writes, recorded at commit `aa71cc8`, before
+the picture package took the conversion over, so the move is proved to change no byte. The test
+compares a run's sums against it. Setting `GOLDEN_RECORD=1` records the sums in place of comparing,
+and is done only at a commit before the code the sums guard changes, so they hold what that code
+wrote; it is never done to make a failing test pass, since a failure is the change the sums exist
+to catch.

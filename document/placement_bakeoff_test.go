@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 )
 
 // Ruling L of task documents, instruction placement: `mise run bakeoff-placement` runs
@@ -106,7 +107,7 @@ func TestPlacement(t *testing.T) {
 					res.RunTimes = append(res.RunTimes, elapsed)
 					for _, cl := range cells {
 						t.Logf("recorded: placement %s %s: page %d run %d: CER %.4f WER %.4f, %d input tokens, %d output tokens, status %s%s",
-							placement, s.name, cl.Page, cl.Run, rate(cl.CharEdits, cl.Chars), rate(cl.WordEdits, cl.Words),
+							placement, s.name, cl.Page, cl.Run, textscore.Rate(cl.CharEdits, cl.Chars), textscore.Rate(cl.WordEdits, cl.Words),
 							cl.InputTokens, cl.OutputTokens, cl.Status, errSuffix(cl.Error))
 					}
 					t.Logf("recorded: placement %s %s: run %d, %d pages at concurrency %d in %v",

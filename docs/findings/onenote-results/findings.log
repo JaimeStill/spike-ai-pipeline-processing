@@ -1,0 +1,618 @@
+# findings-onenote: go test -tags integration -count=1 -timeout 30m -v -run ^TestTierRoutes$ ./dispatch/
+=== RUN   TestTierRoutes
+    tier_integration_test.go:285: document/testdata/clean.pdf: 1 parts, 644ms
+    tier_integration_test.go:285: document/testdata/degraded.pdf: 1 parts, 1.06s
+    tier_integration_test.go:285: document/testdata/scanned.pdf: 1 parts, 2.588s
+    tier_integration_test.go:285: office/testdata/ooxml/bullets.libreoffice.pptx: 1 parts, 16ms
+    tier_integration_test.go:285: office/testdata/ooxml/cells.libreoffice.xlsx: 1 parts, 12ms
+    tier_integration_test.go:285: office/testdata/ooxml/charts.libreoffice.docx: 1 parts, 21ms
+    tier_integration_test.go:285: office/testdata/ooxml/comments.libreoffice.docx: 1 parts, 23ms
+    tier_integration_test.go:285: office/testdata/ooxml/drawings.libreoffice.xlsx: 3 parts, 27ms
+    tier_integration_test.go:285: office/testdata/ooxml/formulas.libreoffice.xlsx: 1 parts, 14ms
+    tier_integration_test.go:285: office/testdata/ooxml/lists.libreoffice.docx: 1 parts, 21ms
+    tier_integration_test.go:285: office/testdata/ooxml/media.libreoffice.docx: 5 parts, 1.014s
+    tier_integration_test.go:285: office/testdata/ooxml/merges.libreoffice.xlsx: 1 parts, 13ms
+    tier_integration_test.go:285: office/testdata/ooxml/notes.libreoffice.docx: 1 parts, 26ms
+    tier_integration_test.go:285: office/testdata/ooxml/sections.libreoffice.docx: 2 parts, 29ms
+    tier_integration_test.go:285: office/testdata/ooxml/slide-objects.libreoffice.pptx: 3 parts, 18ms
+    tier_integration_test.go:285: office/testdata/ooxml/slides.libreoffice.pptx: 1 parts, 17ms
+    tier_integration_test.go:285: office/testdata/ooxml/tables.libreoffice.docx: 1 parts, 22ms
+    tier_integration_test.go:285: office/testdata/ooxml/with-drawing.xlsx: 6 parts, 1.638s
+    tier_integration_test.go:285: office/testdata/ooxml/word-with-attachments.docx: 6 parts, 2.266s
+    tier_integration_test.go:285: office/testdata/legacy/generated/bullets.libreoffice.ppt: 1 parts, 876ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/cells.libreoffice.xls: 1 parts, 785ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/charts.libreoffice.doc: 1 parts, 955ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/comments.libreoffice.doc: 1 parts, 870ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/drawings.libreoffice.xls: 3 parts, 869ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/formulas.libreoffice.xls: 1 parts, 809ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/lists.libreoffice.doc: 1 parts, 870ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/media.libreoffice.doc: 5 parts, 2.145s
+    tier_integration_test.go:285: office/testdata/legacy/generated/merges.libreoffice.xls: 1 parts, 778ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/notes.libreoffice.doc: 1 parts, 865ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/sections.libreoffice.doc: 2 parts, 894ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/slide-objects.libreoffice.ppt: 3 parts, 1.423s
+    tier_integration_test.go:285: office/testdata/legacy/generated/slides.libreoffice.ppt: 1 parts, 896ms
+    tier_integration_test.go:285: office/testdata/legacy/generated/tables.libreoffice.doc: 1 parts, 864ms
+    tier_integration_test.go:285: office/testdata/legacy/real/SampleSS.xls: 1 parts, 824ms
+    tier_integration_test.go:285: office/testdata/legacy/real/basic_test_ppt_file.ppt: 1 parts, 877ms
+    tier_integration_test.go:285: office/testdata/legacy/real/simple-table.doc: 1 parts, 865ms
+    tier_integration_test.go:285: office/testdata/pictures/tiff.docx: 2 parts, 46ms
+    tier_integration_test.go:285: picture/testdata/ink.svg: 1 parts, 28ms
+    tier_integration_test.go:285: picture/testdata/script-bearing.svg: 1 parts, 31ms
+    tier_integration_test.go:285: picture/testdata/shapes.svg: 1 parts, 35ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/eml/01-plain.eml: 1 parts, 2ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml: 2 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml: 2 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/eml/05-japanese.eml: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/eml/06-chinese.eml: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml: 2 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/msg/01-plain.msg: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg: 2 parts, 2ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg: 2 parts, 2ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/msg/05-japanese.msg: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/msg/06-chinese.msg: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg: 3 parts, 3ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/generated/pst/mailbox.pst: 4 parts, 3ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/mime/eml/09-threading.eml: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/mime/nine.mboxrd: 4 parts, 2ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/mime/rlug/mbox.rlug: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0: 1 parts, 0s
+    tier_integration_test.go:285: email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1: 1 parts, 0s
+    tier_integration_test.go:285: email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2: 1 parts, 0s
+    tier_integration_test.go:285: email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3: 1 parts, 0s
+    tier_integration_test.go:285: email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4: 1 parts, 0s
+    tier_integration_test.go:285: email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg: 1 parts, 1ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg: 2 parts, 3ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg: 1 parts, 5ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg: 1 parts, 4ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg: 12 parts, 6ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg: 2 parts, 217ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg: 1 parts, 3ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg: 1 parts, 2ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst: 1 parts, 3ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/pst/java-libpst/passworded.pst: 1 parts, 2ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/pst/libyal/outlook.pst: 23 parts, 8ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/pst/tika/testPST.pst: 1 parts, 9ms
+    tier_integration_test.go:285: email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst: 1 parts, 6ms
+    tier_integration_test.go:285: email/testdata/built/eml/office-attachments.eml: 6 parts, 1.087s
+    tier_integration_test.go:285: email/testdata/built/msg/office-attachments.msg: 6 parts, 3ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/Resources/AlternativePackaging.one: 1 parts, 2ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/Resources/AlternativePackaging.onetoc2: 1 parts, 1ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/Resources/NoSection.onetoc2: 1 parts, 2ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/Resources/Open Notebook.onetoc2: 1 parts, 3ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/SUT/Encryption.one: 1 parts, 1ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/SUT/FileSyncWOPI_OneNoteWithODB.one: 2 parts, 5ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/SUT/InvalidData.one: 1 parts, 5ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/SUT/OneWithFileData.one: 2 parts, 18ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/SUT/OneWithoutFileData.one: 1 parts, 3ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/interop/SUT/Open Notebook.onetoc2: 2 parts, 7ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one: 3 parts, 25ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/Open Notebook.onetoc2: 3 parts, 7ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one: 3 parts, 93ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 1.one: 1 parts, 2ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one: 3 parts, 4ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2: 3 parts, 4ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/OneNote_DeletedPages.one: 1 parts, 1ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/Open Notebook.onetoc2: 1 parts, 2ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one: 3 parts, 7ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 2.one: 1 parts, 2ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 3.one: 1 parts, 1ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2: 3 parts, 7ms
+    tier_integration_test.go:285: onenote/testdata/onenote/fixtures/onenote-rs/object-revision/Open Notebook.onetoc2: 1 parts, 1ms
+    tier_integration_test.go:285: inspect/testdata/absolute.zip: 1 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/bomb.zip: 2 parts, 13ms
+    tier_integration_test.go:285: inspect/testdata/declared-bomb.zip: 1 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/encrypted.xlsx: 1 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/encrypted.zip: 2 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/hyperlink.docx: 1 parts, 14ms
+    tier_integration_test.go:285: inspect/testdata/invoice.pdf.exe: 1 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/javascript.pdf: 1 parts, 108ms
+    tier_integration_test.go:285: inspect/testdata/macro.docm: 1 parts, 16ms
+    tier_integration_test.go:285: inspect/testdata/mismatch.pdf: 1 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/polyglot.jpg: 1 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/polyglot.png: 1 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/script.svg: 1 parts, 13ms
+    tier_integration_test.go:285: inspect/testdata/symlink.zip: 1 parts, 0s
+    tier_integration_test.go:285: inspect/testdata/traversal.zip: 1 parts, 0s
+    tier_integration_test.go:285: tool/testdata/tone.wav: 1 parts, 0s
+    tier_integration_test.go:306: 
+        # routes to stages: 119 inputs from document/testdata/*.pdf office/testdata/ooxml/* office/testdata/legacy/generated/*.*.* office/testdata/legacy/real/*.??? office/testdata/pictures/*.docx picture/testdata/*.svg email/testdata/mail/fixtures/generated/eml/*.eml email/testdata/mail/fixtures/generated/msg/*.msg email/testdata/mail/fixtures/generated/pst/*.pst email/testdata/mail/fixtures/mime/eml/*.eml email/testdata/mail/fixtures/mime/*.mboxrd email/testdata/mail/fixtures/mime/rlug/mbox.* email/testdata/mail/fixtures/msg/poi/*.msg email/testdata/mail/fixtures/msg/tika/*.msg email/testdata/mail/fixtures/pst/*/*.pst email/testdata/built/eml/*.eml email/testdata/built/msg/*.msg onenote/testdata/onenote/fixtures/interop/*/*.one* onenote/testdata/onenote/fixtures/onenote-rs/*.one* onenote/testdata/onenote/fixtures/onenote-rs/*/*.one* inspect/testdata/* tool/testdata/*.wav, dispatched in order over one file index
+        # input	place	name	depth	route	reason	stage	outcome	outputs	children	why
+        document/testdata/clean.pdf	-	clean.pdf	0	document	PDF signature	document	prepared	12	0	
+        document/testdata/degraded.pdf	-	degraded.pdf	0	document	PDF signature	document	prepared	9	0	
+        document/testdata/scanned.pdf	-	scanned.pdf	0	document	PDF signature	document	prepared	7	0	
+        office/testdata/ooxml/bullets.libreoffice.pptx	-	bullets.libreoffice.pptx	0	office	ZIP signature, .pptx extension	office	prepared	1	0	
+        office/testdata/ooxml/cells.libreoffice.xlsx	-	cells.libreoffice.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	0	
+        office/testdata/ooxml/charts.libreoffice.docx	-	charts.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+        office/testdata/ooxml/comments.libreoffice.docx	-	comments.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+        office/testdata/ooxml/drawings.libreoffice.xlsx	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/drawings.libreoffice.xlsx	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/drawings.libreoffice.xlsx	-	drawings.libreoffice.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	2	
+        office/testdata/ooxml/formulas.libreoffice.xlsx	-	formulas.libreoffice.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	0	
+        office/testdata/ooxml/lists.libreoffice.docx	-	lists.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+        office/testdata/ooxml/media.libreoffice.docx	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/ooxml/media.libreoffice.docx	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/ooxml/media.libreoffice.docx	media 670be6349ed84b27d6ca43d66ba6e9454c632f68de8d9b8fea78a480e90afb31.emf, as PNG	670be6349ed84b27d6ca43d66ba6e9454c632f68de8d9b8fea78a480e90afb31.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/media.libreoffice.docx	media df026100fd6fe38e22923c5152a33ea6f6879e38073fb47f022ed9d90dec65a8.png	df026100fd6fe38e22923c5152a33ea6f6879e38073fb47f022ed9d90dec65a8.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/media.libreoffice.docx	-	media.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	4	
+        office/testdata/ooxml/merges.libreoffice.xlsx	-	merges.libreoffice.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	0	
+        office/testdata/ooxml/notes.libreoffice.docx	-	notes.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+        office/testdata/ooxml/sections.libreoffice.docx	media 805924e65dff89ccbac4046a6995a73622a878f5ff9ec17678b4bc33ca55ea12.png	805924e65dff89ccbac4046a6995a73622a878f5ff9ec17678b4bc33ca55ea12.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/sections.libreoffice.docx	-	sections.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	1	
+        office/testdata/ooxml/slide-objects.libreoffice.pptx	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/ooxml/slide-objects.libreoffice.pptx	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/ooxml/slide-objects.libreoffice.pptx	-	slide-objects.libreoffice.pptx	0	office	ZIP signature, .pptx extension	office	prepared	1	2	
+        office/testdata/ooxml/slides.libreoffice.pptx	-	slides.libreoffice.pptx	0	office	ZIP signature, .pptx extension	office	prepared	1	0	
+        office/testdata/ooxml/tables.libreoffice.docx	-	tables.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+        office/testdata/ooxml/with-drawing.xlsx	media 14013b5a111a348deb6efc63f5f164d0bed08831bbe2c3803dd9fbfc76fd2664.emf, as PNG	14013b5a111a348deb6efc63f5f164d0bed08831bbe2c3803dd9fbfc76fd2664.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/with-drawing.xlsx	media 3c9e27e68d0322daaff3477a957d46ae5b32b23f058d29e65d3947b6eeafb2cb.emf, as PNG	3c9e27e68d0322daaff3477a957d46ae5b32b23f058d29e65d3947b6eeafb2cb.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/with-drawing.xlsx	media 8345fcf9642a79651ea36935f736e753e355a4df2d85eaaa1589837143b8f2f0.jpeg	8345fcf9642a79651ea36935f736e753e355a4df2d85eaaa1589837143b8f2f0.jpeg	1	vision	JPEG signature	vision	prepared	1	0	
+        office/testdata/ooxml/with-drawing.xlsx	media 90a2c8be87924f2bf36439fec40969eb74fcc314dce8b9f9c627167d7d425663.png	90a2c8be87924f2bf36439fec40969eb74fcc314dce8b9f9c627167d7d425663.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/with-drawing.xlsx	media fdc312bc0dbea47df16d3e3e98e2777e4aa537d225a703e3cde0177df56a592a.wmf, as PNG	fdc312bc0dbea47df16d3e3e98e2777e4aa537d225a703e3cde0177df56a592a.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/with-drawing.xlsx	-	with-drawing.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	5	
+        office/testdata/ooxml/word-with-attachments.docx	media 2156195ef201015167ead7b09b568042142520ff0d5618eeddb6ba5b169e095f.emf, as PNG	2156195ef201015167ead7b09b568042142520ff0d5618eeddb6ba5b169e095f.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/word-with-attachments.docx	media 8e362ed597728fa8a3eedc95785f2375b9d87cfc5e727de4f6dd597a4f809f16.emf, as PNG	8e362ed597728fa8a3eedc95785f2375b9d87cfc5e727de4f6dd597a4f809f16.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/word-with-attachments.docx	media 90f616810030696b8b3b1cd2686a603e484262d00b8dc0eeba0266b28cca857d.wmf, as PNG	90f616810030696b8b3b1cd2686a603e484262d00b8dc0eeba0266b28cca857d.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/word-with-attachments.docx	media cc90707a7aab5dcb25ce2cb5fdefe6fd611d5c3d632ee5d4d18373cc7d672add.emf, as PNG	cc90707a7aab5dcb25ce2cb5fdefe6fd611d5c3d632ee5d4d18373cc7d672add.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/word-with-attachments.docx	media f35ded1fae0aa91c50f3f8846401d5565e940246f15bf03c38a5c1fb38118a03.emf, as PNG	f35ded1fae0aa91c50f3f8846401d5565e940246f15bf03c38a5c1fb38118a03.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/ooxml/word-with-attachments.docx	-	word-with-attachments.docx	0	office	ZIP signature, .docx extension	office	prepared	1	5	
+        office/testdata/legacy/generated/bullets.libreoffice.ppt	-	bullets.libreoffice.ppt	0	office	OLE2 signature, .ppt extension	office	prepared	1	0	
+        office/testdata/legacy/generated/cells.libreoffice.xls	-	cells.libreoffice.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	0	
+        office/testdata/legacy/generated/charts.libreoffice.doc	-	charts.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+        office/testdata/legacy/generated/comments.libreoffice.doc	-	comments.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+        office/testdata/legacy/generated/drawings.libreoffice.xls	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/drawings.libreoffice.xls	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/drawings.libreoffice.xls	-	drawings.libreoffice.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	2	
+        office/testdata/legacy/generated/formulas.libreoffice.xls	-	formulas.libreoffice.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	0	
+        office/testdata/legacy/generated/lists.libreoffice.doc	-	lists.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+        office/testdata/legacy/generated/media.libreoffice.doc	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/media.libreoffice.doc	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/media.libreoffice.doc	media 670be6349ed84b27d6ca43d66ba6e9454c632f68de8d9b8fea78a480e90afb31.emf, as PNG	670be6349ed84b27d6ca43d66ba6e9454c632f68de8d9b8fea78a480e90afb31.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/media.libreoffice.doc	media df026100fd6fe38e22923c5152a33ea6f6879e38073fb47f022ed9d90dec65a8.png	df026100fd6fe38e22923c5152a33ea6f6879e38073fb47f022ed9d90dec65a8.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/media.libreoffice.doc	-	media.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	4	
+        office/testdata/legacy/generated/merges.libreoffice.xls	-	merges.libreoffice.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	0	
+        office/testdata/legacy/generated/notes.libreoffice.doc	-	notes.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+        office/testdata/legacy/generated/sections.libreoffice.doc	media 805924e65dff89ccbac4046a6995a73622a878f5ff9ec17678b4bc33ca55ea12.png	805924e65dff89ccbac4046a6995a73622a878f5ff9ec17678b4bc33ca55ea12.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/sections.libreoffice.doc	-	sections.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	1	
+        office/testdata/legacy/generated/slide-objects.libreoffice.ppt	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/slide-objects.libreoffice.ppt	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        office/testdata/legacy/generated/slide-objects.libreoffice.ppt	-	slide-objects.libreoffice.ppt	0	office	OLE2 signature, .ppt extension	office	prepared	1	2	
+        office/testdata/legacy/generated/slides.libreoffice.ppt	-	slides.libreoffice.ppt	0	office	OLE2 signature, .ppt extension	office	prepared	1	0	
+        office/testdata/legacy/generated/tables.libreoffice.doc	-	tables.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+        office/testdata/legacy/real/SampleSS.xls	-	SampleSS.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	0	
+        office/testdata/legacy/real/basic_test_ppt_file.ppt	-	basic_test_ppt_file.ppt	0	office	OLE2 signature, .ppt extension	office	prepared	1	0	
+        office/testdata/legacy/real/simple-table.doc	-	simple-table.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+        office/testdata/pictures/tiff.docx	media 9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119.tiff, as PNG	9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119.png	1	vision	PNG signature	vision	prepared	1	0	
+        office/testdata/pictures/tiff.docx	-	tiff.docx	0	office	ZIP signature, .docx extension	office	prepared	1	1	
+        picture/testdata/ink.svg	-	ink.svg	0	vision-converted	SVG root element	picture	prepared	1	0	
+        picture/testdata/script-bearing.svg	-	script-bearing.svg	0	vision-converted	SVG root element	picture	prepared	1	0	
+        picture/testdata/shapes.svg	-	shapes.svg	0	vision-converted	SVG root element	picture	prepared	1	0	
+        email/testdata/mail/fixtures/generated/eml/01-plain.eml	-	01-plain.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml	-	02-reply-latin1.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml	message, attachment 1	moth.png	1	vision	PNG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml	-	03-html-inline-image.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	1	
+        email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	message, attachment 1	отчёт.csv	1	text	text by its .csv extension	-	no processor yet	0	0	no stage for route text
+        email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	-	04-attachment-cyrillic.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	1	
+        email/testdata/mail/fixtures/generated/eml/05-japanese.eml	-	05-japanese.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/eml/06-chinese.eml	-	06-chinese.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml	-	07-html-only-bcc.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	message, attachment 1	note-g.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+        email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	-	08-forward-attached-message.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	5	1	
+        email/testdata/mail/fixtures/generated/msg/01-plain.msg	-	01-plain.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg	-	02-reply-latin1.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg	message, attachment 1	moth.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg	-	03-html-inline-image.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	1	
+        email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	message, attachment 1	отчёт.csv	1	text	text by its .csv extension	-	no processor yet	0	0	no stage for route text
+        email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	-	04-attachment-cyrillic.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	1	
+        email/testdata/mail/fixtures/generated/msg/05-japanese.msg	-	05-japanese.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/msg/06-chinese.msg	-	06-chinese.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg	-	07-html-only-bcc.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment 1	note-g.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+        email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment 2	Notes on the engine (draft).eml	1	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+        email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	-	08-forward-attached-message.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	2	
+        email/testdata/mail/fixtures/generated/pst/mailbox.pst	message 2097220, attachment 1	moth.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/generated/pst/mailbox.pst	message 2097252, attachment 1	отчёт.csv	1	text	text by its .csv extension	-	no processor yet	0	0	no stage for route text
+        email/testdata/mail/fixtures/generated/pst/mailbox.pst	message 2097380, attachment 1	note-g.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+        email/testdata/mail/fixtures/generated/pst/mailbox.pst	-	mailbox.pst	0	nested	PST signature, a .pst	email	prepared	26	3	
+        email/testdata/mail/fixtures/mime/eml/09-threading.eml	-	09-threading.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+        email/testdata/mail/fixtures/mime/nine.mboxrd	message 3, attachment 1	moth.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/mime/nine.mboxrd	message 4, attachment 1	отчёт.csv	1	text	text by its .csv extension	-	no processor yet	0	0	no stage for route text
+        email/testdata/mail/fixtures/mime/nine.mboxrd	message 8, attachment 1	note-g.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+        email/testdata/mail/fixtures/mime/nine.mboxrd	-	nine.mboxrd	0	nested	mbox "From " line	email	prepared	21	3	
+        email/testdata/mail/fixtures/mime/rlug/mbox.rlug	-	mbox.rlug	0	nested	mbox "From " line	email	prepared	11	0	
+        email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0	-	mbox.rlug-0	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+        email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1	-	mbox.rlug-1	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+        email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2	-	mbox.rlug-2	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+        email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3	-	mbox.rlug-3	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+        email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4	-	mbox.rlug-4	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+        email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg	-	ASCII_UTF-8_CP1252_LCID1031_HTML.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg	message, attachment 1	alfresco.gif	1	vision	BMP signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg	-	example_sent_regular.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	1	
+        email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg	-	msgClassAppointment.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg	-	outlook_30_msg.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 1	1.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 2	2.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 3	3.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 4	4.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 5	5.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 6	6.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 7	7.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 8	8.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 9	9.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 10	10.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 11	12.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	-	test-outlook2003.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	11	
+        email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg	message, attachment 2	smbprn.00009008.KdcPjl.pdf	1	document	PDF signature	document	prepared	2	0	
+        email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg	-	testMSG_att_msg.msg	0	nested	OLE2 signature, .msg extension	email	prepared	5	1	
+        email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg	-	testMSG_chinese.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg	-	testMSG_forwarded.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+        email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst	-	dist-list.pst	0	nested	PST signature, a .pst	email	prepared	21	0	
+        email/testdata/mail/fixtures/pst/java-libpst/passworded.pst	-	passworded.pst	0	nested	PST signature, a .pst	email	prepared	17	0	
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 1	1.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 2	2.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 3	3.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 4	4.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 5	5.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 6	6.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 7	7.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 8	8.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 9	9.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 10	10.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 11	12.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 1	1.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 2	2.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 3	3.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 4	4.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 5	5.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 6	6.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 7	7.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 8	8.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 9	9.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 10	10.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 11	12.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        email/testdata/mail/fixtures/pst/libyal/outlook.pst	-	outlook.pst	0	nested	PST signature, a .pst	email	prepared	22	22	
+        email/testdata/mail/fixtures/pst/tika/testPST.pst	-	testPST.pst	0	nested	PST signature, a .pst	email	prepared	19	0	
+        email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst	-	testPST_variousBodyTypes.pst	0	nested	PST signature, a .pst	email	prepared	13	0	
+        email/testdata/built/eml/office-attachments.eml	message, attachment 1	minutes.docx	1	office	ZIP signature, .docx extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+        email/testdata/built/eml/office-attachments.eml	message, attachment 2	budget.xls	1	office	OLE2 signature, .xls extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+        email/testdata/built/eml/office-attachments.eml	message, attachment 3	scan.tif	1	vision-converted	TIFF signature	picture	prepared	1	0	
+        email/testdata/built/eml/office-attachments.eml	message, attachment 4	diagram.emf	1	vision-converted	EMF signature	picture	prepared	1	0	
+        email/testdata/built/eml/office-attachments.eml	message, attachment 5	forwarded.msg	1	nested	OLE2 signature, .msg extension	email	seen	3	1	recorded by email@spike-ai-pipeline-mail 0.3.0#b2eb344a9fe6069042f8ad067c7d639932925544fe63d8a3d34f04a1788c72ba
+        email/testdata/built/eml/office-attachments.eml	-	office-attachments.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	5	
+        email/testdata/built/msg/office-attachments.msg	message, attachment 1	minutes.docx	1	office	ZIP signature, .docx extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+        email/testdata/built/msg/office-attachments.msg	message, attachment 2	budget.xls	1	office	OLE2 signature, .xls extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+        email/testdata/built/msg/office-attachments.msg	message, attachment 3	scan.tif	1	vision-converted	TIFF signature	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+        email/testdata/built/msg/office-attachments.msg	message, attachment 4	diagram.emf	1	vision-converted	EMF signature	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+        email/testdata/built/msg/office-attachments.msg	message, attachment 5	forwarded.msg	1	nested	OLE2 signature, .msg extension	email	seen	3	1	recorded by email@spike-ai-pipeline-mail 0.3.0#b2eb344a9fe6069042f8ad067c7d639932925544fe63d8a3d34f04a1788c72ba
+        email/testdata/built/msg/office-attachments.msg	-	office-attachments.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	5	
+        onenote/testdata/onenote/fixtures/interop/Resources/AlternativePackaging.one	-	AlternativePackaging.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+        onenote/testdata/onenote/fixtures/interop/Resources/AlternativePackaging.onetoc2	-	AlternativePackaging.onetoc2	0	onenote	OneStore signature	onenote	prepared	1	0	
+        onenote/testdata/onenote/fixtures/interop/Resources/NoSection.onetoc2	-	NoSection.onetoc2	0	onenote	OneStore signature	onenote	prepared	1	0	
+        onenote/testdata/onenote/fixtures/interop/Resources/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	1	0	
+        onenote/testdata/onenote/fixtures/interop/SUT/Encryption.one	-	Encryption.one	0	onenote	OneStore signature	onenote	failed	0	0	onenote: refused: Unexpected end of file
+        onenote/testdata/onenote/fixtures/interop/SUT/FileSyncWOPI_OneNoteWithODB.one	page 19a0907d-cc34-459e-bdb6-dea53bdcd6f7, outline 2, item 1, block 1	Chrysanthemum.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        onenote/testdata/onenote/fixtures/interop/SUT/FileSyncWOPI_OneNoteWithODB.one	-	FileSyncWOPI_OneNoteWithODB.one	0	onenote	OneStore signature	onenote	prepared	4	1	
+        onenote/testdata/onenote/fixtures/interop/SUT/InvalidData.one	-	InvalidData.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+        onenote/testdata/onenote/fixtures/interop/SUT/OneWithFileData.one	page d9fb6b6a-ab0c-42df-a684-4fadf122b557, outline 2, item 1, block 1	testing.docx	1	office	ZIP signature, .docx extension	office	prepared	1	0	
+        onenote/testdata/onenote/fixtures/interop/SUT/OneWithFileData.one	-	OneWithFileData.one	0	onenote	OneStore signature	onenote	prepared	4	1	
+        onenote/testdata/onenote/fixtures/interop/SUT/OneWithoutFileData.one	-	OneWithoutFileData.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+        onenote/testdata/onenote/fixtures/interop/SUT/Open Notebook.onetoc2	page d9fb6b6a-ab0c-42df-a684-4fadf122b557, outline 2, item 1, block 1	testing.docx	1	office	ZIP signature, .docx extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+        onenote/testdata/onenote/fixtures/interop/SUT/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	12	1	
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	1	vision-converted	SVG root element	picture	prepared	1	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	-	New Section 1.one	0	onenote	OneStore signature	onenote	prepared	4	2	
+        onenote/testdata/onenote/fixtures/onenote-rs/Open Notebook.onetoc2	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        onenote/testdata/onenote/fixtures/onenote-rs/Open Notebook.onetoc2	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	1	vision-converted	SVG root element	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+        onenote/testdata/onenote/fixtures/onenote-rs/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	5	2	
+        onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	95c93a747acbbbeeb6d345faf0d17e86669bc7cdd0854155b588c58a7556d194.svg	1	vision-converted	SVG root element	picture	prepared	1	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	-	handwriting_recognition.one	0	onenote	OneStore signature	onenote	prepared	6	2	
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 1.one	-	New Section 1.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page e9e2b25d-4462-ea4f-a86c-f167efa63e0d, image container 2	dummy_1.png	1	vision	PNG signature	vision	prepared	1	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page 7198bad9-4462-a34e-b5a2-44b2b78e4e60, outline 2, item 1, block 1	ff-16b-2c-44100hz.mp3	1	audio	MP3 signature	-	no processor yet	0	0	no stage for route audio
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	-	New Section 2.one	0	onenote	OneStore signature	onenote	prepared	6	2	
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page e9e2b25d-4462-ea4f-a86c-f167efa63e0d, image container 2	dummy_1.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page 7198bad9-4462-a34e-b5a2-44b2b78e4e60, outline 2, item 1, block 1	ff-16b-2c-44100hz.mp3	1	audio	MP3 signature	-	no processor yet	0	0	no stage for route audio
+        onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	9	2	
+        onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/OneNote_DeletedPages.one	-	OneNote_DeletedPages.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	4	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	1	vision-converted	SVG root element	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+        onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one	-	New Section 1 2.one	0	onenote	OneStore signature	onenote	prepared	6	2	
+        onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 2.one	-	New Section 2.one	0	onenote	OneStore signature	onenote	prepared	6	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 3.one	-	New Section 3.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+        onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+        onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	1	vision-converted	SVG root element	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+        onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	14	2	
+        onenote/testdata/onenote/fixtures/onenote-rs/object-revision/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	1	0	
+        inspect/testdata/absolute.zip	-	absolute.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	quarantined	0	0	zip-absolute-path: entry "/tmp/evil.txt", and 1 more
+        inspect/testdata/bomb.zip	zip entry zeros.bin	zeros.bin	1	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+        inspect/testdata/bomb.zip	-	bomb.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	prepared	0	1	
+        inspect/testdata/declared-bomb.zip	-	declared-bomb.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	quarantined	0	0	zip-bomb: entry "zeros.bin": 4294967296 bytes from 11, 390451572:1
+        inspect/testdata/encrypted.xlsx	-	encrypted.xlsx	0	unrouted	OLE2 signature without a legacy or .msg extension	-	no processor yet	0	0	no stage for route unrouted
+        inspect/testdata/encrypted.zip	zip entry notes.txt	notes.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+        inspect/testdata/encrypted.zip	-	encrypted.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	encrypted	1	1	zip stage: 1 of 2 entries: encrypted
+        inspect/testdata/hyperlink.docx	-	hyperlink.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+        inspect/testdata/invoice.pdf.exe	-	invoice.pdf.exe	0	unrouted	PE signature, an executable	-	no processor yet	0	0	no stage for route unrouted
+        inspect/testdata/javascript.pdf	-	javascript.pdf	0	document	PDF signature	document	prepared	1	0	
+        inspect/testdata/macro.docm	-	macro.docm	0	office	ZIP signature, .docm extension	office	prepared	1	0	
+        inspect/testdata/mismatch.pdf	-	mismatch.pdf	0	vision	PNG signature	vision	prepared	1	0	
+        inspect/testdata/polyglot.jpg	-	polyglot.jpg	0	vision	JPEG signature	vision	prepared	1	0	
+        inspect/testdata/polyglot.png	-	polyglot.png	0	vision	PNG signature	vision	prepared	1	0	
+        inspect/testdata/script.svg	-	script.svg	0	vision-converted	SVG root element	picture	prepared	1	0	
+        inspect/testdata/symlink.zip	-	symlink.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	quarantined	0	0	zip-symlink: entry "passwd"
+        inspect/testdata/traversal.zip	-	traversal.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	quarantined	0	0	zip-traversal: entry "docs/../../evil.txt"
+        tool/testdata/tone.wav	-	tone.wav	0	audio	WAV signature	-	no processor yet	0	0	no stage for route audio
+        
+        # counts by route × outcome: 225 parts from 119 inputs, dispatched in 27.836s
+        archive × encrypted	1
+        archive × prepared	1
+        archive × quarantined	4
+        audio × no processor yet	3
+        document × prepared	5
+        nested × prepared	36
+        nested × seen	2
+        office × prepared	37
+        office × seen	5
+        onenote × failed	1
+        onenote × prepared	22
+        text × no processor yet	9
+        unrouted × no processor yet	8
+        vision × prepared	35
+        vision × seen	43
+        vision-converted × prepared	8
+        vision-converted × seen	5
+        
+        # vision: one prepared image output per stage and part kind, the first that decodes at least 32 on each side, to google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0
+        # key	input	where	part	output	media type	size	bytes	model	image tokens	output tokens	wall	status	transcription
+        document pdf	document/testdata/clean.pdf	-	clean.pdf	page 1	image/png	1275x1650	54237	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	920	183	2.742s	completed	"**The Harbor Survey**\n\nThe harbor survey began in the spring, when the ice had cleared from the inner channel and the pi"
+        vision png from emf	office/testdata/ooxml/with-drawing.xlsx	media 14013b5a111a348deb6efc63f5f164d0bed08831bbe2c3803dd9fbfc76fd2664.emf, as PNG	14013b5a111a348deb6efc63f5f164d0bed08831bbe2c3803dd9fbfc76fd2664.png	picture	image/png	767x535	103972	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	178	16	390ms	completed	"A black and white illustration of a cow standing on a patch of grass."
+        vision jpeg	office/testdata/ooxml/with-drawing.xlsx	media 8345fcf9642a79651ea36935f736e753e355a4df2d85eaaa1589837143b8f2f0.jpeg	8345fcf9642a79651ea36935f736e753e355a4df2d85eaaa1589837143b8f2f0.jpeg	picture	image/jpeg	192x176	11988	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	83	19	313ms	completed	"An hourglass is depicted in the center of the image against a background of musical staff lines."
+        vision png	office/testdata/ooxml/with-drawing.xlsx	media 90a2c8be87924f2bf36439fec40969eb74fcc314dce8b9f9c627167d7d425663.png	90a2c8be87924f2bf36439fec40969eb74fcc314dce8b9f9c627167d7d425663.png	picture	image/png	130x92	3043	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	82	23	345ms	completed	"This is a stylized, cartoonish illustration of a yellow tiger or cat with black stripes and a long tail."
+        vision png from wmf	office/testdata/ooxml/with-drawing.xlsx	media fdc312bc0dbea47df16d3e3e98e2777e4aa537d225a703e3cde0177df56a592a.wmf, as PNG	fdc312bc0dbea47df16d3e3e98e2777e4aa537d225a703e3cde0177df56a592a.png	picture	image/png	539x577	114013	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	134	14	245ms	completed	"This is an illustration of Santa Claus's face and hat."
+        vision png from tiff	office/testdata/pictures/tiff.docx	media 9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119.tiff, as PNG	9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119.png	picture	image/png	640x400	3366	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	106	5	111ms	completed	"TEST\nTIFF"
+        picture svg	picture/testdata/ink.svg	-	ink.svg	picture	image/png	236x118	1361	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	74	2	75ms	completed	"hi"
+        vision bmp	email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg	message, attachment 1	alfresco.gif	picture	image/bmp	202x74	16174	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	86	12	198ms	completed	"Alfresco\nThe Open Source Alternative for Enterprise Content Management"
+        picture tiff	email/testdata/built/eml/office-attachments.eml	message, attachment 3	scan.tif	picture	image/png	640x400	3366	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	106	5	111ms	completed	"TEST\nTIFF"
+        picture emf	email/testdata/built/eml/office-attachments.eml	message, attachment 4	diagram.emf	picture	image/png	1489x566	9952	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	374	13	279ms	completed	"Привет!\nhi\nozbeklar hissasi juda katta"
+        picture ink	onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	picture	image/png	980x121	5532	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	74	21	367ms	completed	"This image shows a single, continuous black line forming a wavy, undulating shape against a white background."
+        # 11 images, 5.175s wall, 2217 image tokens; text-only baseline 33 input tokens
+        
+--- PASS: TestTierRoutes (33.60s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/dispatch	33.607s
+# findings-onenote: go test -count=1 -v -run ^TestRealMediaRoutes$ ./onenote/
+=== RUN   TestRealMediaRoutes
+=== RUN   TestRealMediaRoutes/interop/Resources/AlternativePackaging.one
+=== RUN   TestRealMediaRoutes/interop/Resources/AlternativePackaging.onetoc2
+=== RUN   TestRealMediaRoutes/interop/Resources/NoSection.onetoc2
+=== RUN   TestRealMediaRoutes/interop/Resources/Open_Notebook.onetoc2
+=== RUN   TestRealMediaRoutes/interop/SUT/Encryption.one
+=== RUN   TestRealMediaRoutes/interop/SUT/FileSyncWOPI_OneNoteWithODB.one
+=== RUN   TestRealMediaRoutes/interop/SUT/InvalidData.one
+=== RUN   TestRealMediaRoutes/interop/SUT/OneWithFileData.one
+=== RUN   TestRealMediaRoutes/interop/SUT/OneWithoutFileData.one
+=== RUN   TestRealMediaRoutes/interop/SUT/Open_Notebook.onetoc2
+=== RUN   TestRealMediaRoutes/onenote-rs/New_Section_1.one
+=== RUN   TestRealMediaRoutes/onenote-rs/New_Section_Group/New_Section_1.one
+=== RUN   TestRealMediaRoutes/onenote-rs/New_Section_Group/New_Section_2.one
+=== RUN   TestRealMediaRoutes/onenote-rs/New_Section_Group/Open_Notebook.onetoc2
+=== RUN   TestRealMediaRoutes/onenote-rs/OneNote_RecycleBin/OneNote_DeletedPages.one
+=== RUN   TestRealMediaRoutes/onenote-rs/OneNote_RecycleBin/Open_Notebook.onetoc2
+=== RUN   TestRealMediaRoutes/onenote-rs/Open_Notebook.onetoc2
+=== RUN   TestRealMediaRoutes/onenote-rs/handwriting_recognition.one
+=== RUN   TestRealMediaRoutes/onenote-rs/non-legacy/New_Section_1_2.one
+=== RUN   TestRealMediaRoutes/onenote-rs/non-legacy/New_Section_2.one
+=== RUN   TestRealMediaRoutes/onenote-rs/non-legacy/New_Section_3.one
+=== RUN   TestRealMediaRoutes/onenote-rs/non-legacy/Open_Notebook.onetoc2
+=== RUN   TestRealMediaRoutes/onenote-rs/object-revision/Open_Notebook.onetoc2
+--- PASS: TestRealMediaRoutes (0.08s)
+    --- PASS: TestRealMediaRoutes/interop/Resources/AlternativePackaging.one (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/Resources/AlternativePackaging.onetoc2 (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/Resources/NoSection.onetoc2 (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/Resources/Open_Notebook.onetoc2 (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/SUT/Encryption.one (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/SUT/FileSyncWOPI_OneNoteWithODB.one (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/SUT/InvalidData.one (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/SUT/OneWithFileData.one (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/SUT/OneWithoutFileData.one (0.00s)
+    --- PASS: TestRealMediaRoutes/interop/SUT/Open_Notebook.onetoc2 (0.01s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/New_Section_1.one (0.01s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/New_Section_Group/New_Section_1.one (0.00s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/New_Section_Group/New_Section_2.one (0.00s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/New_Section_Group/Open_Notebook.onetoc2 (0.00s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/OneNote_RecycleBin/OneNote_DeletedPages.one (0.00s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/OneNote_RecycleBin/Open_Notebook.onetoc2 (0.00s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/Open_Notebook.onetoc2 (0.01s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/handwriting_recognition.one (0.01s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/non-legacy/New_Section_1_2.one (0.01s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/non-legacy/New_Section_2.one (0.00s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/non-legacy/New_Section_3.one (0.00s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/non-legacy/Open_Notebook.onetoc2 (0.01s)
+    --- PASS: TestRealMediaRoutes/onenote-rs/object-revision/Open_Notebook.onetoc2 (0.00s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/onenote	0.084s
+# findings-onenote: go test -tags findings -count=1 -v -run ^(TestFindingsDocs|TestDocs|TestDocsBomb|TestCleanFixtures|TestCleanAttachments)$ ./inspect/
+=== RUN   TestCleanFixtures
+    clean_test.go:60: inspected 177 clean fixtures
+--- PASS: TestCleanFixtures (0.01s)
+=== RUN   TestCleanAttachments
+    clean_test.go:114: inspected 58 attachments of 40 inputs
+--- PASS: TestCleanAttachments (0.07s)
+=== RUN   TestDocs
+--- PASS: TestDocs (0.10s)
+=== RUN   TestDocsBomb
+--- PASS: TestDocsBomb (0.00s)
+=== RUN   TestFindingsDocs
+    findings_test.go:85: recorded: docs archive/high-ratio-200mb.zip: covers zip-bomb-lite (200 MB of zeros; kind zip; checks none; verdict proceed
+    findings_test.go:85: recorded: docs archive/password-protected.zip: covers encrypted; kind zip; checks zip-encrypted; verdict proceed
+    findings_test.go:85: recorded: docs image/vector/script-bearing.svg: covers security script; kind svg; checks svg-event-handler svg-external-href svg-script; verdict proceed
+    findings_test.go:85: recorded: docs office/legacy/generated/docx/media.libreoffice.docx: covers ; kind zip; checks external-relationship; verdict proceed
+    findings_test.go:85: recorded: docs office/legacy/generated/docx/media.python-docx.docx: covers ; kind zip; checks external-relationship; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/macro-enabled.openxmlsdk.docm: covers macro vba; kind zip; checks none; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/macro-enabled.openxmlsdk.dotm: covers macro vba; kind zip; checks none; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/macro.openxmlsdk.xlsm: covers macro vba; kind zip; checks vba-project; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/macro.openxmlsdk.xltm: covers macro vba; kind zip; checks vba-project; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/protected-passtika.poi.xlsb: covers encrypted; kind ole2; checks ooxml-encrypted; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/simple-macro.poi.docm: covers macro vba; kind zip; checks vba-project; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/simple-macro.poi.pptm: covers macro vba; kind zip; checks vba-project; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/simple-macro.poi.xlsm: covers macro vba; kind zip; checks vba-project; verdict proceed
+    findings_test.go:85: recorded: docs office/macro-template/xlm-macro.poi.xlsm: covers macro xlm; kind zip; checks macro-sheet; verdict proceed
+    findings_test.go:85: recorded: docs office/realworld/docx/word-with-attachments.docx: covers ; kind zip; checks ole-object; verdict proceed
+    findings_test.go:85: recorded: docs office/realworld/pptx/linked-pictures.pptx: covers ; kind zip; checks external-relationship; verdict proceed
+    findings_test.go:85: recorded: docs pdf/born-digital/mgrs-field-report.pdf: covers ; kind pdf; checks pdf-openaction; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/attachments/embedded-video-avi.pdf: covers embedded-files; kind pdf; checks pdf-embeddedfile; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/attachments/file-attachment-annotation.pdf: covers embedded-files; kind pdf; checks pdf-embeddedfile; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/attachments/file-attachment.pdf: covers embedded-files; kind pdf; checks pdf-embeddedfile pdf-javascript pdf-js; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/encrypted/encryption-nocopy.pdf: covers encrypted; kind pdf; checks pdf-encrypt; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/encrypted/encryption-notextaccess.pdf: covers encrypted; kind pdf; checks pdf-encrypt; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/encrypted/encryption-openpassword.pdf: covers encrypted; kind pdf; checks pdf-encrypt; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/encrypted/simple-open-password.pdf: covers encrypted; kind pdf; checks pdf-encrypt pdf-openaction; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/encrypted/unicode-password-corrigendum5.pdf: covers encrypted; kind pdf; checks pdf-encrypt; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/forms/isartor-interactive-form.pdf: covers ; kind pdf; checks pdf-openaction; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/malformed/compacted-syntax.pdf: covers ; kind pdf; checks pdf-aa pdf-javascript pdf-js; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/malformed/header-no-version-info.pdf: covers ; kind ; checks signature-mismatch; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/malformed/javascript.pdf: covers javascript security; kind pdf; checks pdf-javascript pdf-js pdf-openaction; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/pdfa/embedded-lucinda-sans-pdfa-1a.pdf: covers ; kind pdf; checks pdf-openaction; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/pdfa/pdfa3b-embedded-files-fail.pdf: covers embedded-files; kind pdf; checks pdf-embeddedfile; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/pdfa/pdfa3b-embedded-files-pass.pdf: covers embedded-files; kind pdf; checks pdf-embeddedfile; verdict proceed
+    findings_test.go:85: recorded: docs pdf/edge/tagged/pdfua1-text-pass.pdf: covers ; kind pdf; checks pdf-openaction; verdict proceed
+    findings_test.go:85: recorded: docs pdf/scanned/generate.sh: covers ; kind shebang; checks executable; verdict proceed
+    findings_test.go:85: recorded: docs text/xml/billion-laughs-small.xml: covers security; kind ; checks none; verdict proceed
+    findings_test.go:85: recorded: docs onenote/interop/SUT/Encryption.one: covers encrypted password-protected; kind onestore; checks none; verdict proceed
+    findings_test.go:85: recorded: docs onenote/interop/SUT/OneWithFileData.one: covers embedded-files; kind onestore; checks none; verdict proceed
+    findings_test.go:85: recorded: docs onenote/large/LargeData.one: covers embedded-files; kind onestore; checks none; verdict proceed
+    findings_test.go:94: recorded: docs archive/high-ratio-200mb.zip, the bomb rule's size lowered to 104857600: checks zip-bomb; verdict quarantine
+    findings_test.go:95: recorded: docs: 568 files inspected, 31 flagged, 39 recorded; verdicts map[proceed:568]
+--- PASS: TestFindingsDocs (0.11s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/inspect	0.294s
+# findings-onenote: go test -tags findings -count=1 -timeout 60m -v -run ^TestFindings ./dispatch/
+=== RUN   TestFindingsInk
+    findings_ink_test.go:141: recorded: ink: page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink, a 984x936 PNG of 31577 bytes, SHA-256 55ca4f24f51af7d2abd7dfd9011dd6f6be7962c1d8b27aee398f24206a796835
+    findings_ink_test.go:173: recorded: ink: OneNote's recognition "Hello World\nHello World": CER 0.6806 (49 of 72), WER 0.7143 (10 of 14), 4 of the truth's words
+    findings_ink_test.go:203: recorded: ink run 1: completed, 422 image tokens, 21 output tokens, 391ms: CER 0.0278 (2 of 72), WER 0.0714 (1 of 14), 14 of the truth's words: "Hello World\nThis is a quick test\nHallo Welt\ntest\nL Hello World\nHello World"
+    findings_ink_test.go:203: recorded: ink run 2: completed, 422 image tokens, 21 output tokens, 375ms: CER 0.0278 (2 of 72), WER 0.0714 (1 of 14), 14 of the truth's words: "Hello World\nThis is a quick test\nHallo Welt\ntest\nL Hello World\nHello World"
+    findings_ink_test.go:203: recorded: ink run 3: completed, 422 image tokens, 21 output tokens, 366ms: CER 0.0278 (2 of 72), WER 0.0714 (1 of 14), 14 of the truth's words: "Hello World\nThis is a quick test\nHallo Welt\ntest\nL Hello World\nHello World"
+--- PASS: TestFindingsInk (1.85s)
+=== RUN   TestFindingsOneNoteLarge
+    findings_test.go:900: recorded: LargeData.one floor: maxrss 12.4 MiB
+    findings_test.go:900: recorded: LargeData.one adapter run 1: wall 1.384s, user 721ms, system 658ms, maxrss 19.7 MiB; own maxrss 11.6 MiB, user 2ms, system 4ms; children's maxrss 19.7 MiB, user 719ms, system 653ms
+    findings_test.go:900: recorded: LargeData.one adapter run 2: wall 1.358s, user 744ms, system 609ms, maxrss 19.6 MiB; own maxrss 13.3 MiB, user 4ms, system 2ms; children's maxrss 19.6 MiB, user 741ms, system 606ms
+    findings_test.go:900: recorded: LargeData.one adapter run 3: wall 1.433s, user 784ms, system 644ms, maxrss 19.4 MiB; own maxrss 13.1 MiB, user 4ms, system 2ms; children's maxrss 19.4 MiB, user 780ms, system 641ms
+    findings_test.go:900: recorded: LargeData.one adapter, 3 runs: median wall 1.384s, peak memory 19.7 MiB, its own 13.3 MiB, its children's 19.7 MiB
+    findings_test.go:900: recorded: LargeData.one adapter, media run 1: wall 1.407s, user 756ms, system 644ms, maxrss 19.4 MiB; own maxrss 12.0 MiB, user 3ms, system 5ms; children's maxrss 19.4 MiB, user 754ms, system 639ms; wrote 2 files, 8127445 bytes
+    findings_test.go:900: recorded: LargeData.one adapter, media run 2: wall 1.42s, user 734ms, system 680ms, maxrss 19.5 MiB; own maxrss 12.3 MiB, user 2ms, system 5ms; children's maxrss 19.5 MiB, user 733ms, system 674ms; wrote 2 files, 8127445 bytes
+    findings_test.go:900: recorded: LargeData.one adapter, media run 3: wall 1.396s, user 754ms, system 637ms, maxrss 19.6 MiB; own maxrss 13.1 MiB, user 3ms, system 3ms; children's maxrss 19.6 MiB, user 751ms, system 633ms; wrote 2 files, 8127445 bytes
+    findings_test.go:900: recorded: LargeData.one adapter, media, 3 runs: median wall 1.407s, peak memory 19.6 MiB, its own 13.1 MiB, its children's 19.6 MiB
+    findings_test.go:900: recorded: LargeData.one onenote run 1: wall 1.429s, user 746ms, system 675ms, maxrss 19.5 MiB
+    findings_test.go:900: recorded: LargeData.one onenote run 2: wall 1.372s, user 742ms, system 623ms, maxrss 19.6 MiB
+    findings_test.go:900: recorded: LargeData.one onenote run 3: wall 1.435s, user 759ms, system 669ms, maxrss 19.6 MiB
+    findings_test.go:900: recorded: LargeData.one onenote, 3 runs: median wall 1.429s, peak memory 19.6 MiB
+    findings_test.go:900: recorded: LargeData.one onenote, media run 1: wall 1.373s, user 736ms, system 630ms, maxrss 19.3 MiB; wrote 2 files, 8127445 bytes
+    findings_test.go:900: recorded: LargeData.one onenote, media run 2: wall 1.394s, user 720ms, system 667ms, maxrss 19.6 MiB; wrote 2 files, 8127445 bytes
+    findings_test.go:900: recorded: LargeData.one onenote, media run 3: wall 1.443s, user 734ms, system 702ms, maxrss 19.7 MiB; wrote 2 files, 8127445 bytes
+    findings_test.go:900: recorded: LargeData.one onenote, media, 3 runs: median wall 1.394s, peak memory 19.7 MiB
+    findings_test.go:900: recorded: Large Desktop.one floor: maxrss 10.1 MiB
+    findings_test.go:900: recorded: Large Desktop.one adapter run 1: wall 285ms, user 131ms, system 153ms, maxrss 134.9 MiB; own maxrss 10.7 MiB, user 1ms, system 3ms; children's maxrss 134.9 MiB, user 130ms, system 149ms
+    findings_test.go:900: recorded: Large Desktop.one adapter run 2: wall 277ms, user 133ms, system 143ms, maxrss 134.9 MiB; own maxrss 10.7 MiB, user 2ms, system 2ms; children's maxrss 134.9 MiB, user 131ms, system 140ms
+    findings_test.go:900: recorded: Large Desktop.one adapter run 3: wall 281ms, user 121ms, system 159ms, maxrss 134.9 MiB; own maxrss 10.6 MiB, user 1ms, system 3ms; children's maxrss 134.9 MiB, user 120ms, system 156ms
+    findings_test.go:900: recorded: Large Desktop.one adapter, 3 runs: median wall 281ms, peak memory 134.9 MiB, its own 10.7 MiB, its children's 134.9 MiB
+    findings_test.go:900: recorded: Large Desktop.one adapter, media run 1: wall 312ms, user 129ms, system 182ms, maxrss 134.9 MiB; own maxrss 11.1 MiB, user 3ms, system 2ms; children's maxrss 134.9 MiB, user 126ms, system 179ms; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large Desktop.one adapter, media run 2: wall 309ms, user 126ms, system 183ms, maxrss 134.9 MiB; own maxrss 11.3 MiB, user 2ms, system 2ms; children's maxrss 134.9 MiB, user 124ms, system 179ms; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large Desktop.one adapter, media run 3: wall 312ms, user 120ms, system 191ms, maxrss 135.1 MiB; own maxrss 10.9 MiB, user 0s, system 4ms; children's maxrss 135.1 MiB, user 120ms, system 186ms; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large Desktop.one adapter, media, 3 runs: median wall 312ms, peak memory 135.1 MiB, its own 11.3 MiB, its children's 135.1 MiB
+    findings_test.go:900: recorded: Large Desktop.one onenote run 1: wall 289ms, user 130ms, system 157ms, maxrss 134.1 MiB
+    findings_test.go:900: recorded: Large Desktop.one onenote run 2: wall 291ms, user 131ms, system 158ms, maxrss 134.9 MiB
+    findings_test.go:900: recorded: Large Desktop.one onenote run 3: wall 286ms, user 132ms, system 152ms, maxrss 134.8 MiB
+    findings_test.go:900: recorded: Large Desktop.one onenote, 3 runs: median wall 289ms, peak memory 134.9 MiB
+    findings_test.go:900: recorded: Large Desktop.one onenote, media run 1: wall 306ms, user 135ms, system 170ms, maxrss 134.8 MiB; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large Desktop.one onenote, media run 2: wall 306ms, user 125ms, system 179ms, maxrss 134.9 MiB; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large Desktop.one onenote, media run 3: wall 316ms, user 122ms, system 192ms, maxrss 134.7 MiB; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large Desktop.one onenote, media, 3 runs: median wall 306ms, peak memory 134.9 MiB
+    findings_test.go:900: recorded: Large OneDrive.one floor: maxrss 9.5 MiB
+    findings_test.go:900: recorded: Large OneDrive.one adapter run 1: wall 298ms, user 136ms, system 161ms, maxrss 134.8 MiB; own maxrss 13.3 MiB, user 1ms, system 4ms; children's maxrss 134.8 MiB, user 134ms, system 156ms
+    findings_test.go:900: recorded: Large OneDrive.one adapter run 2: wall 294ms, user 138ms, system 156ms, maxrss 135.1 MiB; own maxrss 11.1 MiB, user 1ms, system 4ms; children's maxrss 135.1 MiB, user 137ms, system 151ms
+    findings_test.go:900: recorded: Large OneDrive.one adapter run 3: wall 301ms, user 145ms, system 155ms, maxrss 134.7 MiB; own maxrss 10.6 MiB, user 3ms, system 1ms; children's maxrss 134.7 MiB, user 142ms, system 154ms
+    findings_test.go:900: recorded: Large OneDrive.one adapter, 3 runs: median wall 298ms, peak memory 135.1 MiB, its own 13.3 MiB, its children's 135.1 MiB
+    findings_test.go:900: recorded: Large OneDrive.one adapter, media run 1: wall 325ms, user 133ms, system 191ms, maxrss 134.8 MiB; own maxrss 11.5 MiB, user 3ms, system 3ms; children's maxrss 134.8 MiB, user 129ms, system 186ms; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large OneDrive.one adapter, media run 2: wall 315ms, user 121ms, system 194ms, maxrss 135.1 MiB; own maxrss 11.1 MiB, user 2ms, system 3ms; children's maxrss 135.1 MiB, user 119ms, system 190ms; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large OneDrive.one adapter, media run 3: wall 314ms, user 126ms, system 187ms, maxrss 134.8 MiB; own maxrss 11.1 MiB, user 3ms, system 2ms; children's maxrss 134.8 MiB, user 123ms, system 184ms; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large OneDrive.one adapter, media, 3 runs: median wall 315ms, peak memory 135.1 MiB, its own 11.5 MiB, its children's 135.1 MiB
+    findings_test.go:900: recorded: Large OneDrive.one onenote run 1: wall 281ms, user 130ms, system 150ms, maxrss 134.7 MiB
+    findings_test.go:900: recorded: Large OneDrive.one onenote run 2: wall 284ms, user 129ms, system 153ms, maxrss 135.1 MiB
+    findings_test.go:900: recorded: Large OneDrive.one onenote run 3: wall 278ms, user 119ms, system 157ms, maxrss 135.0 MiB
+    findings_test.go:900: recorded: Large OneDrive.one onenote, 3 runs: median wall 281ms, peak memory 135.1 MiB
+    findings_test.go:900: recorded: Large OneDrive.one onenote, media run 1: wall 311ms, user 140ms, system 169ms, maxrss 135.1 MiB; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large OneDrive.one onenote, media run 2: wall 322ms, user 133ms, system 187ms, maxrss 134.8 MiB; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large OneDrive.one onenote, media run 3: wall 310ms, user 136ms, system 172ms, maxrss 134.8 MiB; wrote 11 files, 112889106 bytes
+    findings_test.go:900: recorded: Large OneDrive.one onenote, media, 3 runs: median wall 311ms, peak memory 135.1 MiB
+--- PASS: TestFindingsOneNoteLarge (24.30s)
+=== RUN   TestFindingsScaleDispatch
+    findings_test.go:974: scale store /home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst: content SHA-256 d40792a45510dc0d4b7a3abc527848095d4f255bae26d853ee7f9a87119362b4, parameters map[attachment_bytes:log-uniform from 256 to 524288 attachment_share:0.18 attachments_per_message:1 to 3, uniform bodies:plain only 30%, plain and HTML 60%, HTML only 10%; 1 to 6 paragraphs of 1 to 5 sentences of 4 to 17 words folders:[map[path:Inbox weight:30] map[path:Inbox/Projects/Engine weight:8] map[path:Inbox/Projects/Notes weight:6] map[path:Inbox/Projects/Été weight:3] map[path:Inbox/Lists weight:10] map[path:Sent Items weight:15] map[path:Archive/2024/Q1 weight:5] map[path:Archive/2024/Q2 weight:5] map[path:Archive/2024/Q3 weight:5] map[path:Archive/2024/Q4 weight:5] map[path:Archive/2025 weight:6] map[path:Junk E-mail weight:2]] inline_image_share:0.1 large_attachment_bytes:log-uniform from 1048576 to 16777216, one more attachment large_attachment_share:0.002 messages:50000 people:200 reply_share:0.3 seed:16]
+    findings_test.go:980: recorded: scale floor: maxrss 12.2 MiB
+    findings_test.go:980: recorded: scale dispatch run 1: wall 16.156s, user 15.773s, system 5.615s, maxrss 66.2 MiB; own maxrss 35.5 MiB, user 5.658s, system 1.496s; children's maxrss 66.2 MiB, user 10.115s, system 4.117s; wrote 21206 files, 264048840 bytes
+    findings_test.go:980: recorded: scale dispatch run 2: wall 16.41s, user 15.984s, system 5.637s, maxrss 67.0 MiB; own maxrss 35.6 MiB, user 5.587s, system 1.501s; children's maxrss 67.0 MiB, user 10.397s, system 4.134s; wrote 21206 files, 264048840 bytes
+    findings_test.go:980: recorded: scale dispatch run 3: wall 16.29s, user 15.976s, system 5.584s, maxrss 66.7 MiB; own maxrss 35.9 MiB, user 5.677s, system 1.486s; children's maxrss 66.7 MiB, user 10.298s, system 4.098s; wrote 21206 files, 264048840 bytes
+    findings_test.go:980: recorded: scale dispatch, 3 runs: median wall 16.29s, peak memory 67.0 MiB, its own 35.9 MiB, its children's 67.0 MiB
+    findings_test.go:980: recorded: scale email adapter, attachments run 1: wall 14.098s, user 11.642s, system 4.325s, maxrss 66.6 MiB; own maxrss 17.6 MiB, user 1.674s, system 302ms; children's maxrss 66.6 MiB, user 9.968s, system 4.022s; wrote 21202 files, 1877202474 bytes
+    findings_test.go:980: recorded: scale email adapter, attachments run 2: wall 14.116s, user 11.589s, system 4.372s, maxrss 65.8 MiB; own maxrss 18.4 MiB, user 1.66s, system 293ms; children's maxrss 65.8 MiB, user 9.928s, system 4.077s; wrote 21202 files, 1877202474 bytes
+    findings_test.go:980: recorded: scale email adapter, attachments run 3: wall 14.122s, user 11.742s, system 4.241s, maxrss 66.8 MiB; own maxrss 19.1 MiB, user 1.669s, system 301ms; children's maxrss 66.8 MiB, user 10.073s, system 3.94s; wrote 21202 files, 1877202474 bytes
+    findings_test.go:980: recorded: scale email adapter, attachments, 3 runs: median wall 14.116s, peak memory 66.8 MiB, its own 19.1 MiB, its children's 66.8 MiB
+    findings_test.go:980: recorded: scale mail, attachments run 1: wall 13.908s, user 9.878s, system 3.924s, maxrss 65.9 MiB; wrote 21202 files, 1877202474 bytes
+    findings_test.go:980: recorded: scale mail, attachments run 2: wall 13.875s, user 9.844s, system 3.926s, maxrss 66.1 MiB; wrote 21202 files, 1877202474 bytes
+    findings_test.go:980: recorded: scale mail, attachments run 3: wall 13.807s, user 9.845s, system 3.857s, maxrss 66.5 MiB; wrote 21202 files, 1877202474 bytes
+    findings_test.go:980: recorded: scale mail, attachments, 3 runs: median wall 13.875s, peak memory 66.5 MiB
+    findings_test.go:988: recorded: scale dispatch: dispatch 15.571s, 21203 parts (nested × prepared 1, text × no processor yet 4533, unrouted × no processor yet 16669), 0 seen inputs, 0 seen parts, 50000 messages, 0 seen messages, 100018 outputs, 0 failed; peak disk 15782168 bytes of 1555 samples; index 21206 files, 264048840 bytes
+    findings_test.go:988: recorded: scale dispatch: dispatch 15.91s, 21203 parts (nested × prepared 1, text × no processor yet 4533, unrouted × no processor yet 16669), 0 seen inputs, 0 seen parts, 50000 messages, 0 seen messages, 100018 outputs, 0 failed; peak disk 15782168 bytes of 1584 samples; index 21206 files, 264048840 bytes
+    findings_test.go:988: recorded: scale dispatch: dispatch 15.774s, 21203 parts (nested × prepared 1, text × no processor yet 4533, unrouted × no processor yet 16669), 0 seen inputs, 0 seen parts, 50000 messages, 0 seen messages, 100018 outputs, 0 failed; peak disk 15782168 bytes of 1576 samples; index 21206 files, 264048840 bytes
+--- PASS: TestFindingsScaleDispatch (134.31s)
+=== RUN   TestFindingsResume
+    findings_test.go:1068: scale store /home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst: content SHA-256 d40792a45510dc0d4b7a3abc527848095d4f255bae26d853ee7f9a87119362b4, parameters map[attachment_bytes:log-uniform from 256 to 524288 attachment_share:0.18 attachments_per_message:1 to 3, uniform bodies:plain only 30%, plain and HTML 60%, HTML only 10%; 1 to 6 paragraphs of 1 to 5 sentences of 4 to 17 words folders:[map[path:Inbox weight:30] map[path:Inbox/Projects/Engine weight:8] map[path:Inbox/Projects/Notes weight:6] map[path:Inbox/Projects/Été weight:3] map[path:Inbox/Lists weight:10] map[path:Sent Items weight:15] map[path:Archive/2024/Q1 weight:5] map[path:Archive/2024/Q2 weight:5] map[path:Archive/2024/Q3 weight:5] map[path:Archive/2024/Q4 weight:5] map[path:Archive/2025 weight:6] map[path:Junk E-mail weight:2]] inline_image_share:0.1 large_attachment_bytes:log-uniform from 1048576 to 16777216, one more attachment large_attachment_share:0.002 messages:50000 people:200 reply_share:0.3 seed:16]
+    findings_test.go:1091: recorded: resume whole: 15.74s, 50000 messages, 100000 message outputs committed
+    findings_test.go:1110: recorded: resume first: stopped at cursor 3353860 after 8.664s, 25000 messages, 50000 message outputs committed, 0 pending; the Threader saved in 1507973 bytes, in 3.48ms
+    findings_test.go:1156: recorded: resume resumed: after 3353860, 8.447s, 25000 messages, 50000 message outputs committed; the store prepared (recorded ""), 0 parts seen
+    findings_test.go:1158: recorded: resume union: 100000 message outputs, 0 twice, equal to the whole dispatch's in order true; threads 34928 roots, equal true; resumed 8.447s against whole 15.74s (0.54), first 8.664s
+--- PASS: TestFindingsResume (33.50s)
+=== RUN   TestFindingsPool
+    findings_test.go:1275: scale store /home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst: content SHA-256 d40792a45510dc0d4b7a3abc527848095d4f255bae26d853ee7f9a87119362b4, parameters map[attachment_bytes:log-uniform from 256 to 524288 attachment_share:0.18 attachments_per_message:1 to 3, uniform bodies:plain only 30%, plain and HTML 60%, HTML only 10%; 1 to 6 paragraphs of 1 to 5 sentences of 4 to 17 words folders:[map[path:Inbox weight:30] map[path:Inbox/Projects/Engine weight:8] map[path:Inbox/Projects/Notes weight:6] map[path:Inbox/Projects/Été weight:3] map[path:Inbox/Lists weight:10] map[path:Sent Items weight:15] map[path:Archive/2024/Q1 weight:5] map[path:Archive/2024/Q2 weight:5] map[path:Archive/2024/Q3 weight:5] map[path:Archive/2024/Q4 weight:5] map[path:Archive/2025 weight:6] map[path:Junk E-mail weight:2]] inline_image_share:0.1 large_attachment_bytes:log-uniform from 1048576 to 16777216, one more attachment large_attachment_share:0.002 messages:50000 people:200 reply_share:0.3 seed:16]
+    findings_test.go:1285: pool inputs: plaso's store, the scale store, its copy /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst, and 38 of mail's fixtures
+    findings_test.go:1290: recorded: pool 1 floor: maxrss 12.3 MiB
+    findings_test.go:1290: recorded: pool 1 dispatch run 1: wall 21.668s, user 22.742s, system 8.24s, maxrss 66.7 MiB; own maxrss 35.1 MiB, user 10.682s, system 3.69s; children's maxrss 66.7 MiB, user 12.059s, system 4.548s; wrote 21411 files, 318926239 bytes
+    findings_test.go:1290: recorded: pool 1 dispatch, 1 runs: median wall 21.668s, peak memory 66.7 MiB, its own 35.1 MiB, its children's 66.7 MiB
+    findings_test.go:1295: recorded: pool 1: dispatch 21.171s, 21306 parts (archive × encrypted 1, archive × prepared 1, document × prepared 1, nested × prepared 36, nested × seen 1, office × prepared 3, office × seen 1, text × no processor yet 4541, unrouted × no processor yet 16676, vision × prepared 20, vision × seen 25), 1 seen inputs, 26 seen parts, 50604 messages, 50000 seen messages, 201425 outputs, 0 failed; peak disk 18237850 bytes of 2117 samples; index 21411 files, 318926239 bytes; 4346842427 input bytes, 195.8 MiB/s, 4752 messages/s
+    findings_test.go:1299: recorded: pool 1: input /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst, 59442176 bytes: prepared (recorded ""), 1102 outputs, 6 children, done at 1.763s
+    findings_test.go:1299: recorded: pool 1: input /home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst, 2141594624 bytes: prepared (recorded ""), 100018 outputs, 21202 children, done at 17.846s
+    findings_test.go:1299: recorded: pool 1: input /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst, 2141594624 bytes: seen (recorded "prepared"), 100018 outputs, 21202 children, done at 20.857s
+    findings_test.go:1299: recorded: pool 1: input /home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst, 2302976 bytes: prepared (recorded ""), 19 outputs, 0 children, done at 21.166s
+    findings_test.go:1290: recorded: pool 2 floor: maxrss 10.9 MiB
+    findings_test.go:1290: recorded: pool 2 dispatch run 1: wall 18.761s, user 23.304s, system 8.383s, maxrss 66.0 MiB; own maxrss 34.2 MiB, user 10.857s, system 3.742s; children's maxrss 66.0 MiB, user 12.447s, system 4.639s; wrote 21411 files, 318926239 bytes
+    findings_test.go:1290: recorded: pool 2 dispatch, 1 runs: median wall 18.761s, peak memory 66.0 MiB, its own 34.2 MiB, its children's 66.0 MiB
+    findings_test.go:1295: recorded: pool 2: dispatch 18.175s, 21306 parts (archive × encrypted 1, archive × prepared 1, document × prepared 1, nested × prepared 36, nested × seen 1, office × prepared 3, office × seen 1, text × no processor yet 4541, unrouted × no processor yet 16676, vision × prepared 20, vision × seen 25), 1 seen inputs, 26 seen parts, 50604 messages, 50000 seen messages, 201425 outputs, 0 failed; peak disk 18237850 bytes of 1818 samples; index 21411 files, 318926239 bytes; 4346842427 input bytes, 228.1 MiB/s, 5535 messages/s
+    findings_test.go:1299: recorded: pool 2: input /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst, 59442176 bytes: prepared (recorded ""), 1102 outputs, 6 children, done at 1.842s
+    findings_test.go:1299: recorded: pool 2: input /home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst, 2141594624 bytes: prepared (recorded ""), 100018 outputs, 21202 children, done at 16.485s
+    findings_test.go:1299: recorded: pool 2: input /home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst, 2302976 bytes: prepared (recorded ""), 19 outputs, 0 children, done at 16.811s
+    findings_test.go:1299: recorded: pool 2: input /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst, 2141594624 bytes: seen (recorded "prepared"), 100018 outputs, 21202 children, done at 18.175s
+    findings_test.go:1290: recorded: pool 4 floor: maxrss 14.3 MiB
+    findings_test.go:1290: recorded: pool 4 dispatch run 1: wall 18.772s, user 23.397s, system 8.71s, maxrss 66.1 MiB; own maxrss 35.7 MiB, user 10.975s, system 3.881s; children's maxrss 66.1 MiB, user 12.422s, system 4.826s; wrote 21411 files, 318926239 bytes
+    findings_test.go:1290: recorded: pool 4 dispatch, 1 runs: median wall 18.772s, peak memory 66.1 MiB, its own 35.7 MiB, its children's 66.1 MiB
+    findings_test.go:1295: recorded: pool 4: dispatch 18.186s, 21306 parts (archive × encrypted 1, archive × prepared 1, document × prepared 1, nested × prepared 36, nested × seen 1, office × prepared 3, office × seen 1, text × no processor yet 4541, unrouted × no processor yet 16676, vision × prepared 20, vision × seen 25), 1 seen inputs, 26 seen parts, 50604 messages, 50000 seen messages, 201425 outputs, 0 failed; peak disk 18237850 bytes of 1818 samples; index 21411 files, 318926239 bytes; 4346842427 input bytes, 227.9 MiB/s, 5532 messages/s
+    findings_test.go:1299: recorded: pool 4: input /home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst, 2302976 bytes: prepared (recorded ""), 19 outputs, 0 children, done at 361ms
+    findings_test.go:1299: recorded: pool 4: input /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst, 59442176 bytes: prepared (recorded ""), 1102 outputs, 6 children, done at 2.031s
+    findings_test.go:1299: recorded: pool 4: input /home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst, 2141594624 bytes: prepared (recorded ""), 100018 outputs, 21202 children, done at 16.554s
+    findings_test.go:1299: recorded: pool 4: input /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst, 2141594624 bytes: seen (recorded "prepared"), 100018 outputs, 21202 children, done at 18.186s
+    findings_test.go:1290: recorded: pool 8 floor: maxrss 12.3 MiB
+    findings_test.go:1290: recorded: pool 8 dispatch run 1: wall 18.678s, user 23.532s, system 8.602s, maxrss 66.3 MiB; own maxrss 36.9 MiB, user 11.062s, system 3.84s; children's maxrss 66.3 MiB, user 12.47s, system 4.76s; wrote 21411 files, 318926239 bytes
+    findings_test.go:1290: recorded: pool 8 dispatch, 1 runs: median wall 18.678s, peak memory 66.3 MiB, its own 36.9 MiB, its children's 66.3 MiB
+    findings_test.go:1295: recorded: pool 8: dispatch 18.177s, 21306 parts (archive × encrypted 1, archive × prepared 1, document × prepared 1, nested × prepared 36, nested × seen 1, office × prepared 3, office × seen 1, text × no processor yet 4541, unrouted × no processor yet 16676, vision × prepared 20, vision × seen 25), 1 seen inputs, 26 seen parts, 50604 messages, 50000 seen messages, 201425 outputs, 0 failed; peak disk 17204925 bytes of 1818 samples; index 21411 files, 318926239 bytes; 4346842427 input bytes, 228.1 MiB/s, 5535 messages/s
+    findings_test.go:1299: recorded: pool 8: input /home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst, 2302976 bytes: prepared (recorded ""), 19 outputs, 0 children, done at 27ms
+    findings_test.go:1299: recorded: pool 8: input /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst, 59442176 bytes: prepared (recorded ""), 1102 outputs, 6 children, done at 2.016s
+    findings_test.go:1299: recorded: pool 8: input /home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst, 2141594624 bytes: prepared (recorded ""), 100018 outputs, 21202 children, done at 16.569s
+    findings_test.go:1299: recorded: pool 8: input /home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst, 2141594624 bytes: seen (recorded "prepared"), 100018 outputs, 21202 children, done at 18.177s
+--- PASS: TestFindingsPool (78.41s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/dispatch	272.364s

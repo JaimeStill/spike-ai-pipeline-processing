@@ -26,6 +26,7 @@ import (
 	client "github.com/JaimeStill/spike-ai-pipeline-client"
 	"github.com/JaimeStill/spike-ai-pipeline-client/format/completions"
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 )
 
 // The bake-off tier: `mise run bakeoff` runs TestBakeoff once per renderer, each run capped at
@@ -245,7 +246,7 @@ func TestBakeoff(t *testing.T) {
 			cells := renderAll(t, r, sets)
 			transcribeAll(t, c, sets, cells, func(cl *cell) {
 				t.Logf("recorded: bakeoff %s: %s page %d run %d: CER %.4f WER %.4f, render %v (CPU %v user, %v system), peak %.1f MiB, %d PNG bytes; transcribed in %v, %d output tokens (%d reasoning), status %s%s",
-					cand.name, cl.Set, cl.Page, cl.Run, rate(cl.CharEdits, cl.Chars), rate(cl.WordEdits, cl.Words),
+					cand.name, cl.Set, cl.Page, cl.Run, textscore.Rate(cl.CharEdits, cl.Chars), textscore.Rate(cl.WordEdits, cl.Words),
 					cl.RenderTime.Round(time.Millisecond), cl.UserCPU.Round(time.Millisecond), cl.SystemCPU.Round(time.Millisecond),
 					mib(cl.PeakRSS), cl.PNGBytes, cl.RequestTime.Round(time.Millisecond),
 					cl.OutputTokens, cl.ReasoningTokens, cl.Status, errSuffix(cl.Error))
@@ -359,8 +360,8 @@ func transcribeAll(t *testing.T, c *client.Client, sets []fixtureSet, cells []ce
 			for cl := range work {
 				transcribe(t, c, cl)
 				pageTruth := truth[cl.Set][cl.Page-1]
-				cl.CharEdits, cl.Chars = charErrors(pageTruth, cl.Output)
-				cl.WordEdits, cl.Words = wordErrors(pageTruth, cl.Output)
+				cl.CharEdits, cl.Chars = textscore.CharErrors(pageTruth, cl.Output)
+				cl.WordEdits, cl.Words = textscore.WordErrors(pageTruth, cl.Output)
 				cl.png = nil
 				done(cl)
 			}
@@ -562,8 +563,8 @@ func summarize(res result, sets ...string) summary {
 				}
 			}
 			if cn > 0 {
-				setCER = append(setCER, rate(ce, cn))
-				setWER = append(setWER, rate(we, wn))
+				setCER = append(setCER, textscore.Rate(ce, cn))
+				setWER = append(setWER, textscore.Rate(we, wn))
 			}
 		}
 		if len(setCER) > 0 {
@@ -626,7 +627,7 @@ var criteria = []criterion{
 
 // incompleteRate formats s's incomplete transcriptions as a count of its cells and a rate.
 func (s summary) incompleteRate() string {
-	return fmt.Sprintf("%d/%d (%.3f)", s.incomplete, s.cells, rate(s.incomplete, s.cells))
+	return fmt.Sprintf("%d/%d (%.3f)", s.incomplete, s.cells, textscore.Rate(s.incomplete, s.cells))
 }
 
 // boolInt returns 1 for true and 0 for false.

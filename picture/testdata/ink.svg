@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The picture package's own ink-like SVG fixture, in the form spike-ai-pipeline-onenote writes
+     a page's ink: a viewBox in ink units of 0.01 mm, a size in millimetres, no background, and
+     each stroke an open path of round pen strokes. Four strokes write "hi". 40x20 mm, 236x118 at
+     150 dpi. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="40mm" height="20mm" viewBox="0 0 4000 2000">
+<path d="M 600 300 L 600 600 600 900 600 1200 600 1500 600 1700" fill="none" stroke="#000000" stroke-width="60" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 600 1700 L 650 1300 750 1150 900 1100 1050 1150 1150 1300 1200 1500 1200 1700" fill="none" stroke="#000000" stroke-width="60" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 1700 1100 L 1700 1300 1700 1500 1720 1700" fill="none" stroke="#1f3f9f" stroke-width="60" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 1700 700 L 1705 720" fill="none" stroke="#1f3f9f" stroke-width="90" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -227,7 +228,7 @@ func TestNewConverterLibreOffice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	lo, err := tool.NewExec(t.Context(), office.LibreOfficeSpec())
+	lo, err := tool.NewExec(t.Context(), picture.LibreOfficeSpec())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -236,10 +237,10 @@ func TestNewConverterLibreOffice(t *testing.T) {
 	}
 
 	t.Setenv(sofficeVersionEnv, "7.6.4.1")
-	if _, err := tool.NewExec(t.Context(), office.LibreOfficeSpec()); !errors.Is(err, tool.ErrTooOld) {
+	if _, err := tool.NewExec(t.Context(), picture.LibreOfficeSpec()); !errors.Is(err, tool.ErrTooOld) {
 		t.Errorf("NewExec over 7.6.4.1: got %v, want ErrTooOld", err)
 	}
-	lax := office.LibreOfficeSpec()
+	lax := picture.LibreOfficeSpec()
 	lax.Minimum = "7.0"
 	old, err := tool.NewExec(t.Context(), lax)
 	if err != nil {
@@ -250,7 +251,7 @@ func TestNewConverterLibreOffice(t *testing.T) {
 	if !errors.As(err, &verr) || !errors.Is(err, tool.ErrTooOld) {
 		t.Fatalf("NewConverter over 7.6.4.1: got %v, want a VersionError wrapping ErrTooOld", err)
 	}
-	if verr.Program != "soffice" || verr.Found != "7.6.4.1" || verr.Minimum != office.LibreOfficeMinimum {
+	if verr.Program != "soffice" || verr.Found != "7.6.4.1" || verr.Minimum != picture.LibreOfficeMinimum {
 		t.Errorf("VersionError: %+v", verr)
 	}
 }

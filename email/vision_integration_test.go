@@ -32,9 +32,9 @@ const (
 	describeOutputCap = 512
 )
 
-// picture is a distinct picture an attachment routes to vision: the bytes sent, their content
+// visionPicture is a distinct picture an attachment routes to vision: the bytes sent, their content
 // type, and the attachments it came from, the first first.
-type picture struct {
+type visionPicture struct {
 	data        []byte
 	contentType string
 	sources     []string
@@ -48,7 +48,7 @@ type picture struct {
 // same request without the picture, as office's TestVisionPictures and document's
 // TestVisionImageTokensHost measure them: the image's tokens and the few that mark where an image
 // begins and ends in the model's chat template.
-func describePictures(t *testing.T, c *client.Client, pictures []*picture) {
+func describePictures(t *testing.T, c *client.Client, pictures []*visionPicture) {
 	t.Helper()
 	describe := func(maxOut int, native string, parts ...protocol.ContentPart) (*protocol.Response, time.Duration, error) {
 		start := time.Now()

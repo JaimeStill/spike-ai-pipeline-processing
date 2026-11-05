@@ -21,8 +21,7 @@ import (
 
 // standinEnv marks a process as a stand-in: the test binary, re-executed through a link named
 // spike-ai-pipeline-mail, acting on its arguments as mail instead of running the tests, or
-// through one named spike-ai-pipeline-office or magick, acting as the office and magick the
-// office package's ConvertPicture is built over.
+// through one named magick, acting as the magick the picture package's Converter is built over.
 const standinEnv = "MAIL_TEST_STANDIN"
 
 // The stand-in's settings, which it reads from the environment it inherits.
@@ -54,7 +53,7 @@ func TestMain(m *testing.M) {
 		switch name := filepath.Base(os.Args[0]); name {
 		case "spike-ai-pipeline-mail":
 			os.Exit(standin(os.Args[1:]))
-		case "spike-ai-pipeline-office", "magick":
+		case "magick":
 			os.Exit(pictureStandin(name, os.Args[1:]))
 		default:
 			fmt.Fprintf(os.Stderr, "stand-in: no tool named %s\n", name)

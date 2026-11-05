@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -32,11 +33,11 @@ func containerConverter(t *testing.T) *office.Converter {
 	if err != nil {
 		t.Fatalf("office, which mise pins, run the tier through mise run integration: %v", err)
 	}
-	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: office.LibreOfficeImage}, office.LibreOfficeSpec())
+	lo, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: picture.LibreOfficeImage}, picture.LibreOfficeSpec())
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("soffice %s in %s", lo.Version(), office.LibreOfficeImage)
+	t.Logf("soffice %s in %s", lo.Version(), picture.LibreOfficeImage)
 	c, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo})
 	if err != nil {
 		t.Fatal(err)
@@ -147,7 +148,7 @@ func convertLegacy(t *testing.T, c *office.Converter, path string) *office.Resul
 // inspect gives it. Neither is asserted; a size docker can't give is logged as unknown.
 func logFootprint(t *testing.T) {
 	t.Helper()
-	ref := office.LibreOfficeImage
+	ref := picture.LibreOfficeImage
 	disk, err := exec.CommandContext(t.Context(), "docker", "image", "inspect", "--format={{.Size}}", ref).Output()
 	if err != nil {
 		t.Logf("footprint: on disk unknown: %v", err)

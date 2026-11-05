@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // This file is the first pass of the staged flow, ruling N of task documents: the request the
@@ -41,7 +41,7 @@ func firstPassInstructions() string {
 		"to read on a second look at the corrected image; an empty list when the page reads well as " +
 		"it is. Use the measurements and what you see.\n" +
 		"The corrections:\n")
-	for _, c := range document.Corrections() {
+	for _, c := range picture.Corrections() {
 		fmt.Fprintf(&b, "- %s: %s\n", c, c.Description())
 	}
 	return b.String()
@@ -52,7 +52,7 @@ func firstPassInstructions() string {
 // the catalog's names.
 func firstPassSchema() string {
 	var names []string
-	for _, c := range document.Corrections() {
+	for _, c := range picture.Corrections() {
 		names = append(names, c.String())
 	}
 	schema := map[string]any{
@@ -79,7 +79,7 @@ func firstPassSchema() string {
 
 // figures returns a page's Assessment as the text beside its image in the first pass: each
 // measure with its scale, as the Assessment documents it.
-func figures(a document.Assessment) string {
+func figures(a picture.Assessment) string {
 	gray := "no"
 	if a.Grayscale {
 		gray = "yes"
@@ -105,7 +105,7 @@ type firstPass struct {
 // corrections it names that ParseCorrection reads, each once, in the order the stage applies
 // them, and the names it doesn't read, which are counted and dropped. Output that isn't the
 // schema's object, a field missing, is an error.
-func parseFirstPass(out string) (fp firstPass, corrections []document.Correction, unknown []string, err error) {
+func parseFirstPass(out string) (fp firstPass, corrections []picture.Correction, unknown []string, err error) {
 	dec := json.NewDecoder(strings.NewReader(out))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(&fp); err != nil {
@@ -115,7 +115,7 @@ func parseFirstPass(out string) (fp firstPass, corrections []document.Correction
 		return firstPass{}, nil, nil, errors.New("first pass: a field is missing")
 	}
 	for _, name := range fp.Corrections {
-		c, err := document.ParseCorrection(name)
+		c, err := picture.ParseCorrection(name)
 		if err != nil {
 			unknown = append(unknown, name)
 			continue
@@ -130,7 +130,7 @@ func parseFirstPass(out string) (fp firstPass, corrections []document.Correction
 func TestFirstPassInstructions(t *testing.T) {
 	got := firstPassInstructions()
 	last := -1
-	for _, c := range document.Corrections() {
+	for _, c := range picture.Corrections() {
 		line := fmt.Sprintf("- %s: %s\n", c, c.Description())
 		i := strings.Index(got, line)
 		if i < 0 {
@@ -162,7 +162,7 @@ func TestFirstPassSchema(t *testing.T) {
 		t.Fatal(err)
 	}
 	var names []string
-	for _, c := range document.Corrections() {
+	for _, c := range picture.Corrections() {
 		names = append(names, c.String())
 	}
 	if schema.Type != "object" || len(schema.Properties) != 4 || schema.AdditionalProperties == nil || *schema.AdditionalProperties {
@@ -181,7 +181,7 @@ func TestFirstPassSchema(t *testing.T) {
 
 // TestFigures checks the figures carry each measure of the Assessment.
 func TestFigures(t *testing.T) {
-	got := figures(document.Assessment{Width: 1275, Height: 1650, Skew: -2.5, Contrast: 0.3125, Noise: 0.0123,
+	got := figures(picture.Assessment{Width: 1275, Height: 1650, Skew: -2.5, Contrast: 0.3125, Noise: 0.0123,
 		Sharpness: 0.0512, Colored: 0.0002, Grayscale: true})
 	for _, want := range []string{"1275 x 1650", "skew -2.50", "contrast 0.3125", "noise 0.0123", "sharpness 0.0512", "colored 0.0002", "grayscale: yes"} {
 		if !strings.Contains(got, want) {
@@ -202,7 +202,7 @@ func TestParseFirstPass(t *testing.T) {
 	if *fp.Transcription != "SECRET\nNOFORN" || *fp.Quality != "poor" || *fp.Reason != "The foot is faded." {
 		t.Errorf("the answer is %+v, want its fields", fp)
 	}
-	if want := []document.Correction{document.Deskew, document.Unsharp}; !slices.Equal(corrections, want) {
+	if want := []picture.Correction{picture.Deskew, picture.Unsharp}; !slices.Equal(corrections, want) {
 		t.Errorf("the corrections are %v, want %v", corrections, want)
 	}
 	if !slices.Equal(unknown, []string{"Sharpen"}) {

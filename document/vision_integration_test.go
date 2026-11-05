@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 )
 
@@ -281,7 +282,7 @@ func recordFinal(t *testing.T, run string, final *protocol.Response) {
 	ctx := slotContext(t, digestModel)
 	in := final.Usage.InputTokens
 	t.Logf("recorded: %s final request: %d input tokens, %.1f%% of a %s slot's %d-token context",
-		run, in, 100*rate(in, ctx), digestModel, ctx)
+		run, in, 100*textscore.Rate(in, ctx), digestModel, ctx)
 	if in >= ctx {
 		t.Errorf("%s: the final request's %d input tokens fill the slot's %d-token context", run, in, ctx)
 	}
@@ -307,9 +308,9 @@ func TestVisionPagesHost(t *testing.T) {
 		if p.Response.Status != protocol.StatusCompleted {
 			t.Errorf("page %d's response is %s, want completed", p.Number, p.Response.Status)
 		}
-		e, n := charErrors(truth[p.Number-1], text(p.Response))
+		e, n := textscore.CharErrors(truth[p.Number-1], text(p.Response))
 		edits, chars = edits+e, chars+n
-		t.Logf("recorded: vision Pages clean page %d of %d: CER %.4f, %d output tokens, %d attempts", p.Number, p.Count, rate(e, n), p.Response.Usage.OutputTokens, p.Attempts)
+		t.Logf("recorded: vision Pages clean page %d of %d: CER %.4f, %d output tokens, %d attempts", p.Number, p.Count, textscore.Rate(e, n), p.Response.Usage.OutputTokens, p.Attempts)
 		next++
 	}
 	if next-1 != len(truth) {
@@ -317,7 +318,7 @@ func TestVisionPagesHost(t *testing.T) {
 	}
 	retried := recordRetries(t, "vision Pages clean.pdf", pages)
 	t.Logf("recorded: vision Pages clean.pdf, %d pages at concurrency %d: %v wall, CER %.4f, %d pages retried",
-		next-1, req.Concurrency, time.Since(start).Round(time.Millisecond), rate(edits, chars), retried)
+		next-1, req.Concurrency, time.Since(start).Round(time.Millisecond), textscore.Rate(edits, chars), retried)
 }
 
 // TestVisionDocumentHost checks document on clean.pdf completes every page, in page order, and
@@ -343,18 +344,18 @@ func TestVisionDocumentHost(t *testing.T) {
 			t.Errorf("result page %d is page %d of %d, %v, want page %d of %d", i+1, p.Number, p.Count, p.Err, i+1, len(truth))
 			continue
 		}
-		e, n := charErrors(truth[i], text(p.Response))
+		e, n := textscore.CharErrors(truth[i], text(p.Response))
 		edits, chars = edits+e, chars+n
 	}
 	out := checkDigest(t, res.Final)
 	recordFinal(t, "vision Document clean.pdf", res.Final)
 	joined := strings.Join(truth, "\n\n")
-	te, tn := charErrors(joined, stripHeadings(res.Text()))
+	te, tn := textscore.CharErrors(joined, stripHeadings(res.Text()))
 	t.Logf("recorded: vision Document clean.pdf, %d pages at concurrency %d and a %s digest: %v wall, CER %.4f, digest %d output tokens (%d reasoning), %d pages retried",
-		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond), rate(edits, chars),
+		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond), textscore.Rate(edits, chars),
 		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens, retried)
 	t.Logf("recorded: vision Document clean.pdf Text: %d bytes against the joined ground truth's %d, CER %.4f with headings stripped, whitespace collapsed",
-		len(res.Text()), len(joined), rate(te, tn))
+		len(res.Text()), len(joined), textscore.Rate(te, tn))
 	t.Logf("recorded: vision Document clean.pdf digest: %s", out)
 }
 
@@ -391,13 +392,13 @@ func TestVisionDocumentScannedHost(t *testing.T) {
 	}
 	var edits, chars int
 	for i, p := range res.Pages {
-		e, n := charErrors(truth[i], text(p.Response))
+		e, n := textscore.CharErrors(truth[i], text(p.Response))
 		edits, chars = edits+e, chars+n
 	}
 	out := checkDigest(t, res.Final)
 	recordFinal(t, "vision Document scanned.pdf", res.Final)
 	t.Logf("recorded: vision Document scanned.pdf, %d pages at concurrency %d and a %s digest: %v wall, CER %.4f, digest %d output tokens (%d reasoning), %d pages retried",
-		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond), rate(edits, chars),
+		len(res.Pages), req.Concurrency, digestModel, elapsed.Round(time.Millisecond), textscore.Rate(edits, chars),
 		res.Final.Usage.OutputTokens, res.Final.Usage.OutputTokensDetails.ReasoningTokens, retried)
 	t.Logf("recorded: vision Document scanned.pdf digest: %s", out)
 }

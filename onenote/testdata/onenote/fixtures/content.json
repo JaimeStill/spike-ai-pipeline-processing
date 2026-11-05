@@ -1,0 +1,161 @@
+{
+  "note": "Hand-written expectations of the public fixtures' content fields, for the finding's scoring (bench/findings.rs) and tests/content.rs. Each field is a JSON pointer into one page line, the field kind it is scored under, and the value the CLI writes there when it holds what onenote_parser's API gives for the record: the same values tests/content.rs, tests/media.rs and tests/ink.rs assert, written by hand from that API, not from the CLI's output. A null value is a field the page must not have. A page is found by its id in the read of each of its files. Left out: an image's OCR text (39 lines, which tests/media.rs checks by its ends), the SVG drawings' strokes (tests/ink.rs), and the Markdown (tests/markdown.rs).",
+  "pages": [
+    {
+      "files": ["onenote-rs/New Section 1.one", "onenote-rs/handwriting_recognition.one"],
+      "page": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a",
+      "fields": [
+        {"kind": "Container", "pointer": "/content/0/kind", "value": "title"},
+        {"kind": "Container", "pointer": "/content/1/kind", "value": "outline"},
+        {"kind": "Container", "pointer": "/content/1/offset_horizontal", "value": 1.0},
+        {"kind": "Container", "pointer": "/content/1/offset_vertical", "value": 2.4},
+        {"kind": "Container", "pointer": "/content/2/kind", "value": "ink"},
+        {"kind": "Container", "pointer": "/content/3/kind", "value": "outline"},
+        {"kind": "Container", "pointer": "/content/3/offset_horizontal", "value": 0.9902231},
+        {"kind": "Container", "pointer": "/content/3/offset_vertical", "value": 32.098755},
+
+        {"kind": "Paragraph style", "pointer": "/content/0/items/0/blocks/0/style", "value": "PageTitle"},
+        {"kind": "Paragraph style", "pointer": "/content/0/items/1/blocks/0/style", "value": "PageDateTime"},
+        {"kind": "Paragraph style", "pointer": "/content/0/items/2/blocks/0/style", "value": "PageDateTime"},
+        {"kind": "Paragraph style", "pointer": "/content/1/items/0/blocks/0/style", "value": "p"},
+        {"kind": "Paragraph style", "pointer": "/content/1/items/2/blocks/0/style", "value": "h1"},
+
+        {"kind": "Run, plain", "pointer": "/content/0/items/0/blocks/0/runs/0", "value": {"text": "Test Page"}},
+        {"kind": "Run, plain", "pointer": "/content/0/items/1/blocks/0/runs/0", "value": {"text": "Tuesday, 27. October 2020"}},
+        {"kind": "Run, plain", "pointer": "/content/0/items/2/blocks/0/runs/0", "value": {"text": "11:47"}},
+        {"kind": "Run, plain", "pointer": "/content/1/items/0/blocks/0/runs/0", "value": {"text": "ABCDEF"}},
+        {"kind": "Run, plain", "pointer": "/content/1/items/2/blocks/0/runs/0", "value": {"text": "ABCDEF"}},
+        {"kind": "Run, plain", "pointer": "/content/1/items/3/children/4/blocks/0/runs/1", "value": {"text": " ipsum "}},
+        {"kind": "Run, plain", "pointer": "/content/1/items/3/children/4/blocks/0/runs/17", "value": {"text": " aliquyam erat, sed diam voluptua."}},
+        {"kind": "Run, formatted", "pointer": "/content/1/items/3/children/4/blocks/0/runs/0", "value": {"text": "Lorem", "bold": true}},
+        {"kind": "Run, formatted", "pointer": "/content/1/items/3/children/4/blocks/0/runs/2", "value": {"text": "dolor", "italic": true}},
+        {"kind": "Run, formatted", "pointer": "/content/1/items/3/children/4/blocks/0/runs/4", "value": {"text": "amet", "underline": true}},
+        {"kind": "Run, formatted", "pointer": "/content/1/items/3/children/4/blocks/0/runs/6", "value": {"text": "sadipscing", "strikethrough": true}},
+        {"kind": "Run, formatted", "pointer": "/content/1/items/3/children/4/blocks/0/runs/8", "value": {"text": "sed", "subscript": true}},
+        {"kind": "Run, formatted", "pointer": "/content/1/items/3/children/4/blocks/0/runs/10", "value": {"text": "nonumy", "superscript": true}},
+        {"kind": "Run, coloured", "pointer": "/content/1/items/3/children/4/blocks/0/runs/12", "value": {"text": "invidunt", "highlight": "#ffc000"}},
+        {"kind": "Run, coloured", "pointer": "/content/1/items/3/children/4/blocks/0/runs/14", "value": {"text": "labore", "font_color": "#7f7f7f"}},
+        {"kind": "Link", "pointer": "/content/1/items/3/children/4/blocks/0/runs/16", "value": {"text": "magna", "link": "https://example.com"}},
+        {"kind": "Link", "pointer": "/content/1/items/3/children/6/blocks/0/runs/0", "value": {"text": "http://example.com/", "link": "http://example.com/"}},
+
+        {"kind": "Note tag", "pointer": "/content/1/items/3/children/0/blocks/0/tags", "value": [{"label": "To Do", "shape": "BlueCheckBox", "status": "open"}]},
+        {"kind": "Note tag", "pointer": "/content/1/items/3/children/1/blocks/0/tags", "value": [{"label": "To Do", "shape": "BlueCheckBox", "status": "completed", "completed_time": "2020-10-27T10:50:13Z"}]},
+        {"kind": "Note tag", "pointer": "/content/1/items/3/children/2/blocks/0/tags", "value": [{"label": "Important", "shape": "YellowStar", "status": "completed", "completed_time": "2020-10-27T10:50:10Z"}]},
+
+        {"kind": "List marker", "pointer": "/content/1/items/4/children/0/blocks/0/list", "value": {"bullet": "•"}},
+        {"kind": "List marker", "pointer": "/content/1/items/4/children/0/children/0/blocks/0/list", "value": {"bullet": "○"}},
+        {"kind": "List marker", "pointer": "/content/1/items/4/children/0/children/0/children/0/blocks/0/list", "value": {"bullet": "§"}},
+        {"kind": "List marker", "pointer": "/content/1/items/5/children/0/blocks/0/list", "value": {"number": "decimal", "suffix": "."}},
+        {"kind": "List marker", "pointer": "/content/1/items/5/children/0/children/0/blocks/0/list", "value": {"number": "lower-letter", "suffix": "."}},
+        {"kind": "List marker", "pointer": "/content/1/items/5/children/0/children/0/children/0/blocks/0/list", "value": {"number": "lower-roman", "suffix": "."}},
+        {"kind": "List marker", "pointer": "/content/1/items/5/children/1/blocks/0/list", "value": {"number": "decimal", "suffix": "."}},
+        {"kind": "List marker", "pointer": "/content/1/items/5/children/2/blocks/0/list", "value": {"number": "decimal", "suffix": "."}},
+        {"kind": "List marker", "pointer": "/content/1/items/5/children/3/blocks/0/list", "value": {"number": "decimal", "suffix": ".", "restart": 1}},
+
+        {"kind": "Table", "pointer": "/content/1/items/12/blocks/0", "value": {"kind": "table", "rows": [
+          [{"items": [{"kind": "element", "blocks": [{"kind": "paragraph", "style": "p", "runs": [{"text": "A"}]}]}]},
+           {"items": [{"kind": "element", "blocks": [{"kind": "paragraph", "style": "p", "runs": [{"text": "B"}]}]}]},
+           {"items": [{"kind": "element", "blocks": [{"kind": "paragraph", "style": "p", "runs": [{"text": "C"}]}]}]}],
+          [{"items": [{"kind": "element", "blocks": [{"kind": "paragraph", "style": "p", "runs": [{"text": "1"}]}]}]},
+           {"items": [{"kind": "element", "blocks": [{"kind": "paragraph", "style": "p", "runs": [{"text": "2"}]}]}]},
+           {"items": [{"kind": "element", "blocks": [{"kind": "paragraph", "style": "p", "runs": [{"text": "3"}]}]}]}]
+        ]}},
+        {"kind": "Table", "pointer": "/content/1/items/15/blocks/0", "value": {"kind": "table", "rows": [
+          [{"items": [{"kind": "element", "blocks": [{"kind": "paragraph", "style": "p", "runs": [{"text": "A"}]}]}]},
+           {"items": [{"kind": "element", "blocks": [{"kind": "paragraph", "style": "p", "runs": [{"text": "B"}]}]}]}]
+        ]}},
+
+        {"kind": "Math", "pointer": "/content/1/items/17/blocks/0/runs", "value": [{"math": "display", "latex": "a=b"}]},
+
+        {"kind": "Image", "pointer": "/content/1/items/19/blocks/0/kind", "value": "image"},
+        {"kind": "Image", "pointer": "/content/1/items/19/blocks/0/file", "value": "d6d4898c203cbff35fe92e844bbf404064293314a71d1e6b24e907334e5bdff9.jpg"},
+        {"kind": "Image", "pointer": "/content/1/items/19/blocks/0/size", "value": 90999},
+        {"kind": "Image", "pointer": "/content/1/items/19/blocks/0/filename", "value": "testimages_screenshot.jpg"},
+        {"kind": "Image", "pointer": "/content/1/items/19/blocks/0/alt_text", "value": "example images from TESTIMAGES archive"}
+      ]
+    },
+    {
+      "files": ["onenote-rs/New Section 1.one"],
+      "page": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a",
+      "fields": [
+        {"kind": "Image", "pointer": "/content/1/items/19/blocks/0/extension", "value": "jpg"},
+        {"kind": "Ink", "pointer": "/ink/strokes", "value": 1},
+        {"kind": "Ink", "pointer": "/ink/bounds", "value": {"x": 1363.0, "y": 38643.0, "width": 16563.0, "height": 2017.0}},
+        {"kind": "Ink", "pointer": "/content/2/strokes", "value": 1},
+        {"kind": "Ink", "pointer": "/content/2/bounds", "value": {"x": 1363.0, "y": 38643.0, "width": 16563.0, "height": 2017.0}},
+        {"kind": "Recognised words", "pointer": "/ink_text", "value": null}
+      ]
+    },
+    {
+      "files": ["onenote-rs/non-legacy/New Section 1 2.one"],
+      "page": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a",
+      "fields": [
+        {"kind": "Ink", "pointer": "/ink/strokes", "value": 1},
+        {"kind": "Ink", "pointer": "/ink/bounds", "value": {"x": 1363.0, "y": 38643.0, "width": 16563.0, "height": 2017.0}},
+        {"kind": "Recognised words", "pointer": "/ink_text", "value": null}
+      ]
+    },
+    {
+      "files": ["onenote-rs/handwriting_recognition.one"],
+      "page": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a",
+      "fields": [
+        {"kind": "Image", "pointer": "/content/1/items/19/blocks/0/extension", "value": null},
+        {"kind": "Ink", "pointer": "/ink/strokes", "value": 62},
+        {"kind": "Ink", "pointer": "/ink/bounds", "value": {"x": 1363.0, "y": 38643.0, "width": 16563.0, "height": 15749.0}},
+        {"kind": "Ink", "pointer": "/content/2/strokes", "value": 1},
+        {"kind": "Ink", "pointer": "/content/2/bounds", "value": {"x": 1363.0, "y": 38643.0, "width": 16563.0, "height": 2017.0}},
+        {"kind": "Recognised words", "pointer": "/ink_text/0/0", "value": {"text": "Hello", "alternatives": ["Hallo", "Hell", "HellO", "Hella"], "language": 1031}},
+        {"kind": "Recognised words", "pointer": "/ink_text/0/1", "value": {"text": "World", "alternatives": ["world", "Worlds", "Word", "World."], "language": 1031}},
+        {"kind": "Recognised words", "pointer": "/ink_text/1/0", "value": {"text": "Hello", "alternatives": ["Hallo", "Hell", "HellO", "Helle"], "language": 1031}},
+        {"kind": "Recognised words", "pointer": "/ink_text/1/1", "value": {"text": "World", "alternatives": ["world", "Worlds", "Word", "Would"], "language": 1031}}
+      ]
+    },
+    {
+      "files": ["onenote-rs/handwriting_recognition.one"],
+      "page": "b3784418-303a-ba4e-a772-5bb05abc8ddf",
+      "fields": [
+        {"kind": "Ink", "pointer": "/ink", "value": null},
+        {"kind": "Recognised words", "pointer": "/ink_text", "value": null}
+      ]
+    },
+    {
+      "files": ["interop/SUT/OneWithFileData.one"],
+      "page": "d9fb6b6a-ab0c-42df-a684-4fadf122b557",
+      "fields": [
+        {"kind": "Embedded file", "pointer": "/content/1/items/0/blocks/0", "value": {"kind": "embedded_file", "file": "8e99dc44681b8399608f7a181e44d3e41dc36fbacd35a9cfb2d1fc330ac68459.docx", "filename": "testing.docx", "size": 14660}}
+      ]
+    },
+    {
+      "files": ["interop/SUT/FileSyncWOPI_OneNoteWithODB.one"],
+      "page": "19a0907d-cc34-459e-bdb6-dea53bdcd6f7",
+      "fields": [
+        {"kind": "Image", "pointer": "/content/1/items/0/blocks/0/kind", "value": "image"},
+        {"kind": "Image", "pointer": "/content/1/items/0/blocks/0/file", "value": "954f7d96502b5c5fe2e98a5045bca7f5e9ba11e3dbf92a5c0214a6aa4c7f2208.jpg"},
+        {"kind": "Image", "pointer": "/content/1/items/0/blocks/0/size", "value": 879394},
+        {"kind": "Image", "pointer": "/content/1/items/0/blocks/0/filename", "value": "Chrysanthemum.jpg"},
+        {"kind": "Image", "pointer": "/content/1/items/0/blocks/0/extension", "value": null}
+      ]
+    },
+    {
+      "files": ["onenote-rs/New Section Group/New Section 2.one"],
+      "page": "e9e2b25d-4462-ea4f-a86c-f167efa63e0d",
+      "fields": [
+        {"kind": "Container", "pointer": "/content/1/kind", "value": "image"},
+        {"kind": "Container", "pointer": "/content/1/offset_horizontal", "value": 0.9166665},
+        {"kind": "Container", "pointer": "/content/1/offset_vertical", "value": 2.0408335},
+        {"kind": "Image", "pointer": "/content/1/file", "value": "b7702e05282d4dfffe233281443536319d4739946f54ebce194230df8805b650.png"},
+        {"kind": "Image", "pointer": "/content/1/size", "value": 27146},
+        {"kind": "Image", "pointer": "/content/1/extension", "value": "png"},
+        {"kind": "Image", "pointer": "/content/1/filename", "value": "dummy_1.png"},
+        {"kind": "Image", "pointer": "/content/1/printout_page", "value": 1}
+      ]
+    },
+    {
+      "files": ["onenote-rs/New Section Group/New Section 2.one"],
+      "page": "7198bad9-4462-a34e-b5a2-44b2b78e4e60",
+      "fields": [
+        {"kind": "Embedded file", "pointer": "/content/1/items/0/blocks/0", "value": {"kind": "embedded_file", "file": "d2318cc34b6254cdc2db84b931adad166a4b2b701b4241c27b338b959ac738b0.mp3", "filename": "ff-16b-2c-44100hz.mp3", "type": "audio", "size": 77279}}
+      ]
+    }
+  ]
+}

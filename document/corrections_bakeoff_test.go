@@ -19,6 +19,8 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // Evidence 11, the corrections matrix: `mise run bakeoff-corrections` runs TestCorrections once
@@ -39,19 +41,19 @@ import (
 // matrixCell is one cell of the matrix: its name and the corrections it applies.
 type matrixCell struct {
 	name        string
-	corrections []document.Correction
+	corrections []picture.Correction
 }
 
 // matrixCells are the seven cells, in the order the tables give them: none, each correction
 // alone, and all five together.
 var matrixCells = []matrixCell{
 	{"none", nil},
-	{"Deskew", []document.Correction{document.Deskew}},
-	{"Despeckle", []document.Correction{document.Despeckle}},
-	{"ContrastStretch", []document.Correction{document.ContrastStretch}},
-	{"Unsharp", []document.Correction{document.Unsharp}},
-	{"Grayscale", []document.Correction{document.Grayscale}},
-	{"all", []document.Correction{document.Deskew, document.Despeckle, document.ContrastStretch, document.Unsharp, document.Grayscale}},
+	{"Deskew", []picture.Correction{picture.Deskew}},
+	{"Despeckle", []picture.Correction{picture.Despeckle}},
+	{"ContrastStretch", []picture.Correction{picture.ContrastStretch}},
+	{"Unsharp", []picture.Correction{picture.Unsharp}},
+	{"Grayscale", []picture.Correction{picture.Grayscale}},
+	{"all", []picture.Correction{picture.Deskew, picture.Despeckle, picture.ContrastStretch, picture.Unsharp, picture.Grayscale}},
 }
 
 var (
@@ -155,8 +157,8 @@ func TestCorrections(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	magick := hostTool(t, document.MagickSpec())
-	corr, err := document.NewCorrector(magick)
+	magick := hostTool(t, picture.MagickSpec())
+	corr, err := picture.NewCorrector(magick)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -181,7 +183,7 @@ func TestCorrections(t *testing.T) {
 						res.RunTimes = append(res.RunTimes, elapsed)
 						for _, cl := range cells {
 							t.Logf("recorded: corrections %d dpi %s %s: page %d run %d: CER %.4f WER %.4f, %d input tokens, %d output tokens, status %s%s",
-								dpi, s.name, mc.name, cl.Page, cl.Run, rate(cl.CharEdits, cl.Chars), rate(cl.WordEdits, cl.Words),
+								dpi, s.name, mc.name, cl.Page, cl.Run, textscore.Rate(cl.CharEdits, cl.Chars), textscore.Rate(cl.WordEdits, cl.Words),
 								cl.InputTokens, cl.OutputTokens, cl.Status, errSuffix(cl.Error))
 						}
 						t.Logf("recorded: corrections %d dpi %s %s: run %d, %d pages at concurrency %d in %v",
@@ -255,8 +257,8 @@ func fill(cl *cell, resp *protocol.Response) {
 
 // score sets cl's edits and lengths against truth.
 func score(cl *cell, truth string) {
-	cl.CharEdits, cl.Chars = charErrors(truth, cl.Output)
-	cl.WordEdits, cl.Words = wordErrors(truth, cl.Output)
+	cl.CharEdits, cl.Chars = textscore.CharErrors(truth, cl.Output)
+	cl.WordEdits, cl.Words = textscore.WordErrors(truth, cl.Output)
 }
 
 // saveCorrections keeps res for the matrix: in BAKEOFF_RESULTS when it is set, else in memory.
@@ -319,7 +321,7 @@ func pageSpread(cells []cell, page int) (s spread, incomplete int, ok bool) {
 			incomplete++
 			continue
 		}
-		rates = append(rates, rate(cl.CharEdits, cl.Chars))
+		rates = append(rates, textscore.Rate(cl.CharEdits, cl.Chars))
 	}
 	if len(rates) == 0 {
 		return spread{}, incomplete, false

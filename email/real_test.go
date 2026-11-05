@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -298,7 +299,7 @@ func describe(rec email.Record) string {
 // warnings mail's; and against mimeTruth's records. Each is as a MIME store is: its store has
 // no encoding, password, or display name; no message has a folder, an .eml's no id; and no
 // message, nested ones included, has a class or a creation or modification time, every address
-// is SMTP, and an embedded message is nested under its attachment record, routed RouteNested.
+// is SMTP, and an embedded message is nested under its attachment record, routed route.Nested.
 func TestRealMIME(t *testing.T) {
 	r := realReader(t)
 	_, inputs := realInputs(t)
@@ -415,7 +416,7 @@ func checkMIME(t *testing.T, recs []email.Record) {
 
 // checkMIMEMessage checks m and every message nested in it for what a MIME message gives: no
 // class, no creation or modification time, every address of type SMTP, and each embedded
-// message nested under its attachment record, which routes it RouteNested.
+// message nested under its attachment record, which routes it route.Nested.
 func checkMIMEMessage(t *testing.T, m *email.Message) {
 	t.Helper()
 	if m.Class != "" || !m.CreationTime.IsZero() || !m.ModificationTime.IsZero() {
@@ -437,8 +438,8 @@ func checkMIMEMessage(t *testing.T, m *email.Message) {
 		if a.Message == nil {
 			continue
 		}
-		if route, _, err := a.Route(); err != nil || route != email.RouteNested {
-			t.Errorf("%q: embedded message routed %v, %v", m.Subject, route, err)
+		if rt, _, err := a.Route(); err != nil || rt != route.Nested {
+			t.Errorf("%q: embedded message routed %v, %v", m.Subject, rt, err)
 		}
 		checkMIMEMessage(t, a.Message)
 	}

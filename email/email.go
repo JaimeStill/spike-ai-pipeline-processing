@@ -10,16 +10,23 @@ import (
 	"fmt"
 	"io"
 	"iter"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
+	"strconv"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
 // MailMinimum is the oldest mail the Reader accepts.
 const MailMinimum = "0.2.0"
+
+// MailAfterMinimum is the oldest mail that resumes a read, mail's --after: Read refuses a
+// Request with After under an older one. A Reader without After needs MailMinimum alone, so a
+// caller that never resumes may stay on mail 0.2.0.
+const MailAfterMinimum = "0.3.0"
 
 // MailSpec declares mail's spike-ai-pipeline-mail, minimum 0.2.0, for either runner's
 // constructor. mail --version prints the version alone, as "0.2.0", and the pattern takes the
@@ -76,33 +83,36 @@ type Request struct {
 	// names its file there, and Attachment.Route sniffs it. Read makes it absolute. "" writes
 	// nothing, and routes nothing by content.
 	Attachments string
+	// After, when not zero, resumes the read of a .pst or an mbox after the message whose
+	// Message.ID it is: in a .pst its node id, in an mbox its 1-based ordinal. The resumed read is
+	// the tail of the whole read, as mail writes it byte for byte: the store, every folder, and
+	// every folder's skipped record, then only the messages after this one, with their skipped
+	// records. It needs mail MailAfterMinimum or later, and an id from 1 to 4,294,967,295, mail's
+	// range; Read refuses either otherwise. mail refuses After with a .msg or an .eml, a single
+	// message, as a usage error, an *ExitError matching ErrUsage, and an id that names no message
+	// in the store, a folder's among them, as an *ExitError matching ErrRefused.
+	After uint64
 }
 
-// ErrRequest is the cause of a request Read refuses before anything runs: one with no Input, or
-// whose Input or Attachments can't be made absolute.
+// ErrRequest is the cause of a request Read refuses before anything runs: one with no Input,
+// whose Input or Attachments can't be made absolute, or whose After is past mail's range or
+// given a mail older than MailAfterMinimum.
 var ErrRequest = errors.New("invalid request")
 
 // The outcomes of a mail run that exits nonzero, each its exit code's; an *ExitError matches its
-// code's through errors.Is.
+// code's through errors.Is. Each is the shared exit error of every CLI this module runs, so
+// ErrRefused matches the office package's refusal too, and office.ErrRefused mail's.
 var (
 	// ErrNotWritten is exit code 1: mail couldn't write its output, or an attachment's content.
-	ErrNotWritten = errors.New("not written")
+	ErrNotWritten = cli.ErrNotWritten
 	// ErrUsage is exit code 2: mail refused its arguments, a fault in this package.
-	ErrUsage = errors.New("usage error")
+	ErrUsage = cli.ErrUsage
 	// ErrRefused is exit code 3: mail refused the input before any output, giving its reason,
 	// such as an .ost's.
-	ErrRefused = errors.New("refused")
+	ErrRefused = cli.ErrRefused
 	// ErrFailed is exit code 4: a fault of mail's own.
-	ErrFailed = errors.New("failed")
+	ErrFailed = cli.ErrFailed
 )
-
-// outcomes maps mail's exit codes to their errors.
-var outcomes = map[int]error{
-	1: ErrNotWritten,
-	2: ErrUsage,
-	3: ErrRefused,
-	4: ErrFailed,
-}
 
 // ExitError reports a mail run that exited 1, 2, 3, or 4: its exit code and mail's message. It
 // matches the code's error, ErrNotWritten, ErrUsage, ErrRefused, or ErrFailed, through
@@ -116,19 +126,10 @@ type ExitError struct {
 	err     error
 }
 
-func (e *ExitError) Error() string {
-	msg := fmt.Sprintf("email: mail: exit code %d", e.Code)
-	if outcome, ok := outcomes[e.Code]; ok {
-		msg = "email: mail: " + outcome.Error()
-	}
-	if e.Message != "" {
-		msg += ": " + e.Message
-	}
-	return msg
-}
+func (e *ExitError) Error() string { return cli.ExitText("email: mail", e.Code, e.Message) }
 
 // Is reports whether target is the error of e's exit code.
-func (e *ExitError) Is(target error) bool { return outcomes[e.Code] == target }
+func (e *ExitError) Is(target error) bool { return cli.Is(e.Code, target) }
 
 // Unwrap returns the Tool's *tool.ExitError.
 func (e *ExitError) Unwrap() error { return e.err }
@@ -139,19 +140,36 @@ type Stream struct {
 	mail *tool.Tool
 	ctx  context.Context
 	// input and dir are the request's Input and Attachments, made absolute; dir "" for none.
-	input    string
-	dir      string
+	input string
+	dir   string
+	// after is the request's After, 0 for none.
+	after    uint64
 	started  bool
 	warnings []string
 }
 
 // Read returns the read of req's input under ctx. It refuses an invalid request at once, with an
-// error wrapping ErrRequest: an empty Input, or an Input or Attachments that can't be made
-// absolute, which filepath.Abs does from the working directory. Nothing runs until the Stream's
-// Records are ranged over.
+// error wrapping ErrRequest: an empty Input, an Input or Attachments that can't be made absolute,
+// which filepath.Abs does from the working directory, or an After past 4,294,967,295; and an
+// After given a mail older than MailAfterMinimum, with an error wrapping ErrRequest and a
+// *tool.VersionError wrapping tool.ErrTooOld. Nothing runs until the Stream's Records are ranged
+// over.
 func (r *Reader) Read(ctx context.Context, req Request) (*Stream, error) {
 	if req.Input == "" {
 		return nil, fmt.Errorf("email: %w: no input", ErrRequest)
+	}
+	if req.After > math.MaxUint32 {
+		return nil, fmt.Errorf("email: %w: after %d, past mail's last id, %d", ErrRequest, req.After, uint64(math.MaxUint32))
+	}
+	if req.After != 0 {
+		m, err := tool.ParseVersion(MailAfterMinimum)
+		if err != nil {
+			return nil, err
+		}
+		if v := r.mail.Version(); v.Compare(m) < 0 {
+			verr := &tool.VersionError{Program: r.mail.Name(), Found: v.String(), Minimum: MailAfterMinimum, Err: tool.ErrTooOld}
+			return nil, fmt.Errorf("email: %w: after needs mail %s or later: %w", ErrRequest, MailAfterMinimum, verr)
+		}
 	}
 	input, err := filepath.Abs(req.Input)
 	if err != nil {
@@ -163,7 +181,7 @@ func (r *Reader) Read(ctx context.Context, req Request) (*Stream, error) {
 			return nil, fmt.Errorf("email: %w: attachments: %w", ErrRequest, err)
 		}
 	}
-	return &Stream{mail: r.mail, ctx: ctx, input: input, dir: dir}, nil
+	return &Stream{mail: r.mail, ctx: ctx, input: input, dir: dir, after: req.After}, nil
 }
 
 // Warnings returns mail's warnings, one per line it wrote to stderr as a warning, with mail's
@@ -208,10 +226,14 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 		return err
 	}
 	input, dir := s.input, s.dir
-	args := []string{input}
+	var args []string
 	if dir != "" {
-		args = []string{"--attachments", dir, input}
+		args = append(args, "--attachments", dir)
 	}
+	if s.after != 0 {
+		args = append(args, "--after", strconv.FormatUint(s.after, 10))
+	}
+	args = append(args, input)
 	ctx, cancel := context.WithCancel(s.ctx)
 	defer cancel()
 	// An *os.File passes straight to mail as its stdout, so no copy sits between them that Run
@@ -221,7 +243,7 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 		return fmt.Errorf("email: stdout: %w", err)
 	}
 	defer func() { _ = pr.Close() }()
-	stderr := &limitedBuffer{limit: stderrLimit}
+	stderr := &cli.LimitedBuffer{Limit: stderrLimit}
 	done := make(chan error, 1)
 	go func() {
 		err := s.mail.Run(ctx, tool.Invocation{Args: args, Stdout: pw, Stderr: stderr})
@@ -281,7 +303,7 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 	if runErr != nil {
 		return s.outcome(runErr, stderr.String(), input)
 	}
-	s.warnings, _ = readStderr(stderr.String(), input, true)
+	s.warnings, _ = mailProgram.ReadStderr(stderr.String(), input, true)
 	if first {
 		return errors.New("email: mail wrote no store line")
 	}
@@ -317,12 +339,12 @@ func (s *Stream) ended(runErr error) error {
 // unless the context ended the run; else err with mail's message, if any.
 func (s *Stream) outcome(err error, stderr, input string) error {
 	var message string
-	s.warnings, message = readStderr(stderr, input, false)
+	s.warnings, message = mailProgram.ReadStderr(stderr, input, false)
 	if s.ctx.Err() != nil {
 		return s.ended(err)
 	}
 	if exit, ok := errors.AsType[*tool.ExitError](err); ok {
-		if _, ok := outcomes[exit.Code]; ok {
+		if cli.Outcome(exit.Code) != nil {
 			return &ExitError{Code: exit.Code, Message: message, err: err}
 		}
 	}
@@ -332,52 +354,6 @@ func (s *Stream) outcome(err error, stderr, input string) error {
 	return fmt.Errorf("email: %w", err)
 }
 
-// mailPrefix begins each line mail writes to stderr but its usage.
-const mailPrefix = "spike-ai-pipeline-mail: "
-
-// The labels after mailPrefix: a warning's, and an error's for exit codes 1 to 4.
-const (
-	warningLabel = "warning: "
-	errorLabel   = "error: "
-)
-
-// readStderr reads the stderr of mail's run on input: its warnings, in order, and the run's
-// message, the first line that isn't blank or a warning. A warning is the line with mail's prefix
-// and the warning label taken off; the message, the line with mail's prefix, the error label, and
-// the input's path, which a refusal begins with, taken off. succeeded says the run exited zero,
-// which writes only warnings, so any other line is taken as one too.
-func readStderr(stderr, input string, succeeded bool) (warnings []string, message string) {
-	for line := range strings.Lines(stderr) {
-		line = strings.TrimRight(line, "\r\n")
-		if strings.TrimSpace(line) == "" {
-			continue
-		}
-		rest, own := strings.CutPrefix(line, mailPrefix)
-		if w, ok := strings.CutPrefix(rest, warningLabel); own && ok {
-			warnings = append(warnings, w)
-			continue
-		}
-		if r, ok := strings.CutPrefix(rest, errorLabel); own && ok {
-			rest = strings.TrimPrefix(r, input+": ")
-		}
-		if succeeded {
-			warnings = append(warnings, rest)
-		} else if message == "" {
-			message = rest
-		}
-	}
-	return warnings, message
-}
-
-// limitedBuffer is a writer that keeps the first limit bytes written to it and discards the rest.
-type limitedBuffer struct {
-	strings.Builder
-	limit int
-}
-
-func (b *limitedBuffer) Write(p []byte) (int, error) {
-	if room := b.limit - b.Len(); room > 0 {
-		b.Builder.Write(p[:min(len(p), room)])
-	}
-	return len(p), nil
-}
+// mailProgram is mail as its stderr shows it: each line but its usage begins with its name, and
+// a failure's, for exit codes 1 to 4, with its error label.
+var mailProgram = cli.Program{Name: "spike-ai-pipeline-mail", Labels: []string{"error"}}

@@ -19,6 +19,8 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // Ruling N of task documents, the staged flow the inference layer will follow, in the bake-off
@@ -84,7 +86,7 @@ type flowCell struct {
 	// VisionCalls is how many vision requests the page took.
 	VisionCalls int `json:"vision_calls"`
 	// Assessment is the page's measures, for a page the flow sent.
-	Assessment *document.Assessment `json:"assessment,omitempty"`
+	Assessment *picture.Assessment `json:"assessment,omitempty"`
 	// Quality and Reason are the first pass's judgement; Asked the corrections it named, as it
 	// named them; Applied those ParseCorrection read, in the stage's order; Unknown the rest.
 	Quality string   `json:"quality,omitempty"`
@@ -154,7 +156,7 @@ func firstPassTemplate() *protocol.Request {
 
 // firstPassPrompt is the text beside a page's image in its first pass: the first pass's
 // instructions, then the page's figures.
-func firstPassPrompt(a document.Assessment) string {
+func firstPassPrompt(a picture.Assessment) string {
 	return firstPassInstructions() + "\n" + figures(a)
 }
 
@@ -165,8 +167,8 @@ func TestFlow(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	magick := hostTool(t, document.MagickSpec())
-	corr, err := document.NewCorrector(magick)
+	magick := hostTool(t, picture.MagickSpec())
+	corr, err := picture.NewCorrector(magick)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -201,7 +203,7 @@ func TestFlow(t *testing.T) {
 					res.Elapsed = time.Since(start)
 					for _, cl := range res.Cells {
 						t.Logf("recorded: flow %s %s: page %d run %d: %s, CER %.4f WER %.4f, %d vision calls, %d input tokens, %d output tokens, status %s%s%s",
-							s.name, variant, cl.Page, cl.Run, cl.Source, rate(cl.CharEdits, cl.Chars), rate(cl.WordEdits, cl.Words),
+							s.name, variant, cl.Page, cl.Run, cl.Source, textscore.Rate(cl.CharEdits, cl.Chars), textscore.Rate(cl.WordEdits, cl.Words),
 							cl.VisionCalls, cl.InputTokens, cl.OutputTokens, cl.Status, asked(cl), errSuffix(cl.Error))
 					}
 					t.Logf("recorded: flow %s %s: run %d, %d cells at concurrency %d in %v",
@@ -234,7 +236,7 @@ func asked(cl flowCell) string {
 // page's cell of run, scored against its truth. Images prepares the pages first, reading each
 // page's text layer and rendering only the pages without one; a page that fails in preparation
 // is t's error, and its cell scores as an empty transcription, incomplete.
-func flowRun(t *testing.T, v *vision, corr *document.Corrector, s fixtureSet, run int) []flowCell {
+func flowRun(t *testing.T, v *vision, corr *picture.Corrector, s fixtureSet, run int) []flowCell {
 	t.Helper()
 	f, err := os.Open(s.pdf)
 	if err != nil {
@@ -269,8 +271,8 @@ func flowRun(t *testing.T, v *vision, corr *document.Corrector, s fixtureSet, ru
 				}
 				score(&cl.cell, s.truth[cl.Page-1])
 				if cl.FirstStatus != "" {
-					cl.FirstCharEdits, _ = charErrors(s.truth[cl.Page-1], cl.FirstOutput)
-					cl.FirstWordEdits, _ = wordErrors(s.truth[cl.Page-1], cl.FirstOutput)
+					cl.FirstCharEdits, _ = textscore.CharErrors(s.truth[cl.Page-1], cl.FirstOutput)
+					cl.FirstWordEdits, _ = textscore.WordErrors(s.truth[cl.Page-1], cl.FirstOutput)
 				}
 				cells[i] = cl
 			}
@@ -286,7 +288,7 @@ func flowRun(t *testing.T, v *vision, corr *document.Corrector, s fixtureSet, ru
 
 // flowPage takes one prepared page through the flow, setting cl's text, status, and how it got
 // there. A step that fails is t's error, and leaves cl incomplete.
-func flowPage(t *testing.T, v *vision, corr *document.Corrector, img document.PageImage, cl *flowCell) {
+func flowPage(t *testing.T, v *vision, corr *picture.Corrector, img document.PageImage, cl *flowCell) {
 	t.Helper()
 	if img.PNG == nil && document.HasText(img.Text) {
 		cl.Source = "text-layer"
@@ -499,7 +501,7 @@ func TestTiles(t *testing.T) {
 			for _, r := range reads {
 				t.Logf("recorded: tiles %s at %d dpi, page %d region top %g bottom %g left %g right %g, %dx%d, %d PNG bytes: run %d, %d input tokens, %d image tokens, %d output tokens, %s in %d ms: %q",
 					r.Tile, dpi, r.Page, r.Region.Top, r.Region.Bottom, r.Region.Left, r.Region.Right, r.Width, r.Height, r.PNGBytes,
-					r.Run, r.InputTokens, r.InputTokens-r.TextOnly, r.OutputTokens, r.Status, r.RequestMillis, collapse(r.Output))
+					r.Run, r.InputTokens, r.InputTokens-r.TextOnly, r.OutputTokens, r.Status, r.RequestMillis, textscore.Collapse(r.Output))
 			}
 			saveJSON(t, fmt.Sprintf("tiles-%d.json", dpi), reads, func() {})
 		})
@@ -595,7 +597,7 @@ func reportTextLayers(t *testing.T, set string, flows []flowResult) {
 	byPage := map[int][]string{}
 	for _, cl := range sortedRuns(flows) {
 		if cl.Source == "text-layer" {
-			byPage[cl.Page] = append(byPage[cl.Page], fmt.Sprintf("%.4f", rate(cl.CharEdits, cl.Chars)))
+			byPage[cl.Page] = append(byPage[cl.Page], fmt.Sprintf("%.4f", textscore.Rate(cl.CharEdits, cl.Chars)))
 		}
 	}
 	if len(byPage) == 0 {
@@ -629,12 +631,12 @@ func reportCorrections(t *testing.T, set string, flows []flowResult) {
 			byCorrection[name] = append(byCorrection[name], fmt.Sprintf("p%d/r%d", cl.Page, cl.Run))
 		}
 		t.Logf("recorded: flow %s: page %d run %d: first pass %s, judged %q (%s), asked %v, first CER %.4f",
-			set, cl.Page, cl.Run, cl.FirstStatus, cl.Quality, cl.Reason, cl.Asked, rate(cl.FirstCharEdits, cl.Chars))
+			set, cl.Page, cl.Run, cl.FirstStatus, cl.Quality, cl.Reason, cl.Asked, textscore.Rate(cl.FirstCharEdits, cl.Chars))
 		if cl.Source != "second" {
 			continue
 		}
 		flagged++
-		first, second := rate(cl.FirstCharEdits, cl.Chars), rate(cl.CharEdits, cl.Chars)
+		first, second := textscore.Rate(cl.FirstCharEdits, cl.Chars), textscore.Rate(cl.CharEdits, cl.Chars)
 		verdict := "same"
 		switch {
 		case cl.incomplete():
@@ -657,7 +659,7 @@ func reportCorrections(t *testing.T, set string, flows []flowResult) {
 	}
 	t.Logf("recorded: flow %s: %d first passes, judged %v; %d flagged with corrections, %d unknown names dropped; second pass helped %d, hurt %d, same %d",
 		set, sent, judged, flagged, unknown, helped, hurt, same)
-	for _, c := range document.Corrections() {
+	for _, c := range picture.Corrections() {
 		pages := byCorrection[c.String()]
 		t.Logf("recorded: flow %s: %s asked %d times: %s", set, c, len(pages), strings.Join(pages, " "))
 	}
@@ -698,7 +700,7 @@ func reportBands(t *testing.T, n int, byKey map[string][]flowResult) {
 				continue
 			}
 			t.Logf("recorded: flow scanned regions: page %d run %d %s (%d input tokens, %s): %q",
-				page, cl.Run, cl.Source, cl.InputTokens, cl.Status, collapse(cl.Output))
+				page, cl.Run, cl.Source, cl.InputTokens, cl.Status, textscore.Collapse(cl.Output))
 		}
 		var full []string
 		for _, variant := range flowVariants[:3] {

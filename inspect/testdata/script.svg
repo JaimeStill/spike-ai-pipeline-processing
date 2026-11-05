@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" onload="alert(1)">
+  <script>alert(2)</script>
+  <defs><rect id="box" width="10" height="10"/></defs>
+  <use href="#box"/>
+  <image href="data:image/png;base64,iVBORw0KGgo=" width="1" height="1"/>
+  <image xlink:href="https://example.invalid/tracker.png" width="1" height="1"/>
+  <foreignObject width="10" height="10"><div xmlns="http://www.w3.org/1999/xhtml">markup</div></foreignObject>
+</svg>

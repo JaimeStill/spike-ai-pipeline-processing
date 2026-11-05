@@ -1,0 +1,559 @@
+[
+  {
+    "path": "archive/high-ratio-200mb.zip",
+    "covers": [
+      "zip-bomb-lite (200 MB of zeros"
+    ],
+    "kind": "zip",
+    "verdict": "proceed"
+  },
+  {
+    "path": "archive/password-protected.zip",
+    "covers": [
+      "encrypted"
+    ],
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "zip-encrypted",
+        "Class": "active",
+        "Evidence": "entry \"meeting-notes.txt\", and 1 more"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "image/vector/script-bearing.svg",
+    "covers": [
+      "security",
+      "script"
+    ],
+    "kind": "svg",
+    "flags": [
+      {
+        "Check": "svg-event-handler",
+        "Class": "active",
+        "Evidence": "onload on \u003csvg\u003e at line 4"
+      },
+      {
+        "Check": "svg-external-href",
+        "Class": "active",
+        "Evidence": "xlink:href=\"http://example.invalid/tracker.png\" on \u003cimage\u003e at line 6"
+      },
+      {
+        "Check": "svg-script",
+        "Class": "active",
+        "Evidence": "\u003cscript\u003e at line 5"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/legacy/generated/docx/media.libreoffice.docx",
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "external-relationship",
+        "Class": "active",
+        "Evidence": "word/_rels/document.xml.rels: image https://example.invalid/linked.png"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/legacy/generated/docx/media.python-docx.docx",
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "external-relationship",
+        "Class": "active",
+        "Evidence": "word/_rels/document.xml.rels: image https://example.invalid/linked.png"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/macro-enabled.openxmlsdk.docm",
+    "covers": [
+      "macro",
+      "vba"
+    ],
+    "kind": "zip",
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/macro-enabled.openxmlsdk.dotm",
+    "covers": [
+      "macro",
+      "vba"
+    ],
+    "kind": "zip",
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/macro.openxmlsdk.xlsm",
+    "covers": [
+      "macro",
+      "vba"
+    ],
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "vba-project",
+        "Class": "active",
+        "Evidence": "part \"xl/vbaProject.bin\""
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/macro.openxmlsdk.xltm",
+    "covers": [
+      "macro",
+      "vba"
+    ],
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "vba-project",
+        "Class": "active",
+        "Evidence": "part \"xl/vbaProject.bin\""
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/protected-passtika.poi.xlsb",
+    "covers": [
+      "encrypted"
+    ],
+    "kind": "ole2",
+    "flags": [
+      {
+        "Check": "ooxml-encrypted",
+        "Class": "active",
+        "Evidence": "OLE2 compound file with an EncryptedPackage stream"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/simple-macro.poi.docm",
+    "covers": [
+      "macro",
+      "vba"
+    ],
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "vba-project",
+        "Class": "active",
+        "Evidence": "part \"word/vbaProject.bin\""
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/simple-macro.poi.pptm",
+    "covers": [
+      "macro",
+      "vba"
+    ],
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "vba-project",
+        "Class": "active",
+        "Evidence": "part \"ppt/vbaProject.bin\""
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/simple-macro.poi.xlsm",
+    "covers": [
+      "macro",
+      "vba"
+    ],
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "vba-project",
+        "Class": "active",
+        "Evidence": "part \"xl/vbaProject.bin\""
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/macro-template/xlm-macro.poi.xlsm",
+    "covers": [
+      "macro",
+      "xlm"
+    ],
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "macro-sheet",
+        "Class": "active",
+        "Evidence": "part \"xl/macrosheets/sheet1.xml\""
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/realworld/docx/word-with-attachments.docx",
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "ole-object",
+        "Class": "active",
+        "Evidence": "part \"word/embeddings/oleObject1.bin\""
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "office/realworld/pptx/linked-pictures.pptx",
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "external-relationship",
+        "Class": "active",
+        "Evidence": "ppt/slides/_rels/slide1.xml.rels: image file://localhost/Users/writ/Documents/workspace/ApachePoi/project-logo.jpg"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/born-digital/mgrs-field-report.pdf",
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-openaction",
+        "Class": "active",
+        "Evidence": "/OpenAction at offset 34551"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/attachments/embedded-video-avi.pdf",
+    "covers": [
+      "embedded-files"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-embeddedfile",
+        "Class": "active",
+        "Evidence": "/EF at offset 172081"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/attachments/file-attachment-annotation.pdf",
+    "covers": [
+      "embedded-files"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-embeddedfile",
+        "Class": "active",
+        "Evidence": "/EF at offset 47492"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/attachments/file-attachment.pdf",
+    "covers": [
+      "embedded-files"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-embeddedfile",
+        "Class": "active",
+        "Evidence": "/EmbeddedFiles at offset 69242, and 1 more"
+      },
+      {
+        "Check": "pdf-javascript",
+        "Class": "active",
+        "Evidence": "/JavaScript at offset 69263, and 1 more"
+      },
+      {
+        "Check": "pdf-js",
+        "Class": "active",
+        "Evidence": "/JS at offset 69433"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/encrypted/encryption-nocopy.pdf",
+    "covers": [
+      "encrypted"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-encrypt",
+        "Class": "active",
+        "Evidence": "/Encrypt at offset 166, and 1 more"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/encrypted/encryption-notextaccess.pdf",
+    "covers": [
+      "encrypted"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-encrypt",
+        "Class": "active",
+        "Evidence": "/Encrypt at offset 166, and 1 more"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/encrypted/encryption-openpassword.pdf",
+    "covers": [
+      "encrypted"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-encrypt",
+        "Class": "active",
+        "Evidence": "/Encrypt at offset 166, and 1 more"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/encrypted/simple-open-password.pdf",
+    "covers": [
+      "encrypted"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-encrypt",
+        "Class": "active",
+        "Evidence": "/Encrypt at offset 18872"
+      },
+      {
+        "Check": "pdf-openaction",
+        "Class": "active",
+        "Evidence": "/OpenAction at offset 18080"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/encrypted/unicode-password-corrigendum5.pdf",
+    "covers": [
+      "encrypted"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-encrypt",
+        "Class": "active",
+        "Evidence": "/Encrypt at offset 5147"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/forms/isartor-interactive-form.pdf",
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-openaction",
+        "Class": "active",
+        "Evidence": "/OpenAction at offset 46341"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/malformed/compacted-syntax.pdf",
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-aa",
+        "Class": "active",
+        "Evidence": "/AA at offset 1396"
+      },
+      {
+        "Check": "pdf-javascript",
+        "Class": "active",
+        "Evidence": "/JavaScript at offset 1408, and 1 more"
+      },
+      {
+        "Check": "pdf-js",
+        "Class": "active",
+        "Evidence": "/JS at offset 1419"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/malformed/header-no-version-info.pdf",
+    "kind": "",
+    "flags": [
+      {
+        "Check": "signature-mismatch",
+        "Class": "active",
+        "Evidence": "extension .pdf, no signature"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/malformed/javascript.pdf",
+    "covers": [
+      "javascript",
+      "security"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-javascript",
+        "Class": "active",
+        "Evidence": "/JavaScript at offset 593"
+      },
+      {
+        "Check": "pdf-js",
+        "Class": "active",
+        "Evidence": "/JS at offset 619"
+      },
+      {
+        "Check": "pdf-openaction",
+        "Class": "active",
+        "Evidence": "/OpenAction at offset 27"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/pdfa/embedded-lucinda-sans-pdfa-1a.pdf",
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-openaction",
+        "Class": "active",
+        "Evidence": "/OpenAction at offset 31385"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/pdfa/pdfa3b-embedded-files-fail.pdf",
+    "covers": [
+      "embedded-files"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-embeddedfile",
+        "Class": "active",
+        "Evidence": "/EmbeddedFiles at offset 3957, and 1 more"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/pdfa/pdfa3b-embedded-files-pass.pdf",
+    "covers": [
+      "embedded-files"
+    ],
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-embeddedfile",
+        "Class": "active",
+        "Evidence": "/EmbeddedFiles at offset 3970, and 1 more"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/edge/tagged/pdfua1-text-pass.pdf",
+    "kind": "pdf",
+    "flags": [
+      {
+        "Check": "pdf-openaction",
+        "Class": "active",
+        "Evidence": "/OpenAction at offset 91"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "pdf/scanned/generate.sh",
+    "kind": "shebang",
+    "flags": [
+      {
+        "Check": "executable",
+        "Class": "active",
+        "Evidence": "shebang signature"
+      }
+    ],
+    "verdict": "proceed"
+  },
+  {
+    "path": "text/xml/billion-laughs-small.xml",
+    "covers": [
+      "security"
+    ],
+    "kind": "",
+    "verdict": "proceed"
+  },
+  {
+    "path": "onenote/interop/SUT/Encryption.one",
+    "covers": [
+      "encrypted",
+      "password-protected"
+    ],
+    "kind": "onestore",
+    "verdict": "proceed"
+  },
+  {
+    "path": "onenote/interop/SUT/OneWithFileData.one",
+    "covers": [
+      "embedded-files"
+    ],
+    "kind": "onestore",
+    "verdict": "proceed"
+  },
+  {
+    "path": "onenote/large/LargeData.one",
+    "covers": [
+      "embedded-files"
+    ],
+    "kind": "onestore",
+    "verdict": "proceed"
+  },
+  {
+    "path": "archive/high-ratio-200mb.zip",
+    "kind": "zip",
+    "flags": [
+      {
+        "Check": "zip-bomb",
+        "Class": "unsafe",
+        "Evidence": "entry \"zeros.bin\": 200000000 bytes from 194103, 1030:1"
+      }
+    ],
+    "verdict": "quarantine",
+    "bomb_size": 104857600
+  }
+]

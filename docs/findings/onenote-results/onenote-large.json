@@ -1,0 +1,803 @@
+[
+  {
+    "input": "LargeData.one",
+    "path": "/home/jaime/docs/onenote/large/LargeData.one",
+    "size": 11288928,
+    "floor": {
+      "max_rss": 13045760,
+      "user": 0,
+      "system": 3080000,
+      "wall": 2927042
+    },
+    "runs": [
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 20680704,
+          "user": 720872000,
+          "system": 657842000,
+          "wall": 1383775294
+        },
+        "self": {
+          "max_rss": 12201984,
+          "user": 1843000,
+          "system": 3689000
+        },
+        "children": {
+          "max_rss": 20680704,
+          "user": 719029000,
+          "system": 653373000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 136,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 1379789633
+        }
+      },
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 20561920,
+          "user": 744106000,
+          "system": 609143000,
+          "wall": 1358168706
+        },
+        "self": {
+          "max_rss": 13942784,
+          "user": 3524000,
+          "system": 1777000
+        },
+        "children": {
+          "max_rss": 20561920,
+          "user": 740581000,
+          "system": 606278000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 136,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 1353753813
+        }
+      },
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 20353024,
+          "user": 783949000,
+          "system": 643659000,
+          "wall": 1433180243
+        },
+        "self": {
+          "max_rss": 13758464,
+          "user": 3625000,
+          "system": 1806000
+        },
+        "children": {
+          "max_rss": 20353024,
+          "user": 780323000,
+          "system": 641206000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 136,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 1429267584
+        }
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 20348928,
+          "user": 756382000,
+          "system": 644411000,
+          "wall": 1406652244
+        },
+        "self": {
+          "max_rss": 12546048,
+          "user": 2746000,
+          "system": 4567000
+        },
+        "children": {
+          "max_rss": 20348928,
+          "user": 753576000,
+          "system": 638809000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 136,
+          "routes": {
+            "office": 136
+          },
+          "warnings": 0,
+          "elapsed": 1402177519
+        },
+        "written_files": 2,
+        "written_bytes": 8127445
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 20451328,
+          "user": 734345000,
+          "system": 679576000,
+          "wall": 1420497186
+        },
+        "self": {
+          "max_rss": 12922880,
+          "user": 1588000,
+          "system": 4787000
+        },
+        "children": {
+          "max_rss": 20451328,
+          "user": 732756000,
+          "system": 673995000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 136,
+          "routes": {
+            "office": 136
+          },
+          "warnings": 0,
+          "elapsed": 1416423231
+        },
+        "written_files": 2,
+        "written_bytes": 8127445
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 20525056,
+          "user": 753945000,
+          "system": 636955000,
+          "wall": 1395974521
+        },
+        "self": {
+          "max_rss": 13713408,
+          "user": 2513000,
+          "system": 2521000
+        },
+        "children": {
+          "max_rss": 20525056,
+          "user": 751431000,
+          "system": 633343000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 136,
+          "routes": {
+            "office": 136
+          },
+          "warnings": 0,
+          "elapsed": 1392409771
+        },
+        "written_files": 2,
+        "written_bytes": 8127445
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 20467712,
+          "user": 746415000,
+          "system": 675460000,
+          "wall": 1428878681
+        }
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 20561920,
+          "user": 742402000,
+          "system": 622747000,
+          "wall": 1371893201
+        }
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 20541440,
+          "user": 758542000,
+          "system": 668674000,
+          "wall": 1435150447
+        }
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 20221952,
+          "user": 735819000,
+          "system": 630254000,
+          "wall": 1372508881
+        },
+        "written_files": 2,
+        "written_bytes": 8127445
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 20566016,
+          "user": 720304000,
+          "system": 666630000,
+          "wall": 1393987340
+        },
+        "written_files": 2,
+        "written_bytes": 8127445
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 20672512,
+          "user": 733630000,
+          "system": 702466000,
+          "wall": 1443308586
+        },
+        "written_files": 2,
+        "written_bytes": 8127445
+      }
+    ]
+  },
+  {
+    "input": "Large Desktop.one",
+    "path": "/home/jaime/docs/onenote/large/Large Desktop.one",
+    "size": 112965624,
+    "floor": {
+      "max_rss": 10551296,
+      "user": 0,
+      "system": 3051000,
+      "wall": 2932609
+    },
+    "runs": [
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 141414400,
+          "user": 131253000,
+          "system": 153064000,
+          "wall": 284831145
+        },
+        "self": {
+          "max_rss": 11251712,
+          "user": 1415000,
+          "system": 2836000
+        },
+        "children": {
+          "max_rss": 141414400,
+          "user": 129838000,
+          "system": 149251000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 280738402
+        }
+      },
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 141455360,
+          "user": 132723000,
+          "system": 143297000,
+          "wall": 277137072
+        },
+        "self": {
+          "max_rss": 11235328,
+          "user": 2183000,
+          "system": 2190000
+        },
+        "children": {
+          "max_rss": 141455360,
+          "user": 130540000,
+          "system": 140173000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 272634963
+        }
+      },
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 141447168,
+          "user": 120895000,
+          "system": 159317000,
+          "wall": 280931508
+        },
+        "self": {
+          "max_rss": 11141120,
+          "user": 1229000,
+          "system": 2523000
+        },
+        "children": {
+          "max_rss": 141447168,
+          "user": 119666000,
+          "system": 155926000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 277208088
+        }
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 141402112,
+          "user": 129361000,
+          "system": 181602000,
+          "wall": 311535728
+        },
+        "self": {
+          "max_rss": 11644928,
+          "user": 3398000,
+          "system": 1699000
+        },
+        "children": {
+          "max_rss": 141402112,
+          "user": 125725000,
+          "system": 178889000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {
+            "document": 5,
+            "vision": 8
+          },
+          "warnings": 0,
+          "elapsed": 306874103
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 141430784,
+          "user": 126016000,
+          "system": 182512000,
+          "wall": 309417876
+        },
+        "self": {
+          "max_rss": 11841536,
+          "user": 2356000,
+          "system": 2356000
+        },
+        "children": {
+          "max_rss": 141430784,
+          "user": 123547000,
+          "system": 178797000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {
+            "document": 5,
+            "vision": 8
+          },
+          "warnings": 0,
+          "elapsed": 304543130
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 141635584,
+          "user": 119784000,
+          "system": 191061000,
+          "wall": 311874692
+        },
+        "self": {
+          "max_rss": 11431936,
+          "user": 0,
+          "system": 4438000
+        },
+        "children": {
+          "max_rss": 141635584,
+          "user": 119784000,
+          "system": 185973000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {
+            "document": 5,
+            "vision": 8
+          },
+          "warnings": 0,
+          "elapsed": 307865264
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 140648448,
+          "user": 130178000,
+          "system": 157307000,
+          "wall": 289493051
+        }
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 141430784,
+          "user": 131486000,
+          "system": 158203000,
+          "wall": 291206764
+        }
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 141373440,
+          "user": 132104000,
+          "system": 151982000,
+          "wall": 285726666
+        }
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 141377536,
+          "user": 134570000,
+          "system": 169511000,
+          "wall": 305826717
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 141430784,
+          "user": 125452000,
+          "system": 179109000,
+          "wall": 306400135
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 141275136,
+          "user": 121667000,
+          "system": 192431000,
+          "wall": 315996652
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      }
+    ]
+  },
+  {
+    "input": "Large OneDrive.one",
+    "path": "/home/jaime/docs/onenote/large/Large OneDrive.one",
+    "size": 161469274,
+    "floor": {
+      "max_rss": 9994240,
+      "user": 1189000,
+      "system": 1205000,
+      "wall": 2214145
+    },
+    "runs": [
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 141385728,
+          "user": 135800000,
+          "system": 161274000,
+          "wall": 297689612
+        },
+        "self": {
+          "max_rss": 13950976,
+          "user": 1336000,
+          "system": 4049000
+        },
+        "children": {
+          "max_rss": 141385728,
+          "user": 134438000,
+          "system": 155776000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 293113973
+        }
+      },
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 141623296,
+          "user": 137753000,
+          "system": 155647000,
+          "wall": 293823701
+        },
+        "self": {
+          "max_rss": 11644928,
+          "user": 910000,
+          "system": 3669000
+        },
+        "children": {
+          "max_rss": 141623296,
+          "user": 136842000,
+          "system": 151344000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 289991848
+        }
+      },
+      {
+        "way": "adapter",
+        "launched": {
+          "max_rss": 141230080,
+          "user": 145384000,
+          "system": 155087000,
+          "wall": 301117812
+        },
+        "self": {
+          "max_rss": 11071488,
+          "user": 3100000,
+          "system": 1040000
+        },
+        "children": {
+          "max_rss": 141230080,
+          "user": 142284000,
+          "system": 153525000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {},
+          "warnings": 0,
+          "elapsed": 297481264
+        }
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 141361152,
+          "user": 132816000,
+          "system": 190573000,
+          "wall": 324582512
+        },
+        "self": {
+          "max_rss": 12021760,
+          "user": 3482000,
+          "system": 2620000
+        },
+        "children": {
+          "max_rss": 141361152,
+          "user": 129333000,
+          "system": 186257000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {
+            "document": 5,
+            "vision": 8
+          },
+          "warnings": 0,
+          "elapsed": 319609440
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 141668352,
+          "user": 120712000,
+          "system": 193725000,
+          "wall": 315072692
+        },
+        "self": {
+          "max_rss": 11628544,
+          "user": 1921000,
+          "system": 2884000
+        },
+        "children": {
+          "max_rss": 141668352,
+          "user": 118790000,
+          "system": 189903000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {
+            "document": 5,
+            "vision": 8
+          },
+          "warnings": 0,
+          "elapsed": 310814611
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "adapter, media",
+        "launched": {
+          "max_rss": 141332480,
+          "user": 125969000,
+          "system": 186889000,
+          "wall": 313795143
+        },
+        "self": {
+          "max_rss": 11624448,
+          "user": 3191000,
+          "system": 1600000
+        },
+        "children": {
+          "max_rss": 141332480,
+          "user": 122777000,
+          "system": 183917000
+        },
+        "survey": {
+          "records": {
+            "notebook": 1,
+            "page": 1,
+            "section": 1
+          },
+          "named": 13,
+          "routes": {
+            "document": 5,
+            "vision": 8
+          },
+          "warnings": 0,
+          "elapsed": 308877374
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 141234176,
+          "user": 129572000,
+          "system": 149526000,
+          "wall": 280740164
+        }
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 141656064,
+          "user": 128553000,
+          "system": 153420000,
+          "wall": 283572310
+        }
+      },
+      {
+        "way": "onenote",
+        "launched": {
+          "max_rss": 141533184,
+          "user": 119224000,
+          "system": 156810000,
+          "wall": 277726715
+        }
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 141639680,
+          "user": 140472000,
+          "system": 169352000,
+          "wall": 311452820
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 141348864,
+          "user": 133295000,
+          "system": 186921000,
+          "wall": 321926806
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      },
+      {
+        "way": "onenote, media",
+        "launched": {
+          "max_rss": 141340672,
+          "user": 135791000,
+          "system": 171752000,
+          "wall": 309737701
+        },
+        "written_files": 11,
+        "written_bytes": 112889106
+      }
+    ]
+  }
+]

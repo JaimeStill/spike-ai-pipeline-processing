@@ -14,7 +14,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -231,12 +231,12 @@ func installStandin(t *testing.T, program, version string) func() []standinRun {
 	}
 }
 
-// standinCorrector builds the corrections stage over the stand-in magick at 7.1.2-34, and
-// returns it with the stand-in's run log.
-func standinCorrector(t *testing.T) (*document.Corrector, func() [][]string) {
+// standinCorrector builds the picture package's corrections stage over the stand-in magick at
+// 7.1.2-34, and returns it with the stand-in's run log.
+func standinCorrector(t *testing.T) (*picture.Corrector, func() [][]string) {
 	t.Helper()
-	tl, runs := standinMagick(t, "7.1.2-34", document.MagickSpec())
-	c, err := document.NewCorrector(tl)
+	tl, runs := standinMagick(t, "7.1.2-34", picture.MagickSpec())
+	c, err := picture.NewCorrector(tl)
 	if err != nil {
 		t.Fatal(err)
 	}

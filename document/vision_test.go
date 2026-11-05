@@ -22,6 +22,7 @@ import (
 	client "github.com/JaimeStill/spike-ai-pipeline-client"
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // This file is the vision harness: the layer above document, in test code, that sends the pages
@@ -63,7 +64,7 @@ type vision struct {
 }
 
 // newVision builds a vision over gen and a Preparer of render and correct, correct optional.
-func newVision(gen generator, render document.Renderer, correct *document.Corrector) (*vision, error) {
+func newVision(gen generator, render document.Renderer, correct *picture.Corrector) (*vision, error) {
 	if gen == nil {
 		return nil, errors.New("vision: no generator")
 	}
@@ -79,7 +80,7 @@ func newVision(gen generator, render document.Renderer, correct *document.Correc
 type visionRequest struct {
 	Dir         string
 	DPI         int
-	Corrections []document.Correction
+	Corrections []picture.Correction
 	// Concurrency bounds both the pages Images prepares at once and the pages awaiting the model.
 	Concurrency int
 	// Template is the request for one page; each page's request is a copy of it with one user
@@ -494,7 +495,7 @@ func newVisionFixture(t *testing.T, pages int) *visionFixture {
 }
 
 // build rebuilds f's vision with correct as its corrections stage.
-func (f *visionFixture) build(t *testing.T, correct *document.Corrector) {
+func (f *visionFixture) build(t *testing.T, correct *picture.Corrector) {
 	t.Helper()
 	var err error
 	f.vision, err = newVision(f.gen, f.render, correct)
@@ -647,7 +648,7 @@ func TestVisionRetryCorrectsOnce(t *testing.T) {
 	f := newVisionFixture(t, 1)
 	corrector, runs := standinCorrector(t)
 	f.build(t, corrector)
-	f.req.Corrections = []document.Correction{document.Deskew}
+	f.req.Corrections = []picture.Correction{picture.Deskew}
 	f.req.PageRetries = 2
 	f.gen.respond, _ = cutOff(1, 2)
 	for p, err := range f.vision.pages(t.Context(), bytes.NewReader(f.pdf), f.req) {

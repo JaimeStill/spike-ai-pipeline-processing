@@ -17,6 +17,7 @@ import (
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 )
 
 // builtDir is the built .msg's directory: its .eml source, the generator's layout and manifest,
@@ -36,7 +37,7 @@ const builtEML = "eml/office-attachments.eml"
 // itself.
 type builtSource struct {
 	filename string
-	route    email.Route
+	route    route.Route
 	fixture  string
 	member   string
 }
@@ -45,12 +46,12 @@ type builtSource struct {
 // by hand from the brief: processing's own committed office fixtures, two whole and two pictures
 // taken from packages, and one of the copied mail fixtures, a .msg attached as a file.
 var builtSources = []builtSource{
-	{"minutes.docx", email.RouteOffice, "office/testdata/ooxml/tables.libreoffice.docx", "-"},
-	{"budget.xls", email.RouteOffice, "office/testdata/legacy/generated/formulas.libreoffice.xls", "-"},
-	{"scan.tif", email.RouteVisionConverted, "office/testdata/pictures/tiff.docx", "word/media/image1.tiff"},
-	{"diagram.emf", email.RouteVisionConverted, "office/testdata/ooxml/word-with-attachments.docx", "word/media/image4.emf"},
+	{"minutes.docx", route.Office, "office/testdata/ooxml/tables.libreoffice.docx", "-"},
+	{"budget.xls", route.Office, "office/testdata/legacy/generated/formulas.libreoffice.xls", "-"},
+	{"scan.tif", route.VisionConverted, "office/testdata/pictures/tiff.docx", "word/media/image1.tiff"},
+	{"diagram.emf", route.VisionConverted, "office/testdata/ooxml/word-with-attachments.docx", "word/media/image4.emf"},
 	// MsgKit attaches it by value, as a file, not as an embedded message: a by-value .msg.
-	{"forwarded.msg", email.RouteNested, "email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg", "-"},
+	{"forwarded.msg", route.Nested, "email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg", "-"},
 }
 
 // builtManifest is the built directory's MANIFEST: its header, each key and its value; its
@@ -234,17 +235,17 @@ func TestBuiltRoutes(t *testing.T) {
 			if got, want := sha256Hex(content), sha256Hex(sourceContent(t, s)); got != want {
 				t.Errorf("content SHA-256 %s, its source's %s", got, want)
 			}
-			route, why, err := a.Route()
+			rt, why, err := a.Route()
 			if err != nil {
 				t.Fatal(err)
 			}
-			if route != s.route {
-				t.Errorf("route %q (%s), want %q", route, why, s.route)
+			if rt != s.route {
+				t.Errorf("route %q (%s), want %q", rt, why, s.route)
 			}
-			if a.Message != nil || (route == email.RouteNested && why != "OLE2 signature, .msg extension") {
-				t.Errorf("route %q (%s), nests a message %t; want a by-value file routed by its signature", route, why, a.Message != nil)
+			if a.Message != nil || (rt == route.Nested && why != "OLE2 signature, .msg extension") {
+				t.Errorf("route %q (%s), nests a message %t; want a by-value file routed by its signature", rt, why, a.Message != nil)
 			}
-			t.Logf("%s: %s (%s), stored as %s", a.Filename, route, why, a.MimeType)
+			t.Logf("%s: %s (%s), stored as %s", a.Filename, rt, why, a.MimeType)
 		})
 	}
 }

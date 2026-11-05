@@ -9,7 +9,11 @@ import (
 	"fmt"
 	"io"
 	"iter"
+	"slices"
 	"sync"
+
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/cli"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
 // defaultDPI is the DPI a request of zero DPI renders its pages at.
@@ -21,12 +25,12 @@ const defaultDPI = 150
 // inference: a layer above sends the pages it yields to a model.
 type Preparer struct {
 	render  Renderer
-	correct *Corrector
+	correct *picture.Corrector
 }
 
 // NewPreparer builds a Preparer over render, and over correct when it isn't nil. It refuses a nil
 // Renderer. A Preparer with no corrections stage refuses a request that names corrections.
-func NewPreparer(render Renderer, correct *Corrector) (*Preparer, error) {
+func NewPreparer(render Renderer, correct *picture.Corrector) (*Preparer, error) {
 	if render == nil {
 		return nil, errors.New("document: preparer: no renderer")
 	}
@@ -43,7 +47,7 @@ type ImagesRequest struct {
 	DPI int
 	// Corrections are the corrections each page's image goes through. A Preparer with no
 	// corrections stage refuses a request that names any.
-	Corrections []Correction
+	Corrections []picture.Correction
 	// Concurrency is how many pages are prepared at once, from rendering to the end of their
 	// corrections. Zero means 1; a negative concurrency is refused.
 	Concurrency int
@@ -103,9 +107,9 @@ func (p *Preparer) Images(ctx context.Context, pdf io.Reader, req ImagesRequest)
 			yield(PageImage{}, err)
 			return
 		}
-		path, remove, err := spool(req.Dir, pdf)
+		path, remove, err := cli.Spool(req.Dir, pdf, ".pdf")
 		if err != nil {
-			yield(PageImage{}, err)
+			yield(PageImage{}, fmt.Errorf("document: %w", err))
 			return
 		}
 		more := p.pages(ctx, path, req, yield)
@@ -245,7 +249,7 @@ func (p *Preparer) check(req *ImagesRequest) error {
 		req.Region = &region
 	}
 	for _, corr := range req.Corrections {
-		if _, ok := known[corr]; !ok {
+		if !slices.Contains(picture.Corrections(), corr) {
 			return fmt.Errorf("document: request names unknown correction %v", corr)
 		}
 	}
