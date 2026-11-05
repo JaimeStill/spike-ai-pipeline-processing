@@ -32,7 +32,7 @@ integration tier's in `dispatch/tier_integration_test.go`, and the ink's in
 | Do the routes match the hand truth? | **Yes, every row.** 119 inputs, 225 parts, each held to `dispatch/testdata/tier-routes.tsv`: no mismatch, no failed part the truth doesn't expect. The one failure is the truth's: `Encryption.one`, refused by onenote. |
 | Do OneNote's media route right? | **Yes.** In the tier, every page's image to vision, its embedded .docx to office, its ink to the picture stage, its .mp3 to audio (no processor yet); onenote's `TestRealMediaRoutes` holds all 7 distinct media files to their hand routes. |
 | What does inspection flag over ~/docs? | **Every hazard it has a check for**, 31 of 568 files flagged, all proceed under the default policy; the 200 MB zero ZIP is a bomb, quarantined, once the rule's size is lowered under it. Hazards with no flag: two OpenXML SDK macro-enabled files with no VBA part, the billion-laughs XML, and OneNote's encrypted and file-bearing sections. The clean fixtures yield none but the three documented. |
-| Does vision read OneNote ink? | **Yes, all 14 words, in every run**: CER 0.0278, WER 0.0714, its one word edit a stray mark read as "L". OneNote's stored recognition holds 4 of the 14 words, two "Hello World" lines: CER 0.6806, WER 0.7143. The truth is the session's draft, pending the architect's confirmation. |
+| Does vision read OneNote ink? | **Yes, all 14 words, in every run**: CER 0.0278, WER 0.0714, its one word edit a stray mark read as "L". OneNote's stored recognition holds 4 of the 14 words, two "Hello World" lines: CER 0.6806, WER 0.7143. The truth is the session's draft, confirmed by the architect on 2026-11-05. |
 | What does the onenote adapter cost? | **Nothing measurable over the CLI.** Medians within 6% of the CLI's, either way, on all three large sections (1.38 to 1.43 s on `LargeData.one`, 0.28 to 0.32 s on the others). The adapter's own process peaks at 10.7 to 13.3 MiB; the CLI under it peaks where it does alone, 19.7 and 135.1 MiB. |
 | What does the dispatcher cost on the scale store? | **15.61 s with removal on, 17.57 s with it off, against 13.72 s for the email adapter alone and 13.48 s for mail alone**, median of 3: removal on is 14% over the adapter. Its own process peaks at **36.8 MiB** on, 38.3 MiB off; mail under it at 67.0 MiB, where mail alone peaks at 66.8 MiB. |
 | How much disk? | **19.0 MB at most with removal on**, the CLI's originals released as each is settled, against **1.88 GB with removal off**, every attachment kept, the same bytes mail alone writes: 1.0% of it. The file index ends at 264 MB either way. |
@@ -166,8 +166,8 @@ Hello World
 Hello World
 ```
 
-**It was drafted by the session that wrote this finding, from the rendered PNG, and is pending the
-architect's confirmation.** It leaves out the wavy line across the top and a stray stroke, like an
+**It was drafted by the session that wrote this finding, from the rendered PNG, and confirmed by
+the architect on 2026-11-05.** It leaves out the wavy line across the top and a stray stroke, like an
 "L", before the large "Hello World".
 
 ### Results

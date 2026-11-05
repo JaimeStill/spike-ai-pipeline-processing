@@ -22,6 +22,7 @@ here before the tier passes.
 `handwriting_recognition.one` (`onenote/testdata/onenote/fixtures/onenote-rs/`), which
 `TestFindingsInk` scores the vision model's reading and OneNote's stored recognition against: one
 line per line of handwriting, top to bottom, as written. It was drafted by the session that wrote
-the finding, from the ink rendered by the picture stage at 150 dpi on white (984x936), and is
-pending the architect's confirmation. It leaves out what is no text: the wavy line across the top,
-and the stray mark, an "L"-like stroke, before the large "Hello World".
+the finding, from the ink rendered by the picture stage at 150 dpi on white (984x936), and
+confirmed by the architect on 2026-11-05 against the rendered page. It leaves out what is no text:
+the wavy line across the top, and the stray mark, an "L"-like stroke, before the large "Hello
+World".
