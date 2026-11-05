@@ -4,7 +4,6 @@ package email_test
 
 import (
 	"crypto/sha256"
-	"encoding/binary"
 	"encoding/hex"
 	"os"
 	"path/filepath"
@@ -14,48 +13,16 @@ import (
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 )
 
-// Constructed content, each its format's signature followed by filler.
+// Constructed content, each its format's signature followed by filler. route's tests hold the
+// signatures' cases; these route an attachment through route.File.
 var (
 	pdfBytes  = "%PDF-1.7\n%filler"
-	pngBytes  = "\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR"
-	jpegBytes = "\xff\xd8\xff\xe0\x00\x10JFIF\x00"
-	gif87     = "GIF87a\x01\x00\x01\x00"
-	gif89     = "GIF89a\x01\x00\x01\x00"
 	tiffLE    = "II*\x00\x08\x00\x00\x00"
-	tiffBE    = "MM\x00*\x00\x00\x00\x08"
-	zipBytes  = "PK\x03\x04\x14\x00\x06\x00[Content_Types].xml"
 	ole2Bytes = "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1\x00\x00\x00\x00"
-	wmfPlace  = "\xd7\xcd\xc6\x9a\x00\x00\x00\x00"
 )
-
-// bmp returns a BMP's first bytes, its DIB header size at offset 14 being dib.
-func bmp(dib uint32) string {
-	b := make([]byte, 54)
-	copy(b, "BM")
-	binary.LittleEndian.PutUint32(b[14:], dib)
-	return string(b)
-}
-
-// emf returns an EMF's first bytes: a record of type typ, with sig at offset 40.
-func emf(typ uint32, sig string) string {
-	b := make([]byte, 88)
-	binary.LittleEndian.PutUint32(b, typ)
-	binary.LittleEndian.PutUint32(b[4:], 108)
-	copy(b[40:], sig)
-	return string(b)
-}
-
-// wmf returns a standard WMF META_HEADER's first bytes: its type, its size in words, and its
-// version.
-func wmf(typ, size, version uint16) string {
-	b := make([]byte, 18)
-	binary.LittleEndian.PutUint16(b, typ)
-	binary.LittleEndian.PutUint16(b[2:], size)
-	binary.LittleEndian.PutUint16(b[4:], version)
-	return string(b)
-}
 
 // writeContent writes content into dir under its SHA-256 and ext, as mail names it, and returns
 // the name.
@@ -69,167 +36,17 @@ func writeContent(t *testing.T, dir, content, ext string) string {
 	return name
 }
 
-// TestRouteSignatures: a by-value attachment written into the directory is routed by its
-// content's signature, whatever its stored MIME type says; the extension, in any case, decides
-// only within a ZIP or OLE2 container, and a container without a routed extension, a legacy name
-// without the signature, and a near-miss of a signature are unrouted. A header-shaped .eml is
-// nested, as TestRouteMessages tells apart.
-func TestRouteSignatures(t *testing.T) {
-	type tc struct {
-		name     string
-		content  string
-		filename string
-		mime     string
-		want     email.Route
-	}
-	cases := []tc{
-		{"pdf", pdfBytes, "report.pdf", "application/pdf", email.RouteDocument},
-		{"png", pngBytes, "a.png", "image/png", email.RouteVision},
-		{"jpeg", jpegBytes, "a.jpg", "image/jpeg", email.RouteVision},
-		{"gif87a", gif87, "a.gif", "image/gif", email.RouteVision},
-		{"gif89a", gif89, "a.gif", "image/gif", email.RouteVision},
-		{"bmp", bmp(40), "a.bmp", "image/bmp", email.RouteVision},
-		{"bmp core header", bmp(12), "a.bmp", "", email.RouteVision},
-		{"bmp v5 header", bmp(124), "a.bmp", "", email.RouteVision},
-		{"tiff little-endian", tiffLE, "a.tif", "image/tiff", email.RouteVisionConverted},
-		{"tiff big-endian", tiffBE, "a.tiff", "image/tiff", email.RouteVisionConverted},
-		{"emf", emf(1, " EMF"), "a.emf", "image/x-emf", email.RouteVisionConverted},
-		{"wmf placeable", wmfPlace, "a.wmf", "image/x-wmf", email.RouteVisionConverted},
-		{"wmf memory 3.0", wmf(1, 9, 0x0300), "a.wmf", "", email.RouteVisionConverted},
-		{"wmf disk 1.0", wmf(2, 9, 0x0100), "a.wmf", "", email.RouteVisionConverted},
-		{"ole2 msg", ole2Bytes, "forwarded.msg", "application/vnd.ms-outlook", email.RouteNested},
-		{"ole2 MSG upper case", ole2Bytes, "FORWARDED.MSG", "", email.RouteNested},
-
-		// Near-misses.
-		{"bmp with no dib header", "BM" + strings.Repeat("x", 30), "a.bmp", "image/bmp", email.RouteUnrouted},
-		{"emf type without signature", emf(1, "NOPE"), "a.emf", "image/x-emf", email.RouteUnrouted},
-		{"emf signature on another record", emf(2, " EMF"), "a.emf", "", email.RouteUnrouted},
-		{"wmf version 2", wmf(1, 9, 0x0200), "a.wmf", "", email.RouteUnrouted},
-		{"wmf type 3", wmf(3, 9, 0x0300), "a.wmf", "", email.RouteUnrouted},
-		{"wmf header size 8", wmf(1, 8, 0x0300), "a.wmf", "", email.RouteUnrouted},
-		{"pdf signature cut short", "%PDF", "a.pdf", "application/pdf", email.RouteUnrouted},
-		{"zip without an ooxml extension", zipBytes, "archive.zip", "application/zip", email.RouteUnrouted},
-		{"zip named for a macro slide show office doesn't read", zipBytes, "a.ppsm", "", email.RouteUnrouted},
-		{"zip named for a legacy format", zipBytes, "a.doc", "application/msword", email.RouteUnrouted},
-		{"ole2 without an extension", ole2Bytes, "attachment", "", email.RouteUnrouted},
-		{"ole2 named for ooxml, an encrypted package", ole2Bytes, "secret.docx", "", email.RouteUnrouted},
-		{"ole2 named .bin", ole2Bytes, "a.bin", "application/msword", email.RouteUnrouted},
-		{"legacy name without the signature", "plain text", "notes.doc", "application/msword", email.RouteUnrouted},
-		{"ooxml name without the signature", "plain text", "notes.docx", "", email.RouteUnrouted},
-		{"msg name without the signature", "plain text", "note.msg", "application/vnd.ms-outlook", email.RouteUnrouted},
-		{"eml", "From: a@example.org\r\nSubject: x\r\n\r\nbody", "fwd.eml", "message/rfc822", email.RouteNested},
-		{"text", "plain text", "a.txt", "text/plain", email.RouteUnrouted},
-		{"empty", "", "a.pdf", "application/pdf", email.RouteUnrouted},
-
-		// A stored MIME type that lies loses to the signature.
-		{"pdf stored as png", pdfBytes, "a.png", "image/png", email.RouteDocument},
-		{"png stored as pdf", pngBytes, "report.pdf", "application/pdf", email.RouteVision},
-		{"jpeg stored as docx", jpegBytes, "a.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", email.RouteVision},
-		{"text stored as pdf", "plain text", "a.pdf", "application/pdf", email.RouteUnrouted},
-	}
-	for _, ext := range []string{".docx", ".docm", ".dotx", ".dotm", ".xlsx", ".xlsm", ".xltx", ".xltm", ".pptx", ".pptm", ".potx", ".potm", ".ppsx", ".DOCX", ".XlSm"} {
-		cases = append(cases, tc{"zip " + ext, zipBytes, "doc" + ext, "application/octet-stream", email.RouteOffice})
-	}
-	for _, ext := range []string{".doc", ".dot", ".xls", ".xlt", ".ppt", ".pps", ".pot", ".DOC", ".Xls", ".PPS"} {
-		cases = append(cases, tc{"ole2 " + ext, ole2Bytes, "doc" + ext, "application/octet-stream", email.RouteOffice})
-	}
-	dir := t.TempDir()
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			file := writeContent(t, dir, c.content, filepath.Ext(c.filename))
-			a := email.Attachment{File: file, Filename: c.filename, MimeType: c.mime, Method: "by_value", Path: filepath.Join(dir, file)}
-			got, why, err := a.Route()
-			if err != nil {
-				t.Fatal(err)
-			}
-			if got != c.want || why == "" {
-				t.Errorf("route %q (%s), want %q", got, why, c.want)
-			}
-		})
-	}
-}
-
-// headerShaped is content with a message's header: a From field first.
-const headerShaped = "From: ann@example.org\r\nSubject: x\r\n\r\nbody"
-
-// TestRouteMessages: content of no routed signature is nested when its name has the .eml
-// extension, in any case, or its stored type is message/rfc822 or message/global, in any case
-// and whatever its parameters, and its header has mail's shape: its first line a field, and a
-// From or Date field, its name in any case, before the block ends at a blank line, a line that is
-// neither a field nor a folded continuation, the end of the input, or a line past 64 KiB. One so
-// named that isn't header-shaped is unrouted and says why, an mbox's "From " line first among
-// them; header-shaped content neither so named nor so stored is unrouted; and content with a
-// signature is routed by it, whatever its name or type.
-func TestRouteMessages(t *testing.T) {
-	const notShaped = "but not header-shaped"
-	long := strings.Repeat("x", 64*1024)
-	cases := []struct {
-		name, content, filename, mime string
-		want                          email.Route
-		why                           string
-	}{
-		// Each condition on its own names a message.
-		{"eml extension alone", headerShaped, "fwd.eml", "application/octet-stream", email.RouteNested, ".eml extension, header-shaped"},
-		{"eml extension in upper case", headerShaped, "FWD.EML", "", email.RouteNested, ".eml extension, header-shaped"},
-		{"rfc822 type alone", headerShaped, "Fwd", "message/rfc822", email.RouteNested, "message/rfc822 type, header-shaped"},
-		{"global type alone", headerShaped, "fwd.bin", "message/global", email.RouteNested, "message/global type, header-shaped"},
-		{"rfc822 type in odd case with parameters", headerShaped, "", "Message/RFC822; name=\"fwd\"", email.RouteNested, "message/rfc822 type, header-shaped"},
-		{"global type with a malformed parameter", headerShaped, "fwd", "MESSAGE/Global; name", email.RouteNested, "message/global type, header-shaped"},
-
-		// The header's shape.
-		{"date field after a folded one", "Received: from a\r\n by b; Mon, 12 Jan 2026\r\nDate: x\r\n", "a.eml", "", email.RouteNested, "header-shaped"},
-		{"space before the colon, lower-case from, bare newlines", "Subject : hi\nfrom: ann@example.org\n", "a.eml", "", email.RouteNested, "header-shaped"},
-		{"date field without a newline", "date:x", "a.eml", "", email.RouteNested, "header-shaped"},
-		{"from field past 64 KiB on the first line", "From: " + long + "\r\n", "a.eml", "", email.RouteNested, "header-shaped"},
-		{"mbox separator first", "From ann@example.org Sat Jan  3 01:05:34 1996\nFrom: ann@example.org\n", "a.eml", "message/rfc822", email.RouteUnrouted, notShaped},
-		{"plain text", "plain text", "a.eml", "message/rfc822", email.RouteUnrouted, notShaped},
-		{"empty", "", "a.eml", "", email.RouteUnrouted, notShaped},
-		{"blank line first", "\r\nFrom: ann@example.org\r\n", "a.eml", "", email.RouteUnrouted, notShaped},
-		{"folded line first", " folded\r\nFrom: ann@example.org\r\n", "a.eml", "", email.RouteUnrouted, notShaped},
-		{"from field after the blank line", "Subject: hi\r\n\r\nFrom: ann@example.org\r\n", "a.eml", "", email.RouteUnrouted, notShaped},
-		{"from field after a line not a field", "Subject: hi\r\nnot a field\r\nFrom: ann@example.org\r\n", "a.eml", "", email.RouteUnrouted, notShaped},
-		{"from field after a line past 64 KiB", "Subject: " + long + "\r\nFrom: ann@example.org\r\n", "a.eml", "", email.RouteUnrouted, notShaped},
-		{"neither from nor date", "Subject: hi\r\nTo: bob@example.org\r\n", "a.eml", "", email.RouteUnrouted, notShaped},
-		{"field without a name", ": no name\r\nFrom: ann@example.org\r\n", "a.eml", "", email.RouteUnrouted, notShaped},
-
-		// Neither names a message.
-		{"header-shaped text", headerShaped, "a.txt", "text/plain", email.RouteUnrouted, "no routed signature"},
-		{"header-shaped, no name or type", headerShaped, "", "", email.RouteUnrouted, "no routed signature"},
-		{"another message type", headerShaped, "a.txt", "message/partial", email.RouteUnrouted, "no routed signature"},
-		{"rfc822 as a parameter's value", headerShaped, "a", "text/plain; x=message/rfc822", email.RouteUnrouted, "no routed signature"},
-
-		// A signature decides first.
-		{"pdf named and stored as a message", pdfBytes, "a.eml", "message/rfc822", email.RouteDocument, "PDF signature"},
-		{"zip named as a message", zipBytes, "a.eml", "message/rfc822", email.RouteUnrouted, "ZIP signature without an OOXML extension"},
-		{"ole2 stored as a message", ole2Bytes, "a.msg", "message/rfc822", email.RouteNested, "OLE2 signature, .msg extension"},
-	}
-	dir := t.TempDir()
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			file := writeContent(t, dir, c.content, filepath.Ext(c.filename))
-			a := email.Attachment{File: file, Filename: c.filename, MimeType: c.mime, Method: "by_value", Path: filepath.Join(dir, file)}
-			got, why, err := a.Route()
-			if err != nil {
-				t.Fatal(err)
-			}
-			if got != c.want || !strings.HasSuffix(why, c.why) {
-				t.Errorf("route %q (%s), want %q (...%s)", got, why, c.want, c.why)
-			}
-		})
-	}
-}
-
 // TestRouteName: within a container the extension is Filename's, else File's when the record has
 // no Filename; a File's extension never overrides a Filename's.
 func TestRouteName(t *testing.T) {
 	dir := t.TempDir()
 	cases := []struct {
 		name, filename, fileExt string
-		want                    email.Route
+		want                    route.Route
 	}{
-		{"file's extension, no filename", "", ".xls", email.RouteOffice},
-		{"filename's extension over file's", "budget.xls", ".bin", email.RouteOffice},
-		{"filename without one, file's ignored", "budget", ".xls", email.RouteUnrouted},
+		{"file's extension, no filename", "", ".xls", route.Office},
+		{"filename's extension over file's", "budget.xls", ".bin", route.Office},
+		{"filename without one, file's ignored", "budget", ".xls", route.Unrouted},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -251,13 +68,13 @@ func TestRouteWithoutContent(t *testing.T) {
 	cases := []struct {
 		name string
 		a    email.Attachment
-		want email.Route
+		want route.Route
 	}{
-		{"embedded message in a .msg", email.Attachment{Method: "embedded_message", Message: &email.Message{Subject: "Inner"}}, email.RouteNested},
-		{"embedded message in a .pst", email.Attachment{Method: "embedded_message"}, email.RouteNested},
-		{"by reference", email.Attachment{Filename: "share.pdf", Method: "by_reference"}, email.RouteUnrouted},
-		{"no directory", email.Attachment{File: pdf, Filename: "a.pdf", Method: "by_value"}, email.RouteUnrouted},
-		{"not written", email.Attachment{File: "missing.pdf", Filename: "a.pdf", Method: "by_value", Path: filepath.Join(dir, "missing.pdf")}, email.RouteUnrouted},
+		{"embedded message in a .msg", email.Attachment{Method: "embedded_message", Message: &email.Message{Subject: "Inner"}}, route.Nested},
+		{"embedded message in a .pst", email.Attachment{Method: "embedded_message"}, route.Nested},
+		{"by reference", email.Attachment{Filename: "share.pdf", Method: "by_reference"}, route.Unrouted},
+		{"no directory", email.Attachment{File: pdf, Filename: "a.pdf", Method: "by_value"}, route.Unrouted},
+		{"not written", email.Attachment{File: "missing.pdf", Filename: "a.pdf", Method: "by_value", Path: filepath.Join(dir, "missing.pdf")}, route.Unrouted},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -327,56 +144,56 @@ func TestReadAttachments(t *testing.T) {
 // routed is one attachment's expected route: its filename and route.
 type routed struct {
 	filename string
-	route    email.Route
+	route    route.Route
 }
 
 // fixtureRoutes is the route of every attachment the copied fixtures hold, written by hand from
 // the goldens, per fixture in the order a read gives them, each attachment followed by those of
 // the message it nests. A fixture not listed holds none.
 var fixtureRoutes = map[string][]routed{
-	"generated/msg/03-html-inline-image.msg":   {{"moth.png", email.RouteVision}},
-	"generated/msg/04-attachment-cyrillic.msg": {{"отчёт.csv", email.RouteUnrouted}},
+	"generated/msg/03-html-inline-image.msg":   {{"moth.png", route.Vision}},
+	"generated/msg/04-attachment-cyrillic.msg": {{"отчёт.csv", route.Text}},
 	"generated/msg/08-forward-attached-message.msg": {
-		{"note-g.txt", email.RouteUnrouted},
+		{"note-g.txt", route.Text},
 		// MsgKit's forward attaches the message by value, as an .eml, header-shaped and stored
 		// as message/rfc822.
-		{"Notes on the engine (draft).eml", email.RouteNested},
+		{"Notes on the engine (draft).eml", route.Nested},
 	},
 	"generated/pst/mailbox.pst": {
-		{"moth.png", email.RouteVision},
-		{"отчёт.csv", email.RouteUnrouted},
-		{"note-g.txt", email.RouteUnrouted},
+		{"moth.png", route.Vision},
+		{"отчёт.csv", route.Text},
+		{"note-g.txt", route.Text},
 	},
 	// alfresco.gif is a BMP, named .gif and stored as image/gif: its signature routes it.
-	"msg/poi/example_sent_regular.msg": {{"alfresco.gif", email.RouteVision}},
+	"msg/poi/example_sent_regular.msg": {{"alfresco.gif", route.Vision}},
 	"msg/tika/testMSG_att_msg.msg": {
-		{"Test Attachment", email.RouteNested},
-		{"smbprn.00009008.KdcPjl.pdf", email.RouteDocument},
+		{"Test Attachment", route.Nested},
+		{"smbprn.00009008.KdcPjl.pdf", route.Document},
 	},
 	"msg/tika/test-outlook2003.msg": outlookJPEGs,
 	// The .pst stores' embedded messages, attach method 5, are listed without their content.
-	"pst/java-libpst/dist-list.pst": {{"", email.RouteNested}, {"", email.RouteNested}},
+	"pst/java-libpst/dist-list.pst": {{"", route.Nested}, {"", route.Nested}},
 	"pst/libyal/outlook.pst":        slices.Concat(outlookJPEGs, outlookJPEGs),
-	"pst/tika/testPST.pst":          {{"", email.RouteNested}},
+	"pst/tika/testPST.pst":          {{"", route.Nested}},
 }
 
 // mimeRoutes is the route of every attachment the MIME inputs hold, written by hand from the
 // inputs, keyed by the input's path under testdata/ as fixtureRoutes is under fixtures/. Generated
-// 03's picture goes to vision; 04's CSV and 08's text are unrouted; 08's forwarded message, a
-// message/rfc822 part, is an embedded message, without a filename, nested under its record, and
-// holds no attachment of its own. The mboxrd holds 03, 04, and 08 among its nine. The built
-// .msg's .eml source attaches builtSources, each routed as the .msg's is. An input not listed
-// holds none.
+// 03's picture goes to vision; 04's CSV and 08's text are text, by their extensions; 08's
+// forwarded message, a message/rfc822 part, is an embedded message, without a filename, nested
+// under its record, and holds no attachment of its own. The mboxrd holds 03, 04, and 08 among
+// its nine. The built .msg's .eml source attaches builtSources, each routed as the .msg's is. An
+// input not listed holds none.
 var mimeRoutes = map[string][]routed{
-	"mail/fixtures/generated/eml/03-html-inline-image.eml":   {{"moth.png", email.RouteVision}},
-	"mail/fixtures/generated/eml/04-attachment-cyrillic.eml": {{"отчёт.csv", email.RouteUnrouted}},
+	"mail/fixtures/generated/eml/03-html-inline-image.eml":   {{"moth.png", route.Vision}},
+	"mail/fixtures/generated/eml/04-attachment-cyrillic.eml": {{"отчёт.csv", route.Text}},
 	"mail/fixtures/generated/eml/08-forward-attached-message.eml": {
-		{"note-g.txt", email.RouteUnrouted}, {"", email.RouteNested},
+		{"note-g.txt", route.Text}, {"", route.Nested},
 	},
 	"mail/fixtures/mime/nine.mboxrd": {
-		{"moth.png", email.RouteVision},
-		{"отчёт.csv", email.RouteUnrouted},
-		{"note-g.txt", email.RouteUnrouted}, {"", email.RouteNested},
+		{"moth.png", route.Vision},
+		{"отчёт.csv", route.Text},
+		{"note-g.txt", route.Text}, {"", route.Nested},
 	},
 	"built/" + builtEML: builtRoutes(),
 }
@@ -392,10 +209,10 @@ func builtRoutes() []routed {
 
 // outlookJPEGs are the JPEGs of Outlook 2003's welcome message, 11 of them, no 11.jpg among them.
 var outlookJPEGs = []routed{
-	{"1.jpg", email.RouteVision}, {"2.jpg", email.RouteVision}, {"3.jpg", email.RouteVision},
-	{"4.jpg", email.RouteVision}, {"5.jpg", email.RouteVision}, {"6.jpg", email.RouteVision},
-	{"7.jpg", email.RouteVision}, {"8.jpg", email.RouteVision}, {"9.jpg", email.RouteVision},
-	{"10.jpg", email.RouteVision}, {"12.jpg", email.RouteVision},
+	{"1.jpg", route.Vision}, {"2.jpg", route.Vision}, {"3.jpg", route.Vision},
+	{"4.jpg", route.Vision}, {"5.jpg", route.Vision}, {"6.jpg", route.Vision},
+	{"7.jpg", route.Vision}, {"8.jpg", route.Vision}, {"9.jpg", route.Vision},
+	{"10.jpg", route.Vision}, {"12.jpg", route.Vision},
 }
 
 // attachmentsOf returns every attachment of recs' messages, each followed by those of the message
@@ -457,15 +274,15 @@ func TestRealRoutes(t *testing.T) {
 					t.Fatal(err)
 				}
 				for _, a := range attachmentsOf([]email.Record{rec}) {
-					route, why, err := a.Route()
+					rt, why, err := a.Route()
 					if err != nil {
 						t.Fatal(err)
 					}
-					got = append(got, routed{a.Filename, route})
+					got = append(got, routed{a.Filename, rt})
 					if a.File != "" {
 						checkWritten(t, dir, a)
 					}
-					t.Logf("%s: %s (%s)", a.Filename, route, why)
+					t.Logf("%s: %s (%s)", a.Filename, rt, why)
 				}
 			}
 			if want := in.want; !slices.Equal(got, want) {
@@ -480,9 +297,9 @@ func TestRealRoutes(t *testing.T) {
 				t.Fatal(err)
 			}
 			for _, a := range attachmentsOf(recs) {
-				want := email.RouteUnrouted
+				want := route.Unrouted
 				if a.Method == "embedded_message" {
-					want = email.RouteNested
+					want = route.Nested
 				}
 				if got, why, err := a.Route(); err != nil || got != want || a.Path != "" {
 					t.Errorf("%s: route %q (%s), %v, path %q; want %q and no path", a.Filename, got, why, err, a.Path, want)
@@ -492,6 +309,80 @@ func TestRealRoutes(t *testing.T) {
 				t.Errorf("working directory holds %v, %v; want nothing written", entries, err)
 			}
 		})
+	}
+}
+
+// v050Routes is the golden of v0.5.0's routes, under testdata/: every attachment's route and
+// reason over the fixtures, the MIME inputs, and the built .msg, recorded at b05438a, before the
+// route package.
+var v050Routes = filepath.Join("testdata", "routes-v0.5.0.tsv")
+
+// sinceV050 are the attachments whose route changed since v0.5.0, by filename, each its v0.5.0
+// route and reason, then its route and reason now: those a route named since claims. v0.5.0 had
+// no text route, so the CSV and the text file were unrouted.
+var sinceV050 = map[string][2]string{
+	"отчёт.csv":  {"unrouted (no routed signature)", "text (text by its .csv extension)"},
+	"note-g.txt": {"unrouted (no routed signature)", "text (text by its .txt extension)"},
+}
+
+// TestRealRoutesSinceV050 runs the real pinned mail over every copied fixture, MIME input, and
+// the built .msg with an attachments directory: every attachment's route and reason are v0.5.0's,
+// as v050Routes recorded them, but for those sinceV050 lists, which are its route and reason now,
+// each of them changing at least once; any other change fails.
+func TestRealRoutesSinceV050(t *testing.T) {
+	r := realReader(t)
+	want := map[string][]string{}
+	data, err := os.ReadFile(v050Routes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for line := range strings.Lines(string(data)) {
+		if strings.HasPrefix(line, "#") {
+			continue
+		}
+		f := strings.Split(strings.TrimSuffix(line, "\n"), "\t")
+		if len(f) != 4 {
+			t.Fatalf("%s: line %q, want four fields", v050Routes, line)
+		}
+		want[f[0]] = append(want[f[0]], f[1]+": "+f[2]+" ("+f[3]+")")
+	}
+	stores, mime := realInputs(t)
+	inputs := []string{"built/" + builtMsg}
+	for _, rel := range stores {
+		inputs = append(inputs, "mail/fixtures/"+rel)
+	}
+	inputs = append(inputs, mime...)
+	changed := map[string]bool{}
+	for _, rel := range inputs {
+		recs, err := collect(r.Read(t.Context(), email.Request{Input: filepath.Join("testdata", rel), Attachments: t.TempDir()}))
+		if err != nil {
+			t.Fatalf("%s: %v", rel, err)
+		}
+		var got []string
+		for i, a := range attachmentsOf(recs) {
+			rt, why, err := a.Route()
+			if err != nil {
+				t.Fatalf("%s: %v", rel, err)
+			}
+			now := string(rt) + " (" + why + ")"
+			if c, ok := sinceV050[a.Filename]; ok && i < len(want[rel]) && want[rel][i] == a.Filename+": "+c[0] && now == c[1] {
+				changed[a.Filename] = true
+				now = strings.TrimPrefix(want[rel][i], a.Filename+": ")
+			}
+			got = append(got, a.Filename+": "+now)
+		}
+		if !slices.Equal(got, want[rel]) {
+			t.Errorf("%s: routes %q, v0.5.0's %q", rel, got, want[rel])
+		}
+		delete(want, rel)
+	}
+	for rel := range want {
+		t.Errorf("%s: in the golden, not read", rel)
+	}
+	for name := range sinceV050 {
+		if !changed[name] {
+			t.Errorf("%s: listed as changed since v0.5.0, unchanged", name)
+		}
 	}
 }
 
@@ -516,8 +407,8 @@ func TestRealNestedEML(t *testing.T) {
 	if a.Method != "by_value" || a.MimeType != "message/rfc822" || a.Size == nil || *a.Size != 324 {
 		t.Errorf("forward: method %q, type %q, size %v; want by_value message/rfc822, 324 bytes", a.Method, a.MimeType, a.Size)
 	}
-	if route, why, err := a.Route(); err != nil || route != email.RouteNested {
-		t.Fatalf("forward: route %q (%s), %v; want %q", route, why, err, email.RouteNested)
+	if rt, why, err := a.Route(); err != nil || rt != route.Nested {
+		t.Fatalf("forward: route %q (%s), %v; want %q", rt, why, err, route.Nested)
 	}
 
 	again, err := collect(r.Read(t.Context(), email.Request{Input: a.Path, Attachments: t.TempDir()}))

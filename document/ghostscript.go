@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -255,9 +256,6 @@ func psString(s string) string {
 	return strings.NewReplacer(`\`, `\\`, `(`, `\(`, `)`, `\)`).Replace(s)
 }
 
-// pngSignature is the eight bytes every PNG begins with.
-var pngSignature = []byte("\x89PNG\r\n\x1a\n")
-
 // pngGuardLimit bounds how much of a stdout that isn't a PNG pngGuard keeps for the error.
 const pngGuardLimit = 4 << 10
 
@@ -281,13 +279,13 @@ func (g *pngGuard) Write(p []byte) (int, error) {
 		return len(p), nil
 	}
 	g.keep(p)
-	n := min(len(g.head), len(pngSignature))
-	if !bytes.Equal(g.head[:n], pngSignature[:n]) {
+	n := min(len(g.head), len(route.PNGSignature))
+	if string(g.head[:n]) != route.PNGSignature[:n] {
 		g.decided = true
 		g.head = g.head[:min(len(g.head), pngGuardLimit)]
 		return len(p), nil
 	}
-	if n < len(pngSignature) {
+	if n < len(route.PNGSignature) {
 		return len(p), nil
 	}
 	g.png, g.decided = true, true

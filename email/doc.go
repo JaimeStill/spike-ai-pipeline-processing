@@ -34,16 +34,16 @@
 //
 // Given an attachments directory in its Request, mail writes each distinct attachment content
 // there once, named by its SHA-256, and each Attachment's Path names its file. Attachment.Route
-// names the stage the content goes to next, which the caller runs; the package never runs it. The
-// route is decided by the content's signature, read from the file mail wrote, never by the stored
-// MIME type or the name alone, which real stores show to be unreliable: MsgKit stores an EMF as
-// application/octet-stream, and Apache POI's alfresco.gif is a BMP. A PDF goes to the document
-// package's stage; a ZIP with an OOXML extension, or an OLE2 file with a legacy one, to the office
-// package's Convert; PNG, JPEG, GIF, and BMP to vision as stored; TIFF, EMF, and WMF to vision once
-// the office package's Converter.ConvertPicture has made them PNG; an embedded message, an OLE2
-// file named .msg, or content of no routed signature that is named .eml or stored as
-// message/rfc822 or message/global and whose header has the shape mail reads a message by, is
-// nested, for the caller to read; anything else is unrouted.
+// names the stage the content goes to next, which the caller runs; the package never runs it. An
+// embedded message is nested; any other attachment is routed by the route package's File over
+// the file mail wrote, by the content's signature, never by the stored MIME type or the name
+// alone, which real stores show to be unreliable: MsgKit stores an EMF as
+// application/octet-stream, and Apache POI's alfresco.gif is a BMP. The route package's doc
+// lists the routes: a PDF goes to the document package's stage; an office document to the office
+// package's Convert; PNG, JPEG, GIF, and BMP to vision as stored; TIFF, EMF, and WMF to vision
+// once converted to PNG; an OLE2 file named .msg, or content of no routed signature that is named
+// .eml or stored as message/rfc822 or message/global and whose header has the shape mail reads a
+// message by, is nested, for the caller to read; a CSV or a text file is text; and so on.
 //
 // Threads come from a store's messages: a Threader, fed each record while a Stream is read, keeps
 // their threading keys alone, so its memory follows the number of messages, never their bodies.
@@ -57,8 +57,8 @@
 // is ordered by sent date.
 //
 // Known limits: a by-value .eml whose header isn't a message's shape, such as one that begins with
-// an mbox's "From " line, is unrouted, as is header-shaped content neither named .eml nor stored
-// as a message; an .ost is refused by mail; in a .pst, an embedded message is nested
+// an mbox's "From " line, is unrouted, and header-shaped content neither named .eml nor stored
+// as a message isn't nested; an .ost is refused by mail; in a .pst, an embedded message is nested
 // without its content, which mail can't read; a by-reference attachment has no content file, so
 // it is unrouted; and the stores mail's generator writes, its fixtures and its scale store, carry
 // no threading fields, so they thread by subject alone. mail's own limits reach MIME input: it
@@ -89,9 +89,9 @@
 //   - [Address], [Body], [Derived], and [Attachment] are a message's addresses, bodies, and
 //     attachment records; an Attachment's Path names its content's file in the attachments
 //     directory.
-//   - [Attachment.Route] returns an attachment's [Route] and why, decided by its content's
-//     signature: [RouteDocument], [RouteOffice], [RouteVision], [RouteVisionConverted] (for the
-//     office package's Converter.ConvertPicture), [RouteNested], or [RouteUnrouted].
+//   - [Attachment.Route] returns an attachment's route.Route and why: route.Nested for an
+//     embedded message, route.Unrouted for an attachment without a written content file, and
+//     route.File's route for any other.
 //   - [Threader] builds a store's threads from the threading keys of the messages
 //     [Threader.Add] is fed while a Stream is read; [Threader.Threads] returns them.
 //   - [Threads] builds the threads of a read's Records whole.

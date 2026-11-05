@@ -4,7 +4,6 @@ package office
 
 import (
 	"bufio"
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -14,6 +13,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -50,10 +50,6 @@ func LibreOfficeSpec() tool.Spec {
 // WMF then. Nothing runs for it.
 var ErrNoLibreOffice = errors.New("no LibreOffice converter")
 
-// ole2Signature begins every OLE2 compound file: the legacy binary formats, and an encrypted
-// OOXML package.
-var ole2Signature = []byte{0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1}
-
 // exportFilters are LibreOffice's export filters to the OOXML formats, by the format's
 // extension; naming the filter, not only the extension, keeps a template's export from choosing
 // a template format.
@@ -74,18 +70,23 @@ var legacyTargets = map[string]string{
 	".pot": "pptx",
 }
 
-// legacyFormat reports whether the document doc begins is a legacy one: an OLE2 compound file
-// whose file name, name, has a legacy extension, in any case. It returns the legacy format, the
-// extension without its dot and lowercased, and the OOXML format it converts to; "" for both
-// when the document isn't legacy. It peeks at doc's first bytes without consuming them.
+// ole2HeadLen is how much of a document legacyFormat peeks at: an OLE2 compound file's
+// signature, the legacy binary formats' and an encrypted OOXML package's.
+const ole2HeadLen = 8
+
+// legacyFormat reports whether the document doc begins is a legacy one: an OLE2 compound file,
+// as the route package identifies it, whose file name, name, has a legacy extension, in any case.
+// It returns the legacy format, the extension without its dot and lowercased, and the OOXML
+// format it converts to; "" for both when the document isn't legacy. It peeks at doc's first
+// bytes without consuming them.
 func legacyFormat(doc *bufio.Reader, name string) (from, to string) {
 	ext := strings.ToLower(filepath.Ext(name))
 	to, ok := legacyTargets[ext]
 	if !ok {
 		return "", ""
 	}
-	head, _ := doc.Peek(len(ole2Signature))
-	if !bytes.Equal(head, ole2Signature) {
+	head, _ := doc.Peek(ole2HeadLen)
+	if route.Identify(head) != route.OLE2 {
 		return "", ""
 	}
 	return strings.TrimPrefix(ext, "."), to

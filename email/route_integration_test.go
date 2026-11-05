@@ -18,13 +18,15 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
 // stagedRoutes are the routes that name a stage, each of which the fixtures must carry to its
-// stage at least once: every route but RouteUnrouted.
-var stagedRoutes = []email.Route{
-	email.RouteDocument, email.RouteOffice, email.RouteVision, email.RouteVisionConverted, email.RouteNested,
+// stage at least once: every route with a stage in this repository, the five email routed in
+// v0.5.0. The routes route added since, text among them, have no stage yet and are logged.
+var stagedRoutes = []route.Route{
+	route.Document, route.Office, route.Vision, route.VisionConverted, route.Nested,
 }
 
 // stageConverter builds an office Converter over the real office the mise pins, soffice in
@@ -81,7 +83,7 @@ type stages struct {
 	office   *office.Converter
 	document *document.Preparer
 	// seen are the routes the fixtures' attachments take; ran, those whose stage ran.
-	seen, ran map[email.Route]int
+	seen, ran map[route.Route]int
 	// dispatched counts the attachments dispatched; readAgain, the by-value .msg and .eml files
 	// read through the CLI again, and readAgainDispatched, the attachments those reads dispatched.
 	dispatched, readAgain, readAgainDispatched int
@@ -107,18 +109,18 @@ type stages struct {
 // and each attachment of each message read, those of the messages it nests included, is routed
 // with Attachment.Route and dispatched on its route:
 //
-//   - RouteDocument: document's Images over the host's gs, each page's text layer read and the
+//   - route.Document: document's Images over the host's gs, each page's text layer read and the
 //     page rendered;
-//   - RouteOffice: office's Convert given the attachment's name, a legacy document through
+//   - route.Office: office's Convert given the attachment's name, a legacy document through
 //     soffice in office's pinned image first;
-//   - RouteVision: the picture as stored, gathered for vision;
-//   - RouteVisionConverted: office's ConvertPicture, and its PNG gathered for vision;
-//   - RouteNested: a message nested under its record, which mail read with its parent, its own
+//   - route.Vision: the picture as stored, gathered for vision;
+//   - route.VisionConverted: office's ConvertPicture, and its PNG gathered for vision;
+//   - route.Nested: a message nested under its record, which mail read with its parent, its own
 //     attachments dispatched in turn; a by-value .msg or .eml file read through the CLI again,
 //     into an attachments directory of its own, and its messages' attachments dispatched; a
 //     message listed without its content, as a .pst lists an embedded one, mail's known limit,
 //     logged and not run;
-//   - RouteUnrouted: logged, with its reason.
+//   - route.Unrouted: logged, with its reason.
 //
 // Each content's stage runs once, by File, so an attachment whose content was carried already is
 // logged with the attachment that first carried it. Content is one across the whole run, stores
@@ -137,8 +139,8 @@ func TestRoutesToStages(t *testing.T) {
 		reader:   realReader(t),
 		office:   stageConverter(t),
 		document: stagePreparer(t),
-		seen:     map[email.Route]int{},
-		ran:      map[email.Route]int{},
+		seen:     map[route.Route]int{},
+		ran:      map[route.Route]int{},
 		done:     map[string]string{},
 		pictures: map[string]*picture{},
 	}
@@ -158,16 +160,16 @@ func TestRoutesToStages(t *testing.T) {
 	}
 	s.mime = false
 
-	for _, route := range slices.Sorted(maps.Keys(s.seen)) {
-		t.Logf("recorded: route %s: %d attachments, %d stage runs", route, s.seen[route], s.ran[route])
+	for _, rt := range slices.Sorted(maps.Keys(s.seen)) {
+		t.Logf("recorded: route %s: %d attachments, %d stage runs", rt, s.seen[rt], s.ran[rt])
 	}
 	t.Logf("recorded: route nested, read again: %d stage runs, %d attachments dispatched", s.readAgain, s.readAgainDispatched)
-	for _, route := range stagedRoutes {
+	for _, rt := range stagedRoutes {
 		switch {
-		case s.seen[route] == 0:
-			t.Errorf("no fixture holds an attachment routed %s", route)
-		case s.ran[route] == 0:
-			t.Errorf("route %s: %d attachments, no stage run", route, s.seen[route])
+		case s.seen[rt] == 0:
+			t.Errorf("no fixture holds an attachment routed %s", rt)
+		case s.ran[rt] == 0:
+			t.Errorf("route %s: %d attachments, no stage run", rt, s.seen[rt])
 		}
 	}
 	switch {
@@ -229,12 +231,12 @@ func (s *stages) message(m *email.Message, where string) {
 // dispatch routes a and runs its route's stage.
 func (s *stages) dispatch(a *email.Attachment, where string) {
 	t := s.t
-	route, why, err := a.Route()
+	rt, why, err := a.Route()
 	if err != nil {
 		t.Errorf("%s: %s: %v", where, a.Filename, err)
 		return
 	}
-	s.seen[route]++
+	s.seen[rt]++
 	s.dispatched++
 	if s.mime {
 		s.mimeDispatched++
@@ -244,34 +246,34 @@ func (s *stages) dispatch(a *email.Attachment, where string) {
 		name = "(unnamed)"
 	}
 	source := where + " " + name
-	if route != email.RouteNested && route != email.RouteUnrouted {
+	if rt != route.Nested && rt != route.Unrouted {
 		if first, ok := s.done[a.File]; ok {
 			if p, ok := s.pictures[a.File]; ok {
 				p.sources = append(p.sources, source)
 				if s.mime {
 					s.mimeSkipped = append(s.mimeSkipped, source+", sent as "+first)
-					t.Logf("recorded: vision skipped, %s: %s (%s), already sent as %s", source, route, why, first)
+					t.Logf("recorded: vision skipped, %s: %s (%s), already sent as %s", source, rt, why, first)
 					return
 				}
 			}
-			t.Logf("stage: %s: %s (%s), its content carried as %s", source, route, why, first)
+			t.Logf("stage: %s: %s (%s), its content carried as %s", source, rt, why, first)
 			return
 		}
 		s.done[a.File] = source
 	}
-	switch route {
-	case email.RouteDocument:
+	switch rt {
+	case route.Document:
 		s.pdf(a, source)
-	case email.RouteOffice:
+	case route.Office:
 		s.convert(a, source)
-	case email.RouteVision:
+	case route.Vision:
 		s.stored(a, source)
-	case email.RouteVisionConverted:
+	case route.VisionConverted:
 		s.converted(a, source)
-	case email.RouteNested:
+	case route.Nested:
 		s.nested(a, source, why)
 	default:
-		t.Logf("stage: %s: %s (%s), no stage", source, route, why)
+		t.Logf("stage: %s: %s (%s), no stage", source, rt, why)
 	}
 }
 
@@ -309,7 +311,7 @@ func (s *stages) pdf(a *email.Attachment, source string) {
 		t.Errorf("%s: %d pages yielded of %d", source, pages, count)
 		return
 	}
-	s.ran[email.RouteDocument]++
+	s.ran[route.Document]++
 	t.Logf("recorded: stage document, %s: %d of %d pages rendered at 150 dpi, %d with a text layer: %v wall",
 		source, pages, count, text, time.Since(start).Round(time.Millisecond))
 }
@@ -347,7 +349,7 @@ func (s *stages) convert(a *email.Attachment, source string) {
 	for _, w := range res.Warnings {
 		t.Logf("warning: %s: %s", source, w)
 	}
-	s.ran[email.RouteOffice]++
+	s.ran[route.Office]++
 	t.Logf("recorded: stage office, %s: a %s model, %s, %d media, %d warnings: %v wall",
 		source, res.Document.Format, from, len(res.Media), len(res.Warnings), elapsed.Round(time.Millisecond))
 }
@@ -366,7 +368,7 @@ func (s *stages) stored(a *email.Attachment, source string) {
 		return
 	}
 	s.gather(a.File, &picture{data: data, contentType: ct, sources: []string{source}})
-	s.ran[email.RouteVision]++
+	s.ran[route.Vision]++
 	t.Logf("recorded: stage vision, %s: %s %s, %d bytes, as stored", source, ct, visiontest.PixelSize(data), len(data))
 }
 
@@ -395,7 +397,7 @@ func (s *stages) converted(a *email.Attachment, source string) {
 		return
 	}
 	s.gather(a.File, &picture{data: data, contentType: "image/png", sources: []string{source}})
-	s.ran[email.RouteVisionConverted]++
+	s.ran[route.VisionConverted]++
 	t.Logf("recorded: stage vision-converted, %s: %d bytes -> png %s, %d bytes: %v wall",
 		source, sizeOf(a), visiontest.PixelSize(data), len(data), elapsed.Round(time.Millisecond))
 }
@@ -407,12 +409,12 @@ func (s *stages) nested(a *email.Attachment, source, why string) {
 	t := s.t
 	switch {
 	case a.Message != nil:
-		s.ran[email.RouteNested]++
+		s.ran[route.Nested]++
 		t.Logf("recorded: stage nested, %s: %s; message %q, %d attachments, dispatched in turn",
 			source, why, a.Message.Subject, len(a.Message.Attachments))
 		s.message(a.Message, source+" >")
 	case a.Path != "":
-		s.ran[email.RouteNested]++
+		s.ran[route.Nested]++
 		s.readAgain++
 		before := s.dispatched
 		s.read(a.Path, source+" >")

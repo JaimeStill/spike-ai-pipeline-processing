@@ -3,7 +3,6 @@
 package office
 
 import (
-	"bytes"
 	"cmp"
 	"context"
 	"errors"
@@ -15,6 +14,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -106,9 +106,6 @@ func metafileFilter(scale int) string {
 	return fmt.Sprintf(`png:draw_png_Export:{"PixelWidth":{"type":"long","value":"%d"},"PixelHeight":{"type":"long","value":"%d"}}`,
 		scale*pageWidth, scale*pageHeight)
 }
-
-// pngSignature begins every PNG file.
-var pngSignature = []byte("\x89PNG\r\n\x1a\n")
 
 // convertPictures converts the pictures in media, the media list of a conversion whose media
 // directory is in dir, the working directory, to PNG, as the picture standard says: each EMF and
@@ -278,8 +275,8 @@ func checkPNG(path string) error {
 		return err
 	}
 	defer func() { _ = f.Close() }()
-	head := make([]byte, len(pngSignature))
-	if _, err := io.ReadFull(f, head); err != nil || !bytes.Equal(head, pngSignature) {
+	head := make([]byte, len(route.PNGSignature))
+	if _, err := io.ReadFull(f, head); err != nil || route.Identify(head) != route.PNG {
 		return fmt.Errorf("%s isn't a PNG", filepath.Base(path))
 	}
 	return nil

@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -212,7 +213,7 @@ type survey struct {
 	// Attachments counts every attachment record, those of nested messages included.
 	Attachments int `json:"attachments"`
 	// Routes counts the attachments by route; only a read with an attachments directory routes.
-	Routes  map[email.Route]int `json:"routes,omitzero"`
+	Routes  map[route.Route]int `json:"routes,omitzero"`
 	Threads threadStats         `json:"threads"`
 	// Elapsed is from the read's start until the threads are built, mail's run included.
 	Elapsed time.Duration `json:"elapsed"`
@@ -269,7 +270,7 @@ func statsOf(threads []*email.Thread) threadStats {
 // read. It returns the survey, the threads, and each attachment's filename and route in the order
 // read.
 func surveyStore(ctx context.Context, r *email.Reader, input, dir string) (survey, []*email.Thread, []routed, error) {
-	s := survey{Routes: map[email.Route]int{}}
+	s := survey{Routes: map[route.Route]int{}}
 	var tr email.Threader
 	var routes []routed
 	start := time.Now()
@@ -296,12 +297,12 @@ func surveyStore(ctx context.Context, r *email.Reader, input, dir string) (surve
 				if dir == "" {
 					continue
 				}
-				route, _, err := a.Route()
+				rt, _, err := a.Route()
 				if err != nil {
 					return s, nil, nil, err
 				}
-				s.Routes[route]++
-				routes = append(routes, routed{a.Filename, route})
+				s.Routes[rt]++
+				routes = append(routes, routed{a.Filename, rt})
 			}
 		}
 	}
@@ -444,10 +445,10 @@ func TestFindingsFixtures(t *testing.T) {
 			total.ThreadsScored += res.ThreadsScored
 			total.ThreadsRight += res.ThreadsRight
 			if total.Routes == nil {
-				total.Routes = map[email.Route]int{}
+				total.Routes = map[route.Route]int{}
 			}
-			for route, n := range res.Routes {
-				total.Routes[route] += n
+			for rt, n := range res.Routes {
+				total.Routes[rt] += n
 			}
 		}
 		t.Logf("recorded: %s, %d inputs: %d folders, %d messages, %d skipped, %d warnings; %d attachments, routes %s; routes right %d of %d; threads right %d of %d messages scored",
@@ -507,14 +508,14 @@ func scoreLine(res fixtureResult) string {
 }
 
 // routeCounts writes counts by route, in the routes' declared order, those with none left out.
-func routeCounts(counts map[email.Route]int) string {
+func routeCounts(counts map[route.Route]int) string {
 	var parts []string
-	for _, route := range []email.Route{
-		email.RouteDocument, email.RouteOffice, email.RouteVision, email.RouteVisionConverted,
-		email.RouteNested, email.RouteUnrouted,
+	for _, rt := range []route.Route{
+		route.Document, route.Office, route.Vision, route.VisionConverted, route.Nested,
+		route.OneNote, route.Archive, route.Audio, route.Video, route.Text, route.Unrouted,
 	} {
-		if n := counts[route]; n > 0 {
-			parts = append(parts, fmt.Sprintf("%s %d", route, n))
+		if n := counts[rt]; n > 0 {
+			parts = append(parts, fmt.Sprintf("%s %d", rt, n))
 		}
 	}
 	if len(parts) == 0 {

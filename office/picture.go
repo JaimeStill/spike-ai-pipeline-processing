@@ -6,13 +6,14 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
-	"encoding/binary"
 	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 )
 
 // ErrNoMagick is the cause of the error ConvertPicture returns for a TIFF, EMF, or WMF when the
@@ -35,37 +36,21 @@ type PictureRequest struct {
 	MetafileScale int
 }
 
-// The signatures ConvertPicture tells a picture's kind by, the ones package email routes a
-// picture to office's conversion by. An EMF's signature is at offset 40, and a WMF's standard
-// header is checked by its size and version as well as its type.
-var (
-	tiffLE       = []byte("II*\x00")
-	tiffBE       = []byte("MM\x00*")
-	emfSignature = []byte(" EMF")
-	wmfPlaceable = []byte{0xd7, 0xcd, 0xc6, 0x9a}
-)
-
 // pictureHeadLen is the most of a picture ConvertPicture reads to tell its kind: enough for an
 // EMF's signature at offset 40.
 const pictureHeadLen = 64
 
 // pictureKind returns the stored extension of the picture kind head, a file's first bytes,
-// begins, ".tiff", ".emf", or ".wmf", by its signature; "" for any other content.
+// begins, ".tiff", ".emf", or ".wmf", by its signature as the route package identifies it, the
+// signatures it routes a picture to conversion by; "" for any other content.
 func pictureKind(head []byte) string {
-	switch {
-	case bytes.HasPrefix(head, tiffLE), bytes.HasPrefix(head, tiffBE):
+	switch route.Identify(head) {
+	case route.TIFF:
 		return ".tiff"
-	case len(head) >= 44 && binary.LittleEndian.Uint32(head) == 1 && bytes.Equal(head[40:44], emfSignature):
+	case route.EMF:
 		return ".emf"
-	case bytes.HasPrefix(head, wmfPlaceable):
+	case route.WMF:
 		return ".wmf"
-	case len(head) >= 6:
-		typ := binary.LittleEndian.Uint16(head)
-		size := binary.LittleEndian.Uint16(head[2:])
-		version := binary.LittleEndian.Uint16(head[4:])
-		if (typ == 1 || typ == 2) && size == 9 && (version == 0x0300 || version == 0x0100) {
-			return ".wmf"
-		}
 	}
 	return ""
 }

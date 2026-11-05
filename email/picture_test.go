@@ -11,6 +11,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -86,7 +87,7 @@ func pictureConverter(t *testing.T) (*office.Converter, func() [][]string) {
 }
 
 // TestRouteVisionConvertedPicture: a TIFF attachment, written into the attachments directory as
-// mail names it, its SHA-256 and stored extension, routes RouteVisionConverted, and the caller
+// mail names it, its SHA-256 and stored extension, routes route.VisionConverted, and the caller
 // converts it through office's ConvertPicture into a directory of its own: the PNG is that
 // directory's file named by the attachment's SHA-256 and .png, from one magick run on the TIFF's
 // bytes, and the attachment's file is kept as mail wrote it. How office invokes magick is
@@ -96,9 +97,9 @@ func TestRouteVisionConvertedPicture(t *testing.T) {
 	attachments := t.TempDir()
 	file := writeContent(t, attachments, tiffLE, ".tif")
 	a := &email.Attachment{File: file, Filename: "scan.tif", Method: "by_value", Path: filepath.Join(attachments, file)}
-	route, why, err := a.Route()
-	if err != nil || route != email.RouteVisionConverted {
-		t.Fatalf("route: got %s (%s), %v; want %s", route, why, err, email.RouteVisionConverted)
+	rt, why, err := a.Route()
+	if err != nil || rt != route.VisionConverted {
+		t.Fatalf("route: got %s (%s), %v; want %s", rt, why, err, route.VisionConverted)
 	}
 
 	out := t.TempDir()

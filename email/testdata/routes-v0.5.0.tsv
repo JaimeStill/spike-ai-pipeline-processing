@@ -1,0 +1,70 @@
+# The route and reason of every attachment of email's fixtures and MIME inputs, as processing
+# v0.5.0 gave them: recorded at b05438a, before the route package, from TestRealRoutes' and
+# TestBuiltRoutes' logs over the real pinned mail 0.2.0, with an attachments directory. One line
+# per attachment, in the order a read gives them: the input's path under testdata/, the
+# attachment's filename (empty for an embedded message without one), its route, and its reason,
+# tab-separated. An input with no attachment has no line.
+mail/fixtures/generated/msg/03-html-inline-image.msg	moth.png	vision	PNG signature
+mail/fixtures/generated/msg/04-attachment-cyrillic.msg	отчёт.csv	unrouted	no routed signature
+mail/fixtures/generated/msg/08-forward-attached-message.msg	note-g.txt	unrouted	no routed signature
+mail/fixtures/generated/msg/08-forward-attached-message.msg	Notes on the engine (draft).eml	nested	a message by its .eml extension, header-shaped
+mail/fixtures/generated/pst/mailbox.pst	moth.png	vision	PNG signature
+mail/fixtures/generated/pst/mailbox.pst	отчёт.csv	unrouted	no routed signature
+mail/fixtures/generated/pst/mailbox.pst	note-g.txt	unrouted	no routed signature
+mail/fixtures/msg/poi/example_sent_regular.msg	alfresco.gif	vision	BMP signature
+mail/fixtures/msg/tika/test-outlook2003.msg	1.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	2.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	3.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	4.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	5.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	6.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	7.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	8.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	9.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	10.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/test-outlook2003.msg	12.jpg	vision	JPEG signature
+mail/fixtures/msg/tika/testMSG_att_msg.msg	Test Attachment	nested	embedded message, nested under its record
+mail/fixtures/msg/tika/testMSG_att_msg.msg	smbprn.00009008.KdcPjl.pdf	document	PDF signature
+mail/fixtures/pst/java-libpst/dist-list.pst		nested	embedded message, listed without its content
+mail/fixtures/pst/java-libpst/dist-list.pst		nested	embedded message, listed without its content
+mail/fixtures/pst/libyal/outlook.pst	1.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	2.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	3.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	4.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	5.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	6.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	7.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	8.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	9.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	10.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	12.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	1.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	2.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	3.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	4.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	5.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	6.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	7.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	8.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	9.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	10.jpg	vision	JPEG signature
+mail/fixtures/pst/libyal/outlook.pst	12.jpg	vision	JPEG signature
+mail/fixtures/pst/tika/testPST.pst		nested	embedded message, listed without its content
+mail/fixtures/generated/eml/03-html-inline-image.eml	moth.png	vision	PNG signature
+mail/fixtures/generated/eml/04-attachment-cyrillic.eml	отчёт.csv	unrouted	no routed signature
+mail/fixtures/generated/eml/08-forward-attached-message.eml	note-g.txt	unrouted	no routed signature
+mail/fixtures/generated/eml/08-forward-attached-message.eml		nested	embedded message, nested under its record
+mail/fixtures/mime/nine.mboxrd	moth.png	vision	PNG signature
+mail/fixtures/mime/nine.mboxrd	отчёт.csv	unrouted	no routed signature
+mail/fixtures/mime/nine.mboxrd	note-g.txt	unrouted	no routed signature
+mail/fixtures/mime/nine.mboxrd		nested	embedded message, nested under its record
+built/eml/office-attachments.eml	minutes.docx	office	ZIP signature, .docx extension
+built/eml/office-attachments.eml	budget.xls	office	OLE2 signature, .xls extension
+built/eml/office-attachments.eml	scan.tif	vision-converted	TIFF signature
+built/eml/office-attachments.eml	diagram.emf	vision-converted	EMF signature
+built/eml/office-attachments.eml	forwarded.msg	nested	OLE2 signature, .msg extension
+built/msg/office-attachments.msg	minutes.docx	office	ZIP signature, .docx extension
+built/msg/office-attachments.msg	budget.xls	office	OLE2 signature, .xls extension
+built/msg/office-attachments.msg	scan.tif	vision-converted	TIFF signature
+built/msg/office-attachments.msg	diagram.emf	vision-converted	EMF signature
+built/msg/office-attachments.msg	forwarded.msg	nested	OLE2 signature, .msg extension

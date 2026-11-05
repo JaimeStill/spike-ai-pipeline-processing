@@ -79,7 +79,7 @@
 // Tool run does.
 //
 // Converter.ConvertPicture converts one picture outside a document, such as a mail attachment the
-// email package routes to RouteVisionConverted, through the same code a document's picture takes.
+// email package routes to route.VisionConverted, through the same code a document's picture takes.
 // The PictureRequest names the picture's file, a TIFF, EMF, or WMF told by its content's
 // signature, never its name; the working directory, which the caller owns; and the scale an EMF
 // or WMF is rendered at, as a Request's. The picture is copied under its SHA-256 into a directory

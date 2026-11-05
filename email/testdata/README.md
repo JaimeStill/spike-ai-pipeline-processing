@@ -48,3 +48,11 @@ routes, the docx and the xls to office, the TIFF and the EMF to vision through o
 conversion, and the `.msg` nested, for a Reader to read again. MsgKit stores the EMF and the `.msg`
 as `application/octet-stream`, whatever the source's `image/emf` and
 `application/vnd.ms-outlook`; the route reads their signatures.
+
+## routes-v0.5.0.tsv
+
+`routes-v0.5.0.tsv` is the route and reason processing v0.5.0 gave every attachment of the inputs
+above, the copied fixtures, the MIME inputs, and the built `.msg`, recorded at commit `b05438a`,
+before the route package, from the real-binary route tests' logs over mail 0.2.0. The tests hold
+every route to it, but for the attachments a route named since claims, which they list with their
+route and reason now.
