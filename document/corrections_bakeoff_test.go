@@ -19,6 +19,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
@@ -182,7 +183,7 @@ func TestCorrections(t *testing.T) {
 						res.RunTimes = append(res.RunTimes, elapsed)
 						for _, cl := range cells {
 							t.Logf("recorded: corrections %d dpi %s %s: page %d run %d: CER %.4f WER %.4f, %d input tokens, %d output tokens, status %s%s",
-								dpi, s.name, mc.name, cl.Page, cl.Run, rate(cl.CharEdits, cl.Chars), rate(cl.WordEdits, cl.Words),
+								dpi, s.name, mc.name, cl.Page, cl.Run, textscore.Rate(cl.CharEdits, cl.Chars), textscore.Rate(cl.WordEdits, cl.Words),
 								cl.InputTokens, cl.OutputTokens, cl.Status, errSuffix(cl.Error))
 						}
 						t.Logf("recorded: corrections %d dpi %s %s: run %d, %d pages at concurrency %d in %v",
@@ -256,8 +257,8 @@ func fill(cl *cell, resp *protocol.Response) {
 
 // score sets cl's edits and lengths against truth.
 func score(cl *cell, truth string) {
-	cl.CharEdits, cl.Chars = charErrors(truth, cl.Output)
-	cl.WordEdits, cl.Words = wordErrors(truth, cl.Output)
+	cl.CharEdits, cl.Chars = textscore.CharErrors(truth, cl.Output)
+	cl.WordEdits, cl.Words = textscore.WordErrors(truth, cl.Output)
 }
 
 // saveCorrections keeps res for the matrix: in BAKEOFF_RESULTS when it is set, else in memory.
@@ -320,7 +321,7 @@ func pageSpread(cells []cell, page int) (s spread, incomplete int, ok bool) {
 			incomplete++
 			continue
 		}
-		rates = append(rates, rate(cl.CharEdits, cl.Chars))
+		rates = append(rates, textscore.Rate(cl.CharEdits, cl.Chars))
 	}
 	if len(rates) == 0 {
 		return spread{}, incomplete, false

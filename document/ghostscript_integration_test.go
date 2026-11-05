@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -92,8 +93,8 @@ func TestGhostscriptTextHost(t *testing.T) {
 			t.Errorf("clean.pdf page %d has no text layer, want one", i+1)
 			continue
 		}
-		e, n := charErrors(truth, text)
-		we, wn := wordErrors(truth, text)
+		e, n := textscore.CharErrors(truth, text)
+		we, wn := textscore.WordErrors(truth, text)
 		found := wordsFound(truth, text)
 		edits, chars, wedits, words = edits+e, chars+n, wedits+we, words+wn
 		// txtwrite keeps the page's layout, so two columns read across both, line by line, and a
@@ -103,9 +104,9 @@ func TestGhostscriptTextHost(t *testing.T) {
 			t.Errorf("clean.pdf page %d's text layer holds %.4f of its truth's words, want nearly all: %q", i+1, found, text)
 		}
 		t.Logf("recorded: text layer clean.pdf page %d: CER %.4f, WER %.4f, %.4f of the truth's words found, %d bytes",
-			i+1, rate(e, n), rate(we, wn), found, len(text))
+			i+1, textscore.Rate(e, n), textscore.Rate(we, wn), found, len(text))
 	}
-	t.Logf("recorded: text layer clean.pdf, 6 pages: CER %.4f, WER %.4f", rate(edits, chars), rate(wedits, words))
+	t.Logf("recorded: text layer clean.pdf, 6 pages: CER %.4f, WER %.4f", textscore.Rate(edits, chars), textscore.Rate(wedits, words))
 	scanned := filepath.Join("testdata", "scanned.pdf")
 	for page := 1; page <= 7; page++ {
 		text, err := g.Text(t.Context(), scanned, page)
@@ -204,5 +205,5 @@ func wordsFound(truth, got string) float64 {
 			found++
 		}
 	}
-	return rate(found, len(want))
+	return textscore.Rate(found, len(want))
 }

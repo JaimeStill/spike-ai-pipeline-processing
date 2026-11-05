@@ -19,6 +19,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 )
 
@@ -202,7 +203,7 @@ func TestFlow(t *testing.T) {
 					res.Elapsed = time.Since(start)
 					for _, cl := range res.Cells {
 						t.Logf("recorded: flow %s %s: page %d run %d: %s, CER %.4f WER %.4f, %d vision calls, %d input tokens, %d output tokens, status %s%s%s",
-							s.name, variant, cl.Page, cl.Run, cl.Source, rate(cl.CharEdits, cl.Chars), rate(cl.WordEdits, cl.Words),
+							s.name, variant, cl.Page, cl.Run, cl.Source, textscore.Rate(cl.CharEdits, cl.Chars), textscore.Rate(cl.WordEdits, cl.Words),
 							cl.VisionCalls, cl.InputTokens, cl.OutputTokens, cl.Status, asked(cl), errSuffix(cl.Error))
 					}
 					t.Logf("recorded: flow %s %s: run %d, %d cells at concurrency %d in %v",
@@ -270,8 +271,8 @@ func flowRun(t *testing.T, v *vision, corr *picture.Corrector, s fixtureSet, run
 				}
 				score(&cl.cell, s.truth[cl.Page-1])
 				if cl.FirstStatus != "" {
-					cl.FirstCharEdits, _ = charErrors(s.truth[cl.Page-1], cl.FirstOutput)
-					cl.FirstWordEdits, _ = wordErrors(s.truth[cl.Page-1], cl.FirstOutput)
+					cl.FirstCharEdits, _ = textscore.CharErrors(s.truth[cl.Page-1], cl.FirstOutput)
+					cl.FirstWordEdits, _ = textscore.WordErrors(s.truth[cl.Page-1], cl.FirstOutput)
 				}
 				cells[i] = cl
 			}
@@ -500,7 +501,7 @@ func TestTiles(t *testing.T) {
 			for _, r := range reads {
 				t.Logf("recorded: tiles %s at %d dpi, page %d region top %g bottom %g left %g right %g, %dx%d, %d PNG bytes: run %d, %d input tokens, %d image tokens, %d output tokens, %s in %d ms: %q",
 					r.Tile, dpi, r.Page, r.Region.Top, r.Region.Bottom, r.Region.Left, r.Region.Right, r.Width, r.Height, r.PNGBytes,
-					r.Run, r.InputTokens, r.InputTokens-r.TextOnly, r.OutputTokens, r.Status, r.RequestMillis, collapse(r.Output))
+					r.Run, r.InputTokens, r.InputTokens-r.TextOnly, r.OutputTokens, r.Status, r.RequestMillis, textscore.Collapse(r.Output))
 			}
 			saveJSON(t, fmt.Sprintf("tiles-%d.json", dpi), reads, func() {})
 		})
@@ -596,7 +597,7 @@ func reportTextLayers(t *testing.T, set string, flows []flowResult) {
 	byPage := map[int][]string{}
 	for _, cl := range sortedRuns(flows) {
 		if cl.Source == "text-layer" {
-			byPage[cl.Page] = append(byPage[cl.Page], fmt.Sprintf("%.4f", rate(cl.CharEdits, cl.Chars)))
+			byPage[cl.Page] = append(byPage[cl.Page], fmt.Sprintf("%.4f", textscore.Rate(cl.CharEdits, cl.Chars)))
 		}
 	}
 	if len(byPage) == 0 {
@@ -630,12 +631,12 @@ func reportCorrections(t *testing.T, set string, flows []flowResult) {
 			byCorrection[name] = append(byCorrection[name], fmt.Sprintf("p%d/r%d", cl.Page, cl.Run))
 		}
 		t.Logf("recorded: flow %s: page %d run %d: first pass %s, judged %q (%s), asked %v, first CER %.4f",
-			set, cl.Page, cl.Run, cl.FirstStatus, cl.Quality, cl.Reason, cl.Asked, rate(cl.FirstCharEdits, cl.Chars))
+			set, cl.Page, cl.Run, cl.FirstStatus, cl.Quality, cl.Reason, cl.Asked, textscore.Rate(cl.FirstCharEdits, cl.Chars))
 		if cl.Source != "second" {
 			continue
 		}
 		flagged++
-		first, second := rate(cl.FirstCharEdits, cl.Chars), rate(cl.CharEdits, cl.Chars)
+		first, second := textscore.Rate(cl.FirstCharEdits, cl.Chars), textscore.Rate(cl.CharEdits, cl.Chars)
 		verdict := "same"
 		switch {
 		case cl.incomplete():
@@ -699,7 +700,7 @@ func reportBands(t *testing.T, n int, byKey map[string][]flowResult) {
 				continue
 			}
 			t.Logf("recorded: flow scanned regions: page %d run %d %s (%d input tokens, %s): %q",
-				page, cl.Run, cl.Source, cl.InputTokens, cl.Status, collapse(cl.Output))
+				page, cl.Run, cl.Source, cl.InputTokens, cl.Status, textscore.Collapse(cl.Output))
 		}
 		var full []string
 		for _, variant := range flowVariants[:3] {

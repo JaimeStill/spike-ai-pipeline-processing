@@ -14,6 +14,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/onenote"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
@@ -33,34 +34,9 @@ const (
 	inkRuns = 3
 )
 
-// collapse returns s with every run of whitespace made one space, and none at either end.
-func collapse(s string) string { return strings.Join(strings.Fields(s), " ") }
-
-// editDistance returns the Levenshtein distance from a to b, as document's bake-off scores it.
-func editDistance[T comparable](a, b []T) int {
-	row := make([]int, len(b)+1)
-	for j := range row {
-		row[j] = j
-	}
-	for i := 1; i <= len(a); i++ {
-		diag := row[0]
-		row[0] = i
-		for j := 1; j <= len(b); j++ {
-			cost := 1
-			if a[i-1] == b[j-1] {
-				cost = 0
-			}
-			above := row[j]
-			row[j] = min(above+1, row[j-1]+1, diag+cost)
-			diag = above
-		}
-	}
-	return row[len(b)]
-}
-
-// inkScore is a transcription scored against the truth, as document's bake-off scores a page:
-// the character and word edit distances over the truth's length, both texts whitespace-collapsed,
-// case counting.
+// inkScore is a transcription scored against the truth by textscore, as document's bake-off
+// scores a page: the character and word edit distances over the truth's length, both texts
+// whitespace-collapsed, case counting.
 type inkScore struct {
 	CharEdits  int     `json:"char_edits"`
 	Chars      int     `json:"chars"`
@@ -74,9 +50,11 @@ type inkScore struct {
 // scoreInk scores got against truth. WordsRight is the truth's words got holds in order, their
 // longest common subsequence.
 func scoreInk(truth, got string) inkScore {
-	tc, tw, gw := []rune(collapse(truth)), strings.Fields(truth), strings.Fields(got)
-	s := inkScore{CharEdits: editDistance(tc, []rune(collapse(got))), Chars: len(tc), WordEdits: editDistance(tw, gw), Words: len(tw)}
-	s.CER, s.WER = float64(s.CharEdits)/float64(s.Chars), float64(s.WordEdits)/float64(s.Words)
+	var s inkScore
+	s.CharEdits, s.Chars = textscore.CharErrors(truth, got)
+	s.WordEdits, s.Words = textscore.WordErrors(truth, got)
+	s.CER, s.WER = textscore.Rate(s.CharEdits, s.Chars), textscore.Rate(s.WordEdits, s.Words)
+	tw, gw := strings.Fields(truth), strings.Fields(got)
 	// The longest common subsequence of words, by one row.
 	row := make([]int, len(gw)+1)
 	for i := 1; i <= len(tw); i++ {
