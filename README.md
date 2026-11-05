@@ -179,6 +179,67 @@ caller's loop body returns, so a caller that persists an output sets its `Ref` a
 event carries it; then each part's file is removed unless the caller called `Event.Keep`, so the
 disk holds only the parts in flight.
 
+The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader
+or converter the caller already built and the version of its Tools, which `dispatch.Versions`
+names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeStage`, office's
+Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF, EMF, WMF, or SVG to
+PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
+mail's records, each message's Markdown, and each attachment found as a part, an embedded message
+mail gives no file for prepared inline; and `OneNoteStage`, onenote's records, each page's
+Markdown, and each of its media found as a part. A found part's `Where` names its place, such as
+`message 2097220, attachment 1` or `page {...}, page ink`, and it is dispatched again, so a PDF
+attached to a message reaches the document stage and a page's ink becomes a PNG. Kinds no adapter
+reads yet, ODF, RTF, WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet.
+
+```go
+render, err := document.NewGhostscript(gs)
+if err != nil {
+	return err
+}
+prep, err := document.NewPreparer(render, nil)
+if err != nil {
+	return err
+}
+docs, err := dispatch.NewDocumentStage(dispatch.DocumentConfig{
+	Preparer: prep, Version: dispatch.Versions(gs), Request: document.ImagesRequest{Text: true},
+})
+if err != nil {
+	return err
+}
+offices, err := dispatch.NewOfficeStage(dispatch.OfficeConfig{Converter: oc, Version: dispatch.Versions(of, lo, mg)})
+if err != nil {
+	return err
+}
+pictures, err := dispatch.NewPictureStage(dispatch.PictureConfig{Converter: pc, Version: dispatch.Versions(mg, lo)})
+if err != nil {
+	return err
+}
+mail, err := dispatch.NewEmailStage(dispatch.EmailConfig{Reader: er, Version: dispatch.Versions(ml)})
+if err != nil {
+	return err
+}
+notes, err := dispatch.NewOneNoteStage(dispatch.OneNoteConfig{Reader: nr, Version: dispatch.Versions(on)})
+if err != nil {
+	return err
+}
+d, err := dispatch.New(dispatch.Config{
+	Stages: dispatch.Stages{
+		route.Document: docs, route.Office: offices, route.VisionConverted: pictures,
+		route.Vision: dispatch.NewVisionStage(), route.Nested: mail, route.OneNote: notes,
+	},
+	Index: dispatch.NewMemoryIndex(), Dir: work,
+})
+if err != nil {
+	return err
+}
+for ev, err := range d.Dispatch(ctx, dispatch.Input{Path: "mailbox.pst"}) {
+	if err != nil {
+		return err
+	}
+	// send ev.Outputs on; each part's event comes before its parent's
+}
+```
+
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
 `NewConverter` over a `Config` of a magick Tool that `MagickSpec` declares, minimum
