@@ -1,7 +1,9 @@
 // Package dispatch walks an input and every part found in it to the stages that prepare them,
-// on the standard library and this module's route and inspect packages. It never calls a model:
-// it reports what each part is and what its stage prepared, for a layer above to send on. The
-// stages are the caller's, registered by route; the format packages' adapters are stages.
+// on the standard library and this module's route and inspect packages, and, for the format
+// packages' adapters, which build on Linux only, on document, office, picture, email, onenote,
+// and tool. It never calls a model: it reports what each part is and what its stage prepared,
+// for a layer above to send on. The stages are the caller's, registered by route; the format
+// packages' adapters are stages.
 //
 // [Dispatcher.Dispatch] takes an [Input], a file the caller owns and the dispatcher never
 // removes, and yields an [Event] for each part, depth-first: a stage's parts are dispatched as
@@ -45,6 +47,37 @@
 // and prepares one part: Prepare yields [Item]s, each an [Output] it prepared or a [Found] part,
 // a file it wrote into the directory the dispatcher made for the part. An Output is text,
 // Markdown, an image, or a record, held in a file or inline, with the stage's metadata.
+//
+// # Adapters
+//
+// Each format package has an adapter here, a Stage built over the reader or converter the
+// caller already built, its Tools the caller's, and the version of those Tools, which [Versions]
+// names: no adapter constructs a tool. An adapter's identity is its name, that version, and a
+// hash of the options that change what it prepares, with the adapters' own version, so a change
+// to an adapter prepares content again.
+//
+//   - [DocumentStage], for route.Document: a PDF's pages through document's Preparer, each
+//     page's text layer a text output and its image a PNG, under the request the caller gives.
+//   - [OfficeStage], for route.Office: office's Markdown, and each medium office wrote, a
+//     converted picture as its PNG, found as a part. ODF, RTF, WordPerfect, an Excel binary
+//     workbook, and a legacy document without LibreOffice have no processor yet.
+//   - [PictureStage], for route.VisionConverted: a TIFF, EMF, WMF, or SVG to a PNG through
+//     picture's Converter. HEIC, WebP, and AVIF, and a picture whose tool the Converter lacks,
+//     have no processor yet.
+//   - [VisionStage], for route.Vision: a PNG, JPEG, GIF, or BMP passed through as an image
+//     output, so every picture reaches a layer above as one.
+//   - [EmailStage], for route.Nested: mail's records, each a record output, a message's
+//     Markdown body beside its record, and each attachment's file found as a part, where its
+//     message and place say; an embedded message mail gives no file for is prepared inline,
+//     its own attachments found below it, at any depth.
+//   - [OneNoteStage], for route.OneNote: onenote's records, a page's Markdown beside its
+//     record, and each of its media found as a part, "page <id>, <where>"; a medium onenote
+//     wrote no content for is a record.
+//
+// A skipped record, a medium or attachment with no content, and a CLI's warnings are each a
+// record output, never dropped. The email and onenote stages place each file they find in a
+// directory of its own, a hard link to the file the CLI wrote, since the CLI writes each
+// distinct content once and the dispatcher removes a found part's file once its event is done.
 //
 // # The index
 //
@@ -93,6 +126,11 @@
 //     yields [Item]s, made by [OutputItem] and [PartItem], each an [Output] of an [OutputKind],
 //     [TextOutput], [MarkdownOutput], [ImageOutput], or [RecordOutput], or a [Found] part, and
 //     ends with [ErrNoProcessor] or [ErrEncrypted] to name its outcome.
+//   - The adapters, on Linux: [DocumentStage], [OfficeStage], [PictureStage], [EmailStage], and
+//     [OneNoteStage], made by [NewDocumentStage], [NewOfficeStage], [NewPictureStage],
+//     [NewEmailStage], and [NewOneNoteStage] over a [DocumentConfig], [OfficeConfig],
+//     [PictureConfig], [EmailConfig], and [OneNoteConfig]; [VisionStage], made by
+//     [NewVisionStage]; and [Versions], a stage's tools' version.
 //   - [Index], keyed by a [Key], holding [Entry]s, each referencing its [Child]ren; the shipped
 //     ones are [MemoryIndex], made by [NewMemoryIndex], and [FileIndex], made by
 //     [NewFileIndex] under [FileOptions], [DefaultStale] and [DefaultPoll] by default.
