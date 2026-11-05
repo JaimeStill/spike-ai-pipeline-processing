@@ -140,24 +140,25 @@
 // released with the outputs. Index.Outputs and Index.Children read a recorded entry's outputs and
 // children back, streamed, never all at once, and Lookup's Entry counts them.
 //
-// An entry is recorded only for a part whose stage ran and whose whole subtree came to an
-// outcome the content decides: a part with a [Failed] or [Limited] descendant, or that failed
-// itself, is not recorded, so a later dispatch prepares it again and retries what failed. A
-// part whose route has no stage records only its flags, never an entry under any stage, so a
-// stage registered later prepares it in a later dispatch. A [Seen] part's entry references its children, by their SHA-256, name, where they were
-// found, size, route, and outcome, as [Child]ren, read by Index.Children, rather than yielding
-// their events again: their own entries and flags are in the index, and their outputs where the
-// caller put them.
+// An entry is recorded only for a part whose stage ran and whose whole subtree came to an outcome
+// the content decides: a part with a [Failed] or [Limited] descendant, or that failed itself, is
+// not recorded, so a later dispatch prepares it again and retries what failed. A part whose route
+// has no stage records only its flags, never an entry under any stage, so a stage registered later
+// prepares it in a later dispatch. A [Seen] part's entry references its children, by their SHA-256,
+// name, where they were found, size, route, and outcome, as [Child]ren, read by Index.Children,
+// rather than yielding their events again: their own entries and flags are in the index, and their
+// outputs where the caller put them.
 //
 // [MemoryIndex] holds the index in memory, every output among it, its waiters woken the moment a
-// claim ends. [FileIndex] holds it in a directory the caller names, on the standard library
-// alone: a file per record, written by atomic rename, a claim file per claim, created with
-// O_EXCL, which a claimant takes over once it is older than [FileOptions.Stale], as a dead
-// claimant would leave it, and two pending files per claim, its outputs and its children as JSON
-// lines, appended as they come and renamed beside the entry when it is recorded, so its memory
-// holds none of them; its waiters poll, and a takeover removes the dead claim's pending files. A
-// claim is never renewed, so the stale timeout must outlast the slowest stage. Two dispatches each holding a part the other contains wait on each other, as
-// only content that contains itself can arrange; their contexts end the wait.
+// claim ends. [FileIndex] holds it in a directory the caller names, on the standard library alone:
+// a file per record, written by atomic rename, a claim file per claim, created with O_EXCL, which a
+// claimant takes over once it is older than [FileOptions.Stale], as a dead claimant would leave it,
+// and two pending files per claim, its outputs and its children as JSON lines, appended as they
+// come and renamed beside the entry when it is recorded, so its memory holds none of them; its
+// waiters poll, and a takeover removes the dead claim's pending files. A claim is never renewed, so
+// the stale timeout must outlast the slowest stage. Two dispatches each holding a part the other
+// contains wait on each other, as only content that contains itself can arrange; their contexts end
+// the wait.
 //
 // # Outputs and the caller's loop
 //
@@ -192,14 +193,14 @@
 //
 // [Dispatcher.Pool] dispatches an iterator of inputs over a number of workers, each a Dispatch of
 // its own, all sharing the dispatcher's index, so content the inputs share is prepared once and
-// seen by the rest, and yields every input's events as one sequence, each a [PoolEvent], its
-// input and its event. An input's events keep their order; the inputs' interleave. The caller's
-// loop body runs on its own goroutine, and each worker waits for it to return before its dispatch
-// goes on, so the caller's loop owns each event as it owns one dispatch's, output events among
-// them: an output is appended, the entry recorded, and the files removed once the body returns. A worker holds one event at most, so a slow loop
-// holds the workers back, and the disk holds what that many dispatches have in flight. An error
-// that stops one input's dispatch is yielded with that input, and the others go on; ctx ending
-// stops them all, its error yielded alone, last.
+// seen by the rest, and yields every input's events as one sequence, each a [PoolEvent], its input
+// and its event. An input's events keep their order; the inputs' interleave. The caller's loop body
+// runs on its own goroutine, and each worker waits for it to return before its dispatch goes on, so
+// the caller's loop owns each event as it owns one dispatch's, output events among them: an output
+// is appended, the entry recorded, and the files removed once the body returns. A worker holds one
+// event at most, so a slow loop holds the workers back, and the disk holds what that many
+// dispatches have in flight. An error that stops one input's dispatch is yielded with that input,
+// and the others go on; ctx ending stops them all, its error yielded alone, last.
 //
 // # Resuming a store
 //
@@ -252,8 +253,8 @@
 //   - [New] builds a [Dispatcher] over a [Config]: its [Stages], its [Index], its working
 //     directory, its [Limits], and its inspect.Options. [Dispatcher.Dispatch] dispatches an
 //     [Input], its After resuming a store, yielding [Event]s, each a [Part] and an [Output] or the
-//     part's [Outcome]; [Event.Keep] keeps its files. [Dispatcher.Pool] dispatches many over workers, yielding
-//     [PoolEvent]s.
+//     part's [Outcome]; [Event.Keep] keeps its files. [Dispatcher.Pool] dispatches many over
+//     workers, yielding [PoolEvent]s.
 //   - [Stage], its [Identity], and [HashConfig] for an identity's configuration hash; a stage
 //     yields [Item]s, made by [OutputItem] and [PartItem], each an [Output] of an [OutputKind],
 //     [TextOutput], [MarkdownOutput], [ImageOutput], or [RecordOutput], or a [Found] part, and

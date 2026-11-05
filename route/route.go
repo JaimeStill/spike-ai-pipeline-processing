@@ -183,7 +183,8 @@ func File(path, name, mimeType string) (Route, string, error) {
 			return "", "", err
 		}
 		if encrypted {
-			return Office, "OLE2 signature with an EncryptedPackage stream, " + ext + " extension, an encrypted OOXML package", nil
+			why := "OLE2 signature with an EncryptedPackage stream, " + ext + " extension, an encrypted OOXML package"
+			return Office, why, nil
 		}
 	}
 	if route, why := byKind(kind, ext); route != "" {

@@ -65,15 +65,15 @@
 // Threader fed the records up to K, saved, restored, and fed the read resumed after K returns the
 // threads of the whole read.
 //
-// Known limits: a by-value .eml whose header isn't a message's shape is unrouted, unless it
-// begins with an mbox's "From " line, which makes it an mbox, and header-shaped content neither
-// named .eml nor stored as a message isn't nested; an .ost is refused by mail, and unrouted; in a .pst, an embedded message is nested
-// without its content, which mail can't read; a by-reference attachment has no content file, so
-// it is unrouted; and the stores mail's generator writes, its fixtures and its scale store, carry
-// no threading fields, so they thread by subject alone. mail's own limits reach MIME input: it
-// reads every mbox as an mboxrd, so an mboxcl's Content-Length is ignored and an mboxo body line
-// that was ">From " loses its ">"; and an .eml's or an mbox's message has no class, no creation
-// or modification time, and SMTP addresses alone.
+// Known limits: a by-value .eml whose header isn't a message's shape is unrouted, unless it begins
+// with an mbox's "From " line, which makes it an mbox, and header-shaped content neither named .eml
+// nor stored as a message isn't nested; an .ost is refused by mail, and unrouted; in a .pst, an
+// embedded message is nested without its content, which mail can't read; a by-reference attachment
+// has no content file, so it is unrouted; and the stores mail's generator writes, its fixtures and
+// its scale store, carry no threading fields, so they thread by subject alone. mail's own limits
+// reach MIME input: it reads every mbox as an mboxrd, so an mboxcl's Content-Length is ignored and
+// an mboxo body line that was ">From " loses its ">"; and an .eml's or an mbox's message has no
+// class, no creation or modification time, and SMTP addresses alone.
 //
 // Its exported identifiers:
 //
