@@ -1,0 +1,115 @@
+[
+  {
+    "file": "interop/Resources/AlternativePackaging.one",
+    "code": 0,
+    "section": {"id": "1d83e4e5-5b18-49c9-8a60-6651ff1997d5", "display_name": "TestSuiteSampleSection", "color": "#9bbbd2"},
+    "pages": [
+      {"id": "59d31d73-b864-4640-810c-c00a64a746d1", "level": 1, "title": "Test Suite Sample", "creation_time": "2021-07-15T09:07:51Z", "modification_time": "2021-07-15T09:07:51Z", "content": {"title": 1, "outline": 2}}
+    ]
+  },
+  {
+    "file": "interop/SUT/Encryption.one",
+    "code": 3,
+    "reason": "Unexpected end of file"
+  },
+  {
+    "file": "interop/SUT/FileSyncWOPI_OneNoteWithODB.one",
+    "code": 0,
+    "section": {"id": "bd15459b-f818-471c-9386-f1058b65c64f", "display_name": "FileSyncWOPI_OneNoteWithODB", "color": "#8aa8e4"},
+    "pages": [
+      {"id": "19a0907d-cc34-459e-bdb6-dea53bdcd6f7", "level": 1, "creation_time": "2013-12-10T03:10:54Z", "modification_time": "2013-12-10T03:11:11Z", "author": "Changbin Chen (VanceInfo)", "content": {"title": 1, "outline": 2}}
+    ]
+  },
+  {
+    "file": "interop/SUT/InvalidData.one",
+    "code": 0,
+    "section": {"id": "b44d1bb9-b3f4-4e7f-b0fb-f89fc3f46d60", "display_name": "InvalidData", "color": "#91baae"},
+    "pages": [
+      {"id": "d2ef96b5-baf3-4551-91dc-29c28f0e67da", "level": 1, "creation_time": "2019-01-22T03:24:05Z", "modification_time": "2019-01-24T05:52:07Z", "author": "Xinwei Li (Shang Hai Wei Chuang Ruan Jian)", "content": {"title": 1, "outline": 4}}
+    ]
+  },
+  {
+    "file": "interop/SUT/OneWithFileData.one",
+    "code": 0,
+    "section": {"id": "af6de84b-d817-4f07-8baf-fb6629cb7c2c", "display_name": "OneWithFileData", "color": "#e8d199"},
+    "pages": [
+      {"id": "d9fb6b6a-ab0c-42df-a684-4fadf122b557", "level": 1, "creation_time": "2019-03-14T09:06:41Z", "modification_time": "2019-03-14T09:06:43Z", "author": "Xinwei Li (Shang Hai Wei Chuang Ruan Jian)", "content": {"title": 1, "outline": 1}}
+    ]
+  },
+  {
+    "file": "interop/SUT/OneWithoutFileData.one",
+    "code": 0,
+    "section": {"id": "b11deca3-a2f2-4dea-a773-582d5c8cb2d8", "display_name": "OneWithoutFileData", "color": "#ffd869"},
+    "pages": [
+      {"id": "a77ea0ec-7db9-4b65-883b-6660657d2dd3", "level": 1, "title": "The OneNote file without file data", "creation_time": "2019-01-14T06:59:10Z", "modification_time": "2019-01-14T06:59:44Z", "author": "Xinwei Li (Shang Hai Wei Chuang Ruan Jian)", "content": {"title": 1, "outline": 1}}
+    ]
+  },
+  {
+    "file": "onenote-rs/New Section 1.one",
+    "code": 0,
+    "section": {"id": "0575dd0a-5612-d746-b82b-983f7a80b282", "display_name": "New Section 1", "color": "#8aa8e4"},
+    "pages": [
+      {"id": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a", "level": 1, "title": "Test Page", "creation_time": "2020-10-27T10:47:23Z", "modification_time": "2020-10-27T10:52:39Z", "author": "Markus Siemens", "content": {"title": 1, "outline": 2, "ink": 1}}
+    ]
+  },
+  {
+    "file": "onenote-rs/New Section Group/New Section 1.one",
+    "code": 0,
+    "section": {"id": "07e1868e-e7d0-c24e-85c6-7cbe04486764", "display_name": "New Section 1", "color": "#9bbbd2"},
+    "pages": [
+      {"id": "3fdc5978-8647-8e4c-85de-356300ee58ab", "level": 1, "title": "Test Page 2", "creation_time": "2020-10-27T10:47:52Z", "modification_time": "2020-10-27T10:52:31Z", "author": "Markus Siemens", "content": {"title": 1, "outline": 1}}
+    ]
+  },
+  {
+    "file": "onenote-rs/New Section Group/New Section 2.one",
+    "code": 0,
+    "section": {"id": "18481a4a-6857-0748-ac96-6327c4ada7c0", "display_name": "New Section 2", "color": "#ab9cb7"},
+    "pages": [
+      {"id": "e9e2b25d-4462-ea4f-a86c-f167efa63e0d", "level": 1, "title": "Test Page 3", "creation_time": "2020-10-27T10:47:53Z", "modification_time": "2020-10-27T10:53:09Z", "author": "Markus Siemens", "content": {"title": 1, "image": 1}},
+      {"id": "7198bad9-4462-a34e-b5a2-44b2b78e4e60", "level": 1, "title": "Test Page 4", "creation_time": "2020-10-27T10:53:12Z", "modification_time": "2020-10-27T10:55:55Z", "author": "Markus Siemens", "content": {"title": 1, "outline": 1}}
+    ]
+  },
+  {
+    "file": "onenote-rs/OneNote_RecycleBin/OneNote_DeletedPages.one",
+    "code": 0,
+    "section": {"id": "bee9d753-c3df-804e-961b-c38c9754244b", "display_name": "OneNote_DeletedPages", "color": "#e1e1e1"},
+    "pages": [
+      {"id": "ec3fbb4f-bdab-1146-9ed9-07f7808f5a3e", "level": 1, "title": "Te", "creation_time": "2020-10-27T10:47:39Z", "modification_time": "2020-10-27T10:47:42Z", "author": "Markus Siemens", "content": {"title": 1}}
+    ]
+  },
+  {
+    "file": "onenote-rs/handwriting_recognition.one",
+    "code": 0,
+    "section": {"id": "3ef70c2a-1787-854a-a0b4-ef192956c142", "display_name": "handwriting_recognition", "color": "#8aa8e4"},
+    "pages": [
+      {"id": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a", "level": 1, "title": "Test Page", "creation_time": "2020-10-27T10:47:23Z", "modification_time": "2026-05-20T21:18:56Z", "author": "Markus Siemens", "content": {"title": 1, "outline": 2, "ink": 62}},
+      {"id": "b3784418-303a-ba4e-a772-5bb05abc8ddf", "level": 1, "title": "Test Page", "creation_time": "2020-11-02T13:45:49Z", "modification_time": "2020-11-02T13:45:49Z", "author": "Markus Siemens", "content": {"title": 1}}
+    ]
+  },
+  {
+    "file": "onenote-rs/non-legacy/New Section 1 2.one",
+    "code": 0,
+    "section": {"id": "26a89915-6861-9b44-856a-b6296cf894af", "display_name": "New Section 1 2", "color": "#8aa8e4"},
+    "pages": [
+      {"id": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a", "level": 1, "title": "Test Page", "creation_time": "2020-10-27T10:47:23Z", "modification_time": "2020-10-27T10:52:39Z", "author": "Markus Siemens", "content": {"title": 1, "outline": 2, "ink": 1}},
+      {"id": "b3784418-303a-ba4e-a772-5bb05abc8ddf", "level": 1, "title": "Test Page", "creation_time": "2020-11-02T13:45:49Z", "modification_time": "2020-11-02T13:45:49Z", "author": "Markus Siemens", "content": {"title": 1}}
+    ]
+  },
+  {
+    "file": "onenote-rs/non-legacy/New Section 2.one",
+    "code": 0,
+    "section": {"id": "11b448eb-ebf3-4d0d-9347-6a15fdea7f08", "display_name": "New Section 2", "color": "#f6b078"},
+    "pages": [
+      {"id": "a4bda32f-941a-48ff-99cd-d61430e9694c", "level": 1, "creation_time": "2020-11-02T15:06:17Z", "modification_time": "2020-11-02T15:06:17Z", "content": {"title": 1}},
+      {"id": "1c4dc559-7643-3d4f-95b2-36e41add244b", "level": 1, "creation_time": "2025-12-28T12:58:48Z", "modification_time": "2025-12-28T12:58:48Z", "author": "Theresa Siemens", "content": {"title": 1}}
+    ]
+  },
+  {
+    "file": "onenote-rs/non-legacy/New Section 3.one",
+    "code": 0,
+    "section": {"id": "760b77af-cc00-a44a-9f63-8bb5350e12a0", "display_name": "New Section 3", "color": "#b49ede"},
+    "pages": [
+      {"id": "a5ccb703-669f-bb42-b5d6-2f0a953242f4", "level": 1, "creation_time": "2025-12-28T12:58:53Z", "modification_time": "2025-12-28T12:58:53Z", "author": "Theresa Siemens", "content": {"title": 1}}
+    ]
+  }
+]

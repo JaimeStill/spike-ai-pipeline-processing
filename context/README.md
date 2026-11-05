@@ -22,10 +22,10 @@ express; the spike's question and evidence live in the root repository's `contex
   named by SHA-256, EMF and WMF through soffice in the default gotenberg image and trimmed by
   magick; and the corrections stage, ImageMagick corrections in a fixed order, their catalog for a
   prompt, and Assess's measures.
-- **cli contract**: package internal/cli, the exit codes 1 to 4 as one set of errors that office's
-  and email's exit errors are bound to, the stderr warning reader, and the bounded buffer and
-  spool the adapters share; the README's adapter convention describes the shape every format
-  package follows.
+- **cli contract**: package internal/cli, the exit codes 1 to 4 as one set of errors that office's,
+  email's, and onenote's exit errors are bound to, the stderr warning reader, and the bounded
+  buffer and spool the adapters share; the README's adapter convention describes the shape every
+  format package follows.
 - **documents**: pre-inference preparation of a PDF's pages: Ghostscript, the renderer bake-off's
   winner, for page counts, pages and regions as PNG, and text layers; picture's corrections; and
   Preparer.Images, the lazy, ordered, concurrent page stream over them. Inference is test code: the
@@ -48,5 +48,12 @@ express; the spike's question and evidence live in the root repository's `contex
   findings tier, whose results `docs/findings/email.md` records, scores threads and routes against
   hand truth and times the adapter on plaso's store and mail's generated scale store, neither
   committed.
+- **onenote**: the adapter over spike-ai-pipeline-onenote's CLI, its JSON Lines streamed from a
+  pipe into typed schema "1" records, a section's, a notebook's, or a package's: notebook, section
+  groups, sections, pages with their content kept as onenote's JSON, and skipped sections, with
+  onenote's warnings and exit codes as errors bound to internal/cli's shared set. Its fixtures are
+  onenote's public Interop-TestSuites and onenote.rs sets and expectations, copied at its tag under
+  a SHA-256 manifest; the real-binary tests hold every read to them. Its media are named, not yet
+  routed.
 - **audio**: windows cut at silences, concurrent transcription, and the seam merge.
 - **streams**: live and real-time-paced media, and chat streams, as events.

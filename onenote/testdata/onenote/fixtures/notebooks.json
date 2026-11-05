@@ -1,0 +1,97 @@
+[
+  {
+    "file": "interop/Resources/AlternativePackaging.onetoc2",
+    "code": 0,
+    "notebook": {"name": "Resources", "id": "f02db08d-2e77-462d-ba9f-68bc432ef6f5", "color": "#b79cab"},
+    "entries": [],
+    "warnings": []
+  },
+  {
+    "file": "interop/Resources/NoSection.onetoc2",
+    "code": 0,
+    "notebook": {"name": "Resources", "id": "d0600034-a03f-4c49-aaa5-e67b0d241614", "color": "#d5a4bb"},
+    "entries": [],
+    "warnings": []
+  },
+  {
+    "file": "interop/Resources/Open Notebook.onetoc2",
+    "code": 0,
+    "notebook": {"name": "Resources", "id": "e919d52c-f149-4414-b04c-d05b73309ed1", "color": "#ba7575"},
+    "entries": [],
+    "warnings": []
+  },
+  {
+    "file": "interop/SUT/Open Notebook.onetoc2",
+    "code": 0,
+    "notebook": {"name": "SUT", "id": "e919d52c-f149-4414-b04c-d05b73309ed1", "color": "#ba7575"},
+    "entries": [
+      {"line": "section", "id": "b11deca3-a2f2-4dea-a773-582d5c8cb2d8", "path": ["OneWithoutFileData"], "color": "#ffd869",
+       "pages": [{"id": "a77ea0ec-7db9-4b65-883b-6660657d2dd3", "title": "The OneNote file without file data"}]},
+      {"line": "section", "id": "b44d1bb9-b3f4-4e7f-b0fb-f89fc3f46d60", "path": ["InvalidData"], "color": "#91baae",
+       "pages": [{"id": "d2ef96b5-baf3-4551-91dc-29c28f0e67da"}]},
+      {"line": "section", "id": "af6de84b-d817-4f07-8baf-fb6629cb7c2c", "path": ["OneWithFileData"], "color": "#e8d199",
+       "pages": [{"id": "d9fb6b6a-ab0c-42df-a684-4fadf122b557"}]},
+      {"line": "skipped", "kind": "section", "name": "Encryption.one", "reason": "Unexpected end of file"}
+    ],
+    "warnings": ["/Encryption.one: the section is skipped: Unexpected end of file"]
+  },
+  {
+    "file": "onenote-rs/New Section Group/Open Notebook.onetoc2",
+    "code": 0,
+    "notebook": {"name": "New Section Group", "id": "2ed96381-1fac-4ca5-bda9-0e3a35478644"},
+    "entries": [
+      {"line": "section", "id": "07e1868e-e7d0-c24e-85c6-7cbe04486764", "path": ["New Section 1"], "color": "#9bbbd2",
+       "pages": [{"id": "3fdc5978-8647-8e4c-85de-356300ee58ab", "title": "Test Page 2"}]},
+      {"line": "section", "id": "18481a4a-6857-0748-ac96-6327c4ada7c0", "path": ["New Section 2"], "color": "#ab9cb7",
+       "pages": [
+         {"id": "e9e2b25d-4462-ea4f-a86c-f167efa63e0d", "title": "Test Page 3"},
+         {"id": "7198bad9-4462-a34e-b5a2-44b2b78e4e60", "title": "Test Page 4"}
+       ]}
+    ],
+    "warnings": []
+  },
+  {
+    "file": "onenote-rs/non-legacy/Open Notebook.onetoc2",
+    "code": 0,
+    "notebook": {"name": "non-legacy", "id": "f1da443f-a65f-4513-b200-78d8a9910b8d", "color": "#9bbbd2"},
+    "entries": [
+      {"line": "section", "id": "26a89915-6861-9b44-856a-b6296cf894af", "path": ["New Section 1 2"], "color": "#8aa8e4",
+       "pages": [
+         {"id": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a", "title": "Test Page"},
+         {"id": "b3784418-303a-ba4e-a772-5bb05abc8ddf", "title": "Test Page"}
+       ]},
+      {"line": "section", "id": "11b448eb-ebf3-4d0d-9347-6a15fdea7f08", "path": ["New Section 2"], "color": "#f6b078",
+       "pages": [{"id": "a4bda32f-941a-48ff-99cd-d61430e9694c"}, {"id": "1c4dc559-7643-3d4f-95b2-36e41add244b"}]},
+      {"line": "section", "id": "760b77af-cc00-a44a-9f63-8bb5350e12a0", "path": ["New Section 3"], "color": "#b49ede",
+       "pages": [{"id": "a5ccb703-669f-bb42-b5d6-2f0a953242f4"}]}
+    ],
+    "warnings": []
+  },
+  {
+    "file": "onenote-rs/object-revision/Open Notebook.onetoc2",
+    "code": 0,
+    "notebook": {"name": "object-revision", "id": "9cf59d79-cd9e-4936-9333-44274544b327", "color": "#9bbbd2"},
+    "entries": [],
+    "warnings": []
+  },
+  {
+    "file": "onenote-rs/OneNote_RecycleBin/Open Notebook.onetoc2",
+    "code": 0,
+    "notebook": {"name": "OneNote_RecycleBin", "id": "a020a022-ada4-48de-9257-9d415d2aa252"},
+    "entries": [
+      {"line": "section", "id": "bee9d753-c3df-804e-961b-c38c9754244b", "path": ["OneNote_DeletedPages"], "color": "#e1e1e1",
+       "pages": [{"id": "ec3fbb4f-bdab-1146-9ed9-07f7808f5a3e", "title": "Te"}]}
+    ],
+    "warnings": []
+  },
+  {
+    "file": "onenote-rs/Open Notebook.onetoc2",
+    "code": 0,
+    "notebook": {"name": "onenote-rs", "id": "f1da443f-a65f-4513-b200-78d8a9910b8d", "color": "#9bbbd2"},
+    "entries": [
+      {"line": "section", "id": "0575dd0a-5612-d746-b82b-983f7a80b282", "path": ["New Section 1"], "color": "#8aa8e4",
+       "pages": [{"id": "5eaf76b1-8dde-8745-a8a7-1a9865cc478a", "title": "Test Page"}]}
+    ],
+    "warnings": ["/OneNote_RecycleBin: the recycle bin is skipped; its sections and pages are not read"]
+  }
+]

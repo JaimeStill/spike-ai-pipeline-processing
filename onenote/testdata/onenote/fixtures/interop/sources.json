@@ -1,0 +1,90 @@
+[
+  {
+    "file": "LICENSE",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "LICENSE",
+    "license": "MIT; LICENSE",
+    "sha256": "85ae63489b69170ae3d74ade5fe7c4c149c2c9af00b3be4b52888b82e7bdcd16"
+  },
+  {
+    "file": "Resources/AlternativePackaging.one",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Source/MS-ONESTORE/TestSuite/Resources/AlternativePackaging.one",
+    "license": "MIT; LICENSE",
+    "sha256": "640cc0fade1984b81457e052aed628a4dab6429977439d4a828a20e9e18f6d76"
+  },
+  {
+    "file": "Resources/AlternativePackaging.onetoc2",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Source/MS-ONESTORE/TestSuite/Resources/AlternativePackaging.onetoc2",
+    "license": "MIT; LICENSE",
+    "sha256": "fe018bb2e8ab6a74eeb52d0c6e61d6e29fd4c916adca6d0fe72b7ff263640977"
+  },
+  {
+    "file": "Resources/NoSection.onetoc2",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Source/MS-ONESTORE/TestSuite/Resources/NoSection.onetoc2",
+    "license": "MIT; LICENSE",
+    "sha256": "3bcfab4c58f4bab13e6398e4ec2297828f7807ddd3f5b2f2afb29f06ae8b9ec0"
+  },
+  {
+    "file": "Resources/Open Notebook.onetoc2",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Source/MS-ONESTORE/TestSuite/Resources/Open Notebook.onetoc2",
+    "license": "MIT; LICENSE",
+    "sha256": "f5bdf70d972973affccf17125894af22d8927f05eeed49f89a0baf071afb51f9"
+  },
+  {
+    "file": "SUT/Encryption.one",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Setup/SUT/Encryption.one",
+    "license": "MIT; LICENSE",
+    "sha256": "cfc80d971ddf2ad62d7dbda197ac7966a4387117ec6dff29e9be0626b2888eab"
+  },
+  {
+    "file": "SUT/FileSyncWOPI_OneNoteWithODB.one",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Setup/SUT/FileSyncWOPI_OneNoteWithODB.one",
+    "license": "MIT; LICENSE",
+    "sha256": "f98382b4f8984ae999d8e0cffcb315075ebc8c369db81374cef55919536df931"
+  },
+  {
+    "file": "SUT/InvalidData.one",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Setup/SUT/InvalidData.one",
+    "license": "MIT; LICENSE",
+    "sha256": "22dd01a518d896374edad6d95addb5f49bc27716b52a798561154da312b30123"
+  },
+  {
+    "file": "SUT/OneWithFileData.one",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Setup/SUT/OneWithFileData.one",
+    "license": "MIT; LICENSE",
+    "sha256": "26ec59da7bb81c48e8f41554d06d381b53f88166727eed231baa665d9833266e"
+  },
+  {
+    "file": "SUT/OneWithoutFileData.one",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Setup/SUT/OneWithoutFileData.one",
+    "license": "MIT; LICENSE",
+    "sha256": "49ba9f8affd45835c84bc8ad740015a7aab57df1b19abbc91cc291c1b7689b0e"
+  },
+  {
+    "file": "SUT/Open Notebook.onetoc2",
+    "repository": "https://github.com/OfficeDev/Interop-TestSuites",
+    "commit": "fe87ed3253de01804a2ae6e1d0015943da6023f8",
+    "path": "FileSyncandWOPI/Setup/SUT/Open Notebook.onetoc2",
+    "license": "MIT; LICENSE",
+    "sha256": "c9d96b2319808a7e976b67bf269968769c1a16cb81ebec627b402eab9c65ba4e"
+  }
+]

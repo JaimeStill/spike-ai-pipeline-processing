@@ -1,0 +1,114 @@
+[
+  {
+    "file": "LICENSE",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "LICENSE",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+  },
+  {
+    "file": "New Section 1.one",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/New Section 1.one",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "e9ec2cc5e234681a3d701145aefcf0c19aea4d2981929da227d103d2dc44aff9"
+  },
+  {
+    "file": "New Section Group/New Section 1.one",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/New Section Group/New Section 1.one",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "75702a8ae420b30c4a349363befb5e86d65f208eff381623d5f17dbc01b33109"
+  },
+  {
+    "file": "New Section Group/New Section 2.one",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/New Section Group/New Section 2.one",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "ab93b8cb1c0d7f45043637cf63b0f06785b8234eb4185acff7cf79b8b122fb0b"
+  },
+  {
+    "file": "New Section Group/Open Notebook.onetoc2",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/New Section Group/Open Notebook.onetoc2",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "e39b72dcca6f9f218c28a5cddd021e4ce1338d24211e8288492d75c60ffcf653"
+  },
+  {
+    "file": "OneNote_RecycleBin/OneNote_DeletedPages.one",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/OneNote_RecycleBin/OneNote_DeletedPages.one",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "d98c625fb275c830407985465c8fc336010dac40eb7733cac4a8b95db9d26170"
+  },
+  {
+    "file": "OneNote_RecycleBin/Open Notebook.onetoc2",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/OneNote_RecycleBin/Open Notebook.onetoc2",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "f6d932f2244a590b88eeccd6531b685332eea5dfcf0b91f137afc306ff215926"
+  },
+  {
+    "file": "Open Notebook.onetoc2",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/Open Notebook.onetoc2",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "2f9edeaf7f99736027123826ef12605a59b7bb9b15dce7db3e1014b8d57a7202"
+  },
+  {
+    "file": "handwriting_recognition.one",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/handwriting_recognition.one",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "2cff8769ccf0af6209d96d5e0650661077edba2d2bae4e4aa691f06caea35456"
+  },
+  {
+    "file": "non-legacy/New Section 1 2.one",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/non-legacy/New Section 1 2.one",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "05ade3445a7d7885636e2c592c82f12f8107c1cfbf674a9314367bc27b8bcecf"
+  },
+  {
+    "file": "non-legacy/New Section 2.one",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/non-legacy/New Section 2.one",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "7c9ab7fae8a31b3f765fd2b7b32b884d88fa79fd6ed01f33c7d529dabf6b306d"
+  },
+  {
+    "file": "non-legacy/New Section 3.one",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/non-legacy/New Section 3.one",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "bdeb13e2bd4849774d4f7aa80263925a13219094ca4af6f9d4681b03693d4f03"
+  },
+  {
+    "file": "non-legacy/Open Notebook.onetoc2",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/non-legacy/Open Notebook.onetoc2",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "d146df35b1cda03075fa9ebfc6c0ab1e28b3efb8832bd5712a30bcf01f2207ec"
+  },
+  {
+    "file": "object-revision/Open Notebook.onetoc2",
+    "repository": "https://github.com/msiemens/onenote.rs",
+    "commit": "727389a674665dc07e0c31818cd4b54b64b9c684",
+    "path": "crates/parser/tests/samples/object-revision/Open Notebook.onetoc2",
+    "license": "MPL-2.0; LICENSE",
+    "sha256": "f3dafe5ced9f8e3d1e37fbe93f447eece46d93da46ee24b89936038a57bbe94c"
+  }
+]

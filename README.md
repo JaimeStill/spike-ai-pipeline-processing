@@ -9,8 +9,9 @@ tool contract this layer defines in its `tool` package, as herald's processing l
 runner for binaries and scripts, and a container runner for pinned images. The tools the layer's
 adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
 correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
-office documents, LibreOffice in a container for legacy office formats only, and
-spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages.
+office documents, LibreOffice in a container for legacy office formats only,
+spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages, and
+spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages.
 
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
@@ -395,6 +396,47 @@ The adapter adds about 1 to 3% to mail's time, and its Go process peaks at 52 to
 the scale store's 50,000 messages, where the adapter adds 4.5 to 5.6% to mail's time and peaks at
 56 to 58 MiB.
 
+`onenote` reads OneNote sections, .one files from desktop OneNote or OneDrive, .onetoc2 notebooks
+and notebook directories, and .onepkg packages, for a model, on Linux, the standard library, and
+`tool`. It runs spike-ai-pipeline-onenote's CLI and provides pre-inference preparation only. A
+`Reader`, built by `NewReader` over a `Config` holding a onenote Tool that `OneNoteSpec`
+declares, minimum `OneNoteMinimum`, 0.1.0, reads one input per `Request`, with an optional
+`Media` directory onenote writes each distinct image, embedded file, and ink drawing into, named
+by its SHA-256. `Reader.Read` returns a `Stream`, or refuses an invalid `Request`, one with no
+input or a path that can't be made absolute, with an error matching `ErrRequest` before anything
+runs. Ranging over `Stream.Records` runs onenote once and yields each line it writes while it
+runs, decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
+`Notebook` first, then the notebook's entries depth-first, each `SectionGroup` before what it
+holds and each `Section` before its `Page`s, then a `Skipped` record for each section onenote
+couldn't read. A `Page`'s own fields are typed, its ids, level, title, times, author, `Ink`,
+recognised `InkText`, and Markdown; its containers, `Content`, are the JSON onenote writes. A
+notebook line of another schema is an error matching `ErrSchema`. onenote's warnings are the
+Stream's `Warnings`, and its exit codes 1 to 4 are an `*ExitError` that matches `ErrNotWritten`,
+`ErrUsage`, `ErrRefused`, or `ErrFailed`, the errors email's and office's match too.
+
+```go
+n, err := tool.NewExec(ctx, onenote.OneNoteSpec())
+if err != nil {
+	return err
+}
+r, err := onenote.NewReader(onenote.Config{OneNote: n})
+if err != nil {
+	return err
+}
+s, err := r.Read(ctx, onenote.Request{Input: "Notebook.onetoc2", Media: dir})
+if err != nil {
+	return err
+}
+for rec, err := range s.Records() {
+	if err != nil {
+		return err
+	}
+	if page, ok := rec.(*onenote.Page); ok {
+		// hand page.Markdown, and the media it names in dir, onward
+	}
+}
+```
+
 Every format package follows one adapter convention, so a dispatcher, and the next format, meet
 the same shape:
 
@@ -426,7 +468,9 @@ the same shape:
 
 Each package's deviations: `office` returns one `Result`, the whole model or Markdown, not a
 stream of lines, and its media list names no route yet; `email` follows the convention whole, its
-`Attachment.Route` the route per part; `document` streams pages, `PageImage`s, rather than a CLI's
+`Attachment.Route` the route per part; `onenote` follows it but for the route per part, its
+`Request.Media` the media directory, its pages' content kept as onenote's JSON, so the images
+and embedded files it names aren't routed yet; `document` streams pages, `PageImage`s, rather than a CLI's
 lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's failures
 are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not a
 reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one
@@ -506,7 +550,8 @@ docker, server 20.10 or later, for the container runner. For `office`: spike-ai-
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice
 in the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the
 metafile trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, which mise pins from its
-GitHub release for the tests. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and
+GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote 0.1.0 or later, which mise
+pins from its GitHub release for the tests. The renderer bake-off also runs poppler's pdftoppm and pdftocairo and
 libvips. typst and qpdf are needed only to regenerate the fixtures in `document/testdata`, and
 .NET, which mise installs, only to rebuild `email/testdata`'s built .msg, as their READMEs say.
 
