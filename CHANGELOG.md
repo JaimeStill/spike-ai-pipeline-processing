@@ -6,6 +6,133 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.6.0] - 2026-11-05
+
+### Breaking changes
+
+Every move is without an alias: a caller on v0.5.0 renames as listed.
+
+- `email`'s routes move to the new `route` package: `email.Route` is `route.Route`, and
+  `email.RouteDocument`, `RouteOffice`, `RouteVision`, `RouteVisionConverted`, `RouteNested`, and
+  `RouteUnrouted` are `route.Document`, `Office`, `Vision`, `VisionConverted`, `Nested`, and
+  `Unrouted`. `email.Attachment.Route` returns a `route.Route`.
+- `office`'s picture conversion moves to the new `picture` package:
+  `office.Converter.ConvertPicture` and `office.PictureRequest` are `picture.Converter.Convert`
+  and `picture.Request`; `office.DefaultMetafileScale` and `office.MaxMetafileScale` are
+  picture's, the range check `picture.CheckMetafileScale`, its refusal `picture.ErrScale`; and
+  `office.ErrNoMagick` is `picture.ErrNoMagick`. `office.ErrNoLibreOffice` stays, for a legacy
+  document; a metafile without LibreOffice is the new `picture.ErrNoLibreOffice`.
+- The tool declarations move to `picture`: `office.MagickSpec` and `office.MagickMinimum`, and
+  `document.MagickSpec` and `document.MagickMinimum`, are `picture.MagickSpec` and
+  `picture.MagickMinimum`, one spec, minimum 7.1; `office.LibreOfficeSpec`,
+  `office.LibreOfficeMinimum`, and `office.LibreOfficeImage` are picture's.
+- `document`'s corrections stage moves to `picture`: `document.Correction`, `Deskew`,
+  `Despeckle`, `ContrastStretch`, `Unsharp`, `Grayscale`, `Corrections`, `ParseCorrection`,
+  `Corrector`, `NewCorrector`, `Assessment`, and `GrayscaleColored`, with `Corrector.Correct` and
+  `Corrector.Assess`, are picture's. `document.NewPreparer` takes a `*picture.Corrector`, and
+  `ImagesRequest.Corrections` is a `[]picture.Correction`.
+- office's and email's exit errors are bound to one shared set, so `errors.Is` matches either
+  package's refusal through the other's `ErrRefused`. Exit code 1's text is the shared "not
+  written": `office.ErrMediaNotWritten.Error()` and an office `*ExitError` for code 1 read "not
+  written", where v0.5.0 read "media not written". No exported name changes.
+- `email.Attachment.Route` takes `route.File`'s routes, so an attachment unrouted in v0.5.0 may
+  now be text (a .csv or .txt, as two of the fixtures' attachments are), archive, onenote, audio,
+  video, nested (a .pst or an mbox), or office (an ODF package, an RTF, a WordPerfect document, an
+  .xlsb, or an encrypted OOXML package). Every other fixture attachment's route and reason is
+  v0.5.0's, as `TestRealRoutesSinceV050` holds.
+- mise pins mail 0.3.0, which the tests need to resume a read; `MailMinimum` stays 0.2.0.
+
+### Added
+
+- `route`, which identifies content by its signature and names the stage it goes to next, on the
+  standard library alone. `Identify` names the `Kind` a file's first `HeadLen` bytes, 4096, begin:
+  PDF; PNG, JPEG, GIF, and BMP; TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF; ZIP, OLE2, ODF, RTF, and
+  WordPerfect; PST, OST, and mbox; OneStore and cabinet; WAV, FLAC, MP3, Ogg, and M4A; MP4,
+  Matroska, WebM, and AVI; gzip, zstd, 7z, and tar; PE, ELF, Mach-O, and "#!"; and the UTF-8,
+  UTF-16, and UTF-32 byte order marks. `File` routes a file by its kind, never by its stored type,
+  and by its name's extension only where the signature can't tell formats apart, to `Document`,
+  `Office`, `Vision`, `VisionConverted`, `Nested`, and `Unrouted`, as email's routes did, and the
+  new `OneNote`, `Archive`, `Audio`, `Video`, and `Text`, each with a reason in a few words. A
+  .pst and an mbox are nested, an .ost unrouted, a tar an archive, and WordPerfect, an .xlsb, and
+  an encrypted OOXML package, an OLE2 file holding an EncryptedPackage stream named with an OOXML
+  extension or .xlsb, office's; HTML is unrouted, web content, not text. `PNGSignature` is the
+  eight bytes a PNG begins with.
+- `picture`, which converts TIFF, EMF, WMF, and SVG to PNG, each named by its original's SHA-256:
+  `Converter.Convert` one picture, told by its signature, and `Converter.ConvertBatch` several, the
+  metafiles in one soffice run; an SVG at `SVGDensity`, 150 dpi, through magick's rsvg
+  coder, its relative references resolving to nothing. office converts a document's pictures
+  through it. Its corrections stage is document's, moved.
+- `inspect`, which inspects a part before its stage, on the standard library and `route`, and
+  returns a `Report`, its `Flag`s and a `Verdict`. Active content, flagged and let proceed by
+  default: a signature mismatch, a polyglot, executable content and extensions, an OOXML
+  package's VBA project, macro sheet, ActiveX, OLE objects, and external relationships, the PDF
+  names pdfid counts, an SVG's scripts, handlers, external hrefs, and foreignObjects, and
+  encrypted content. Unsafe content, quarantined by default: a ZIP entry's traversal, absolute
+  path, or symbolic link, a bomb by its declared sizes, and an unreadable central directory.
+  `Options.Policy` overrides any check's action.
+- `internal/cli`, the CLI contract the format packages share: the exit codes 1 to 4 as one set of
+  errors, the stderr warning reader, the bounded buffer, and the spool. The README's adapter
+  convention describes the shape every format package follows.
+- `onenote`, which reads OneNote sections, notebooks, and packages through
+  spike-ai-pipeline-onenote's CLI, on Linux, as email reads mail: `NewReader` over a `Config`, a
+  onenote Tool that `OneNoteSpec` declares, minimum `OneNoteMinimum`, 0.1.0; `Reader.Read` a
+  `Stream` of typed schema "1" records, `Notebook`, `SectionGroup`, `Section`, `Page`, and
+  `Skipped`, each marshalling back to onenote's line byte for byte; a page's content typed through
+  and through; and `Page.Media`, every image, embedded file, and ink drawing a page names, wherever
+  it sits, each with its place and its route. Exit codes 1 to 4 are an `*ExitError`. mise pins
+  onenote 0.1.0, and `mise run fixtures:onenote` refreshes the copy of its fixtures.
+- `dispatch`, which walks an input and every part found in it to the caller's stages by route, on
+  the standard library, `route`, and `inspect`, and never calls a model. `New` builds a
+  `Dispatcher` over a `Config` of `Stages`, an `Index`, a working directory, `Limits`, and
+  inspect's Options; `Dispatcher.Dispatch` hashes, routes, and inspects each part before its stage
+  and yields its `Event`s depth-first, each output as it comes and each part's own event, with its
+  `Outcome`: prepared, no processor yet, seen, cycle, quarantined, encrypted, failed, or limited.
+  The stages:
+  - the format packages' adapters, on Linux: `DocumentStage`, `OfficeStage`, `PictureStage`,
+    `VisionStage`, `EmailStage`, and `OneNoteStage`, each over the reader or converter the caller
+    built and its tools' version, `Versions`; a found part, such as a message's attachment or a
+    page's ink, is dispatched again;
+  - `ZipStage`, on any platform, each entry written by its SHA-256 and found as a part, an
+    encrypted entry a record, the bomb rule enforced again on the bytes written.
+- The index: `Index`, content-addressed by the content's SHA-256 and the stage's identity, so
+  content it holds is seen, its outputs streamed back, and a claim makes one of concurrent
+  dispatches prepare it; outputs and children appended as they come and read back streamed, so a
+  store streams through in the memory of one message. `MemoryIndex` and `FileIndex`, a directory
+  of records by atomic rename and claims by O_EXCL, taken over once `FileOptions.Stale`.
+- The pool: `Dispatcher.Pool`, inputs over N workers sharing one index, their events as
+  `PoolEvent`s on the caller's goroutine.
+- Resuming a store: `Input.After` resumes a .pst or an mbox after a message, through
+  `email.Request.After`, and the package doc's "Resuming a store" gives the caller's cursor rule
+  and its checkpoint, the cursor and the Threader saved together every N messages.
+- `email.Request.After`, a read resumed after a message, through mail's `--after`; it needs mail
+  `email.MailAfterMinimum`, 0.3.0, checked only when `After` is set. `email.Threader`'s
+  `MarshalBinary` and `UnmarshalBinary` save and restore its keys, so a resumed read threads whole.
+- The dispatch integration tier: `TestTierRoutes` dispatches every committed fixture input
+  through every adapter over one file index, held to the hand route truth in
+  `dispatch/testdata/tier-routes.tsv`, with a vision sample.
+- The onenote finding, `docs/findings/onenote.md`, from one run of `mise run findings-onenote`
+  recorded in `docs/findings/onenote-results/`: every route matches the truth over 119 inputs and
+  225 parts; inspection flags every hazard it has a check for over ~/docs; vision reads all 14
+  words of a OneNote page's ink, CER 0.0278, where OneNote's recognition holds 4; the onenote
+  adapter costs nothing measurable over its CLI; the dispatcher takes 16.29 s on mail's 2.1 GB
+  scale store, 15% over the email adapter, peaking at 35.9 MiB and 15.8 MB of disk; a resumed
+  half takes 0.54 of the whole; and the pool buys 18.2 s against 21.2 s at one worker. It found a
+  Threader saved at every message quadratic over a store, 3.5 ms a save at 25,000 messages.
+- Known limits, in the README: mail's caps, an .eml at 4 GiB and a .msg's nesting at 16; office's
+  and onenote's whole-input memory; the Threader's keys, about 60 bytes a message; OneNote's own
+  encryption undetected, so `Encryption.one` fails; a bare RFC 822 file unrouted; a released
+  content's later reference taking the first's route; a stale claim's takeover preparing content
+  twice; and legacy OLE2 macros and XML entity expansion unchecked.
+
+### Changed
+
+- office converts a document's pictures through `picture`, each from a copy in a directory of
+  its own; every media PNG and Markdown is byte for byte what it was before the move, as the
+  golden sums recorded before it hold.
+- The test helpers: `internal/goldentest`, the golden sums of office's and document's picture
+  outputs, and `internal/textscore`, the character and word error rates document's bake-offs and
+  the ink finding score by, are shared internal packages.
+
 ## [v0.5.0] - 2026-11-04
 
 ### Added
@@ -340,7 +467,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.6.0...HEAD
+[v0.6.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.6.0
 [v0.5.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.5.0
 [v0.4.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.4.0
 [v0.3.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.3.0
