@@ -163,6 +163,22 @@ if rep.Verdict == inspect.Quarantine {
 }
 ```
 
+`dispatch` walks an input and every part found in it to the stages that prepare them, on the
+standard library, `route`, and `inspect`, and never calls a model. A caller registers a `Stage`
+per route; each names its `Identity`, its name, tool version, and configuration hash, and yields
+the `Output`s it prepares, text, Markdown, an image, or a record, in a file or inline, and the
+parts it finds. `Dispatcher.Dispatch` hashes each part, SHA-256, streamed, before any stage runs,
+routes and inspects it, and yields an `Event` for each, depth-first, a part's after its
+descendants': prepared, no processor yet, seen, cycle, quarantined, encrypted, failed, or limited,
+only under a cap the caller set. An `Index`, content-addressed, records a stage's outputs by the
+content's SHA-256 and the stage's identity, and the flags by the SHA-256 alone, so content it
+holds is seen, neither inspected nor prepared again; a claim makes one of two concurrent dispatches
+prepare it while the other waits. `MemoryIndex` and `FileIndex`, a directory of records written
+by atomic rename and O_EXCL claim files reclaimed once stale, ship. The entry is recorded once the
+caller's loop body returns, so a caller that persists an output sets its `Ref` and a later seen
+event carries it; then each part's file is removed unless the caller called `Event.Keep`, so the
+disk holds only the parts in flight.
+
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
 `NewConverter` over a `Config` of a magick Tool that `MagickSpec` declares, minimum
