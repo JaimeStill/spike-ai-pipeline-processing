@@ -168,47 +168,57 @@ standard library, `route`, and `inspect`, and never calls a model. A caller regi
 per route; each names its `Identity`, its name, tool version, and configuration hash, and yields
 the `Output`s it prepares, text, Markdown, an image, or a record, in a file or inline, and the
 parts it finds. `Dispatcher.Dispatch` hashes each part, SHA-256, streamed, before any stage runs,
-routes and inspects it, and yields an `Event` for each, depth-first, a part's after its
-descendants': prepared, no processor yet, seen, cycle, quarantined, encrypted, failed, or limited,
-only under a cap the caller set. An `Index`, content-addressed, records a stage's outputs by the
-content's SHA-256 and the stage's identity, and the flags by the SHA-256 alone, so content it
-holds is seen, neither inspected nor prepared again; a claim makes one of two concurrent dispatches
-prepare it while the other waits. `MemoryIndex` and `FileIndex`, a directory of records written
-by atomic rename and O_EXCL claim files reclaimed once stale, ship. The entry is recorded once the
-caller's loop body returns, so a caller that persists an output sets its `Ref` and a later seen
-event carries it; then each part's file is removed unless the caller called `Event.Keep`, so the
-disk holds only the parts in flight.
+routes and inspects it, and yields `Event`s depth-first in each stage's own order: each output is
+an output event, `ev.Output` set, as the stage yields it, among the subtrees of the parts it finds,
+and each part's own event, after its outputs and its descendants', carries its outcome: prepared,
+no processor yet, seen, cycle, quarantined, encrypted, failed, or limited, only under a cap the
+caller set, with a count of its outputs and its children. The dispatcher holds nothing of an
+output once the loop body returns for it, so a store of millions of messages streams through in
+the memory of one. An `Index`, content-addressed, records a stage's outputs by the content's
+SHA-256 and the stage's identity, and the flags by the SHA-256 alone, so content it holds is seen,
+its outputs streamed back from the index as output events, neither inspected nor prepared again;
+a claim makes one of two concurrent dispatches prepare it while the other waits. Each output is
+appended to the claim's pending entry by `Index.Append` once the loop body returns for its event,
+so a caller that persists it sets `ev.Output.Ref` and a later seen part's output carries it; the
+part's own event commits the entry by `Record`, or `Release` drops it when the part fails or the
+loop stops, and `Index.Outputs` reads it back streamed. `MemoryIndex` and `FileIndex`, a
+directory of records written by atomic rename, O_EXCL claim files reclaimed once stale, and a
+pending file of JSON lines per claim, renamed beside its entry when recorded, ship. Each part's
+file and working directory are removed once its own event is done, unless the caller called
+`Event.Keep`, so the disk holds only the parts in flight.
 
 `Dispatcher.Pool` dispatches an iterator of inputs over N workers sharing the dispatcher's index,
 so content the inputs share is prepared once and seen by the rest, and yields every input's events
 as one sequence of `PoolEvent`s, each its `Input` and its `Event`. An input's events keep their
 order, and the inputs' interleave. The caller's loop body runs on one goroutine, and each worker
-waits for it to return before its dispatch goes on, so the entry is still recorded, and the files
-removed, after the body returns; a worker holds one event at most, so a slow loop holds the
+waits for it to return before its dispatch goes on, so each output is still appended, the entry
+recorded, and the files removed, after the body returns; a worker holds one event at most, so a slow loop holds the
 workers back and the disk holds what N dispatches have in flight. An error that stops one input's
 dispatch is yielded with that input and the others go on; ctx ending stops them all, its error
 yielded last.
 
 `Input.After` resumes a .pst or an mbox after a message, its node id or ordinal: the email stage
-passes it to mail as `--after`, mail 0.3.0 or later, and the store's event holds the store, its
-folders, and only the messages after it, with their attachments found. A resumed input's own entry
-is never recorded, its outputs being the tail alone. A caller resuming after a crash keeps a
-`FileIndex` that outlives the process, so the attachments recorded before the crash are seen; the
-cursor, the last message whose outputs it persisted; and an `email.Threader` saved with it by
-`MarshalBinary`. It restores the Threader by `UnmarshalBinary`, dispatches with `After` set to the
-cursor, and feeds the Threader the rest, whose threads are then the whole store's. A store's
-records reach the caller in the store's own event, after every attachment's, so the cursor
-advances as the caller persists that event's outputs; a crash before it leaves no cursor, and the
-store is dispatched whole again, its recorded attachments seen. The crashed dispatch's claim on the
-store waits out `FileOptions.Stale` before the resumed one takes it.
+passes it to mail as `--after`, mail 0.3.0 or later, and the store yields its store and folder
+records and only the messages after it, with their attachments found. A resumed input's own entry
+is never recorded, its outputs being the tail alone. For each message, the email stage yields its
+attachments first, each found part dispatched whole, then its record, its Meta `id` the message's,
+then its Markdown, which the record's Meta `markdown: follows` announces, so the message's last
+output is the last of everything it holds. A caller resuming after a crash keeps a `FileIndex`
+that outlives the process, so the attachments recorded before the crash are seen; the cursor, the
+id of the last message whose outputs it has persisted, advanced at each message's last output;
+and an `email.Threader`, fed each message record of the store's own, decoded, and saved with the
+cursor by `MarshalBinary`. It restores the Threader by `UnmarshalBinary`, dispatches with `After`
+set to the cursor, and feeds the Threader the rest, whose threads are then the whole store's; what
+it had of the message past the cursor comes again. A dead process's claims and pending outputs wait
+out `FileOptions.Stale` before the resumed dispatch takes them over.
 
 The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader
 or converter the caller already built and the version of its Tools, which `dispatch.Versions`
 names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeStage`, office's
 Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF, EMF, WMF, or SVG to
 PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
-mail's records, each message's record then its Markdown, and each attachment found as a part,
-an embedded message mail gives no file for prepared inline; and `OneNoteStage`, onenote's
+mail's records, each message's attachments found as parts, then its record, then its Markdown,
+an embedded message mail gives no file for prepared inline in its attachment's place; and `OneNoteStage`, onenote's
 records, each page's record then its Markdown, and each of its media found as a part. A found part's `Where` names its place, such as
 `message 2097220, attachment 1` or `page {...}, page ink`, and it is dispatched again, so a PDF
 attached to a message reaches the document stage and a page's ink becomes a PNG. Kinds no adapter
@@ -276,7 +286,11 @@ for ev, err := range d.Dispatch(ctx, dispatch.Input{Path: "mailbox.pst"}) {
 	if err != nil {
 		return err
 	}
-	// send ev.Outputs on; each part's event comes before its parent's
+	if ev.Output != nil {
+		// persist ev.Output and set ev.Output.Ref to its key; the index records the Ref
+		continue
+	}
+	// ev is a part's own event, after its outputs and every part found in it
 }
 for pe, err := range d.Pool(ctx, slices.Values(inputs), 4) {
 	if err != nil {
