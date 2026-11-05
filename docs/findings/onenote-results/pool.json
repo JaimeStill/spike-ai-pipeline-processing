@@ -1,0 +1,1643 @@
+{
+  "inputs": [
+    "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst",
+    "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/01-plain.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/05-japanese.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/06-chinese.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/01-plain.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/05-japanese.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/06-chinese.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/mailbox.pst",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/eml/09-threading.eml",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/nine.mboxrd",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/passworded.pst",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/libyal/outlook.pst",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst",
+    "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst"
+  ],
+  "results": [
+    {
+      "input": "pool 1",
+      "path": "",
+      "size": 0,
+      "floor": {
+        "max_rss": 12853248,
+        "user": 0,
+        "system": 2368000,
+        "wall": 2189899
+      },
+      "runs": [
+        {
+          "way": "dispatch",
+          "launched": {
+            "max_rss": 69898240,
+            "user": 22741528000,
+            "system": 8240431000,
+            "wall": 21667979548
+          },
+          "self": {
+            "max_rss": 36786176,
+            "user": 10681840000,
+            "system": 3690091000
+          },
+          "children": {
+            "max_rss": 69898240,
+            "user": 12059222000,
+            "system": 4548138000
+          },
+          "survey": {
+            "workers": 1,
+            "input_bytes": 4346842427,
+            "parts": 21306,
+            "counts": {
+              "archive × encrypted": 1,
+              "archive × prepared": 1,
+              "document × prepared": 1,
+              "nested × prepared": 36,
+              "nested × seen": 1,
+              "office × prepared": 3,
+              "office × seen": 1,
+              "text × no processor yet": 4541,
+              "unrouted × no processor yet": 16676,
+              "vision × prepared": 20,
+              "vision × seen": 25
+            },
+            "seen_inputs": 1,
+            "seen_parts": 26,
+            "messages": 50604,
+            "seen_messages": 50000,
+            "outputs": 201425,
+            "tops": [
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst",
+                "size": 59442176,
+                "outcome": "prepared",
+                "outputs": 1102,
+                "children": 6,
+                "at": 1762816453
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+                "size": 2141594624,
+                "outcome": "prepared",
+                "outputs": 100018,
+                "children": 21202,
+                "at": 17846454801
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst",
+                "size": 2141594624,
+                "outcome": "seen",
+                "recorded": "prepared",
+                "reason": "recorded by email@spike-ai-pipeline-mail 0.3.0#b2eb344a9fe6069042f8ad067c7d639932925544fe63d8a3d34f04a1788c72ba",
+                "outputs": 100018,
+                "children": 21202,
+                "at": 20856969537
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/01-plain.eml",
+                "size": 568,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20858204874
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml",
+                "size": 650,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20859511055
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml",
+                "size": 1164,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 20860999948
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml",
+                "size": 936,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 20862054718
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/05-japanese.eml",
+                "size": 495,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20863070340
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/06-chinese.eml",
+                "size": 781,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20864323383
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml",
+                "size": 462,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20865197055
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml",
+                "size": 1106,
+                "outcome": "prepared",
+                "outputs": 5,
+                "children": 1,
+                "at": 20866336571
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/01-plain.msg",
+                "size": 13824,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20867777220
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg",
+                "size": 11264,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20869146639
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg",
+                "size": 12800,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 20870647903
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg",
+                "size": 13824,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 20872435021
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/05-japanese.msg",
+                "size": 10240,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20873846541
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/06-chinese.msg",
+                "size": 10240,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20875199610
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg",
+                "size": 11776,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20876368344
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg",
+                "size": 14848,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 2,
+                "at": 20878798470
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/mailbox.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 26,
+                "children": 3,
+                "at": 20882648551
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/eml/09-threading.eml",
+                "size": 812,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20883644369
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/nine.mboxrd",
+                "size": 7381,
+                "outcome": "prepared",
+                "outputs": 21,
+                "children": 3,
+                "at": 20886071423
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug",
+                "size": 12292,
+                "outcome": "prepared",
+                "outputs": 11,
+                "children": 0,
+                "at": 20887980461
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0",
+                "size": 3384,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 20888186553
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1",
+                "size": 2482,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 20888277480
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2",
+                "size": 1743,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 20888337431
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3",
+                "size": 2169,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 20888394702
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4",
+                "size": 2289,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 20888453276
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+                "size": 3584,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20889453131
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg",
+                "size": 53248,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 20892542852
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg",
+                "size": 30208,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20897301559
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg",
+                "size": 97280,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 20901750413
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg",
+                "size": 83968,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 11,
+                "at": 20907239690
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg",
+                "size": 71680,
+                "outcome": "prepared",
+                "outputs": 5,
+                "children": 1,
+                "at": 21139930206
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg",
+                "size": 48129,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 21142942481
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg",
+                "size": 25600,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 21145024219
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 21,
+                "children": 0,
+                "at": 21148026007
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/passworded.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 17,
+                "children": 0,
+                "at": 21150135115
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/libyal/outlook.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 22,
+                "children": 22,
+                "at": 21157449280
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst",
+                "size": 2302976,
+                "outcome": "prepared",
+                "outputs": 19,
+                "children": 0,
+                "at": 21165712803
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 13,
+                "children": 0,
+                "at": 21171124502
+              }
+            ],
+            "elapsed": 21171200362,
+            "peak_disk": 18237850,
+            "disk_samples": 2117,
+            "index_files": 21411,
+            "index_bytes": 318926239
+          },
+          "written_files": 21411,
+          "written_bytes": 318926239
+        }
+      ]
+    },
+    {
+      "input": "pool 2",
+      "path": "",
+      "size": 0,
+      "floor": {
+        "max_rss": 11472896,
+        "user": 2571000,
+        "system": 1295000,
+        "wall": 3777699
+      },
+      "runs": [
+        {
+          "way": "dispatch",
+          "launched": {
+            "max_rss": 69255168,
+            "user": 23303861000,
+            "system": 8383104000,
+            "wall": 18761386098
+          },
+          "self": {
+            "max_rss": 35880960,
+            "user": 10856528000,
+            "system": 3741615000
+          },
+          "children": {
+            "max_rss": 69255168,
+            "user": 12446699000,
+            "system": 4639242000
+          },
+          "survey": {
+            "workers": 2,
+            "input_bytes": 4346842427,
+            "parts": 21306,
+            "counts": {
+              "archive × encrypted": 1,
+              "archive × prepared": 1,
+              "document × prepared": 1,
+              "nested × prepared": 36,
+              "nested × seen": 1,
+              "office × prepared": 3,
+              "office × seen": 1,
+              "text × no processor yet": 4541,
+              "unrouted × no processor yet": 16676,
+              "vision × prepared": 20,
+              "vision × seen": 25
+            },
+            "seen_inputs": 1,
+            "seen_parts": 26,
+            "messages": 50604,
+            "seen_messages": 50000,
+            "outputs": 201425,
+            "tops": [
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst",
+                "size": 59442176,
+                "outcome": "prepared",
+                "outputs": 1102,
+                "children": 6,
+                "at": 1841836592
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+                "size": 2141594624,
+                "outcome": "prepared",
+                "outputs": 100018,
+                "children": 21202,
+                "at": 16485344431
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/01-plain.eml",
+                "size": 568,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16486496191
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml",
+                "size": 650,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16487564210
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml",
+                "size": 1164,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 16488891121
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml",
+                "size": 936,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 16489993621
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/05-japanese.eml",
+                "size": 495,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16490909269
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/06-chinese.eml",
+                "size": 781,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16491749018
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml",
+                "size": 462,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16492550994
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml",
+                "size": 1106,
+                "outcome": "prepared",
+                "outputs": 5,
+                "children": 1,
+                "at": 16493786577
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/01-plain.msg",
+                "size": 13824,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16495346979
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg",
+                "size": 11264,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16496591519
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg",
+                "size": 12800,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 16497991198
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg",
+                "size": 13824,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 16499678297
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/05-japanese.msg",
+                "size": 10240,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16500632793
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/06-chinese.msg",
+                "size": 10240,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16501510447
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg",
+                "size": 11776,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16502801025
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg",
+                "size": 14848,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 2,
+                "at": 16505260659
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/mailbox.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 26,
+                "children": 3,
+                "at": 16508752962
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/eml/09-threading.eml",
+                "size": 812,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16509778053
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/nine.mboxrd",
+                "size": 7381,
+                "outcome": "prepared",
+                "outputs": 21,
+                "children": 3,
+                "at": 16512503885
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug",
+                "size": 12292,
+                "outcome": "prepared",
+                "outputs": 11,
+                "children": 0,
+                "at": 16514565222
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0",
+                "size": 3384,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 16514771220
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1",
+                "size": 2482,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 16514862366
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2",
+                "size": 1743,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 16514920235
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3",
+                "size": 2169,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 16514993166
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4",
+                "size": 2289,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 16515056081
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+                "size": 3584,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16516000032
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg",
+                "size": 53248,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 16519122832
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg",
+                "size": 30208,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16523770766
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg",
+                "size": 97280,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16527874426
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg",
+                "size": 83968,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 11,
+                "at": 16535319267
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg",
+                "size": 71680,
+                "outcome": "prepared",
+                "outputs": 5,
+                "children": 1,
+                "at": 16783527933
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg",
+                "size": 48129,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16786352806
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg",
+                "size": 25600,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 16788556147
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 21,
+                "children": 0,
+                "at": 16790828541
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/passworded.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 17,
+                "children": 0,
+                "at": 16793004911
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/libyal/outlook.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 22,
+                "children": 22,
+                "at": 16802023426
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst",
+                "size": 2302976,
+                "outcome": "prepared",
+                "outputs": 19,
+                "children": 0,
+                "at": 16811056341
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 13,
+                "children": 0,
+                "at": 16816411639
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst",
+                "size": 2141594624,
+                "outcome": "seen",
+                "recorded": "prepared",
+                "reason": "recorded by email@spike-ai-pipeline-mail 0.3.0#b2eb344a9fe6069042f8ad067c7d639932925544fe63d8a3d34f04a1788c72ba",
+                "outputs": 100018,
+                "children": 21202,
+                "at": 18174700274
+              }
+            ],
+            "elapsed": 18174718000,
+            "peak_disk": 18237850,
+            "disk_samples": 1818,
+            "index_files": 21411,
+            "index_bytes": 318926239
+          },
+          "written_files": 21411,
+          "written_bytes": 318926239
+        }
+      ]
+    },
+    {
+      "input": "pool 4",
+      "path": "",
+      "size": 0,
+      "floor": {
+        "max_rss": 15044608,
+        "user": 0,
+        "system": 3032000,
+        "wall": 2750340
+      },
+      "runs": [
+        {
+          "way": "dispatch",
+          "launched": {
+            "max_rss": 69337088,
+            "user": 23397057000,
+            "system": 8709555000,
+            "wall": 18771999594
+          },
+          "self": {
+            "max_rss": 37416960,
+            "user": 10974629000,
+            "system": 3880891000
+          },
+          "children": {
+            "max_rss": 69337088,
+            "user": 12422263000,
+            "system": 4825539000
+          },
+          "survey": {
+            "workers": 4,
+            "input_bytes": 4346842427,
+            "parts": 21306,
+            "counts": {
+              "archive × encrypted": 1,
+              "archive × prepared": 1,
+              "document × prepared": 1,
+              "nested × prepared": 36,
+              "nested × seen": 1,
+              "office × prepared": 3,
+              "office × seen": 1,
+              "text × no processor yet": 4541,
+              "unrouted × no processor yet": 16676,
+              "vision × prepared": 20,
+              "vision × seen": 25
+            },
+            "seen_inputs": 1,
+            "seen_parts": 26,
+            "messages": 50604,
+            "seen_messages": 50000,
+            "outputs": 201425,
+            "tops": [
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/01-plain.eml",
+                "size": 568,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 2012849
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml",
+                "size": 650,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 3579407
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml",
+                "size": 1164,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 5350974
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml",
+                "size": 936,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 6801763
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/05-japanese.eml",
+                "size": 495,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 8027753
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/06-chinese.eml",
+                "size": 781,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 9150386
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml",
+                "size": 462,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 10232854
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml",
+                "size": 1106,
+                "outcome": "prepared",
+                "outputs": 5,
+                "children": 1,
+                "at": 11746177
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/01-plain.msg",
+                "size": 13824,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 13189356
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg",
+                "size": 11264,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 14529160
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg",
+                "size": 12800,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 16237115
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg",
+                "size": 13824,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 18293796
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/05-japanese.msg",
+                "size": 10240,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 19873297
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/06-chinese.msg",
+                "size": 10240,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 21173280
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg",
+                "size": 11776,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 22681841
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg",
+                "size": 14848,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 2,
+                "at": 26033125
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/mailbox.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 26,
+                "children": 3,
+                "at": 30447214
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/eml/09-threading.eml",
+                "size": 812,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 31579458
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/nine.mboxrd",
+                "size": 7381,
+                "outcome": "prepared",
+                "outputs": 21,
+                "children": 3,
+                "at": 34765254
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug",
+                "size": 12292,
+                "outcome": "prepared",
+                "outputs": 11,
+                "children": 0,
+                "at": 37063692
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0",
+                "size": 3384,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 37267888
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1",
+                "size": 2482,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 37361496
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2",
+                "size": 1743,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 37438447
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3",
+                "size": 2169,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 37499468
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4",
+                "size": 2289,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 37567005
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+                "size": 3584,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 38649523
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg",
+                "size": 53248,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 42211357
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg",
+                "size": 30208,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 46441344
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg",
+                "size": 97280,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 52275071
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg",
+                "size": 83968,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 11,
+                "at": 59366913
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg",
+                "size": 71680,
+                "outcome": "prepared",
+                "outputs": 5,
+                "children": 1,
+                "at": 329906998
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg",
+                "size": 48129,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 333592494
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg",
+                "size": 25600,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 335885148
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 21,
+                "children": 0,
+                "at": 339097419
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/passworded.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 17,
+                "children": 0,
+                "at": 341403345
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/libyal/outlook.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 22,
+                "children": 22,
+                "at": 349999105
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst",
+                "size": 2302976,
+                "outcome": "prepared",
+                "outputs": 19,
+                "children": 0,
+                "at": 360923490
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 13,
+                "children": 0,
+                "at": 366946548
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst",
+                "size": 59442176,
+                "outcome": "prepared",
+                "outputs": 1102,
+                "children": 6,
+                "at": 2031232130
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+                "size": 2141594624,
+                "outcome": "prepared",
+                "outputs": 100018,
+                "children": 21202,
+                "at": 16554482974
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst",
+                "size": 2141594624,
+                "outcome": "seen",
+                "recorded": "prepared",
+                "reason": "recorded by email@spike-ai-pipeline-mail 0.3.0#b2eb344a9fe6069042f8ad067c7d639932925544fe63d8a3d34f04a1788c72ba",
+                "outputs": 100018,
+                "children": 21202,
+                "at": 18186047345
+              }
+            ],
+            "elapsed": 18186059610,
+            "peak_disk": 18237850,
+            "disk_samples": 1818,
+            "index_files": 21411,
+            "index_bytes": 318926239
+          },
+          "written_files": 21411,
+          "written_bytes": 318926239
+        }
+      ]
+    },
+    {
+      "input": "pool 8",
+      "path": "",
+      "size": 0,
+      "floor": {
+        "max_rss": 12849152,
+        "user": 0,
+        "system": 2938000,
+        "wall": 2718210
+      },
+      "runs": [
+        {
+          "way": "dispatch",
+          "launched": {
+            "max_rss": 69529600,
+            "user": 23532456000,
+            "system": 8602381000,
+            "wall": 18678311467
+          },
+          "self": {
+            "max_rss": 38715392,
+            "user": 11061662000,
+            "system": 3840328000
+          },
+          "children": {
+            "max_rss": 69529600,
+            "user": 12469713000,
+            "system": 4759649000
+          },
+          "survey": {
+            "workers": 8,
+            "input_bytes": 4346842427,
+            "parts": 21306,
+            "counts": {
+              "archive × encrypted": 1,
+              "archive × prepared": 1,
+              "document × prepared": 1,
+              "nested × prepared": 36,
+              "nested × seen": 1,
+              "office × prepared": 3,
+              "office × seen": 1,
+              "text × no processor yet": 4541,
+              "unrouted × no processor yet": 16676,
+              "vision × prepared": 20,
+              "vision × seen": 25
+            },
+            "seen_inputs": 1,
+            "seen_parts": 26,
+            "messages": 50604,
+            "seen_messages": 50000,
+            "outputs": 201425,
+            "tops": [
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/05-japanese.eml",
+                "size": 495,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 2066863
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/01-plain.eml",
+                "size": 568,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 2933001
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml",
+                "size": 650,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 2948886
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/06-chinese.eml",
+                "size": 781,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 3043957
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml",
+                "size": 936,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 3144824
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml",
+                "size": 1164,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 3452232
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml",
+                "size": 462,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 3959750
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml",
+                "size": 1106,
+                "outcome": "prepared",
+                "outputs": 5,
+                "children": 1,
+                "at": 4356219
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/01-plain.msg",
+                "size": 13824,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 4677591
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg",
+                "size": 11264,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 4717298
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg",
+                "size": 13824,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 5333538
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg",
+                "size": 12800,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 5593269
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg",
+                "size": 11776,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 6051138
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/05-japanese.msg",
+                "size": 10240,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 6078868
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/06-chinese.msg",
+                "size": 10240,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 6101372
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/eml/09-threading.eml",
+                "size": 812,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 7080212
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0",
+                "size": 3384,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 7368065
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1",
+                "size": 2482,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 7626067
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2",
+                "size": 1743,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 7698288
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3",
+                "size": 2169,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 7798362
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4",
+                "size": 2289,
+                "outcome": "no processor yet",
+                "reason": "no stage for route unrouted",
+                "outputs": 0,
+                "children": 0,
+                "at": 7854505
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg",
+                "size": 14848,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 2,
+                "at": 7953107
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/rlug/mbox.rlug",
+                "size": 12292,
+                "outcome": "prepared",
+                "outputs": 11,
+                "children": 0,
+                "at": 8018844
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+                "size": 3584,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 8667328
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/mime/nine.mboxrd",
+                "size": 7381,
+                "outcome": "prepared",
+                "outputs": 21,
+                "children": 3,
+                "at": 9677409
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/mailbox.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 26,
+                "children": 3,
+                "at": 9966210
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg",
+                "size": 53248,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 1,
+                "at": 11756096
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg",
+                "size": 97280,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 12366018
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg",
+                "size": 30208,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 13375245
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg",
+                "size": 48129,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 14878639
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg",
+                "size": 25600,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 0,
+                "at": 15023935
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 21,
+                "children": 0,
+                "at": 16250856
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg",
+                "size": 83968,
+                "outcome": "prepared",
+                "outputs": 3,
+                "children": 11,
+                "at": 17607580
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/java-libpst/passworded.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 17,
+                "children": 0,
+                "at": 17849816
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 13,
+                "children": 0,
+                "at": 23581508
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/libyal/outlook.pst",
+                "size": 271360,
+                "outcome": "prepared",
+                "outputs": 22,
+                "children": 22,
+                "at": 24484607
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/pst/tika/testPST.pst",
+                "size": 2302976,
+                "outcome": "prepared",
+                "outputs": 19,
+                "children": 0,
+                "at": 26766849
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg",
+                "size": 71680,
+                "outcome": "prepared",
+                "outputs": 5,
+                "children": 1,
+                "at": 286579500
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/plaso/nromanoff@stark-research-labs.com.pst",
+                "size": 59442176,
+                "outcome": "prepared",
+                "outputs": 1102,
+                "children": 6,
+                "at": 2015901610
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-mail/.state/scale/scale.pst",
+                "size": 2141594624,
+                "outcome": "prepared",
+                "outputs": 100018,
+                "children": 21202,
+                "at": 16569425752
+              },
+              {
+                "input": "/home/jaime/experiments/spike-ai-pipeline-processing/.state/findings/onenote/scale-copy.pst",
+                "size": 2141594624,
+                "outcome": "seen",
+                "recorded": "prepared",
+                "reason": "recorded by email@spike-ai-pipeline-mail 0.3.0#b2eb344a9fe6069042f8ad067c7d639932925544fe63d8a3d34f04a1788c72ba",
+                "outputs": 100018,
+                "children": 21202,
+                "at": 18177009846
+              }
+            ],
+            "elapsed": 18177020957,
+            "peak_disk": 17204925,
+            "disk_samples": 1818,
+            "index_files": 21411,
+            "index_bytes": 318926239
+          },
+          "written_files": 21411,
+          "written_bytes": 318926239
+        }
+      ]
+    }
+  ]
+}

@@ -61,6 +61,9 @@ express; the spike's question and evidence live in the root repository's `contex
   under a content-addressed index, in memory or a directory, whose claims make one of concurrent
   dispatches prepare shared content; a pool over N workers sharing the index, its events merged
   onto the caller's goroutine, each worker held until the loop takes its event; and a store's read
-  resumed after a message, Input.After, its entry not recorded.
+  resumed after a message, Input.After, its entry not recorded. The findings tier, whose results
+  `docs/findings/onenote.md` records, holds the tier's routes to hand truth, records inspection
+  over ~/docs and vision's reading of OneNote ink, and times the onenote adapter and the
+  dispatcher, resumed and pooled, over mail's scale store.
 - **audio**: windows cut at silences, concurrent transcription, and the seam merge.
 - **streams**: live and real-time-paced media, and chat streams, as events.

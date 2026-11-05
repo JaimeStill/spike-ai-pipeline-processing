@@ -1,0 +1,78 @@
+{
+  "baseline_input_tokens": 39,
+  "model": "google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0",
+  "onenote": {
+    "score": {
+      "char_edits": 49,
+      "chars": 72,
+      "cer": 0.6805555555555556,
+      "word_edits": 10,
+      "words": 14,
+      "wer": 0.7142857142857143,
+      "words_right": 4
+    },
+    "text": "Hello World\nHello World"
+  },
+  "png": {
+    "bytes": 31577,
+    "sha256": "55ca4f24f51af7d2abd7dfd9011dd6f6be7962c1d8b27aee398f24206a796835",
+    "size": "984x936"
+  },
+  "prompt": "Transcribe the handwritten text in this picture, line by line, top to bottom. Output only the text, with no commentary.",
+  "runs": [
+    {
+      "run": 1,
+      "text": "Hello World\nThis is a quick test\nHallo Welt\ntest\nL Hello World\nHello World",
+      "status": "completed",
+      "image_tokens": 422,
+      "output_tokens": 21,
+      "wall": 390544325,
+      "score": {
+        "char_edits": 2,
+        "chars": 72,
+        "cer": 0.027777777777777776,
+        "word_edits": 1,
+        "words": 14,
+        "wer": 0.07142857142857142,
+        "words_right": 14
+      }
+    },
+    {
+      "run": 2,
+      "text": "Hello World\nThis is a quick test\nHallo Welt\ntest\nL Hello World\nHello World",
+      "status": "completed",
+      "image_tokens": 422,
+      "output_tokens": 21,
+      "wall": 375220017,
+      "score": {
+        "char_edits": 2,
+        "chars": 72,
+        "cer": 0.027777777777777776,
+        "word_edits": 1,
+        "words": 14,
+        "wer": 0.07142857142857142,
+        "words_right": 14
+      }
+    },
+    {
+      "run": 3,
+      "text": "Hello World\nThis is a quick test\nHallo Welt\ntest\nL Hello World\nHello World",
+      "status": "completed",
+      "image_tokens": 422,
+      "output_tokens": 21,
+      "wall": 366059366,
+      "score": {
+        "char_edits": 2,
+        "chars": 72,
+        "cer": 0.027777777777777776,
+        "word_edits": 1,
+        "words": 14,
+        "wer": 0.07142857142857142,
+        "words_right": 14
+      }
+    }
+  ],
+  "section": "../onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one",
+  "truth": "Hello World\nThis is a quick test\nHallo Welt\ntest\nHello World\nHello World\n",
+  "where": "page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink"
+}

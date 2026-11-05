@@ -1,0 +1,261 @@
+# routes to stages: 119 inputs from document/testdata/*.pdf office/testdata/ooxml/* office/testdata/legacy/generated/*.*.* office/testdata/legacy/real/*.??? office/testdata/pictures/*.docx picture/testdata/*.svg email/testdata/mail/fixtures/generated/eml/*.eml email/testdata/mail/fixtures/generated/msg/*.msg email/testdata/mail/fixtures/generated/pst/*.pst email/testdata/mail/fixtures/mime/eml/*.eml email/testdata/mail/fixtures/mime/*.mboxrd email/testdata/mail/fixtures/mime/rlug/mbox.* email/testdata/mail/fixtures/msg/poi/*.msg email/testdata/mail/fixtures/msg/tika/*.msg email/testdata/mail/fixtures/pst/*/*.pst email/testdata/built/eml/*.eml email/testdata/built/msg/*.msg onenote/testdata/onenote/fixtures/interop/*/*.one* onenote/testdata/onenote/fixtures/onenote-rs/*.one* onenote/testdata/onenote/fixtures/onenote-rs/*/*.one* inspect/testdata/* tool/testdata/*.wav, dispatched in order over one file index
+# input	place	name	depth	route	reason	stage	outcome	outputs	children	why
+document/testdata/clean.pdf	-	clean.pdf	0	document	PDF signature	document	prepared	12	0	
+document/testdata/degraded.pdf	-	degraded.pdf	0	document	PDF signature	document	prepared	9	0	
+document/testdata/scanned.pdf	-	scanned.pdf	0	document	PDF signature	document	prepared	7	0	
+office/testdata/ooxml/bullets.libreoffice.pptx	-	bullets.libreoffice.pptx	0	office	ZIP signature, .pptx extension	office	prepared	1	0	
+office/testdata/ooxml/cells.libreoffice.xlsx	-	cells.libreoffice.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	0	
+office/testdata/ooxml/charts.libreoffice.docx	-	charts.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+office/testdata/ooxml/comments.libreoffice.docx	-	comments.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+office/testdata/ooxml/drawings.libreoffice.xlsx	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/drawings.libreoffice.xlsx	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/drawings.libreoffice.xlsx	-	drawings.libreoffice.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	2	
+office/testdata/ooxml/formulas.libreoffice.xlsx	-	formulas.libreoffice.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	0	
+office/testdata/ooxml/lists.libreoffice.docx	-	lists.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+office/testdata/ooxml/media.libreoffice.docx	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/ooxml/media.libreoffice.docx	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/ooxml/media.libreoffice.docx	media 670be6349ed84b27d6ca43d66ba6e9454c632f68de8d9b8fea78a480e90afb31.emf, as PNG	670be6349ed84b27d6ca43d66ba6e9454c632f68de8d9b8fea78a480e90afb31.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/media.libreoffice.docx	media df026100fd6fe38e22923c5152a33ea6f6879e38073fb47f022ed9d90dec65a8.png	df026100fd6fe38e22923c5152a33ea6f6879e38073fb47f022ed9d90dec65a8.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/media.libreoffice.docx	-	media.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	4	
+office/testdata/ooxml/merges.libreoffice.xlsx	-	merges.libreoffice.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	0	
+office/testdata/ooxml/notes.libreoffice.docx	-	notes.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+office/testdata/ooxml/sections.libreoffice.docx	media 805924e65dff89ccbac4046a6995a73622a878f5ff9ec17678b4bc33ca55ea12.png	805924e65dff89ccbac4046a6995a73622a878f5ff9ec17678b4bc33ca55ea12.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/sections.libreoffice.docx	-	sections.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	1	
+office/testdata/ooxml/slide-objects.libreoffice.pptx	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/ooxml/slide-objects.libreoffice.pptx	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/ooxml/slide-objects.libreoffice.pptx	-	slide-objects.libreoffice.pptx	0	office	ZIP signature, .pptx extension	office	prepared	1	2	
+office/testdata/ooxml/slides.libreoffice.pptx	-	slides.libreoffice.pptx	0	office	ZIP signature, .pptx extension	office	prepared	1	0	
+office/testdata/ooxml/tables.libreoffice.docx	-	tables.libreoffice.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+office/testdata/ooxml/with-drawing.xlsx	media 14013b5a111a348deb6efc63f5f164d0bed08831bbe2c3803dd9fbfc76fd2664.emf, as PNG	14013b5a111a348deb6efc63f5f164d0bed08831bbe2c3803dd9fbfc76fd2664.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/with-drawing.xlsx	media 3c9e27e68d0322daaff3477a957d46ae5b32b23f058d29e65d3947b6eeafb2cb.emf, as PNG	3c9e27e68d0322daaff3477a957d46ae5b32b23f058d29e65d3947b6eeafb2cb.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/with-drawing.xlsx	media 8345fcf9642a79651ea36935f736e753e355a4df2d85eaaa1589837143b8f2f0.jpeg	8345fcf9642a79651ea36935f736e753e355a4df2d85eaaa1589837143b8f2f0.jpeg	1	vision	JPEG signature	vision	prepared	1	0	
+office/testdata/ooxml/with-drawing.xlsx	media 90a2c8be87924f2bf36439fec40969eb74fcc314dce8b9f9c627167d7d425663.png	90a2c8be87924f2bf36439fec40969eb74fcc314dce8b9f9c627167d7d425663.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/with-drawing.xlsx	media fdc312bc0dbea47df16d3e3e98e2777e4aa537d225a703e3cde0177df56a592a.wmf, as PNG	fdc312bc0dbea47df16d3e3e98e2777e4aa537d225a703e3cde0177df56a592a.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/with-drawing.xlsx	-	with-drawing.xlsx	0	office	ZIP signature, .xlsx extension	office	prepared	1	5	
+office/testdata/ooxml/word-with-attachments.docx	media 2156195ef201015167ead7b09b568042142520ff0d5618eeddb6ba5b169e095f.emf, as PNG	2156195ef201015167ead7b09b568042142520ff0d5618eeddb6ba5b169e095f.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/word-with-attachments.docx	media 8e362ed597728fa8a3eedc95785f2375b9d87cfc5e727de4f6dd597a4f809f16.emf, as PNG	8e362ed597728fa8a3eedc95785f2375b9d87cfc5e727de4f6dd597a4f809f16.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/word-with-attachments.docx	media 90f616810030696b8b3b1cd2686a603e484262d00b8dc0eeba0266b28cca857d.wmf, as PNG	90f616810030696b8b3b1cd2686a603e484262d00b8dc0eeba0266b28cca857d.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/word-with-attachments.docx	media cc90707a7aab5dcb25ce2cb5fdefe6fd611d5c3d632ee5d4d18373cc7d672add.emf, as PNG	cc90707a7aab5dcb25ce2cb5fdefe6fd611d5c3d632ee5d4d18373cc7d672add.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/word-with-attachments.docx	media f35ded1fae0aa91c50f3f8846401d5565e940246f15bf03c38a5c1fb38118a03.emf, as PNG	f35ded1fae0aa91c50f3f8846401d5565e940246f15bf03c38a5c1fb38118a03.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/ooxml/word-with-attachments.docx	-	word-with-attachments.docx	0	office	ZIP signature, .docx extension	office	prepared	1	5	
+office/testdata/legacy/generated/bullets.libreoffice.ppt	-	bullets.libreoffice.ppt	0	office	OLE2 signature, .ppt extension	office	prepared	1	0	
+office/testdata/legacy/generated/cells.libreoffice.xls	-	cells.libreoffice.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	0	
+office/testdata/legacy/generated/charts.libreoffice.doc	-	charts.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+office/testdata/legacy/generated/comments.libreoffice.doc	-	comments.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+office/testdata/legacy/generated/drawings.libreoffice.xls	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/drawings.libreoffice.xls	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/drawings.libreoffice.xls	-	drawings.libreoffice.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	2	
+office/testdata/legacy/generated/formulas.libreoffice.xls	-	formulas.libreoffice.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	0	
+office/testdata/legacy/generated/lists.libreoffice.doc	-	lists.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+office/testdata/legacy/generated/media.libreoffice.doc	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/media.libreoffice.doc	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/media.libreoffice.doc	media 670be6349ed84b27d6ca43d66ba6e9454c632f68de8d9b8fea78a480e90afb31.emf, as PNG	670be6349ed84b27d6ca43d66ba6e9454c632f68de8d9b8fea78a480e90afb31.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/media.libreoffice.doc	media df026100fd6fe38e22923c5152a33ea6f6879e38073fb47f022ed9d90dec65a8.png	df026100fd6fe38e22923c5152a33ea6f6879e38073fb47f022ed9d90dec65a8.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/media.libreoffice.doc	-	media.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	4	
+office/testdata/legacy/generated/merges.libreoffice.xls	-	merges.libreoffice.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	0	
+office/testdata/legacy/generated/notes.libreoffice.doc	-	notes.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+office/testdata/legacy/generated/sections.libreoffice.doc	media 805924e65dff89ccbac4046a6995a73622a878f5ff9ec17678b4bc33ca55ea12.png	805924e65dff89ccbac4046a6995a73622a878f5ff9ec17678b4bc33ca55ea12.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/sections.libreoffice.doc	-	sections.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	1	
+office/testdata/legacy/generated/slide-objects.libreoffice.ppt	media 0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	0fcca33bb0baf1a0669bd2fcdcaeb34e33d27196f7ffb5294b27aea8a9e46446.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/slide-objects.libreoffice.ppt	media 10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	10a86bd779a80e60e5d3314ec1edeab643cb454a4c7dfee671132090878d7aea.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+office/testdata/legacy/generated/slide-objects.libreoffice.ppt	-	slide-objects.libreoffice.ppt	0	office	OLE2 signature, .ppt extension	office	prepared	1	2	
+office/testdata/legacy/generated/slides.libreoffice.ppt	-	slides.libreoffice.ppt	0	office	OLE2 signature, .ppt extension	office	prepared	1	0	
+office/testdata/legacy/generated/tables.libreoffice.doc	-	tables.libreoffice.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+office/testdata/legacy/real/SampleSS.xls	-	SampleSS.xls	0	office	OLE2 signature, .xls extension	office	prepared	1	0	
+office/testdata/legacy/real/basic_test_ppt_file.ppt	-	basic_test_ppt_file.ppt	0	office	OLE2 signature, .ppt extension	office	prepared	1	0	
+office/testdata/legacy/real/simple-table.doc	-	simple-table.doc	0	office	OLE2 signature, .doc extension	office	prepared	1	0	
+office/testdata/pictures/tiff.docx	media 9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119.tiff, as PNG	9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119.png	1	vision	PNG signature	vision	prepared	1	0	
+office/testdata/pictures/tiff.docx	-	tiff.docx	0	office	ZIP signature, .docx extension	office	prepared	1	1	
+picture/testdata/ink.svg	-	ink.svg	0	vision-converted	SVG root element	picture	prepared	1	0	
+picture/testdata/script-bearing.svg	-	script-bearing.svg	0	vision-converted	SVG root element	picture	prepared	1	0	
+picture/testdata/shapes.svg	-	shapes.svg	0	vision-converted	SVG root element	picture	prepared	1	0	
+email/testdata/mail/fixtures/generated/eml/01-plain.eml	-	01-plain.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml	-	02-reply-latin1.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml	message, attachment 1	moth.png	1	vision	PNG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml	-	03-html-inline-image.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	1	
+email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	message, attachment 1	отчёт.csv	1	text	text by its .csv extension	-	no processor yet	0	0	no stage for route text
+email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	-	04-attachment-cyrillic.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	1	
+email/testdata/mail/fixtures/generated/eml/05-japanese.eml	-	05-japanese.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/eml/06-chinese.eml	-	06-chinese.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml	-	07-html-only-bcc.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	message, attachment 1	note-g.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	-	08-forward-attached-message.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	5	1	
+email/testdata/mail/fixtures/generated/msg/01-plain.msg	-	01-plain.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg	-	02-reply-latin1.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg	message, attachment 1	moth.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg	-	03-html-inline-image.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	1	
+email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	message, attachment 1	отчёт.csv	1	text	text by its .csv extension	-	no processor yet	0	0	no stage for route text
+email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	-	04-attachment-cyrillic.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	1	
+email/testdata/mail/fixtures/generated/msg/05-japanese.msg	-	05-japanese.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/msg/06-chinese.msg	-	06-chinese.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg	-	07-html-only-bcc.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment 1	note-g.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment 2	Notes on the engine (draft).eml	1	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	-	08-forward-attached-message.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	2	
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	message 2097220, attachment 1	moth.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	message 2097252, attachment 1	отчёт.csv	1	text	text by its .csv extension	-	no processor yet	0	0	no stage for route text
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	message 2097380, attachment 1	note-g.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	-	mailbox.pst	0	nested	PST signature, a .pst	email	prepared	26	3	
+email/testdata/mail/fixtures/mime/eml/09-threading.eml	-	09-threading.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	0	
+email/testdata/mail/fixtures/mime/nine.mboxrd	message 3, attachment 1	moth.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/mime/nine.mboxrd	message 4, attachment 1	отчёт.csv	1	text	text by its .csv extension	-	no processor yet	0	0	no stage for route text
+email/testdata/mail/fixtures/mime/nine.mboxrd	message 8, attachment 1	note-g.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+email/testdata/mail/fixtures/mime/nine.mboxrd	-	nine.mboxrd	0	nested	mbox "From " line	email	prepared	21	3	
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug	-	mbox.rlug	0	nested	mbox "From " line	email	prepared	11	0	
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-0	-	mbox.rlug-0	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-1	-	mbox.rlug-1	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-2	-	mbox.rlug-2	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-3	-	mbox.rlug-3	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+email/testdata/mail/fixtures/mime/rlug/mbox.rlug-4	-	mbox.rlug-4	0	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+email/testdata/mail/fixtures/msg/poi/ASCII_UTF-8_CP1252_LCID1031_HTML.msg	-	ASCII_UTF-8_CP1252_LCID1031_HTML.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg	message, attachment 1	alfresco.gif	1	vision	BMP signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg	-	example_sent_regular.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	1	
+email/testdata/mail/fixtures/msg/poi/msgClassAppointment.msg	-	msgClassAppointment.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/msg/poi/outlook_30_msg.msg	-	outlook_30_msg.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 1	1.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 2	2.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 3	3.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 4	4.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 5	5.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 6	6.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 7	7.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 8	8.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 9	9.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 10	10.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	message, attachment 11	12.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+email/testdata/mail/fixtures/msg/tika/test-outlook2003.msg	-	test-outlook2003.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	11	
+email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg	message, attachment 2	smbprn.00009008.KdcPjl.pdf	1	document	PDF signature	document	prepared	2	0	
+email/testdata/mail/fixtures/msg/tika/testMSG_att_msg.msg	-	testMSG_att_msg.msg	0	nested	OLE2 signature, .msg extension	email	prepared	5	1	
+email/testdata/mail/fixtures/msg/tika/testMSG_chinese.msg	-	testMSG_chinese.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/msg/tika/testMSG_forwarded.msg	-	testMSG_forwarded.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	0	
+email/testdata/mail/fixtures/pst/java-libpst/dist-list.pst	-	dist-list.pst	0	nested	PST signature, a .pst	email	prepared	21	0	
+email/testdata/mail/fixtures/pst/java-libpst/passworded.pst	-	passworded.pst	0	nested	PST signature, a .pst	email	prepared	17	0	
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 1	1.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 2	2.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 3	3.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 4	4.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 5	5.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 6	6.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 7	7.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 8	8.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 9	9.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 10	10.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097188, attachment 11	12.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 1	1.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 2	2.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 3	3.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 4	4.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 5	5.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 6	6.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 7	7.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 8	8.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 9	9.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 10	10.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	message 2097220, attachment 11	12.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+email/testdata/mail/fixtures/pst/libyal/outlook.pst	-	outlook.pst	0	nested	PST signature, a .pst	email	prepared	22	22	
+email/testdata/mail/fixtures/pst/tika/testPST.pst	-	testPST.pst	0	nested	PST signature, a .pst	email	prepared	19	0	
+email/testdata/mail/fixtures/pst/tika/testPST_variousBodyTypes.pst	-	testPST_variousBodyTypes.pst	0	nested	PST signature, a .pst	email	prepared	13	0	
+email/testdata/built/eml/office-attachments.eml	message, attachment 1	minutes.docx	1	office	ZIP signature, .docx extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+email/testdata/built/eml/office-attachments.eml	message, attachment 2	budget.xls	1	office	OLE2 signature, .xls extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+email/testdata/built/eml/office-attachments.eml	message, attachment 3	scan.tif	1	vision-converted	TIFF signature	picture	prepared	1	0	
+email/testdata/built/eml/office-attachments.eml	message, attachment 4	diagram.emf	1	vision-converted	EMF signature	picture	prepared	1	0	
+email/testdata/built/eml/office-attachments.eml	message, attachment 5	forwarded.msg	1	nested	OLE2 signature, .msg extension	email	seen	3	1	recorded by email@spike-ai-pipeline-mail 0.3.0#b2eb344a9fe6069042f8ad067c7d639932925544fe63d8a3d34f04a1788c72ba
+email/testdata/built/eml/office-attachments.eml	-	office-attachments.eml	0	nested	a message by its .eml extension, header-shaped	email	prepared	3	5	
+email/testdata/built/msg/office-attachments.msg	message, attachment 1	minutes.docx	1	office	ZIP signature, .docx extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+email/testdata/built/msg/office-attachments.msg	message, attachment 2	budget.xls	1	office	OLE2 signature, .xls extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+email/testdata/built/msg/office-attachments.msg	message, attachment 3	scan.tif	1	vision-converted	TIFF signature	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+email/testdata/built/msg/office-attachments.msg	message, attachment 4	diagram.emf	1	vision-converted	EMF signature	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+email/testdata/built/msg/office-attachments.msg	message, attachment 5	forwarded.msg	1	nested	OLE2 signature, .msg extension	email	seen	3	1	recorded by email@spike-ai-pipeline-mail 0.3.0#b2eb344a9fe6069042f8ad067c7d639932925544fe63d8a3d34f04a1788c72ba
+email/testdata/built/msg/office-attachments.msg	-	office-attachments.msg	0	nested	OLE2 signature, .msg extension	email	prepared	3	5	
+onenote/testdata/onenote/fixtures/interop/Resources/AlternativePackaging.one	-	AlternativePackaging.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+onenote/testdata/onenote/fixtures/interop/Resources/AlternativePackaging.onetoc2	-	AlternativePackaging.onetoc2	0	onenote	OneStore signature	onenote	prepared	1	0	
+onenote/testdata/onenote/fixtures/interop/Resources/NoSection.onetoc2	-	NoSection.onetoc2	0	onenote	OneStore signature	onenote	prepared	1	0	
+onenote/testdata/onenote/fixtures/interop/Resources/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	1	0	
+onenote/testdata/onenote/fixtures/interop/SUT/Encryption.one	-	Encryption.one	0	onenote	OneStore signature	onenote	failed	0	0	onenote: refused: Unexpected end of file
+onenote/testdata/onenote/fixtures/interop/SUT/FileSyncWOPI_OneNoteWithODB.one	page 19a0907d-cc34-459e-bdb6-dea53bdcd6f7, outline 2, item 1, block 1	Chrysanthemum.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+onenote/testdata/onenote/fixtures/interop/SUT/FileSyncWOPI_OneNoteWithODB.one	-	FileSyncWOPI_OneNoteWithODB.one	0	onenote	OneStore signature	onenote	prepared	4	1	
+onenote/testdata/onenote/fixtures/interop/SUT/InvalidData.one	-	InvalidData.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+onenote/testdata/onenote/fixtures/interop/SUT/OneWithFileData.one	page d9fb6b6a-ab0c-42df-a684-4fadf122b557, outline 2, item 1, block 1	testing.docx	1	office	ZIP signature, .docx extension	office	prepared	1	0	
+onenote/testdata/onenote/fixtures/interop/SUT/OneWithFileData.one	-	OneWithFileData.one	0	onenote	OneStore signature	onenote	prepared	4	1	
+onenote/testdata/onenote/fixtures/interop/SUT/OneWithoutFileData.one	-	OneWithoutFileData.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+onenote/testdata/onenote/fixtures/interop/SUT/Open Notebook.onetoc2	page d9fb6b6a-ab0c-42df-a684-4fadf122b557, outline 2, item 1, block 1	testing.docx	1	office	ZIP signature, .docx extension	office	seen	1	0	recorded by office@spike-ai-pipeline-office 0.1.0, soffice 26.8.1.1, magick 7.1.2#f6a125a52e6538c4d63173f90e7cfb691f8e477c897dbbb9cdad454d7a63e6b1
+onenote/testdata/onenote/fixtures/interop/SUT/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	12	1	
+onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	prepared	1	0	
+onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	1	vision-converted	SVG root element	picture	prepared	1	0	
+onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	-	New Section 1.one	0	onenote	OneStore signature	onenote	prepared	4	2	
+onenote/testdata/onenote/fixtures/onenote-rs/Open Notebook.onetoc2	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+onenote/testdata/onenote/fixtures/onenote-rs/Open Notebook.onetoc2	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	1	vision-converted	SVG root element	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+onenote/testdata/onenote/fixtures/onenote-rs/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	5	2	
+onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	95c93a747acbbbeeb6d345faf0d17e86669bc7cdd0854155b588c58a7556d194.svg	1	vision-converted	SVG root element	picture	prepared	1	0	
+onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	-	handwriting_recognition.one	0	onenote	OneStore signature	onenote	prepared	6	2	
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 1.one	-	New Section 1.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page e9e2b25d-4462-ea4f-a86c-f167efa63e0d, image container 2	dummy_1.png	1	vision	PNG signature	vision	prepared	1	0	
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page 7198bad9-4462-a34e-b5a2-44b2b78e4e60, outline 2, item 1, block 1	ff-16b-2c-44100hz.mp3	1	audio	MP3 signature	-	no processor yet	0	0	no stage for route audio
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	-	New Section 2.one	0	onenote	OneStore signature	onenote	prepared	6	2	
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page e9e2b25d-4462-ea4f-a86c-f167efa63e0d, image container 2	dummy_1.png	1	vision	PNG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page 7198bad9-4462-a34e-b5a2-44b2b78e4e60, outline 2, item 1, block 1	ff-16b-2c-44100hz.mp3	1	audio	MP3 signature	-	no processor yet	0	0	no stage for route audio
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	9	2	
+onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/OneNote_DeletedPages.one	-	OneNote_DeletedPages.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	4	0	
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	1	vision-converted	SVG root element	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one	-	New Section 1 2.one	0	onenote	OneStore signature	onenote	prepared	6	2	
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 2.one	-	New Section 2.one	0	onenote	OneStore signature	onenote	prepared	6	0	
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 3.one	-	New Section 3.one	0	onenote	OneStore signature	onenote	prepared	4	0	
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, outline 2, item 20, block 1	testimages_screenshot.jpg	1	vision	JPEG signature	vision	seen	1	0	recorded by vision@1#c953ea6e98fa93d682dab2a14cdfe1455cf8c995cb7d276006a137b25a958835
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	1	vision-converted	SVG root element	picture	seen	1	0	recorded by picture@magick 7.1.2, soffice 26.8.1.1#1469bc7b77f55852e3265b850ee86d126318c570e6b1d56347c3e257f5446c00
+onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	14	2	
+onenote/testdata/onenote/fixtures/onenote-rs/object-revision/Open Notebook.onetoc2	-	Open Notebook.onetoc2	0	onenote	OneStore signature	onenote	prepared	1	0	
+inspect/testdata/absolute.zip	-	absolute.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	quarantined	0	0	zip-absolute-path: entry "/tmp/evil.txt", and 1 more
+inspect/testdata/bomb.zip	zip entry zeros.bin	zeros.bin	1	unrouted	no routed signature	-	no processor yet	0	0	no stage for route unrouted
+inspect/testdata/bomb.zip	-	bomb.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	prepared	0	1	
+inspect/testdata/declared-bomb.zip	-	declared-bomb.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	quarantined	0	0	zip-bomb: entry "zeros.bin": 4294967296 bytes from 11, 390451572:1
+inspect/testdata/encrypted.xlsx	-	encrypted.xlsx	0	unrouted	OLE2 signature without a legacy or .msg extension	-	no processor yet	0	0	no stage for route unrouted
+inspect/testdata/encrypted.zip	zip entry notes.txt	notes.txt	1	text	text by its .txt extension	-	no processor yet	0	0	no stage for route text
+inspect/testdata/encrypted.zip	-	encrypted.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	encrypted	1	1	zip stage: 1 of 2 entries: encrypted
+inspect/testdata/hyperlink.docx	-	hyperlink.docx	0	office	ZIP signature, .docx extension	office	prepared	1	0	
+inspect/testdata/invoice.pdf.exe	-	invoice.pdf.exe	0	unrouted	PE signature, an executable	-	no processor yet	0	0	no stage for route unrouted
+inspect/testdata/javascript.pdf	-	javascript.pdf	0	document	PDF signature	document	prepared	1	0	
+inspect/testdata/macro.docm	-	macro.docm	0	office	ZIP signature, .docm extension	office	prepared	1	0	
+inspect/testdata/mismatch.pdf	-	mismatch.pdf	0	vision	PNG signature	vision	prepared	1	0	
+inspect/testdata/polyglot.jpg	-	polyglot.jpg	0	vision	JPEG signature	vision	prepared	1	0	
+inspect/testdata/polyglot.png	-	polyglot.png	0	vision	PNG signature	vision	prepared	1	0	
+inspect/testdata/script.svg	-	script.svg	0	vision-converted	SVG root element	picture	prepared	1	0	
+inspect/testdata/symlink.zip	-	symlink.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	quarantined	0	0	zip-symlink: entry "passwd"
+inspect/testdata/traversal.zip	-	traversal.zip	0	archive	ZIP signature without an OOXML extension or ODF mimetype	zip	quarantined	0	0	zip-traversal: entry "docs/../../evil.txt"
+tool/testdata/tone.wav	-	tone.wav	0	audio	WAV signature	-	no processor yet	0	0	no stage for route audio
+
+# counts by route × outcome: 225 parts from 119 inputs, dispatched in 27.836s
+archive × encrypted	1
+archive × prepared	1
+archive × quarantined	4
+audio × no processor yet	3
+document × prepared	5
+nested × prepared	36
+nested × seen	2
+office × prepared	37
+office × seen	5
+onenote × failed	1
+onenote × prepared	22
+text × no processor yet	9
+unrouted × no processor yet	8
+vision × prepared	35
+vision × seen	43
+vision-converted × prepared	8
+vision-converted × seen	5
+
+# vision: one prepared image output per stage and part kind, the first that decodes at least 32 on each side, to google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0
+# key	input	where	part	output	media type	size	bytes	model	image tokens	output tokens	wall	status	transcription
+document pdf	document/testdata/clean.pdf	-	clean.pdf	page 1	image/png	1275x1650	54237	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	920	183	2.742s	completed	"**The Harbor Survey**\n\nThe harbor survey began in the spring, when the ice had cleared from the inner channel and the pi"
+vision png from emf	office/testdata/ooxml/with-drawing.xlsx	media 14013b5a111a348deb6efc63f5f164d0bed08831bbe2c3803dd9fbfc76fd2664.emf, as PNG	14013b5a111a348deb6efc63f5f164d0bed08831bbe2c3803dd9fbfc76fd2664.png	picture	image/png	767x535	103972	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	178	16	390ms	completed	"A black and white illustration of a cow standing on a patch of grass."
+vision jpeg	office/testdata/ooxml/with-drawing.xlsx	media 8345fcf9642a79651ea36935f736e753e355a4df2d85eaaa1589837143b8f2f0.jpeg	8345fcf9642a79651ea36935f736e753e355a4df2d85eaaa1589837143b8f2f0.jpeg	picture	image/jpeg	192x176	11988	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	83	19	313ms	completed	"An hourglass is depicted in the center of the image against a background of musical staff lines."
+vision png	office/testdata/ooxml/with-drawing.xlsx	media 90a2c8be87924f2bf36439fec40969eb74fcc314dce8b9f9c627167d7d425663.png	90a2c8be87924f2bf36439fec40969eb74fcc314dce8b9f9c627167d7d425663.png	picture	image/png	130x92	3043	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	82	23	345ms	completed	"This is a stylized, cartoonish illustration of a yellow tiger or cat with black stripes and a long tail."
+vision png from wmf	office/testdata/ooxml/with-drawing.xlsx	media fdc312bc0dbea47df16d3e3e98e2777e4aa537d225a703e3cde0177df56a592a.wmf, as PNG	fdc312bc0dbea47df16d3e3e98e2777e4aa537d225a703e3cde0177df56a592a.png	picture	image/png	539x577	114013	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	134	14	245ms	completed	"This is an illustration of Santa Claus's face and hat."
+vision png from tiff	office/testdata/pictures/tiff.docx	media 9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119.tiff, as PNG	9006e4b5615beb93d5ff99a79ed62551a523ec8b0e2f881b074589d28c47b119.png	picture	image/png	640x400	3366	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	106	5	111ms	completed	"TEST\nTIFF"
+picture svg	picture/testdata/ink.svg	-	ink.svg	picture	image/png	236x118	1361	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	74	2	75ms	completed	"hi"
+vision bmp	email/testdata/mail/fixtures/msg/poi/example_sent_regular.msg	message, attachment 1	alfresco.gif	picture	image/bmp	202x74	16174	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	86	12	198ms	completed	"Alfresco\nThe Open Source Alternative for Enterprise Content Management"
+picture tiff	email/testdata/built/eml/office-attachments.eml	message, attachment 3	scan.tif	picture	image/png	640x400	3366	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	106	5	111ms	completed	"TEST\nTIFF"
+picture emf	email/testdata/built/eml/office-attachments.eml	message, attachment 4	diagram.emf	picture	image/png	1489x566	9952	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	374	13	279ms	completed	"Привет!\nhi\nozbeklar hissasi juda katta"
+picture ink	onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page 5eaf76b1-8dde-8745-a8a7-1a9865cc478a, page ink	d3ea3690550c782de46d4f8cc3573feb3f97727a1a8793849df7a950a503a1ec.svg	picture	image/png	980x121	5532	google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0	74	21	367ms	completed	"This image shows a single, continuous black line forming a wavy, undulating shape against a white background."
+# 11 images, 5.175s wall, 2217 image tokens; text-only baseline 33 input tokens

@@ -311,6 +311,13 @@ for pe, err := range d.Pool(ctx, slices.Values(inputs), 4) {
 }
 ```
 
+[docs/findings/onenote.md](docs/findings/onenote.md) records the dispatcher's routes over every
+committed fixture against the hand route truth, inspection over ~/docs' hazards, vision's reading
+of a OneNote page's ink beside OneNote's own recognition, the onenote adapter's cost beside the
+CLI on three large sections, and the dispatcher's time, peak memory, and peak disk over mail's
+2.1 GB scale store, resumed midway, and through the pool at 1 to 8 workers. The run results it
+cites are in `docs/findings/onenote-results/`.
+
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
 `NewConverter` over a `Config` of a magick Tool that `MagickSpec` declares, minimum
@@ -723,7 +730,11 @@ The findings tier, findings-tagged tests, measures `email` on this machine and n
 plaso's store by its pinned SHA-256, and times the adapter on it, on the scale store
 `EMAIL_SCALE_STORE` names, and on the scale mboxrd `EMAIL_SCALE_MBOX` names, both of which mail's
 generator builds; a run keeps its results only in the directory `EMAIL_FINDINGS_RESULTS`
-names ([docs/findings/email.md](docs/findings/email.md), "Rerunning").
+names ([docs/findings/email.md](docs/findings/email.md), "Rerunning"). `mise run findings-onenote` measures
+`dispatch` and `onenote` the same way: the tier's routes, inspection over ~/docs, the page ink to
+vision, the large sections, and the dispatcher over the scale store `ONENOTE_SCALE_STORE` names,
+resumed and pooled; a run keeps its results only in the directory `ONENOTE_FINDINGS_RESULTS`
+names ([docs/findings/onenote.md](docs/findings/onenote.md), "Rerunning").
 
 The tests' vision harness, the bake-offs, the staged flow, and the findings tier are test code,
 not released.
@@ -741,8 +752,8 @@ libvips. typst and qpdf are needed only to regenerate the fixtures in `document/
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
 integration and bake-off tiers run on; no released package imports it, and `internal/visiontest`,
-the router client and response helpers the vision tests share, builds under the integration tag
-alone. It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer
+the router client and response helpers the vision tests share, builds under the integration and
+findings tags alone. It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer
 are in the root
 repository's README.
 
