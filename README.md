@@ -192,8 +192,10 @@ onenote stages hold what mail and onenote write once per distinct content, gives
 part its SHA-256 and a `Release`, which the dispatcher calls once the index holds the content's
 entry and the caller kept nothing of it: the stage removes its original, and a later record is
 found with no file and seen from the index, so a store's directory holds the attachments of the
-messages in flight. Content the dispatcher didn't settle, failed, limited, quarantined, or with no
-stage for its route, keeps its original for the next record naming it.
+messages in flight. Content with no stage for its route is released once the caller's loop moves
+past its no-processor event without keeping it, and a later record naming it is no processor yet
+again, with no file. Content the dispatcher didn't settle, failed, limited, quarantined, or a
+cycle, keeps its original for the next record naming it.
 
 `Dispatcher.Pool` dispatches an iterator of inputs over N workers sharing the dispatcher's index,
 so content the inputs share is prepared once and seen by the rest, and yields every input's events
@@ -697,7 +699,12 @@ Known limits:
 The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
 under the race detector, and lint, the integration, bakeoff, and findings tags included. `mise run
 integration` runs the integration-tagged tests against this machine's tools and docker, and the
-vision tests against the llama.cpp router `SPIKE_ROUTER_URL` names, gb10-2's by default. The
+vision tests against the llama.cpp router `SPIKE_ROUTER_URL` names, gb10-2's by default. Among
+them, `dispatch`'s `TestTierRoutes` dispatches every committed fixture input through every
+adapter over one file index, holds each route and outcome to the hand route truth in
+`dispatch/testdata/tier-routes.tsv`, and sends one image output per stage and part kind to Gemma
+4 26B-A4B; run alone, with its routes-to-stages log written to a file, it is `DISPATCH_TIER_LOG=<file>
+mise exec -- go test -race -tags integration -count=1 -run '^TestTierRoutes$' ./dispatch/`. The
 bake-off tier, bakeoff-tagged tests, sends pages to Gemma 4 26B-A4B on the same router and never
 runs in CI. Each task is a series of `go test` runs, each capped at 10 minutes, and takes from a
 few minutes to about 25:
