@@ -46,8 +46,8 @@ for mod in $GO_MODULES; do
 done
 '''
 
-# The integration tier runs the integration-tagged tests on this machine: real ffprobe, gs, and
-# magick on PATH, the office and mail binaries mise pins, a reachable docker daemon, which pulls
+# The integration tier runs the integration-tagged tests on this machine: real ffmpeg, ffprobe, gs,
+# and magick on PATH, the office and mail binaries mise pins, a reachable docker daemon, which pulls
 # the pinned ffmpeg and LibreOffice images when they aren't present, and, for the vision tests,
 # the router SPIKE_ROUTER_URL names. It never starts a server.
 [tasks.integration]
@@ -77,6 +77,14 @@ run = "scripts/fixtures-mail.sh"
 [tasks."fixtures:onenote"]
 description = "Refresh onenote's copy of onenote's fixtures from onenote's tag; reports drift against the manifest"
 run = "scripts/fixtures-onenote.sh"
+
+# The audio package's speech fixture, rebuilt from the LibriSpeech utterances in the test corpus
+# at ~/docs (DOCS names another root) through the host's ffmpeg, each source checked by its
+# SHA-256 and each output against the testdata README's. The check never runs it, and reads the
+# committed fixture.
+[tasks."fixtures:audio"]
+description = "Rebuild audio's speech fixture from ~/docs' LibriSpeech utterances; checks sources and outputs by SHA-256"
+run = "scripts/fixtures-audio.sh"
 
 # The email package's built .msg, rebuilt by mail's fixtures generator at its tag from an .eml
 # source that attaches this repository's own office fixtures. It needs network access and installs

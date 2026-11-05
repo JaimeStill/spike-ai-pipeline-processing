@@ -6,6 +6,23 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- The `audio` package plans a speech source's windows for a model's audio input, over FFmpeg's
+  ffmpeg and ffprobe, `audio.FFmpegSpec` and `audio.FFprobeSpec`, minimum 9.0, `FFmpegMinimum`, on
+  the host or in the default image `audio.FFmpegImage`, linuxserver/ffmpeg:9.0.2-cli-ls88, pinned
+  by digest. `NewSplitter` builds a `Splitter` over a `Config` of both Tools, refusing a missing or
+  outdated one. `Splitter.Probe` reads a source's duration and first audio stream, a `Source`, and
+  a source without one is refused with `ErrNoAudio` before ffmpeg runs. `Splitter.Detect` finds its
+  silences, a `Detection`, through volumedetect and silencedetect: at least 0.3 s,
+  `DefaultMinSilence`, below 15 dB, `DefaultBelow`, under the mean volume, or below a fixed
+  threshold a `Request` gives. `PlanWindows`, a pure function of a duration, its silences, and a
+  `Request`'s overlap, plans windows of at most 30 s, `WindowLimit`, each ending at the middle of
+  the latest silence its range allows or at the limit, the next starting 2 s, `DefaultOverlap`,
+  before it, with the seams they share; `Splitter.Plan` runs both. An invalid request is refused
+  with `ErrRequest` before anything runs. A ~50 s LibriSpeech speech fixture and its transcript,
+  CC BY 4.0, are in `audio/testdata`, rebuilt by `mise run fixtures:audio`.
+
 ### Changed
 
 - The default LibreOffice image, `picture.LibreOfficeImage`, moves to
