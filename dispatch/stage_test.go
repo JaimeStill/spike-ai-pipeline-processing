@@ -242,3 +242,26 @@ func byName(t *testing.T, events []dispatch.Event, name string) dispatch.Event {
 	t.Fatalf("no event for %s", name)
 	return dispatch.Event{}
 }
+
+// outputNamed returns ev's first output of kind named name.
+func outputNamed(t *testing.T, ev dispatch.Event, kind dispatch.OutputKind, name string) dispatch.Output {
+	t.Helper()
+	for _, o := range ev.Outputs {
+		if o.Kind == kind && o.Name == name {
+			return o
+		}
+	}
+	t.Fatalf("%s: no %s output named %q among %d", ev.Part.Name, kind, name, len(ev.Outputs))
+	return dispatch.Output{}
+}
+
+// wheres returns the Where of each event below the input, in order.
+func wheres(events []dispatch.Event) []string {
+	var out []string
+	for _, ev := range events {
+		if ev.Part.Depth > 0 {
+			out = append(out, ev.Part.Where)
+		}
+	}
+	return out
+}

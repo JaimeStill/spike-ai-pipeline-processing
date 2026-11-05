@@ -118,27 +118,15 @@ func newDispatcher(t *testing.T, stages dispatch.Stages, index dispatch.Index) *
 	return d
 }
 
-// outputNamed returns ev's first output of kind named name.
-func outputNamed(t *testing.T, ev dispatch.Event, kind dispatch.OutputKind, name string) dispatch.Output {
+// recordThenMarkdown fails the test unless ev's record named name comes right before its
+// Markdown of the same name, the order the email and onenote stages yield a message or a page in.
+func recordThenMarkdown(t *testing.T, ev dispatch.Event, name string) {
 	t.Helper()
-	for _, o := range ev.Outputs {
-		if o.Kind == kind && o.Name == name {
-			return o
-		}
+	i := slices.IndexFunc(ev.Outputs, func(o dispatch.Output) bool { return o.Name == name })
+	if i < 0 || i+1 >= len(ev.Outputs) || ev.Outputs[i].Kind != dispatch.RecordOutput ||
+		ev.Outputs[i+1].Kind != dispatch.MarkdownOutput || ev.Outputs[i+1].Name != name {
+		t.Errorf("%s: %q's outputs aren't its record, then its Markdown", ev.Part.Name, name)
 	}
-	t.Fatalf("%s: no %s output named %q among %d", ev.Part.Name, kind, name, len(ev.Outputs))
-	return dispatch.Output{}
-}
-
-// wheres returns the Where of each event below the input, in order.
-func wheres(events []dispatch.Event) []string {
-	var out []string
-	for _, ev := range events {
-		if ev.Part.Depth > 0 {
-			out = append(out, ev.Part.Where)
-		}
-	}
-	return out
 }
 
 // TestAdapterIdentities: each adapter names itself and its tools' version, refuses a missing
@@ -439,6 +427,7 @@ func TestEmailStage(t *testing.T) {
 	if rec.Meta["subject"] == "" || body.Meta["subject"] != rec.Meta["subject"] || len(body.Value) == 0 {
 		t.Errorf("message: %v, %v, %d bytes of Markdown", rec.Meta, body.Meta, len(body.Value))
 	}
+	recordThenMarkdown(t, msg, "message")
 	outputNamed(t, msg, dispatch.RecordOutput, "store")
 
 	events = dispatchAll(t, d, filepath.Join(mailFixtures, "generated", "pst", "mailbox.pst"), nil)
@@ -463,7 +452,7 @@ func TestEmailStage(t *testing.T) {
 	if m := outputNamed(t, pst, dispatch.RecordOutput, "folder 32962").Meta; m["path"] != "Top of Personal Folders/Inbox/Projects/2026" {
 		t.Errorf("folder 32962's meta %v", m)
 	}
-	outputNamed(t, pst, dispatch.MarkdownOutput, "message 2097156")
+	recordThenMarkdown(t, pst, "message 2097156")
 	if len(pst.Children) != 3 {
 		t.Errorf("the .pst's children %+v", pst.Children)
 	}
@@ -499,9 +488,9 @@ func TestEmailEmbedded(t *testing.T) {
 }
 
 // TestOneNoteStage dispatches a section with an image and ink, then a section holding the same
-// image, sharing one index. Each page is Markdown and a record, the section and notebook records;
-// the image, found on its page, is prepared by the vision stage, then seen; the ink, an SVG, goes
-// to the picture stage, which has no processor without magick.
+// image, sharing one index. Each page is a record, then its Markdown, beside the section and
+// notebook records; the image, found on its page, is prepared by the vision stage, then seen; the
+// ink, an SVG, goes to the picture stage, which has no processor without magick.
 func TestOneNoteStage(t *testing.T) {
 	index := dispatch.NewMemoryIndex()
 	d := newDispatcher(t, dispatch.Stages{
@@ -536,7 +525,7 @@ func TestOneNoteStage(t *testing.T) {
 	if md.Meta["title"] != "Test Page" || !bytes.HasPrefix(md.Value, []byte("# Test Page")) {
 		t.Errorf("page markdown %v, %.40q", md.Meta, md.Value)
 	}
-	outputNamed(t, section, dispatch.RecordOutput, page)
+	recordThenMarkdown(t, section, page)
 
 	events = dispatchAll(t, d, filepath.Join(onenoteFixtures, "New Section 1.one"), nil)
 	img := events[0]

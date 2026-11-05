@@ -66,18 +66,36 @@
 //     have no processor yet.
 //   - [VisionStage], for route.Vision: a PNG, JPEG, GIF, or BMP passed through as an image
 //     output, so every picture reaches a layer above as one.
-//   - [EmailStage], for route.Nested: mail's records, each a record output, a message's
-//     Markdown body beside its record, and each attachment's file found as a part, where its
+//   - [EmailStage], for route.Nested: mail's records, each a record output, a message's record
+//     followed by its Markdown body, and each attachment's file found as a part, where its
 //     message and place say; an embedded message mail gives no file for is prepared inline,
 //     its own attachments found below it, at any depth.
-//   - [OneNoteStage], for route.OneNote: onenote's records, a page's Markdown beside its
-//     record, and each of its media found as a part, "page <id>, <where>"; a medium onenote
+//   - [OneNoteStage], for route.OneNote: onenote's records, a page's record followed by its
+//     Markdown, and each of its media found as a part, "page <id>, <where>"; a medium onenote
 //     wrote no content for is a record.
 //
-// A skipped record, a medium or attachment with no content, and a CLI's warnings are each a
-// record output, never dropped. The email and onenote stages place each file they find in a
-// directory of its own, a hard link to the file the CLI wrote, since the CLI writes each
-// distinct content once and the dispatcher removes a found part's file once its event is done.
+// Where a stage yields a record and its Markdown, per message or page, the record comes first,
+// then the Markdown of the same name.
+//
+// [ZipStage], for route.Archive, is no format package's adapter: it reads a ZIP through
+// archive/zip, on any platform, one entry at a time, each file entry written into the part's
+// directory under its content's SHA-256 and found as a part, named by its stored name, "zip
+// entry <name>"; the stored name is never a path. A directory's entry is no part. An encrypted
+// entry is a record, and the ZIP, once its other entries are dispatched, [Encrypted]. The stage
+// enforces inspect's zip bomb rule again on the bytes it writes, under the thresholds of the
+// inspect.Options its [ZipConfig] is given, which should be the dispatcher's: an entry past both
+// is stopped, its partial file removed, and recorded quarantined, with its evidence, whatever
+// its central directory declared. A tar, gzip, zstd, or 7z archive, or a cabinet, has no
+// processor yet. Its identity is "zip", this package's version of it, and a hash of its
+// thresholds. A ZIP with a traversing, absolute, or drive letter name, or a symbolic link, is
+// quarantined by inspect before the stage runs; under a policy that lets it proceed, the stage
+// still writes each entry by its hash, inside the part's directory.
+//
+// A skipped record, a medium or attachment with no content, a ZIP entry the zip stage can't
+// write, and a CLI's warnings are each a record output, never dropped. The email and onenote
+// stages place each file they find in a directory of its own, a hard link to the file the CLI
+// wrote, since the CLI writes each distinct content once and the dispatcher removes a found
+// part's file once its event is done.
 //
 // # The index
 //
@@ -131,6 +149,7 @@
 //     [NewEmailStage], and [NewOneNoteStage] over a [DocumentConfig], [OfficeConfig],
 //     [PictureConfig], [EmailConfig], and [OneNoteConfig]; [VisionStage], made by
 //     [NewVisionStage]; and [Versions], a stage's tools' version.
+//   - [ZipStage], made by [NewZipStage] over a [ZipConfig], on any platform.
 //   - [Index], keyed by a [Key], holding [Entry]s, each referencing its [Child]ren; the shipped
 //     ones are [MemoryIndex], made by [NewMemoryIndex], and [FileIndex], made by
 //     [NewFileIndex] under [FileOptions], [DefaultStale] and [DefaultPoll] by default.

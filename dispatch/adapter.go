@@ -3,7 +3,6 @@
 package dispatch
 
 import (
-	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"io"
@@ -46,16 +45,6 @@ func adapterIdentity(name, version string, config any) (Identity, error) {
 		return Identity{}, err
 	}
 	return Identity{Name: name, Version: version, Config: hash}, nil
-}
-
-// record returns a record output named name holding v as JSON, through encoding/json/v2, as the
-// format packages' records marshal back to their lines, with meta.
-func record(name string, v any, meta map[string]string) (Output, error) {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return Output{}, fmt.Errorf("dispatch: %s: %w", name, err)
-	}
-	return Output{Kind: RecordOutput, Name: name, MediaType: "application/json", Value: b, Meta: meta}, nil
 }
 
 // markdown returns a Markdown output named name holding md inline, with meta.

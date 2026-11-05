@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	jsonv2 "encoding/json/v2"
 	"errors"
 	"fmt"
 	"iter"
@@ -126,6 +127,16 @@ type Output struct {
 	Value     []byte            `json:"value,omitzero"`
 	Meta      map[string]string `json:"meta,omitzero"`
 	Ref       string            `json:"ref,omitzero"`
+}
+
+// record returns a record output named name holding v as JSON, through encoding/json/v2, as the
+// format packages' records marshal back to their lines, with meta.
+func record(name string, v any, meta map[string]string) (Output, error) {
+	b, err := jsonv2.Marshal(v)
+	if err != nil {
+		return Output{}, fmt.Errorf("dispatch: %s: %w", name, err)
+	}
+	return Output{Kind: RecordOutput, Name: name, MediaType: "application/json", Value: b, Meta: meta}, nil
 }
 
 // Part is one part of an input, the input itself among them: the file at Path, the name it was

@@ -29,7 +29,7 @@ type OneNoteConfig struct {
 // through onenote's Reader, its media written into the part's directory. Each of onenote's
 // records is a [RecordOutput], its typed JSON as onenote's record marshals it, in onenote's
 // order: the notebook, named "notebook"; each section group, "section group <id>", and section,
-// "section <id>", their Meta naming their path; each page, "page <id>", with its Markdown as a
+// "section <id>", their Meta naming their path; each page, "page <id>", then its Markdown, a
 // [MarkdownOutput] of the same name, the Meta of both naming its id, its section's id, and its
 // title; each skipped record, "skipped <kind>", its Meta naming the record and its reason; and a
 // record of a kind onenote doesn't know, by its kind. onenote's warnings, when it gave any, are a
@@ -148,14 +148,14 @@ type medium struct {
 	Reason   string             `json:"reason"`
 }
 
-// page yields p's Markdown and record, then each of its media, as the stage's doc says.
+// page yields p's record and Markdown, then each of its media, as the stage's doc says.
 func (w *onenoteWalk) page(p *onenote.Page) error {
 	name := "page " + p.ID
 	meta := map[string]string{"id": p.ID, "section": p.Section, "title": p.Title}
-	if err := w.output(markdown(name, p.Markdown, meta), nil); err != nil {
+	if err := w.output(record(name, p, meta)); err != nil {
 		return err
 	}
-	if err := w.output(record(name, p, meta)); err != nil {
+	if err := w.output(markdown(name, p.Markdown, meta), nil); err != nil {
 		return err
 	}
 	for m, err := range p.Media(w.media) {

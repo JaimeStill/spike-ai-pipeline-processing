@@ -29,12 +29,12 @@ type EmailConfig struct {
 // or a .pst, through email's Reader, its attachments written into the part's directory. Each of
 // mail's records is a [RecordOutput], its JSON as email's record marshals it, in mail's order:
 // the store line, named "store"; each folder, "folder <id>", its Meta naming its id and path; each
-// message, "message <id>", or "message" for a .msg's or an .eml's, which has none, with its
-// derived Markdown body, when it has one, as a [MarkdownOutput] of the same name, the Meta of
-// both naming its id, its folder's path, its subject, and its Message-ID, and an embedded one's
-// the message it is embedded in; each skipped record,
-// "skipped <kind>", its Meta naming its reason; and a record of a kind email doesn't know, by its
-// kind. mail's warnings, when it gave any, are a last record, "warnings", a JSON array.
+// message, "message <id>", or "message" for a .msg's or an .eml's, which has none, then its
+// derived Markdown body, when it has one, a [MarkdownOutput] of the same name, the Meta of both
+// naming its id, its folder's path, its subject, and its Message-ID, and an embedded one's the
+// message it is embedded in; each skipped record, "skipped <kind>", its Meta naming its reason;
+// and a record of a kind email doesn't know, by its kind. mail's warnings, when it gave any, are
+// a last record, "warnings", a JSON array.
 //
 // Each attachment whose content mail wrote is a [Found] part, the dispatcher's to route and
 // inspect again, named by its filename and typed by its stored MIME type, its Where naming its
