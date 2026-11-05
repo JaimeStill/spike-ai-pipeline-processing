@@ -2,6 +2,7 @@ package dispatch_test
 
 import (
 	"context"
+	"os"
 	"path/filepath"
 	"reflect"
 	"sync"
@@ -504,6 +505,60 @@ func TestFileIndexStale(t *testing.T) {
 	}
 	if got := pendingIn(t, dir); len(got) != 0 {
 		t.Fatalf("pending files %q after the record", got)
+	}
+}
+
+// TestFileIndexRecordFails: a record the file index can't write, its entries directory read
+// only, fails and records nothing; the release the dispatcher then makes removes the claim's
+// pending outputs and children, and the key may be claimed and recorded again.
+func TestFileIndexRecordFails(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("root writes into a read-only directory")
+	}
+	ctx := t.Context()
+	dir := t.TempDir()
+	idx, err := dispatch.NewFileIndex(dir, dispatch.FileOptions{Poll: time.Millisecond})
+	if err != nil {
+		t.Fatal(err)
+	}
+	key := dispatch.Key{SHA256: sum("content"), Stage: stageA}
+	tok, ok, err := idx.Claim(ctx, key)
+	if err != nil || !ok {
+		t.Fatalf("claim: %v, %v", ok, err)
+	}
+	if err := idx.Append(ctx, key, tok, outputs()[0]); err != nil {
+		t.Fatal(err)
+	}
+	if err := idx.AppendChild(ctx, key, tok, kids()[0]); err != nil {
+		t.Fatal(err)
+	}
+	entries := filepath.Join(dir, "entries")
+	if err := os.Chmod(entries, 0o500); err != nil {
+		t.Fatal(err)
+	}
+	err = idx.Record(ctx, key, tok, entry())
+	if cerr := os.Chmod(entries, 0o700); cerr != nil {
+		t.Fatal(cerr)
+	}
+	if err == nil {
+		t.Fatal("a record into a read-only entries directory: no error")
+	}
+	if err := idx.Release(ctx, key, tok); err != nil {
+		t.Fatal(err)
+	}
+	if got := pendingIn(t, dir); len(got) != 0 {
+		t.Fatalf("pending files %q after the failed record's release", got)
+	}
+	if _, ok, _ := idx.Lookup(ctx, key); ok {
+		t.Fatal("the failed record was recorded")
+	}
+	tok, ok, err = idx.Claim(ctx, key)
+	if err != nil || !ok {
+		t.Fatalf("claim after the release: %v, %v", ok, err)
+	}
+	record(t, idx, key, tok)
+	if got := recorded(t, idx, key); !reflect.DeepEqual(got, outputs()) {
+		t.Fatalf("outputs recorded after the failure: %+v", got)
 	}
 }
 

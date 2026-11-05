@@ -444,13 +444,22 @@ func (f *FileIndex) closePending(name string, commit bool) (int, bool, error) {
 
 // Record renames token's pending outputs and children files into entries/, writes key's entry
 // file naming them, removes the files of the entry it replaces, if any, then ends token's claim.
-// A pending file a takeover removed records nothing.
+// A pending file a takeover removed records nothing. A record that fails removes the files it
+// renamed, which no entry names.
 func (f *FileIndex) Record(ctx context.Context, key Key, token string, e Entry) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
 	fe := fileEntry{Key: key, Entry: e}
 	var renamed []string
+	written := false
+	defer func() {
+		if !written {
+			for _, name := range renamed {
+				_ = os.Remove(filepath.Join(f.dir, entriesDir, name)) // named by no entry
+			}
+		}
+	}()
 	for _, pending := range []struct {
 		name  string
 		count *int
@@ -471,9 +480,6 @@ func (f *FileIndex) Record(ctx context.Context, key Key, token string, e Entry) 
 		err = os.Rename(filepath.Join(f.dir, claimsDir, pending.name), filepath.Join(f.dir, entriesDir, pending.name))
 		if errors.Is(err, fs.ErrNotExist) {
 			// Taken over: the claim that replaced this one records the key.
-			for _, name := range renamed {
-				_ = os.Remove(filepath.Join(f.dir, entriesDir, name))
-			}
 			return f.Release(ctx, key, token)
 		}
 		if err != nil {
@@ -489,6 +495,7 @@ func (f *FileIndex) Record(ctx context.Context, key Key, token string, e Entry) 
 	if err := writeJSON(f.entryPath(key), fe); err != nil {
 		return err
 	}
+	written = true
 	if had {
 		for _, name := range []string{old.Outputs, old.Children} {
 			if name != "" && name != fe.Outputs && name != fe.Children {
@@ -499,13 +506,13 @@ func (f *FileIndex) Record(ctx context.Context, key Key, token string, e Entry) 
 	return f.Release(ctx, key, token)
 }
 
-// Release removes token's pending files, then key's claim file if token holds it.
+// Release removes token's pending files, whether or not this index has them open, as after a
+// record that failed, then key's claim file if token holds it.
 func (f *FileIndex) Release(_ context.Context, key Key, token string) error {
 	for _, name := range []string{pendingName(key, token), childrenName(key, token)} {
-		if _, ok, _ := f.closePending(name, false); ok {
-			if err := os.Remove(filepath.Join(f.dir, claimsDir, name)); err != nil && !errors.Is(err, fs.ErrNotExist) {
-				return fmt.Errorf("dispatch: file index: release: %w", err)
-			}
+		_, _, _ = f.closePending(name, false) // unflushed: nothing in it is kept
+		if err := os.Remove(filepath.Join(f.dir, claimsDir, name)); err != nil && !errors.Is(err, fs.ErrNotExist) {
+			return fmt.Errorf("dispatch: file index: release: %w", err)
 		}
 	}
 	path := f.claimPath(key)
