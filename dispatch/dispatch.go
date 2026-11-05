@@ -207,18 +207,20 @@ type run struct {
 	released map[string]released
 }
 
-// released is what a released content's part was: its size, kind, and route, and why.
+// released is what a released content's part was: its size, kind, and route, and why, and its
+// outcome, [NoProcessor] for content whose route has no stage.
 type released struct {
-	size   int64
-	kind   route.Kind
-	route  route.Route
-	reason string
+	size    int64
+	kind    route.Kind
+	route   route.Route
+	reason  string
+	outcome Outcome
 }
 
 // result is what a part came to, for its parent's entry: a reference to it, whether its whole
 // subtree is complete, so its parent may be recorded, and whether it is settled: the index holds
-// its content's entry under its stage, and the caller kept nothing of it, so a later part of the
-// same content needs no file.
+// its content's entry under its stage, or its route has no stage and the index holds its flags,
+// and the caller kept nothing of it, so a later part of the same content needs no file.
 type result struct {
 	child    Child
 	complete bool
@@ -335,7 +337,9 @@ func (r *run) part(f Found, parent string, depth int) result {
 	}
 	res := r.dispatchPart(&p, f.SHA256)
 	if res.settled && f.Release != nil && f.Path != "" && f.SHA256 == p.SHA256 && !r.stopped {
-		r.released[p.SHA256] = released{size: p.Size, kind: p.Kind, route: p.Route, reason: p.Reason}
+		r.released[p.SHA256] = released{
+			size: p.Size, kind: p.Kind, route: p.Route, reason: p.Reason, outcome: res.child.Outcome,
+		}
 		f.Release()
 	}
 	return res
@@ -442,7 +446,10 @@ func quarantined(p Part) Event {
 }
 
 // unstaged dispatches p, whose route has no stage: it is inspected, and is quarantined or no
-// processor yet. Nothing but its flags is recorded, so a stage registered later prepares it.
+// processor yet. Nothing but its flags is recorded, so a stage registered later prepares it, in a
+// later dispatch. A no processor part is settled once the caller's loop body returns for its
+// event without keeping it, its flags being all the index holds of it: a later part of the same
+// content in this dispatch is no processor again, with no file.
 func (r *run) unstaged(p Part, failed func(error) result) result {
 	rep, err := r.inspect(&p)
 	if ie := (*indexError)(nil); errors.As(err, &ie) {
@@ -453,15 +460,28 @@ func (r *run) unstaged(p Part, failed func(error) result) result {
 	if rep.Verdict == inspect.Quarantine {
 		return r.emit(quarantined(p), "", true, nil)
 	}
-	why := fmt.Sprintf("no stage for route %s", p.Route)
-	return r.emit(Event{Part: p, Outcome: NoProcessor, Reason: why}, "", true, nil)
+	return r.emit(noStage(p), "", true, func(Event) (bool, error) { return true, nil })
+}
+
+// noStage returns the event of p, a part whose route has no stage, as no processor yet.
+func noStage(p Part) Event {
+	return Event{Part: p, Outcome: NoProcessor, Reason: fmt.Sprintf("no stage for route %s", p.Route)}
 }
 
 // releasedPart dispatches p, a part with no file of content this dispatch released, to stage:
-// it is seen, the index holding the content's entry under stage since the release.
+// it is seen, the index holding the content's entry under stage since the release; or, the
+// content's route having no stage, it is no processor yet again, its flags the index's.
 func (r *run) releasedPart(p Part, stage Stage, failed func(error) result) result {
 	if stage == nil {
-		return failed(fmt.Errorf("dispatch: %s has no file, and its route %s no stage", p.Name, p.Route))
+		if r.released[p.SHA256].outcome != NoProcessor {
+			return failed(fmt.Errorf("dispatch: %s has no file, and its route %s no stage", p.Name, p.Route))
+		}
+		flags, _, err := r.d.cfg.Index.Flags(r.ctx, p.SHA256)
+		if err != nil {
+			return r.fatal(err)
+		}
+		p.Flags = flags
+		return r.emit(noStage(p), "", true, nil)
 	}
 	id := stage.Identity()
 	key := Key{SHA256: p.SHA256, Stage: id}

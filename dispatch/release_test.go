@@ -11,6 +11,7 @@ import (
 	"iter"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -371,5 +372,113 @@ func (ghost) Identity() dispatch.Identity {
 func (ghost) Prepare(context.Context, dispatch.Part, string) iter.Seq2[dispatch.Item, error] {
 	return func(yield func(dispatch.Item, error) bool) {
 		yield(dispatch.PartItem(dispatch.Found{Name: "ghost.bin", SHA256: sum("ghost")}), nil)
+	}
+}
+
+// unstagedDispatcher returns a dispatcher with s on route.Text alone, so the store's .bin
+// content, route.Unrouted, has no stage, over index, and its working directory.
+func unstagedDispatcher(t *testing.T, s *store, index dispatch.Index) (*dispatch.Dispatcher, string) {
+	t.Helper()
+	dir := t.TempDir()
+	d, err := dispatch.New(dispatch.Config{Stages: dispatch.Stages{route.Text: s}, Index: index, Dir: dir})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return d, dir
+}
+
+// TestReleaseUnstaged: a store of 10,000 records whose content routes to no stage, a thousand
+// naming the same content and each other a content of its own, as an enterprise mailbox's
+// attachments with no task yet are, holds a few files at any event: each original is released
+// once the caller's loop has moved past its part's event without keeping it. Every record's part
+// is no processor yet, a later record of the shared content with no file, its flags and reason
+// the first's; and a dispatch with a stage registered for the route later prepares the content,
+// the index holding nothing of it under any stage.
+func TestReleaseUnstaged(t *testing.T) {
+	const n, every, size = 10_000, 10, 1024
+	s := heavyStore(n, every, size)
+	index := dispatch.NewMemoryIndex()
+	d, dir := unstagedDispatcher(t, s, index)
+	var first dispatch.Event
+	pr := probeStore(t, d, dir, func(ev *dispatch.Event) {
+		if ev.Output != nil || ev.Part.Depth != 1 || ev.Part.SHA256 != sha(s.contents["shared"]) {
+			return
+		}
+		if ev.Part.Where == "record 0" {
+			first = *ev
+			return
+		}
+		if ev.Part.Path != "" || ev.Reason != first.Reason || ev.Part.Route != first.Part.Route ||
+			!reflect.DeepEqual(ev.Part.Flags, first.Part.Flags) {
+			t.Errorf("%s: path %q, %q, %s, flags %v; the first: %q, %s, flags %v", ev.Part.Where,
+				ev.Part.Path, ev.Reason, ev.Part.Route, ev.Part.Flags, first.Reason, first.Part.Route, first.Part.Flags)
+		}
+	})
+
+	if pr.last.Outcome != dispatch.Prepared || pr.last.Children != n {
+		t.Fatalf("the store: %s, %q, %d children", pr.last.Outcome, pr.last.Reason, pr.last.Children)
+	}
+	for i := range n {
+		where := fmt.Sprintf("record %d", i)
+		if got := pr.outcomes[where]; got != dispatch.NoProcessor {
+			t.Fatalf("%s: %s, %q", where, got, pr.reasons[where])
+		}
+	}
+	if distinct := n - n/every + 1; s.released() != distinct {
+		t.Errorf("%d released, want each of the %d contents once", s.released(), distinct)
+	}
+	if !strings.Contains(first.Reason, "no stage") {
+		t.Errorf("record 0: %q", first.Reason)
+	}
+	if pr.peakFiles > 3 || pr.peakBytes > 3*size {
+		t.Errorf("the working directory held up to %d files, %d bytes", pr.peakFiles, pr.peakBytes)
+	}
+	t.Logf("peak %d files, %d bytes", pr.peakFiles, pr.peakBytes)
+
+	// The route's stage registered later: the shared content is prepared, not seen.
+	leaf := &picky{}
+	later, err := dispatch.New(dispatch.Config{
+		Stages: dispatch.Stages{route.Text: heavyStore(1, 1, size), route.Unrouted: leaf}, Index: index, Dir: t.TempDir(),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	events := dispatchAll(t, later, input(t, "later.txt", "later"), nil)
+	if len(events) != 2 || events[0].Outcome != dispatch.Prepared || leaf.calls != 1 {
+		t.Fatalf("with a stage registered: %d events, the content %s, %d prepared", len(events), events[0].Outcome, leaf.calls)
+	}
+}
+
+// TestReleaseUnstagedKept: a caller that keeps the first record of the shared content, whose
+// route has no stage, keeps its original: the next record naming it is dispatched from that
+// file and released, and every record is no processor yet, none lost.
+func TestReleaseUnstagedKept(t *testing.T) {
+	const n, every, size = 1000, 10, 64
+	s := heavyStore(n, every, size)
+	d, dir := unstagedDispatcher(t, s, dispatch.NewMemoryIndex())
+	paths := map[string]string{}
+	pr := probeStore(t, d, dir, func(ev *dispatch.Event) {
+		if ev.Output == nil && ev.Part.Depth == 1 {
+			paths[ev.Part.Where] = ev.Part.Path
+			if ev.Part.Where == "record 0" {
+				ev.Keep()
+			}
+		}
+	})
+	if pr.last.Outcome != dispatch.Prepared {
+		t.Fatalf("the store: %s, %q", pr.last.Outcome, pr.last.Reason)
+	}
+	for i := range n {
+		where := fmt.Sprintf("record %d", i)
+		if got := pr.outcomes[where]; got != dispatch.NoProcessor {
+			t.Fatalf("%s: %s, %q", where, got, pr.reasons[where])
+		}
+	}
+	if paths["record 10"] == "" || paths["record 20"] != "" {
+		t.Errorf("record 10 from %q, record 20 from %q: want the first from a file, the second with none",
+			paths["record 10"], paths["record 20"])
+	}
+	if distinct := n - n/every + 1; s.released() != distinct {
+		t.Errorf("%d released, want %d", s.released(), distinct)
 	}
 }

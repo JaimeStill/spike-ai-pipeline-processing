@@ -93,13 +93,15 @@ func PartItem(f Found) Item { return Item{Part: &f} }
 // once, may give SHA256, the content's SHA-256 as it knows it, lowercase hex, such as the name
 // the CLI wrote the file under, and Release, which the dispatcher calls, once, after the part's
 // own event, when the part is settled: the index holds the content's entry under its stage, the
-// part prepared and recorded or seen, the caller kept neither the part's file nor its directory,
+// part prepared and recorded or seen, or its route has no stage, the part no processor yet and
+// its flags recorded, the caller kept neither the part's file nor its directory,
 // it isn't quarantined, and SHA256 is the SHA-256 the dispatcher took of Path's file, which it
 // never trusts the stage for. The stage may then remove what it holds of the content, and, for a
 // later item naming the same content, find it with Path "" and the same SHA256: the dispatcher
 // dispatches it as the part it released was, of its size, kind, and route, whatever the later
-// name, and sees it from the index, so no file is needed. A part the dispatcher didn't settle,
-// as one failed, limited, quarantined, a cycle, or whose route has no stage, is never released,
+// name, and sees it from the index, or, its route having no stage, reports it no processor yet
+// again, with the flags the index holds, so no file is needed. A part the dispatcher didn't
+// settle, as one failed, limited, quarantined, or a cycle, is never released,
 // so the stage keeps its content for the later item, which is dispatched from its file again. A
 // part found with no file and a SHA256 this dispatch released none of fails.
 type Found struct {

@@ -142,8 +142,8 @@
 // An entry is recorded only for a part whose stage ran and whose whole subtree came to an
 // outcome the content decides: a part with a [Failed] or [Limited] descendant, or that failed
 // itself, is not recorded, so a later dispatch prepares it again and retries what failed. A
-// part whose route has no stage records only its flags, so a stage registered later prepares
-// it. A [Seen] part's entry references its children, by their SHA-256, name, where they were
+// part whose route has no stage records only its flags, never an entry under any stage, so a
+// stage registered later prepares it in a later dispatch. A [Seen] part's entry references its children, by their SHA-256, name, where they were
 // found, size, route, and outcome, as [Child]ren, read by Index.Children, rather than yielding
 // their events again: their own entries and flags are in the index, and their outputs where the
 // caller put them.
@@ -173,12 +173,16 @@
 // part's file goes once its event is done. A store's stage holds more: the content its CLI wrote
 // for records still to come. The email and onenote stages release each original as soon as the
 // dispatcher settles its content, the found part's event done, its entry in the index, the
-// caller keeping nothing of it, so a store's working directory holds the attachments of the
-// messages in flight, those mail has written ahead of the dispatch among them, rather than every
-// attachment until the store's own event. What the dispatcher doesn't settle stays until then,
-// so no record loses its content: an original whose part failed, was limited, quarantined, a
-// cycle, or had no stage for its route, or that the caller kept, is there for the next record
-// naming it, which is dispatched from it again. [Event.Keep], in an output event, keeps the
+// caller keeping nothing of it. Content whose route has no stage is settled too, once the
+// caller's loop has moved past its [NoProcessor] event without keeping it: the caller had its
+// chance, and a later record naming it in the same dispatch is no processor yet again, with no
+// file, its flags those the index holds under its SHA-256 and its route and reason the first's.
+// So a store's working directory holds the attachments of the messages in flight, those mail has
+// written ahead of the dispatch among them, rather than every attachment until the store's own
+// event, whether or not a stage is registered for them. What the dispatcher doesn't settle stays
+// until then, so no record loses its content: an original whose part failed, was limited,
+// quarantined, or a cycle, or that the caller kept, is there for the next record naming it, which
+// is dispatched from it again. [Event.Keep], in an output event, keeps the
 // output's file, and the index records its Path, the path otherwise cleared; in a part's own
 // event, it keeps the part's file and its working directory, the caller then owning them. A file
 // the caller moved away is not missed.
