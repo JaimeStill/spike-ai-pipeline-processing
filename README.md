@@ -784,7 +784,12 @@ generator builds; a run keeps its results only in the directory `EMAIL_FINDINGS_
 measures `dispatch` and `onenote` the same way: the tier's routes, inspection over ~/docs, the page
 ink to vision, the large sections, and the dispatcher over the scale store `ONENOTE_SCALE_STORE`
 names, resumed and pooled; a run keeps its results only in the directory `ONENOTE_FINDINGS_RESULTS`
-names ([docs/findings/onenote.md](docs/findings/onenote.md), "Rerunning").
+names ([docs/findings/onenote.md](docs/findings/onenote.md), "Rerunning"). `mise run findings-audio`
+measures `audio` on ~/docs' long sources, each checked against the corpus manifest: windowed and
+joined through the speech harness, an unsplit pass over each one's first 10 minutes, and a
+gpt-oss-120b seam pass, scored by normalized WER and seam edits; a run keeps its results only in
+the directory `AUDIO_FINDINGS_RESULTS` names
+([docs/findings/audio.md](docs/findings/audio.md), "Rerunning").
 
 The tests' vision harness, the bake-offs, the staged flow, and the findings tier are test code,
 not released.

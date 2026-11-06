@@ -55,9 +55,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   not the concurrency. A caller with no ffmpeg registers no audio stage, so audio stays no
   processor yet, as video does. The integration tier dispatches its fixtures through it too: the
   tool package's WAV and onenote's embedded MP3 are now prepared.
+- The audio finding, `docs/findings/audio.md`, from one run of `mise run findings-audio` recorded
+  in `docs/findings/audio-results/`: four long sources in ~/docs (AMI ES2002a, Earnings-21 4330115,
+  Earnings-22 4479944, a 4.4 h LibriVox M4B), each windowed whole and its first 10 minutes both
+  windowed and unsplit, 3 greedy runs each on Gemma 4 E4B, with a gpt-oss-120b seam pass. Windowed
+  is 2.6 to 3.4 times faster than unsplit, as accurate or slightly better on read speech and the
+  accented call, and worse on the meeting and the 8-speaker call; the seam pass made every run
+  worse.
 
 ### Changed
 
+- `textscore.Align` (internal) holds every b-th row of its table, b about the square root of the
+  truth's length, and recomputes each block on its traceback: the same alignment as before, in
+  memory that grows as the square root of one length times the other, so a 4.4 h audiobook's
+  transcript scores in 73 MB. `textscore.BestPrefix` finds the prefix of a truth nearest a
+  transcript of its beginning.
 - The default LibreOffice image, `picture.LibreOfficeImage`, moves to
   gotenberg/gotenberg:9.0.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest. soffice runs in
   it headless as before, through the container runner's lockdown, with no change of path,
