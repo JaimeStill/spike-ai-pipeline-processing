@@ -21,6 +21,7 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/audiotest"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/corpustest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 )
@@ -43,7 +44,6 @@ import (
 //     as JSON, after each run, and TestFindingsReport reads them from; unset writes nothing.
 const (
 	sourceEnv  = "AUDIO_FINDINGS_SOURCE"
-	docsEnv    = "DOCS"
 	runsEnv    = "AUDIO_FINDINGS_RUNS"
 	resultsEnv = "AUDIO_FINDINGS_RESULTS"
 )
@@ -272,7 +272,7 @@ func TestFindingsSource(t *testing.T) {
 		t.Fatalf("%s=%s names no source", sourceEnv, name)
 	}
 	src := findingSources[i]
-	docs := corpusRoot(t)
+	docs := corpustest.Root(t)
 	runs := 3
 	if v := os.Getenv(runsEnv); v != "" {
 		n, err := strconv.Atoi(v)
@@ -281,7 +281,7 @@ func TestFindingsSource(t *testing.T) {
 		}
 		runs = n
 	}
-	entries, err := checkCorpus(docs, append([]string{src.Audio}, src.Truth...))
+	entries, err := corpustest.Check(docs, append([]string{src.Audio}, src.Truth...))
 	if err != nil {
 		t.Fatal(err)
 	}

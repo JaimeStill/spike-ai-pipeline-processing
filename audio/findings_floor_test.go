@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/corpustest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
@@ -39,7 +40,7 @@ func TestFindingsFloor(t *testing.T) {
 		t.Skipf("%s names no source", floorSourcesEnv)
 	}
 	logFixtureGrid(t)
-	docs := corpusRoot(t)
+	docs := corpustest.Root(t)
 	s := splitter(t, func(spec tool.Spec) (*tool.Tool, error) { return tool.NewExec(t.Context(), spec) })
 	for _, name := range names {
 		var src *findingSource
@@ -52,7 +53,7 @@ func TestFindingsFloor(t *testing.T) {
 			t.Fatalf("%s: %s names no source", floorSourcesEnv, name)
 		}
 		t.Run(name, func(t *testing.T) {
-			if _, err := checkCorpus(docs, []string{src.Audio}); err != nil {
+			if _, err := corpustest.Check(docs, []string{src.Audio}); err != nil {
 				t.Fatal(err)
 			}
 			var reference []audio.Span

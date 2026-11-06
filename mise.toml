@@ -307,3 +307,17 @@ run = "scripts/findings-audio.sh"
 description = "Run the tracker's tuning grid over the level-change fixtures and ~/docs' long sources; logs each setting's windows cut at the limit"
 env = { AUDIO_FLOOR_SOURCES = "{{ get_env(name='AUDIO_FLOOR_SOURCES', default='ami earnings21 earnings22') }}" }
 run = "GOWORK=off go test -tags findings -count=1 -timeout 1h -v -run '^TestFindingsFloor$' ./audio/"
+
+# Evidence 13's streams finding, in the findings tier: the findings-tagged tests in package media.
+# Each source in ~/docs (DOCS names another root), checked by its SHA-256 against the corpus
+# manifest, is read once unpaced with no model; its audio transcribed through audio's file path
+# under silencedetect and the tracker; read at real time through media's paced stream, each window
+# sent to Gemma 4 E4B and each frame to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names as it
+# arrives, each event's lags recorded and the transcript scored; and read at real time once more
+# and cancelled midway. The paced runs take real time, about 75 minutes for the three sources.
+# STREAMS_FINDINGS_SOURCES and STREAMS_FINDINGS_RUNS choose the sources and runs. None of the media
+# is committed. A STREAMS_FINDINGS_RESULTS the shell sets keeps the run's results there; unset, the
+# run keeps nothing. It isn't CI.
+[tasks.findings-streams]
+description = "Run the streams finding on ~/docs' videos at real time against the router SPIKE_ROUTER_URL names; keeps results only in STREAMS_FINDINGS_RESULTS"
+run = "scripts/findings-streams.sh"
