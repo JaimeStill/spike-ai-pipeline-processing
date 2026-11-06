@@ -1,0 +1,1071 @@
+[findings-floor] $ GOWORK=off go test -tags findings -count=1 -timeout 1h -v -run '^TestFindingsFloor$' ./audio/
+=== RUN   TestFindingsFloor
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, fixed -46.2 dB | gain 4/4 before, 0/7 after | noise 4/4 before, 0/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 3s, +6 dB | gain 1/4 before, 1/7 after | noise 1/4 before, 0/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 3s, +9 dB | gain 3/4 before, 6/7 after | noise 3/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 3s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 3s, +6 dB | gain 3/4 before, 5/7 after | noise 3/4 before, 0/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 3s, +9 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 3s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 3s, +6 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 2/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 3s, +9 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 3s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 5s, +6 dB | gain 3/4 before, 2/7 after | noise 3/4 before, 0/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 5s, +9 dB | gain 3/4 before, 6/7 after | noise 3/4 before, 5/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 5s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 5s, +6 dB | gain 3/4 before, 6/7 after | noise 3/4 before, 1/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 5s, +9 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 5s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 5s, +6 dB | gain 3/4 before, 7/7 after | noise 3/4 before, 4/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 5s, +9 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 5s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 10s, +6 dB | gain 3/4 before, 0/7 after | noise 3/4 before, 0/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 10s, +9 dB | gain 3/4 before, 5/7 after | noise 3/4 before, 5/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 10s, +12 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 10s, +6 dB | gain 3/4 before, 6/7 after | noise 3/4 before, 1/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 10s, +9 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 10s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 10s, +6 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 4/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 10s, +9 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 10s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 15s, +6 dB | gain 3/4 before, 0/7 after | noise 3/4 before, 0/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 15s, +9 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 5/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 15s, +12 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 15s, +6 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 1/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 15s, +9 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 15s, +12 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 15s, +6 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 4/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 15s, +9 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 15s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 30s, +6 dB | gain 3/4 before, 0/7 after | noise 3/4 before, 0/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 30s, +9 dB | gain 4/4 before, 3/7 after | noise 4/4 before, 3/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 30s, +12 dB | gain 4/4 before, 4/7 after | noise 4/4 before, 3/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 30s, +6 dB | gain 4/4 before, 4/7 after | noise 4/4 before, 0/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 30s, +9 dB | gain 4/4 before, 5/7 after | noise 4/4 before, 4/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p20 over 30s, +12 dB | gain 4/4 before, 5/7 after | noise 4/4 before, 5/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 30s, +6 dB | gain 4/4 before, 5/7 after | noise 4/4 before, 2/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 30s, +9 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p30 over 30s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 4s, +10 dB | gain 3/4 before, 6/7 after | noise 3/4 before, 5/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 4s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 4s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 4s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 4s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 4s, +10 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 4s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 4s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 4s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 4s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 4s, +10 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 4s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 4s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 4s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 4s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 5s, +10 dB | gain 3/4 before, 6/7 after | noise 3/4 before, 5/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 5s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 5s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 5s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 5s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 5s, +10 dB | gain 3/4 before, 7/7 after | noise 3/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 5s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 5s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 5s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 5s, +10 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 5s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 5s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 5s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 5s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 6s, +10 dB | gain 3/4 before, 6/7 after | noise 3/4 before, 5/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 6s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 6s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 6s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 6s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 6s, +10 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 6s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 6s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 6s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 6s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 6s, +10 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 6s, +11 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 6s, +12 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 6s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 6s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 7/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 8s, +10 dB | gain 3/4 before, 6/7 after | noise 3/4 before, 5/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 8s, +11 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 8s, +12 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 8s, +13 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p5 over 8s, +14 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 8s, +10 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 8s, +11 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 8s, +12 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 8s, +13 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p10 over 8s, +14 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 8s, +10 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 8s, +11 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 8s, +12 dB | gain 4/4 before, 6/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 8s, +13 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:221: recorded: floor: fixtures | tracker, p15 over 8s, +14 dB | gain 4/4 before, 7/7 after | noise 4/4 before, 6/7 after
+    findings_floor_test.go:44: ffmpeg 9.0.2, ffprobe 9.0.2
+=== RUN   TestFindingsFloor/ami
+    findings_floor_test.go:78: recorded: floor: ami | unchanged | silencedetect, mean -42.5 dB less 15 | 493 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:85: recorded: floor: ami | unchanged | silencedetect, fixed -64.1 dB | 342 silences | 54 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 3s, +6 dB | 343 silences | 51 windows | 0 at the limit | 46 of 50 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 3s, +9 dB | 475 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 3s, +12 dB | 543 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 3s, +6 dB | 485 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 3s, +9 dB | 573 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 3s, +12 dB | 630 silences | 48 windows | 0 at the limit | 36 of 47 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 3s, +6 dB | 600 silences | 48 windows | 0 at the limit | 37 of 47 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 3s, +9 dB | 707 silences | 48 windows | 0 at the limit | 33 of 47 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 3s, +12 dB | 739 silences | 48 windows | 0 at the limit | 27 of 47 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 5s, +6 dB | 322 silences | 51 windows | 0 at the limit | 48 of 50 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 5s, +9 dB | 447 silences | 50 windows | 0 at the limit | 44 of 49 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 5s, +12 dB | 523 silences | 49 windows | 0 at the limit | 44 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 5s, +6 dB | 454 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 5s, +9 dB | 562 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 5s, +12 dB | 613 silences | 49 windows | 0 at the limit | 38 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 5s, +6 dB | 589 silences | 49 windows | 0 at the limit | 39 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 5s, +9 dB | 645 silences | 48 windows | 0 at the limit | 34 of 47 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 5s, +12 dB | 669 silences | 48 windows | 0 at the limit | 31 of 47 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 10s, +6 dB | 283 silences | 52 windows | 0 at the limit | 50 of 51 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 10s, +9 dB | 414 silences | 50 windows | 0 at the limit | 48 of 49 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 10s, +12 dB | 499 silences | 49 windows | 0 at the limit | 43 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 10s, +6 dB | 445 silences | 50 windows | 0 at the limit | 45 of 49 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 10s, +9 dB | 537 silences | 49 windows | 0 at the limit | 40 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 10s, +12 dB | 578 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 10s, +6 dB | 550 silences | 49 windows | 0 at the limit | 40 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 10s, +9 dB | 601 silences | 49 windows | 0 at the limit | 40 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 10s, +12 dB | 634 silences | 49 windows | 0 at the limit | 38 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 15s, +6 dB | 288 silences | 55 windows | 0 at the limit | 53 of 54 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 15s, +9 dB | 391 silences | 51 windows | 0 at the limit | 48 of 50 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 15s, +12 dB | 482 silences | 49 windows | 0 at the limit | 44 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 15s, +6 dB | 427 silences | 51 windows | 0 at the limit | 46 of 50 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 15s, +9 dB | 517 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 15s, +12 dB | 562 silences | 49 windows | 0 at the limit | 40 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 15s, +6 dB | 540 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 15s, +9 dB | 586 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 15s, +12 dB | 618 silences | 48 windows | 0 at the limit | 40 of 47 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 30s, +6 dB | 271 silences | 54 windows | 4 at the limit | 49 of 49 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 30s, +9 dB | 383 silences | 52 windows | 0 at the limit | 51 of 51 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 30s, +12 dB | 452 silences | 50 windows | 0 at the limit | 48 of 49 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 30s, +6 dB | 415 silences | 51 windows | 0 at the limit | 48 of 50 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 30s, +9 dB | 487 silences | 49 windows | 0 at the limit | 46 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p20 over 30s, +12 dB | 545 silences | 49 windows | 0 at the limit | 40 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 30s, +6 dB | 516 silences | 49 windows | 0 at the limit | 44 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 30s, +9 dB | 567 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p30 over 30s, +12 dB | 579 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 4s, +10 dB | 411 silences | 50 windows | 0 at the limit | 47 of 49 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 4s, +11 dB | 455 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 4s, +12 dB | 480 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 4s, +13 dB | 493 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 4s, +14 dB | 522 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 4s, +10 dB | 496 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 4s, +11 dB | 513 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 4s, +12 dB | 526 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 4s, +13 dB | 554 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 4s, +14 dB | 571 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 4s, +10 dB | 535 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 4s, +11 dB | 552 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 4s, +12 dB | 564 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 4s, +13 dB | 594 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 4s, +14 dB | 610 silences | 48 windows | 0 at the limit | 36 of 47 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 5s, +10 dB | 403 silences | 51 windows | 0 at the limit | 50 of 50 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 5s, +11 dB | 443 silences | 49 windows | 0 at the limit | 46 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 5s, +12 dB | 466 silences | 49 windows | 0 at the limit | 46 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 5s, +13 dB | 484 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 5s, +14 dB | 511 silences | 49 windows | 0 at the limit | 46 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 5s, +10 dB | 477 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 5s, +11 dB | 502 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 5s, +13 dB | 543 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 5s, +14 dB | 557 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 5s, +10 dB | 521 silences | 49 windows | 0 at the limit | 44 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 5s, +11 dB | 544 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 5s, +12 dB | 564 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 5s, +13 dB | 585 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 5s, +14 dB | 603 silences | 49 windows | 0 at the limit | 39 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 6s, +10 dB | 386 silences | 51 windows | 0 at the limit | 50 of 50 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 6s, +11 dB | 432 silences | 50 windows | 0 at the limit | 49 of 49 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 6s, +12 dB | 458 silences | 49 windows | 0 at the limit | 46 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 6s, +13 dB | 477 silences | 49 windows | 0 at the limit | 46 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 6s, +14 dB | 511 silences | 49 windows | 0 at the limit | 44 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 6s, +10 dB | 479 silences | 49 windows | 0 at the limit | 44 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 6s, +11 dB | 487 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 6s, +12 dB | 516 silences | 49 windows | 0 at the limit | 43 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 6s, +13 dB | 539 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 6s, +14 dB | 543 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 6s, +10 dB | 518 silences | 49 windows | 0 at the limit | 43 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 6s, +11 dB | 537 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 6s, +12 dB | 561 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 6s, +13 dB | 576 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 6s, +14 dB | 579 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 8s, +10 dB | 381 silences | 52 windows | 0 at the limit | 51 of 51 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 8s, +11 dB | 408 silences | 50 windows | 0 at the limit | 47 of 49 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 8s, +12 dB | 442 silences | 49 windows | 0 at the limit | 46 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 8s, +13 dB | 474 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p5 over 8s, +14 dB | 499 silences | 49 windows | 0 at the limit | 44 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 8s, +10 dB | 453 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 8s, +11 dB | 475 silences | 49 windows | 0 at the limit | 45 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 8s, +12 dB | 508 silences | 49 windows | 0 at the limit | 43 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 8s, +13 dB | 524 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p10 over 8s, +14 dB | 546 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 8s, +10 dB | 519 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 8s, +11 dB | 534 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 8s, +12 dB | 554 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 8s, +13 dB | 572 silences | 49 windows | 0 at the limit | 42 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: ami | unchanged | tracker, p15 over 8s, +14 dB | 575 silences | 49 windows | 0 at the limit | 41 of 48 cuts in silencedetect's silences
+    findings_floor_test.go:78: recorded: floor: ami | gain | silencedetect, mean -35.7 dB less 15 | 485 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:85: recorded: floor: ami | gain | silencedetect, fixed -64.1 dB | 137 silences | 51 windows | 25 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 3s, +6 dB | 343 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 3s, +9 dB | 475 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 3s, +12 dB | 543 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 3s, +6 dB | 485 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 3s, +9 dB | 574 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 3s, +12 dB | 630 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 3s, +6 dB | 599 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 3s, +9 dB | 705 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 3s, +12 dB | 740 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 5s, +6 dB | 321 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 5s, +9 dB | 446 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 5s, +12 dB | 522 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 5s, +6 dB | 453 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 5s, +9 dB | 562 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 5s, +12 dB | 612 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 5s, +6 dB | 589 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 5s, +9 dB | 645 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 5s, +12 dB | 668 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 10s, +6 dB | 282 silences | 52 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 10s, +9 dB | 412 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 10s, +12 dB | 497 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 10s, +6 dB | 443 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 10s, +9 dB | 536 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 10s, +12 dB | 579 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 10s, +6 dB | 550 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 10s, +9 dB | 601 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 10s, +12 dB | 633 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 15s, +6 dB | 287 silences | 55 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 15s, +9 dB | 389 silences | 52 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 15s, +12 dB | 479 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 15s, +6 dB | 426 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 15s, +9 dB | 516 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 15s, +12 dB | 562 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 15s, +6 dB | 539 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 15s, +9 dB | 585 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 15s, +12 dB | 617 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 30s, +6 dB | 266 silences | 54 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 30s, +9 dB | 377 silences | 53 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 30s, +12 dB | 448 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 30s, +6 dB | 410 silences | 52 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 30s, +9 dB | 482 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p20 over 30s, +12 dB | 542 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 30s, +6 dB | 514 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 30s, +9 dB | 564 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p30 over 30s, +12 dB | 575 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 4s, +10 dB | 410 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 4s, +11 dB | 456 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 4s, +12 dB | 479 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 4s, +13 dB | 492 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 4s, +14 dB | 521 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 4s, +10 dB | 495 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 4s, +11 dB | 512 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 4s, +12 dB | 525 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 4s, +13 dB | 553 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 4s, +14 dB | 570 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 4s, +10 dB | 534 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 4s, +11 dB | 551 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 4s, +12 dB | 562 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 4s, +13 dB | 594 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 4s, +14 dB | 609 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 5s, +10 dB | 402 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 5s, +11 dB | 442 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 5s, +12 dB | 466 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 5s, +13 dB | 483 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 5s, +14 dB | 511 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 5s, +10 dB | 476 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 5s, +11 dB | 501 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 5s, +13 dB | 542 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 5s, +14 dB | 559 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 5s, +10 dB | 520 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 5s, +11 dB | 543 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 5s, +12 dB | 563 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 5s, +13 dB | 584 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 5s, +14 dB | 603 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 6s, +10 dB | 385 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 6s, +11 dB | 431 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 6s, +12 dB | 457 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 6s, +13 dB | 476 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 6s, +14 dB | 510 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 6s, +10 dB | 478 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 6s, +11 dB | 487 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 6s, +12 dB | 515 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 6s, +13 dB | 538 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 6s, +14 dB | 543 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 6s, +10 dB | 517 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 6s, +11 dB | 536 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 6s, +12 dB | 561 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 6s, +13 dB | 576 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 6s, +14 dB | 579 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 8s, +10 dB | 380 silences | 52 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 8s, +11 dB | 407 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 8s, +12 dB | 441 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 8s, +13 dB | 474 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p5 over 8s, +14 dB | 499 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 8s, +10 dB | 451 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 8s, +11 dB | 475 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 8s, +12 dB | 508 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 8s, +13 dB | 523 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p10 over 8s, +14 dB | 546 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 8s, +10 dB | 518 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 8s, +11 dB | 534 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 8s, +12 dB | 555 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 8s, +13 dB | 573 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | gain | tracker, p15 over 8s, +14 dB | 574 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:78: recorded: floor: ami | noise | silencedetect, mean -42.4 dB less 15 | 231 silences | 49 windows | 24 at the limit
+    findings_floor_test.go:85: recorded: floor: ami | noise | silencedetect, fixed -64.1 dB | 133 silences | 51 windows | 26 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 3s, +6 dB | 495 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 3s, +9 dB | 522 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 3s, +12 dB | 511 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 3s, +6 dB | 624 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 3s, +9 dB | 551 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 3s, +12 dB | 583 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 3s, +6 dB | 704 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 3s, +9 dB | 645 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 3s, +12 dB | 659 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 5s, +6 dB | 477 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 5s, +9 dB | 505 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 5s, +12 dB | 496 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 5s, +6 dB | 596 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 5s, +9 dB | 536 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 5s, +12 dB | 553 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 5s, +6 dB | 673 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 5s, +9 dB | 594 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 5s, +12 dB | 603 silences | 48 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 10s, +6 dB | 463 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 10s, +9 dB | 473 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 10s, +12 dB | 478 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 10s, +6 dB | 588 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 10s, +9 dB | 517 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 10s, +12 dB | 524 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 10s, +6 dB | 638 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 10s, +9 dB | 551 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 10s, +12 dB | 572 silences | 48 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 15s, +6 dB | 462 silences | 53 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 15s, +9 dB | 462 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 15s, +12 dB | 468 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 15s, +6 dB | 582 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 15s, +9 dB | 506 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 15s, +12 dB | 518 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 15s, +6 dB | 628 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 15s, +9 dB | 552 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 15s, +12 dB | 557 silences | 48 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 30s, +6 dB | 446 silences | 52 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 30s, +9 dB | 433 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 30s, +12 dB | 447 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 30s, +6 dB | 543 silences | 51 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 30s, +9 dB | 478 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p20 over 30s, +12 dB | 502 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 30s, +6 dB | 604 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 30s, +9 dB | 528 silences | 48 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p30 over 30s, +12 dB | 538 silences | 48 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 4s, +10 dB | 454 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 4s, +11 dB | 461 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 4s, +12 dB | 462 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 4s, +13 dB | 474 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 4s, +14 dB | 490 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 4s, +10 dB | 487 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 4s, +11 dB | 487 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 4s, +12 dB | 492 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 4s, +13 dB | 508 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 4s, +14 dB | 534 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 4s, +10 dB | 506 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 4s, +11 dB | 515 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 4s, +12 dB | 529 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 4s, +13 dB | 545 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 4s, +14 dB | 557 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 5s, +10 dB | 453 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 5s, +11 dB | 448 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 5s, +12 dB | 458 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 5s, +13 dB | 472 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 5s, +14 dB | 485 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 5s, +10 dB | 474 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 5s, +11 dB | 484 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 5s, +13 dB | 505 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 5s, +14 dB | 512 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 5s, +10 dB | 497 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 5s, +11 dB | 504 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 5s, +12 dB | 517 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 5s, +13 dB | 530 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 5s, +14 dB | 543 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 6s, +10 dB | 442 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 6s, +11 dB | 441 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 6s, +12 dB | 452 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 6s, +13 dB | 468 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 6s, +14 dB | 485 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 6s, +10 dB | 478 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 6s, +11 dB | 478 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 6s, +12 dB | 494 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 6s, +13 dB | 504 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 6s, +14 dB | 504 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 6s, +10 dB | 497 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 6s, +11 dB | 501 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 6s, +12 dB | 515 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 6s, +13 dB | 516 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 6s, +14 dB | 527 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 8s, +10 dB | 437 silences | 50 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 8s, +11 dB | 433 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 8s, +12 dB | 441 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 8s, +13 dB | 465 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p5 over 8s, +14 dB | 480 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 8s, +10 dB | 459 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 8s, +11 dB | 465 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 8s, +12 dB | 485 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 8s, +13 dB | 492 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p10 over 8s, +14 dB | 497 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 8s, +10 dB | 498 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 8s, +11 dB | 510 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 8s, +12 dB | 511 silences | 49 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 8s, +13 dB | 513 silences | 49 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: ami | noise | tracker, p15 over 8s, +14 dB | 523 silences | 49 windows | 1 at the limit
+=== RUN   TestFindingsFloor/earnings21
+    findings_floor_test.go:78: recorded: floor: earnings21 | unchanged | silencedetect, mean -19.3 dB less 15 | 601 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:85: recorded: floor: earnings21 | unchanged | silencedetect, fixed -42.5 dB | 476 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 3s, +6 dB | 507 silences | 98 windows | 0 at the limit | 94 of 97 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 3s, +9 dB | 535 silences | 98 windows | 0 at the limit | 92 of 97 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 3s, +12 dB | 579 silences | 96 windows | 0 at the limit | 90 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 3s, +6 dB | 617 silences | 96 windows | 0 at the limit | 90 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 3s, +9 dB | 658 silences | 95 windows | 0 at the limit | 86 of 94 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 3s, +12 dB | 724 silences | 94 windows | 0 at the limit | 83 of 93 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 3s, +6 dB | 713 silences | 93 windows | 0 at the limit | 78 of 92 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 3s, +9 dB | 826 silences | 93 windows | 0 at the limit | 72 of 92 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 3s, +12 dB | 1012 silences | 92 windows | 0 at the limit | 43 of 91 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 5s, +6 dB | 440 silences | 100 windows | 0 at the limit | 96 of 99 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 5s, +9 dB | 486 silences | 98 windows | 0 at the limit | 94 of 97 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 5s, +12 dB | 519 silences | 97 windows | 0 at the limit | 93 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 5s, +6 dB | 591 silences | 96 windows | 0 at the limit | 89 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 5s, +9 dB | 614 silences | 96 windows | 0 at the limit | 91 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 5s, +12 dB | 667 silences | 95 windows | 0 at the limit | 83 of 94 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 5s, +6 dB | 687 silences | 95 windows | 0 at the limit | 86 of 94 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 5s, +9 dB | 749 silences | 93 windows | 0 at the limit | 78 of 92 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 5s, +12 dB | 898 silences | 92 windows | 0 at the limit | 58 of 91 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 10s, +6 dB | 380 silences | 104 windows | 0 at the limit | 103 of 103 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 10s, +9 dB | 428 silences | 101 windows | 0 at the limit | 100 of 100 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 10s, +12 dB | 466 silences | 100 windows | 0 at the limit | 98 of 99 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 10s, +6 dB | 576 silences | 96 windows | 0 at the limit | 92 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 10s, +9 dB | 606 silences | 96 windows | 0 at the limit | 90 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 10s, +12 dB | 636 silences | 95 windows | 0 at the limit | 87 of 94 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 10s, +6 dB | 676 silences | 95 windows | 0 at the limit | 83 of 94 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 10s, +9 dB | 714 silences | 94 windows | 0 at the limit | 76 of 93 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 10s, +12 dB | 813 silences | 93 windows | 0 at the limit | 73 of 92 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 15s, +6 dB | 355 silences | 106 windows | 0 at the limit | 105 of 105 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 15s, +9 dB | 405 silences | 104 windows | 0 at the limit | 103 of 103 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 15s, +12 dB | 452 silences | 101 windows | 0 at the limit | 99 of 100 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 15s, +6 dB | 582 silences | 97 windows | 0 at the limit | 94 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 15s, +9 dB | 603 silences | 97 windows | 0 at the limit | 93 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 15s, +12 dB | 640 silences | 97 windows | 0 at the limit | 87 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 15s, +6 dB | 680 silences | 95 windows | 0 at the limit | 86 of 94 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 15s, +9 dB | 717 silences | 94 windows | 0 at the limit | 76 of 93 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 15s, +12 dB | 789 silences | 93 windows | 0 at the limit | 70 of 92 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 30s, +6 dB | 340 silences | 108 windows | 1 at the limit | 106 of 106 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 30s, +9 dB | 381 silences | 106 windows | 0 at the limit | 105 of 105 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 30s, +12 dB | 435 silences | 103 windows | 0 at the limit | 102 of 102 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 30s, +6 dB | 575 silences | 98 windows | 0 at the limit | 95 of 97 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 30s, +9 dB | 603 silences | 97 windows | 0 at the limit | 91 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p20 over 30s, +12 dB | 638 silences | 97 windows | 0 at the limit | 88 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 30s, +6 dB | 674 silences | 95 windows | 0 at the limit | 81 of 94 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 30s, +9 dB | 701 silences | 95 windows | 0 at the limit | 84 of 94 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p30 over 30s, +12 dB | 779 silences | 94 windows | 0 at the limit | 75 of 93 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 4s, +10 dB | 405 silences | 99 windows | 0 at the limit | 95 of 98 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 4s, +11 dB | 416 silences | 99 windows | 0 at the limit | 96 of 98 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 4s, +12 dB | 429 silences | 98 windows | 0 at the limit | 94 of 97 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 4s, +13 dB | 446 silences | 99 windows | 0 at the limit | 96 of 98 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 4s, +14 dB | 460 silences | 98 windows | 0 at the limit | 95 of 97 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 4s, +10 dB | 515 silences | 97 windows | 0 at the limit | 90 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 4s, +11 dB | 527 silences | 97 windows | 0 at the limit | 91 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 4s, +12 dB | 536 silences | 97 windows | 0 at the limit | 91 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 4s, +13 dB | 546 silences | 96 windows | 0 at the limit | 89 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 4s, +14 dB | 563 silences | 96 windows | 0 at the limit | 89 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 4s, +10 dB | 597 silences | 96 windows | 0 at the limit | 90 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 4s, +11 dB | 609 silences | 96 windows | 0 at the limit | 88 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 4s, +12 dB | 625 silences | 96 windows | 0 at the limit | 88 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 4s, +13 dB | 634 silences | 96 windows | 0 at the limit | 88 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 4s, +14 dB | 645 silences | 96 windows | 0 at the limit | 88 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 5s, +10 dB | 362 silences | 104 windows | 0 at the limit | 102 of 103 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 5s, +11 dB | 378 silences | 103 windows | 0 at the limit | 100 of 102 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 5s, +12 dB | 396 silences | 101 windows | 0 at the limit | 98 of 100 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 5s, +13 dB | 415 silences | 101 windows | 0 at the limit | 98 of 100 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 5s, +14 dB | 427 silences | 101 windows | 0 at the limit | 97 of 100 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 5s, +10 dB | 494 silences | 98 windows | 0 at the limit | 94 of 97 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 5s, +11 dB | 505 silences | 98 windows | 0 at the limit | 93 of 97 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 5s, +13 dB | 530 silences | 96 windows | 0 at the limit | 91 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 5s, +14 dB | 536 silences | 96 windows | 0 at the limit | 91 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 5s, +10 dB | 574 silences | 96 windows | 0 at the limit | 88 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 5s, +11 dB | 580 silences | 96 windows | 0 at the limit | 88 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 5s, +12 dB | 595 silences | 96 windows | 0 at the limit | 91 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 5s, +13 dB | 605 silences | 96 windows | 0 at the limit | 91 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 5s, +14 dB | 619 silences | 96 windows | 0 at the limit | 91 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 6s, +10 dB | 332 silences | 106 windows | 0 at the limit | 105 of 105 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 6s, +11 dB | 345 silences | 105 windows | 0 at the limit | 104 of 104 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 6s, +12 dB | 357 silences | 105 windows | 0 at the limit | 104 of 104 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 6s, +13 dB | 374 silences | 103 windows | 0 at the limit | 102 of 102 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 6s, +14 dB | 385 silences | 102 windows | 0 at the limit | 100 of 101 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 6s, +10 dB | 473 silences | 99 windows | 0 at the limit | 97 of 98 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 6s, +11 dB | 484 silences | 99 windows | 0 at the limit | 95 of 98 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 6s, +12 dB | 500 silences | 97 windows | 0 at the limit | 93 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 6s, +13 dB | 512 silences | 97 windows | 0 at the limit | 93 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 6s, +14 dB | 518 silences | 97 windows | 0 at the limit | 93 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 6s, +10 dB | 555 silences | 97 windows | 0 at the limit | 92 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 6s, +11 dB | 567 silences | 97 windows | 0 at the limit | 91 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 6s, +12 dB | 577 silences | 97 windows | 0 at the limit | 91 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 6s, +13 dB | 589 silences | 97 windows | 0 at the limit | 91 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 6s, +14 dB | 602 silences | 96 windows | 0 at the limit | 92 of 95 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 8s, +10 dB | 292 silences | 111 windows | 0 at the limit | 110 of 110 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 8s, +11 dB | 307 silences | 107 windows | 0 at the limit | 106 of 106 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 8s, +12 dB | 319 silences | 107 windows | 0 at the limit | 106 of 106 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 8s, +13 dB | 333 silences | 105 windows | 0 at the limit | 104 of 104 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p5 over 8s, +14 dB | 347 silences | 105 windows | 0 at the limit | 103 of 104 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 8s, +10 dB | 447 silences | 101 windows | 0 at the limit | 99 of 100 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 8s, +11 dB | 458 silences | 101 windows | 0 at the limit | 100 of 100 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 8s, +12 dB | 468 silences | 100 windows | 0 at the limit | 98 of 99 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 8s, +13 dB | 481 silences | 100 windows | 0 at the limit | 97 of 99 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p10 over 8s, +14 dB | 493 silences | 100 windows | 0 at the limit | 97 of 99 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 8s, +10 dB | 548 silences | 97 windows | 0 at the limit | 90 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 8s, +11 dB | 554 silences | 97 windows | 0 at the limit | 90 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 8s, +12 dB | 567 silences | 97 windows | 0 at the limit | 90 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 8s, +13 dB | 575 silences | 97 windows | 0 at the limit | 90 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings21 | unchanged | tracker, p15 over 8s, +14 dB | 588 silences | 97 windows | 0 at the limit | 89 of 96 cuts in silencedetect's silences
+    findings_floor_test.go:78: recorded: floor: earnings21 | gain | silencedetect, mean -9.7 dB less 15 | 610 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:85: recorded: floor: earnings21 | gain | silencedetect, fixed -42.5 dB | 309 silences | 109 windows | 9 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 3s, +6 dB | 508 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 3s, +9 dB | 535 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 3s, +12 dB | 579 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 3s, +6 dB | 618 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 3s, +9 dB | 659 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 3s, +12 dB | 733 silences | 94 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 3s, +6 dB | 718 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 3s, +9 dB | 847 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 3s, +12 dB | 1004 silences | 92 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 5s, +6 dB | 441 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 5s, +9 dB | 486 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 5s, +12 dB | 517 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 5s, +6 dB | 591 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 5s, +9 dB | 614 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 5s, +12 dB | 668 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 5s, +6 dB | 687 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 5s, +9 dB | 759 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 5s, +12 dB | 907 silences | 92 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 10s, +6 dB | 379 silences | 104 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 10s, +9 dB | 427 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 10s, +12 dB | 465 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 10s, +6 dB | 576 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 10s, +9 dB | 606 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 10s, +12 dB | 636 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 10s, +6 dB | 676 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 10s, +9 dB | 714 silences | 94 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 10s, +12 dB | 819 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 15s, +6 dB | 355 silences | 106 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 15s, +9 dB | 404 silences | 104 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 15s, +12 dB | 452 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 15s, +6 dB | 582 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 15s, +9 dB | 603 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 15s, +12 dB | 640 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 15s, +6 dB | 680 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 15s, +9 dB | 717 silences | 94 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 15s, +12 dB | 794 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 30s, +6 dB | 340 silences | 108 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 30s, +9 dB | 381 silences | 106 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 30s, +12 dB | 435 silences | 103 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 30s, +6 dB | 575 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 30s, +9 dB | 603 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p20 over 30s, +12 dB | 638 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 30s, +6 dB | 674 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 30s, +9 dB | 701 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p30 over 30s, +12 dB | 780 silences | 94 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 4s, +10 dB | 404 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 4s, +11 dB | 415 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 4s, +12 dB | 430 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 4s, +13 dB | 445 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 4s, +14 dB | 459 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 4s, +10 dB | 515 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 4s, +11 dB | 528 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 4s, +12 dB | 536 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 4s, +13 dB | 545 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 4s, +14 dB | 562 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 4s, +10 dB | 597 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 4s, +11 dB | 609 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 4s, +12 dB | 624 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 4s, +13 dB | 635 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 4s, +14 dB | 646 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 5s, +10 dB | 361 silences | 104 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 5s, +11 dB | 378 silences | 103 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 5s, +12 dB | 397 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 5s, +13 dB | 414 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 5s, +14 dB | 427 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 5s, +10 dB | 494 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 5s, +11 dB | 505 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 5s, +13 dB | 529 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 5s, +14 dB | 536 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 5s, +10 dB | 574 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 5s, +11 dB | 581 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 5s, +12 dB | 595 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 5s, +13 dB | 605 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 5s, +14 dB | 620 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 6s, +10 dB | 332 silences | 106 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 6s, +11 dB | 346 silences | 105 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 6s, +12 dB | 358 silences | 105 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 6s, +13 dB | 373 silences | 103 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 6s, +14 dB | 385 silences | 102 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 6s, +10 dB | 473 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 6s, +11 dB | 484 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 6s, +12 dB | 499 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 6s, +13 dB | 512 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 6s, +14 dB | 519 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 6s, +10 dB | 555 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 6s, +11 dB | 567 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 6s, +12 dB | 577 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 6s, +13 dB | 590 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 6s, +14 dB | 602 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 8s, +10 dB | 292 silences | 111 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 8s, +11 dB | 309 silences | 107 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 8s, +12 dB | 320 silences | 107 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 8s, +13 dB | 333 silences | 105 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p5 over 8s, +14 dB | 346 silences | 105 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 8s, +10 dB | 447 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 8s, +11 dB | 459 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 8s, +12 dB | 468 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 8s, +13 dB | 480 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p10 over 8s, +14 dB | 493 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 8s, +10 dB | 548 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 8s, +11 dB | 554 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 8s, +12 dB | 566 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 8s, +13 dB | 575 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | gain | tracker, p15 over 8s, +14 dB | 588 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:78: recorded: floor: earnings21 | noise | silencedetect, mean -19.3 dB less 15 | 601 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:85: recorded: floor: earnings21 | noise | silencedetect, fixed -42.5 dB | 467 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 3s, +6 dB | 564 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 3s, +9 dB | 570 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 3s, +12 dB | 607 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 3s, +6 dB | 644 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 3s, +9 dB | 665 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 3s, +12 dB | 729 silences | 94 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 3s, +6 dB | 728 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 3s, +9 dB | 833 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 3s, +12 dB | 1021 silences | 92 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 5s, +6 dB | 505 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 5s, +9 dB | 543 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 5s, +12 dB | 564 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 5s, +6 dB | 618 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 5s, +9 dB | 632 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 5s, +12 dB | 686 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 5s, +6 dB | 693 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 5s, +9 dB | 753 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 5s, +12 dB | 908 silences | 92 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 10s, +6 dB | 456 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 10s, +9 dB | 491 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 10s, +12 dB | 528 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 10s, +6 dB | 598 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 10s, +9 dB | 625 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 10s, +12 dB | 655 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 10s, +6 dB | 681 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 10s, +9 dB | 717 silences | 94 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 10s, +12 dB | 816 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 15s, +6 dB | 428 silences | 103 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 15s, +9 dB | 482 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 15s, +12 dB | 535 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 15s, +6 dB | 597 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 15s, +9 dB | 617 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 15s, +12 dB | 653 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 15s, +6 dB | 687 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 15s, +9 dB | 721 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 15s, +12 dB | 789 silences | 93 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 30s, +6 dB | 420 silences | 104 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 30s, +9 dB | 468 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 30s, +12 dB | 512 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 30s, +6 dB | 592 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 30s, +9 dB | 616 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p20 over 30s, +12 dB | 651 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 30s, +6 dB | 677 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 30s, +9 dB | 704 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p30 over 30s, +12 dB | 780 silences | 94 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 4s, +10 dB | 497 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 4s, +11 dB | 508 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 4s, +12 dB | 522 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 4s, +13 dB | 539 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 4s, +14 dB | 546 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 4s, +10 dB | 557 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 4s, +11 dB | 576 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 4s, +12 dB | 586 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 4s, +13 dB | 592 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 4s, +14 dB | 604 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 4s, +10 dB | 620 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 4s, +11 dB | 630 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 4s, +12 dB | 642 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 4s, +13 dB | 650 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 4s, +14 dB | 660 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 5s, +10 dB | 465 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 5s, +11 dB | 482 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 5s, +12 dB | 499 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 5s, +13 dB | 512 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 5s, +14 dB | 527 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 5s, +10 dB | 544 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 5s, +11 dB | 552 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 5s, +13 dB | 575 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 5s, +14 dB | 591 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 5s, +10 dB | 596 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 5s, +11 dB | 608 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 5s, +12 dB | 620 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 5s, +13 dB | 633 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 5s, +14 dB | 647 silences | 95 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 6s, +10 dB | 449 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 6s, +11 dB | 464 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 6s, +12 dB | 485 silences | 101 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 6s, +13 dB | 498 silences | 100 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 6s, +14 dB | 513 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 6s, +10 dB | 528 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 6s, +11 dB | 542 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 6s, +12 dB | 553 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 6s, +13 dB | 570 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 6s, +14 dB | 577 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 6s, +10 dB | 582 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 6s, +11 dB | 595 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 6s, +12 dB | 605 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 6s, +13 dB | 618 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 6s, +14 dB | 633 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 8s, +10 dB | 424 silences | 103 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 8s, +11 dB | 442 silences | 103 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 8s, +12 dB | 457 silences | 102 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 8s, +13 dB | 474 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p5 over 8s, +14 dB | 493 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 8s, +10 dB | 511 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 8s, +11 dB | 522 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 8s, +12 dB | 533 silences | 99 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 8s, +13 dB | 549 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p10 over 8s, +14 dB | 562 silences | 98 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 8s, +10 dB | 574 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 8s, +11 dB | 584 silences | 97 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 8s, +12 dB | 598 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 8s, +13 dB | 609 silences | 96 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings21 | noise | tracker, p15 over 8s, +14 dB | 621 silences | 96 windows | 0 at the limit
+=== RUN   TestFindingsFloor/earnings22
+    findings_floor_test.go:78: recorded: floor: earnings22 | unchanged | silencedetect, mean -22.1 dB less 15 | 878 silences | 156 windows | 2 at the limit
+    findings_floor_test.go:85: recorded: floor: earnings22 | unchanged | silencedetect, fixed -45.0 dB | 593 silences | 165 windows | 10 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 3s, +6 dB | 751 silences | 160 windows | 7 at the limit | 139 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 3s, +9 dB | 881 silences | 156 windows | 4 at the limit | 123 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 3s, +12 dB | 1019 silences | 155 windows | 2 at the limit | 122 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 3s, +6 dB | 1134 silences | 151 windows | 1 at the limit | 112 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 3s, +9 dB | 1296 silences | 151 windows | 0 at the limit | 103 of 150 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 3s, +12 dB | 1560 silences | 147 windows | 0 at the limit | 92 of 146 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 3s, +6 dB | 1432 silences | 149 windows | 0 at the limit | 101 of 148 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 3s, +9 dB | 1766 silences | 146 windows | 0 at the limit | 70 of 145 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 3s, +12 dB | 2272 silences | 144 windows | 0 at the limit | 52 of 143 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 5s, +6 dB | 716 silences | 162 windows | 7 at the limit | 141 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 5s, +9 dB | 808 silences | 158 windows | 4 at the limit | 133 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 5s, +12 dB | 936 silences | 156 windows | 2 at the limit | 128 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 5s, +6 dB | 1110 silences | 152 windows | 0 at the limit | 115 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 5s, +9 dB | 1257 silences | 150 windows | 0 at the limit | 96 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 5s, +12 dB | 1467 silences | 149 windows | 0 at the limit | 90 of 148 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 5s, +6 dB | 1382 silences | 150 windows | 0 at the limit | 102 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 5s, +9 dB | 1665 silences | 146 windows | 0 at the limit | 77 of 145 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 5s, +12 dB | 2141 silences | 145 windows | 0 at the limit | 56 of 144 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 10s, +6 dB | 630 silences | 168 windows | 8 at the limit | 156 of 159 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 10s, +9 dB | 732 silences | 161 windows | 6 at the limit | 143 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 10s, +12 dB | 850 silences | 160 windows | 1 at the limit | 140 of 158 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 10s, +6 dB | 1106 silences | 152 windows | 0 at the limit | 117 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 10s, +9 dB | 1224 silences | 151 windows | 0 at the limit | 106 of 150 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 10s, +12 dB | 1388 silences | 150 windows | 0 at the limit | 93 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 10s, +6 dB | 1380 silences | 149 windows | 0 at the limit | 93 of 148 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 10s, +9 dB | 1591 silences | 147 windows | 0 at the limit | 80 of 146 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 10s, +12 dB | 2020 silences | 146 windows | 0 at the limit | 67 of 145 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 15s, +6 dB | 603 silences | 166 windows | 10 at the limit | 153 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 15s, +9 dB | 722 silences | 161 windows | 6 at the limit | 138 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 15s, +12 dB | 827 silences | 160 windows | 3 at the limit | 135 of 156 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 15s, +6 dB | 1098 silences | 153 windows | 0 at the limit | 115 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 15s, +9 dB | 1219 silences | 150 windows | 0 at the limit | 105 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 15s, +12 dB | 1372 silences | 149 windows | 0 at the limit | 93 of 148 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 15s, +6 dB | 1367 silences | 148 windows | 0 at the limit | 95 of 147 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 15s, +9 dB | 1568 silences | 147 windows | 0 at the limit | 76 of 146 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 15s, +12 dB | 1984 silences | 146 windows | 0 at the limit | 64 of 145 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 30s, +6 dB | 554 silences | 166 windows | 10 at the limit | 155 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 30s, +9 dB | 655 silences | 164 windows | 7 at the limit | 152 of 156 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 30s, +12 dB | 762 silences | 162 windows | 6 at the limit | 146 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 30s, +6 dB | 1089 silences | 154 windows | 1 at the limit | 116 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 30s, +9 dB | 1208 silences | 152 windows | 0 at the limit | 109 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p20 over 30s, +12 dB | 1348 silences | 150 windows | 0 at the limit | 99 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 30s, +6 dB | 1367 silences | 148 windows | 0 at the limit | 96 of 147 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 30s, +9 dB | 1535 silences | 147 windows | 0 at the limit | 82 of 146 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p30 over 30s, +12 dB | 1937 silences | 147 windows | 0 at the limit | 68 of 146 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 4s, +10 dB | 603 silences | 166 windows | 9 at the limit | 147 of 156 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 4s, +11 dB | 642 silences | 165 windows | 9 at the limit | 147 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 4s, +12 dB | 664 silences | 165 windows | 9 at the limit | 147 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 4s, +13 dB | 702 silences | 162 windows | 9 at the limit | 143 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 4s, +14 dB | 740 silences | 159 windows | 8 at the limit | 139 of 150 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 4s, +10 dB | 872 silences | 159 windows | 3 at the limit | 133 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 4s, +11 dB | 916 silences | 157 windows | 2 at the limit | 129 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 4s, +12 dB | 949 silences | 156 windows | 2 at the limit | 127 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 4s, +13 dB | 988 silences | 155 windows | 2 at the limit | 126 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 4s, +14 dB | 1028 silences | 154 windows | 1 at the limit | 124 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 4s, +10 dB | 1123 silences | 152 windows | 0 at the limit | 111 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 4s, +11 dB | 1175 silences | 152 windows | 0 at the limit | 111 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 4s, +12 dB | 1227 silences | 151 windows | 0 at the limit | 105 of 150 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 4s, +13 dB | 1283 silences | 151 windows | 0 at the limit | 104 of 150 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 4s, +14 dB | 1359 silences | 150 windows | 0 at the limit | 99 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 5s, +10 dB | 557 silences | 164 windows | 10 at the limit | 150 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 5s, +11 dB | 592 silences | 164 windows | 8 at the limit | 152 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 5s, +12 dB | 628 silences | 162 windows | 8 at the limit | 148 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 5s, +13 dB | 666 silences | 160 windows | 7 at the limit | 146 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 5s, +14 dB | 703 silences | 159 windows | 7 at the limit | 143 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 5s, +10 dB | 848 silences | 157 windows | 4 at the limit | 132 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 5s, +11 dB | 899 silences | 156 windows | 2 at the limit | 129 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 5s, +13 dB | 977 silences | 156 windows | 1 at the limit | 127 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 5s, +14 dB | 999 silences | 155 windows | 1 at the limit | 122 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 5s, +10 dB | 1111 silences | 152 windows | 0 at the limit | 115 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 5s, +11 dB | 1146 silences | 152 windows | 0 at the limit | 110 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 5s, +12 dB | 1191 silences | 151 windows | 0 at the limit | 103 of 150 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 5s, +13 dB | 1245 silences | 151 windows | 0 at the limit | 101 of 150 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 5s, +14 dB | 1324 silences | 150 windows | 0 at the limit | 96 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 6s, +10 dB | 539 silences | 168 windows | 9 at the limit | 153 of 158 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 6s, +11 dB | 566 silences | 164 windows | 9 at the limit | 149 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 6s, +12 dB | 602 silences | 164 windows | 8 at the limit | 149 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 6s, +13 dB | 643 silences | 163 windows | 8 at the limit | 149 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 6s, +14 dB | 679 silences | 162 windows | 8 at the limit | 146 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 6s, +10 dB | 838 silences | 157 windows | 4 at the limit | 138 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 6s, +11 dB | 886 silences | 156 windows | 3 at the limit | 132 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 6s, +12 dB | 921 silences | 156 windows | 3 at the limit | 131 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 6s, +13 dB | 964 silences | 156 windows | 1 at the limit | 132 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 6s, +14 dB | 1001 silences | 156 windows | 1 at the limit | 131 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 6s, +10 dB | 1096 silences | 153 windows | 0 at the limit | 113 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 6s, +11 dB | 1132 silences | 152 windows | 0 at the limit | 107 of 151 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 6s, +12 dB | 1190 silences | 150 windows | 0 at the limit | 95 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 6s, +13 dB | 1248 silences | 150 windows | 0 at the limit | 95 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 6s, +14 dB | 1305 silences | 150 windows | 0 at the limit | 90 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 8s, +10 dB | 501 silences | 170 windows | 10 at the limit | 159 of 159 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 8s, +11 dB | 532 silences | 167 windows | 10 at the limit | 155 of 156 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 8s, +12 dB | 565 silences | 167 windows | 10 at the limit | 155 of 156 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 8s, +13 dB | 608 silences | 164 windows | 8 at the limit | 153 of 155 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p5 over 8s, +14 dB | 644 silences | 163 windows | 8 at the limit | 149 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 8s, +10 dB | 798 silences | 158 windows | 4 at the limit | 140 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 8s, +11 dB | 837 silences | 157 windows | 2 at the limit | 140 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 8s, +12 dB | 867 silences | 157 windows | 2 at the limit | 140 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 8s, +13 dB | 908 silences | 156 windows | 2 at the limit | 136 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p10 over 8s, +14 dB | 948 silences | 156 windows | 1 at the limit | 129 of 154 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 8s, +10 dB | 1074 silences | 154 windows | 0 at the limit | 113 of 153 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 8s, +11 dB | 1120 silences | 153 windows | 0 at the limit | 112 of 152 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 8s, +12 dB | 1156 silences | 151 windows | 0 at the limit | 103 of 150 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 8s, +13 dB | 1207 silences | 150 windows | 0 at the limit | 104 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:93: recorded: floor: earnings22 | unchanged | tracker, p15 over 8s, +14 dB | 1268 silences | 150 windows | 0 at the limit | 100 of 149 cuts in silencedetect's silences
+    findings_floor_test.go:78: recorded: floor: earnings22 | gain | silencedetect, mean -9.9 dB less 15 | 836 silences | 158 windows | 3 at the limit
+    findings_floor_test.go:85: recorded: floor: earnings22 | gain | silencedetect, fixed -42.0 dB | 207 silences | 162 windows | 87 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 3s, +6 dB | 749 silences | 160 windows | 7 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 3s, +9 dB | 879 silences | 156 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 3s, +12 dB | 1018 silences | 155 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 3s, +6 dB | 1133 silences | 151 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 3s, +9 dB | 1295 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 3s, +12 dB | 1559 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 3s, +6 dB | 1432 silences | 149 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 3s, +9 dB | 1767 silences | 146 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 3s, +12 dB | 2284 silences | 144 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 5s, +6 dB | 714 silences | 162 windows | 7 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 5s, +9 dB | 806 silences | 158 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 5s, +12 dB | 934 silences | 156 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 5s, +6 dB | 1109 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 5s, +9 dB | 1256 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 5s, +12 dB | 1466 silences | 149 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 5s, +6 dB | 1381 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 5s, +9 dB | 1664 silences | 146 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 5s, +12 dB | 2143 silences | 145 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 10s, +6 dB | 629 silences | 168 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 10s, +9 dB | 731 silences | 161 windows | 6 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 10s, +12 dB | 848 silences | 160 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 10s, +6 dB | 1105 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 10s, +9 dB | 1223 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 10s, +12 dB | 1387 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 10s, +6 dB | 1380 silences | 149 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 10s, +9 dB | 1590 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 10s, +12 dB | 2022 silences | 146 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 15s, +6 dB | 602 silences | 166 windows | 10 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 15s, +9 dB | 721 silences | 161 windows | 6 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 15s, +12 dB | 827 silences | 160 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 15s, +6 dB | 1098 silences | 153 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 15s, +9 dB | 1219 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 15s, +12 dB | 1372 silences | 149 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 15s, +6 dB | 1367 silences | 148 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 15s, +9 dB | 1569 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 15s, +12 dB | 1982 silences | 146 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 30s, +6 dB | 552 silences | 166 windows | 10 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 30s, +9 dB | 654 silences | 164 windows | 7 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 30s, +12 dB | 761 silences | 162 windows | 6 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 30s, +6 dB | 1088 silences | 154 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 30s, +9 dB | 1207 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p20 over 30s, +12 dB | 1347 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 30s, +6 dB | 1367 silences | 148 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 30s, +9 dB | 1535 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p30 over 30s, +12 dB | 1937 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 4s, +10 dB | 601 silences | 166 windows | 9 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 4s, +11 dB | 640 silences | 165 windows | 9 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 4s, +12 dB | 662 silences | 165 windows | 9 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 4s, +13 dB | 700 silences | 162 windows | 9 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 4s, +14 dB | 738 silences | 159 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 4s, +10 dB | 870 silences | 159 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 4s, +11 dB | 913 silences | 158 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 4s, +12 dB | 948 silences | 155 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 4s, +13 dB | 985 silences | 155 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 4s, +14 dB | 1026 silences | 154 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 4s, +10 dB | 1123 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 4s, +11 dB | 1173 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 4s, +12 dB | 1225 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 4s, +13 dB | 1282 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 4s, +14 dB | 1358 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 5s, +10 dB | 556 silences | 164 windows | 10 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 5s, +11 dB | 590 silences | 164 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 5s, +12 dB | 626 silences | 162 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 5s, +13 dB | 664 silences | 160 windows | 7 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 5s, +14 dB | 701 silences | 159 windows | 7 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 5s, +10 dB | 846 silences | 157 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 5s, +11 dB | 896 silences | 156 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 5s, +13 dB | 975 silences | 156 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 5s, +14 dB | 997 silences | 155 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 5s, +10 dB | 1110 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 5s, +11 dB | 1145 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 5s, +12 dB | 1190 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 5s, +13 dB | 1245 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 5s, +14 dB | 1323 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 6s, +10 dB | 536 silences | 168 windows | 9 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 6s, +11 dB | 564 silences | 164 windows | 9 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 6s, +12 dB | 600 silences | 164 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 6s, +13 dB | 641 silences | 163 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 6s, +14 dB | 677 silences | 162 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 6s, +10 dB | 835 silences | 157 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 6s, +11 dB | 884 silences | 156 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 6s, +12 dB | 919 silences | 156 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 6s, +13 dB | 962 silences | 156 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 6s, +14 dB | 999 silences | 156 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 6s, +10 dB | 1095 silences | 153 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 6s, +11 dB | 1131 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 6s, +12 dB | 1189 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 6s, +13 dB | 1247 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 6s, +14 dB | 1304 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 8s, +10 dB | 498 silences | 170 windows | 10 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 8s, +11 dB | 528 silences | 167 windows | 10 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 8s, +12 dB | 563 silences | 167 windows | 10 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 8s, +13 dB | 606 silences | 164 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p5 over 8s, +14 dB | 642 silences | 163 windows | 8 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 8s, +10 dB | 797 silences | 158 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 8s, +11 dB | 836 silences | 157 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 8s, +12 dB | 866 silences | 157 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 8s, +13 dB | 907 silences | 156 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p10 over 8s, +14 dB | 947 silences | 156 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 8s, +10 dB | 1073 silences | 154 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 8s, +11 dB | 1119 silences | 153 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 8s, +12 dB | 1155 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 8s, +13 dB | 1206 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | gain | tracker, p15 over 8s, +14 dB | 1265 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:78: recorded: floor: earnings22 | noise | silencedetect, mean -19.1 dB less 15 | 877 silences | 156 windows | 2 at the limit
+    findings_floor_test.go:85: recorded: floor: earnings22 | noise | silencedetect, fixed -42.0 dB | 580 silences | 166 windows | 11 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 3s, +6 dB | 833 silences | 158 windows | 5 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 3s, +9 dB | 930 silences | 154 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 3s, +12 dB | 1062 silences | 154 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 3s, +6 dB | 1197 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 3s, +9 dB | 1311 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 3s, +12 dB | 1576 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 3s, +6 dB | 1482 silences | 148 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 3s, +9 dB | 1780 silences | 146 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 3s, +12 dB | 2290 silences | 144 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 5s, +6 dB | 788 silences | 161 windows | 6 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 5s, +9 dB | 866 silences | 157 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 5s, +12 dB | 977 silences | 154 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 5s, +6 dB | 1166 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 5s, +9 dB | 1282 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 5s, +12 dB | 1494 silences | 149 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 5s, +6 dB | 1432 silences | 149 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 5s, +9 dB | 1674 silences | 146 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 5s, +12 dB | 2154 silences | 145 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 10s, +6 dB | 711 silences | 165 windows | 5 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 10s, +9 dB | 793 silences | 160 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 10s, +12 dB | 909 silences | 157 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 10s, +6 dB | 1153 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 10s, +9 dB | 1236 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 10s, +12 dB | 1402 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 10s, +6 dB | 1410 silences | 148 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 10s, +9 dB | 1597 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 10s, +12 dB | 2028 silences | 145 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 15s, +6 dB | 689 silences | 163 windows | 7 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 15s, +9 dB | 788 silences | 160 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 15s, +12 dB | 886 silences | 158 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 15s, +6 dB | 1140 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 15s, +9 dB | 1231 silences | 149 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 15s, +12 dB | 1383 silences | 149 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 15s, +6 dB | 1396 silences | 148 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 15s, +9 dB | 1574 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 15s, +12 dB | 1986 silences | 146 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 30s, +6 dB | 626 silences | 167 windows | 7 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 30s, +9 dB | 711 silences | 163 windows | 5 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 30s, +12 dB | 827 silences | 160 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 30s, +6 dB | 1123 silences | 152 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 30s, +9 dB | 1222 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p20 over 30s, +12 dB | 1363 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 30s, +6 dB | 1377 silences | 148 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 30s, +9 dB | 1541 silences | 147 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p30 over 30s, +12 dB | 1950 silences | 146 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 4s, +10 dB | 702 silences | 161 windows | 5 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 4s, +11 dB | 730 silences | 160 windows | 5 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 4s, +12 dB | 754 silences | 160 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 4s, +13 dB | 789 silences | 158 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 4s, +14 dB | 828 silences | 158 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 4s, +10 dB | 921 silences | 155 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 4s, +11 dB | 963 silences | 154 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 4s, +12 dB | 994 silences | 153 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 4s, +13 dB | 1035 silences | 154 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 4s, +14 dB | 1083 silences | 153 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 4s, +10 dB | 1145 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 4s, +11 dB | 1197 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 4s, +12 dB | 1251 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 4s, +13 dB | 1310 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 4s, +14 dB | 1387 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 5s, +10 dB | 661 silences | 163 windows | 5 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 5s, +11 dB | 694 silences | 162 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 5s, +12 dB | 725 silences | 160 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 5s, +13 dB | 758 silences | 159 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 5s, +14 dB | 794 silences | 157 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 5s, +10 dB | 896 silences | 156 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 5s, +11 dB | 942 silences | 155 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 5s, +13 dB | 1019 silences | 153 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 5s, +14 dB | 1049 silences | 153 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 5s, +10 dB | 1129 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 5s, +11 dB | 1170 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 5s, +12 dB | 1221 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 5s, +13 dB | 1284 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 5s, +14 dB | 1352 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 6s, +10 dB | 649 silences | 163 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 6s, +11 dB | 674 silences | 163 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 6s, +12 dB | 706 silences | 162 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 6s, +13 dB | 741 silences | 161 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 6s, +14 dB | 781 silences | 159 windows | 3 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 6s, +10 dB | 880 silences | 155 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 6s, +11 dB | 926 silences | 155 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 6s, +12 dB | 964 silences | 155 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 6s, +13 dB | 1007 silences | 154 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 6s, +14 dB | 1051 silences | 154 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 6s, +10 dB | 1126 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 6s, +11 dB | 1162 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 6s, +12 dB | 1222 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 6s, +13 dB | 1287 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 6s, +14 dB | 1335 silences | 150 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 8s, +10 dB | 618 silences | 163 windows | 6 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 8s, +11 dB | 639 silences | 161 windows | 6 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 8s, +12 dB | 672 silences | 162 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 8s, +13 dB | 711 silences | 161 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p5 over 8s, +14 dB | 754 silences | 160 windows | 4 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 8s, +10 dB | 844 silences | 156 windows | 2 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 8s, +11 dB | 884 silences | 155 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 8s, +12 dB | 920 silences | 155 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 8s, +13 dB | 960 silences | 154 windows | 1 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p10 over 8s, +14 dB | 1005 silences | 155 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 8s, +10 dB | 1099 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 8s, +11 dB | 1145 silences | 152 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 8s, +12 dB | 1188 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 8s, +13 dB | 1242 silences | 151 windows | 0 at the limit
+    findings_floor_test.go:93: recorded: floor: earnings22 | noise | tracker, p15 over 8s, +14 dB | 1298 silences | 150 windows | 0 at the limit
+--- PASS: TestFindingsFloor (63.21s)
+    --- PASS: TestFindingsFloor/ami (9.69s)
+    --- PASS: TestFindingsFloor/earnings21 (19.68s)
+    --- PASS: TestFindingsFloor/earnings22 (33.37s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/audio	63.219s

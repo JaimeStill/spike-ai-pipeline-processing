@@ -1,0 +1,2284 @@
+{
+  "source": {
+    "name": "tears",
+    "title": "Tears of Steel, the 180 s clip at 1150x480, H.264 24 fps, AAC 44.1 kHz stereo",
+    "files": [
+      "video/tears-of-steel/tos-clip-180s-480p.mp4"
+    ],
+    "sha256": [
+      "b1dba0c6c2ce364b8888566c1687c15c78ca3632864670c76291ea3573a15bd6"
+    ],
+    "license": "CC-BY-3.0 (film); CC-BY-ND-3.0 (soundtrack)",
+    "redistributable": true,
+    "seconds": 180,
+    "truth_note": "approximate: the film's English subtitles, the cues whose middle is before 180 s; subtitles condense speech and carry a title card (\"Fourty years later\"), and music and effects are in no truth",
+    "truth_words": 97
+  },
+  "settings": {
+    "audio_model": "ggml-org/gemma-4-E4B-it-GGUF:Q8_0",
+    "vision_model": "google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0",
+    "prompt": "Describe this picture in two or three sentences.",
+    "output_cap": 512,
+    "slots": 4,
+    "overlap": 2000000000,
+    "min_silence": 300000000,
+    "percentile": 10,
+    "floor_window": 4000000000,
+    "margin": 12,
+    "scene_threshold": 0.2,
+    "max_gap": 10000000000,
+    "max_side": 0
+  },
+  "started": "2026-11-06T16:25:59.517622034Z",
+  "unpaced": {
+    "wall": 4142916973,
+    "speed": 43.44764840161811,
+    "windows": 7,
+    "frames": 35,
+    "reasons": {
+      "first": 1,
+      "interval": 4,
+      "scene": 30
+    },
+    "cuts": {
+      "end": 1,
+      "silence": 6
+    }
+  },
+  "file_paths": [
+    {
+      "detector": "silencedetect",
+      "windows": 7,
+      "failed": 0,
+      "plan_time": 261761436,
+      "wall": 4991063302,
+      "wer": {
+        "edits": 33,
+        "length": 97,
+        "rate": 0.3402061855670103
+      },
+      "scored": 7,
+      "transcript": "We have main engine start. Four, three, two, one. Go. They jerked up. Look, Celia, we have to follow our passions. You have your robotics and I just want to be awesome in space. Why don't you just admit that you're freaked out by my robot hand? I I'm freaked out by it's All right, fine. I'm freaked out. I'm having nightmares that I'm being chased by his giant robotic claw. We're done. We're done. Robot's memory synced and plop. This is pretty freaking Should you be down there? I heard you guys talking last night. It's not my fault, you know. [Music] [Music]"
+    },
+    {
+      "detector": "tracker",
+      "windows": 7,
+      "failed": 0,
+      "plan_time": 166255501,
+      "wall": 5122715949,
+      "wer": {
+        "edits": 35,
+        "length": 97,
+        "rate": 0.36082474226804123
+      },
+      "scored": 7,
+      "transcript": "We have main engine start. Four, three, two, one. Go. They jerked up. Look, Celia, we have to follow our passions. You have your robotics and I just want to be awesome in space. Why don't you just admit that you're freaked out by my robot hand? I'm not freaked out by it's All right, fine. I'm freaked out. I'm having nightmares that I'm being chased by this giant robotic claw. We're done. Robot's memory synced and lock. This is pretty freaking. [No speech detected] Should you be down there? I heard you guys talked about last night. It's not my fault, you know. [Music]"
+    }
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "wall": 181684830113,
+      "ended": 179445761937,
+      "last_window": 2245074520,
+      "windows": 7,
+      "frames": 35,
+      "reasons": {
+        "first": 1,
+        "interval": 4,
+        "scene": 30
+      },
+      "cuts": {
+        "end": 1,
+        "silence": 6
+      },
+      "failed": 0,
+      "same_as_unpaced": true,
+      "window_lags": {
+        "arrival_to_event": {
+          "n": 7,
+          "mean": 6727878436,
+          "p50": 3126218642,
+          "p90": 21167858244,
+          "max": 21167858244
+        },
+        "event_to_answer": {
+          "n": 7,
+          "mean": 1800250651,
+          "p50": 1754963502,
+          "p90": 2936742952,
+          "max": 2936742952
+        },
+        "queued": {
+          "n": 7,
+          "mean": 48645,
+          "p50": 47326,
+          "p90": 68843,
+          "max": 68843
+        },
+        "request": {
+          "n": 7,
+          "mean": 1800202005,
+          "p50": 1754913953,
+          "p90": 2936688446,
+          "max": 2936688446
+        },
+        "waited": 0,
+        "max_in_flight": 2
+      },
+      "frame_lags": {
+        "arrival_to_event": {
+          "n": 35,
+          "mean": 112633952,
+          "p50": 123370757,
+          "p90": 154426477,
+          "max": 176069096
+        },
+        "event_to_answer": {
+          "n": 35,
+          "mean": 1527190972,
+          "p50": 1622554489,
+          "p90": 1825883105,
+          "max": 1975204169
+        },
+        "queued": {
+          "n": 35,
+          "mean": 51374,
+          "p50": 47503,
+          "p90": 73842,
+          "max": 82276
+        },
+        "request": {
+          "n": 35,
+          "mean": 1527139598,
+          "p50": 1622519376,
+          "p90": 1825830910,
+          "max": 1975147797
+        },
+        "waited": 0,
+        "max_in_flight": 2
+      },
+      "lags": [
+        {
+          "kind": "window",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 750,
+          "event_to_answer_ms": 1754,
+          "queued_ms": 0,
+          "request_ms": 1754,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 1,
+          "source_ms": 27930,
+          "arrival_to_event_ms": 5417,
+          "event_to_answer_ms": 2936,
+          "queued_ms": 0,
+          "request_ms": 2936,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 2,
+          "source_ms": 53695,
+          "arrival_to_event_ms": 14751,
+          "event_to_answer_ms": 908,
+          "queued_ms": 0,
+          "request_ms": 908,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 3,
+          "source_ms": 78057,
+          "arrival_to_event_ms": 1875,
+          "event_to_answer_ms": 2181,
+          "queued_ms": 0,
+          "request_ms": 2181,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 4,
+          "source_ms": 104420,
+          "arrival_to_event_ms": 3126,
+          "event_to_answer_ms": 1172,
+          "queued_ms": 0,
+          "request_ms": 1172,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 5,
+          "source_ms": 131530,
+          "arrival_to_event_ms": 21167,
+          "event_to_answer_ms": 1407,
+          "queued_ms": 0,
+          "request_ms": 1407,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 6,
+          "source_ms": 156750,
+          "arrival_to_event_ms": 6,
+          "event_to_answer_ms": 2239,
+          "queued_ms": 0,
+          "request_ms": 2238,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 10,
+          "event_to_answer_ms": 502,
+          "queued_ms": 0,
+          "request_ms": 502,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 1,
+          "source_ms": 8917,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1414,
+          "queued_ms": 0,
+          "request_ms": 1414,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 2,
+          "source_ms": 13458,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1778,
+          "queued_ms": 0,
+          "request_ms": 1778,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 3,
+          "source_ms": 18417,
+          "arrival_to_event_ms": 81,
+          "event_to_answer_ms": 1647,
+          "queued_ms": 0,
+          "request_ms": 1646,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 4,
+          "source_ms": 25000,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1825,
+          "queued_ms": 0,
+          "request_ms": 1825,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 5,
+          "source_ms": 35000,
+          "arrival_to_event_ms": 176,
+          "event_to_answer_ms": 1627,
+          "queued_ms": 0,
+          "request_ms": 1627,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 6,
+          "source_ms": 40250,
+          "arrival_to_event_ms": 143,
+          "event_to_answer_ms": 1711,
+          "queued_ms": 0,
+          "request_ms": 1711,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 7,
+          "source_ms": 42083,
+          "arrival_to_event_ms": 114,
+          "event_to_answer_ms": 1694,
+          "queued_ms": 0,
+          "request_ms": 1694,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 8,
+          "source_ms": 45625,
+          "arrival_to_event_ms": 133,
+          "event_to_answer_ms": 1616,
+          "queued_ms": 0,
+          "request_ms": 1616,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 9,
+          "source_ms": 49792,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1752,
+          "queued_ms": 0,
+          "request_ms": 1752,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 10,
+          "source_ms": 51125,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1685,
+          "queued_ms": 0,
+          "request_ms": 1685,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 11,
+          "source_ms": 53667,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1479,
+          "queued_ms": 0,
+          "request_ms": 1479,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 12,
+          "source_ms": 56667,
+          "arrival_to_event_ms": 143,
+          "event_to_answer_ms": 1485,
+          "queued_ms": 0,
+          "request_ms": 1485,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 13,
+          "source_ms": 64458,
+          "arrival_to_event_ms": 10,
+          "event_to_answer_ms": 629,
+          "queued_ms": 0,
+          "request_ms": 629,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 14,
+          "source_ms": 69917,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1675,
+          "queued_ms": 0,
+          "request_ms": 1675,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 15,
+          "source_ms": 74083,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1812,
+          "queued_ms": 0,
+          "request_ms": 1812,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 16,
+          "source_ms": 79375,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1624,
+          "queued_ms": 0,
+          "request_ms": 1624,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 17,
+          "source_ms": 82125,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1230,
+          "queued_ms": 0,
+          "request_ms": 1230,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 18,
+          "source_ms": 84833,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1299,
+          "queued_ms": 0,
+          "request_ms": 1299,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 19,
+          "source_ms": 92417,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1877,
+          "queued_ms": 0,
+          "request_ms": 1877,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 20,
+          "source_ms": 95417,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1637,
+          "queued_ms": 0,
+          "request_ms": 1637,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 21,
+          "source_ms": 98208,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1526,
+          "queued_ms": 0,
+          "request_ms": 1526,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 22,
+          "source_ms": 102417,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1285,
+          "queued_ms": 0,
+          "request_ms": 1285,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 23,
+          "source_ms": 112417,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1345,
+          "queued_ms": 0,
+          "request_ms": 1345,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 24,
+          "source_ms": 116708,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1366,
+          "queued_ms": 0,
+          "request_ms": 1366,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 25,
+          "source_ms": 119875,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1485,
+          "queued_ms": 0,
+          "request_ms": 1485,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 26,
+          "source_ms": 129875,
+          "arrival_to_event_ms": 174,
+          "event_to_answer_ms": 1626,
+          "queued_ms": 0,
+          "request_ms": 1626,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 27,
+          "source_ms": 134917,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1622,
+          "queued_ms": 0,
+          "request_ms": 1622,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 28,
+          "source_ms": 139917,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1340,
+          "queued_ms": 0,
+          "request_ms": 1340,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 29,
+          "source_ms": 143292,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1666,
+          "queued_ms": 0,
+          "request_ms": 1666,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 30,
+          "source_ms": 145792,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 1829,
+          "queued_ms": 0,
+          "request_ms": 1828,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 31,
+          "source_ms": 152875,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1545,
+          "queued_ms": 0,
+          "request_ms": 1545,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 32,
+          "source_ms": 158542,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1204,
+          "queued_ms": 0,
+          "request_ms": 1204,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 33,
+          "source_ms": 168542,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 1975,
+          "queued_ms": 0,
+          "request_ms": 1975,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 34,
+          "source_ms": 172292,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1621,
+          "queued_ms": 0,
+          "request_ms": 1621,
+          "ok": true
+        }
+      ],
+      "steps": 7,
+      "settled_grew": true,
+      "wer": {
+        "edits": 35,
+        "length": 97,
+        "rate": 0.36082474226804123
+      },
+      "scored": 7,
+      "seams": 6,
+      "unmatched": 4,
+      "transcript": "We have main engine start. Four, three, two, one. Go. They jerked up. Look, Celia, we have to follow our passions. You have your robotics and I just want to be awesome in space. Why don't you just admit that you're freaked out by my robot hand? I'm not freaked out by it's All right, fine. I'm freaked out. I'm having nightmares that I'm being chased by this giant robotic claw. We're done. Robot's memory synced and lock. This is pretty freaking. [No speech detected] Should you be down there? I heard you guys talked about last night. It's not my fault, you know. [Music]",
+      "descriptions": [
+        {
+          "index": 0,
+          "time": 0,
+          "reason": "first",
+          "description": "This image is a solid, uniform black rectangle. It contains no other colors, shapes, or patterns."
+        },
+        {
+          "index": 1,
+          "time": 8917000000,
+          "reason": "scene",
+          "description": "This image shows a close-up, low-angle view of massive, industrial cylindrical structures that resemble rocket engines or large storage tanks. The machinery is weathered and metallic, featuring complex scaffolding and red structural supports amidst a hazy, atmospheric background."
+        },
+        {
+          "index": 2,
+          "time": 13458000000,
+          "reason": "scene",
+          "description": "This image shows a close-up, low-angle view of massive, industrial-looking structures that resemble large, metallic silos or cooling towers. The scene is bathed in a bright, hazy light that creates a glowing, cinematic atmosphere, obscuring some of the intricate mechanical details. The structures appear to be part of a complex, futuristic, or sci-fi industrial facility."
+        },
+        {
+          "index": 3,
+          "time": 18417000000,
+          "reason": "scene",
+          "description": "A sprawling, industrial cityscape is filled with numerous tall, skeletal metal structures and scaffolding that stretch toward a hazy sky. In the center, a bright, ethereal light pierces through the thick fog, creating a dramatic focal point amidst the dense urban machinery. The overall atmosphere is somber and dystopian, characterized by a muted color palette and a sense of overwhelming scale."
+        },
+        {
+          "index": 4,
+          "time": 25000000000,
+          "reason": "scene",
+          "description": "A man and a woman are standing on a bridge in a city, both looking towards the right side of the frame. The man is wearing a dark jacket over a patterned shirt, while the woman is dressed in a blue and black vest over a blue long-sleeve shirt."
+        },
+        {
+          "index": 5,
+          "time": 35000000000,
+          "reason": "interval",
+          "description": "A young man and a woman are standing on a bridge in a city, facing each other in a tense confrontation. The woman is wearing a blue and black jacket and appears to be pointing a mechanical, robotic arm toward the man. The background features a canal and traditional European-style buildings lined with green trees."
+        },
+        {
+          "index": 6,
+          "time": 40250000000,
+          "reason": "scene",
+          "description": "This image features two glowing, wireframe humanoid figures, one orange and one blue, appearing to interact in a dark, industrial setting. The background is filled with complex, shadowy machinery and structural elements, creating a high-tech or sci-fi atmosphere. The scene is illuminated by the vibrant light of the digital outlines against the dim, gritty environment."
+        },
+        {
+          "index": 7,
+          "time": 42083000000,
+          "reason": "scene",
+          "description": "This cinematic image shows a dark, sprawling, and futuristic cityscape filled with massive, decaying industrial structures. The text \"40 YEARS LATER\" is centered in the frame, suggesting a time jump in a science fiction setting. Glowing pink and blue lights emerge from the shadows, highlighting the gritty and atmospheric environment."
+        },
+        {
+          "index": 8,
+          "time": 45625000000,
+          "reason": "scene",
+          "description": "Two glowing, wireframe humanoid figures, one orange and one blue, stand amidst a dark, industrial, and cluttered environment. The scene has a high-tech, digital aesthetic, featuring scattered red and blue light artifacts that suggest a glitchy or virtual reality setting."
+        },
+        {
+          "index": 9,
+          "time": 49792000000,
+          "reason": "scene",
+          "description": "A person's hand is shown interacting with a complex array of electronic equipment, featuring various knobs, buttons, and glowing digital displays. The scene is overlaid with futuristic, holographic-style graphics and data readouts in shades of green and blue, creating a high-tech, sci-fi aesthetic."
+        },
+        {
+          "index": 10,
+          "time": 51125000000,
+          "reason": "scene",
+          "description": "A man with curly hair and glasses is focused on a task in a high-tech laboratory setting. The scene is overlaid with glowing, translucent digital graphics and data visualizations in shades of pink, green, and blue. Other individuals in white lab coats are visible in the background, contributing to the scientific atmosphere."
+        },
+        {
+          "index": 11,
+          "time": 53667000000,
+          "reason": "scene",
+          "description": "This image features two people working with various electronic components and equipment, overlaid with vibrant, glowing digital graphics and data visualizations. The scene blends a physical workspace with futuristic, holographic elements, creating a high-tech or sci-fi atmosphere."
+        },
+        {
+          "index": 12,
+          "time": 56667000000,
+          "reason": "scene",
+          "description": "This image features a highly detailed human brain resting on a white plate, appearing as if it is being presented as a specimen. The brain is surrounded by glowing pink light and digital, holographic-style data overlays, suggesting a theme of advanced neuroscience or artificial intelligence."
+        },
+        {
+          "index": 13,
+          "time": 64458000000,
+          "reason": "scene",
+          "description": "This image is a solid, uniform black rectangle. It contains no colors, shapes, or patterns other than a single, consistent dark tone."
+        },
+        {
+          "index": 14,
+          "time": 69917000000,
+          "reason": "scene",
+          "description": "This image depicts a dark, dystopian cityscape where traditional European-style architecture is juxtaposed with massive, industrial machinery and towering structures. In the background, a large airship floats through a heavy, overcast sky filled with smoke and smog. The overall atmosphere is somber and cinematic, suggesting a steampunk or science fiction setting."
+        },
+        {
+          "index": 15,
+          "time": 74083000000,
+          "reason": "scene",
+          "description": "A dark, cinematic shot shows the interior of a complex, industrial structure filled with heavy ropes, cables, and large metal bells. In the background, a person is visible sitting amidst the machinery, looking out toward a misty, blue-toned landscape. The overall atmosphere is moody and mysterious, characterized by deep shadows and a cold color palette."
+        },
+        {
+          "index": 16,
+          "time": 79375000000,
+          "reason": "scene",
+          "description": "A newspaper with the headline \"ROBOTICIST CREATES KILLER ROBOTS\" is draped over the head of a person lying down. A hand is visible on the right side, holding the edge of the crumpled paper. The scene is dimly lit, creating a somber and dramatic atmosphere."
+        },
+        {
+          "index": 17,
+          "time": 82125000000,
+          "reason": "scene",
+          "description": "A man is shown in profile, aiming a large, futuristic-looking rifle while lying down. He is wearing a dark, quilted jacket and is positioned behind a stone balustrade in a misty, blue-toned environment."
+        },
+        {
+          "index": 18,
+          "time": 84833000000,
+          "reason": "scene",
+          "description": "A view through a circular lens reveals a large, dark, industrial structure or vehicle overlooking a misty, desaturated cityscape. The foreground is dominated by complex machinery and scaffolding, while the background shows faint outlines of buildings under a heavy fog."
+        },
+        {
+          "index": 19,
+          "time": 92417000000,
+          "reason": "scene",
+          "description": "A close-up shot shows a person peering intensely through the scope of a large, futuristic-looking weapon. The scene is bathed in a cool, blue-toned light, creating a tense and cinematic atmosphere."
+        },
+        {
+          "index": 20,
+          "time": 95417000000,
+          "reason": "scene",
+          "description": "A large, steampunk-style airship floats through a misty, blue-toned sky above a dense cityscape of traditional European-style buildings. The scene is viewed through a circular, blurred frame, creating a sense of looking out from a window or portal. The overall atmosphere is cinematic and mysterious, characterized by a heavy fog and a muted color palette."
+        },
+        {
+          "index": 21,
+          "time": 98208000000,
+          "reason": "scene",
+          "description": "A person lies on a balcony or rooftop, partially covered by a newspaper and dark clothing. In the background, a soldier in tactical gear aims a rifle toward the horizon through a stone balustrade. The scene is dimly lit, with a few candles providing a soft glow against the blue-toned atmosphere."
+        },
+        {
+          "index": 22,
+          "time": 102417000000,
+          "reason": "scene",
+          "description": "Viewed through a circular lens, a large, steampunk-style airship floats above a dense cityscape of traditional European-style buildings. The scene is shrouded in a thick, blue-toned fog, giving the entire image a mysterious and cinematic atmosphere."
+        },
+        {
+          "index": 23,
+          "time": 112417000000,
+          "reason": "interval",
+          "description": "A large, steampunk-style airship floats through a hazy sky above a dense cityscape of traditional European-style buildings. The vessel is heavily detailed with various mechanical parts, lights, and exhaust, appearing as if it is viewed through a circular lens or portal."
+        },
+        {
+          "index": 24,
+          "time": 116708000000,
+          "reason": "scene",
+          "description": "A man is seen in profile, aiming a large, futuristic-looking rifle through a scope. He is positioned behind a stone balustrade, appearing to be on a balcony or elevated platform overlooking a misty, blue-toned landscape."
+        },
+        {
+          "index": 25,
+          "time": 119875000000,
+          "reason": "scene",
+          "description": "An elderly man with white hair lies on a bed, appearing to be in a state of rest or distress. In the background, a soldier in tactical gear is positioned behind a railing, aiming a rifle. The scene is dimly lit with a cool, blueish tone, creating a somber or tense atmosphere."
+        },
+        {
+          "index": 26,
+          "time": 129875000000,
+          "reason": "interval",
+          "description": "An older man with grey hair and a beard is shown in a medium shot, appearing to be in distress or pain. He is wearing a dark, patterned jacket and is positioned in what looks like a rustic, dimly lit room or balcony. In the background, another person is partially visible, sitting near a window or opening."
+        },
+        {
+          "index": 27,
+          "time": 134917000000,
+          "reason": "scene",
+          "description": "An older man with grey hair sits alone on a wooden deck, looking somber in a dimly lit, atmospheric setting. He is surrounded by various nautical equipment, ropes, and structural pillars, all shrouded in a thick, blue-toned mist. The scene has a cinematic and melancholic quality, suggesting a moment of quiet reflection or solitude."
+        },
+        {
+          "index": 28,
+          "time": 139917000000,
+          "reason": "scene",
+          "description": "A man is shown in profile, aiming a large, futuristic-looking rifle equipped with a scope. He is positioned behind a stone balustrade, set against a hazy, blue-toned background."
+        },
+        {
+          "index": 29,
+          "time": 143292000000,
+          "reason": "scene",
+          "description": "A middle-aged man with gray hair and a beard stands on a balcony, holding onto a thick rope with a serious expression. In the background, another person is crouched near a railing, appearing to hold a weapon. The scene is set in a dimly lit, atmospheric environment with a soft, blue-toned light."
+        },
+        {
+          "index": 30,
+          "time": 145792000000,
+          "reason": "scene",
+          "description": "A man with a focused and intense expression peers from behind a large, dark object, possibly a weapon or piece of equipment. The scene is dimly lit with a cool, blueish tone, creating a tense and cinematic atmosphere. In the foreground, blurred architectural elements and a small juice box add depth to the composition."
+        },
+        {
+          "index": 31,
+          "time": 152875000000,
+          "reason": "scene",
+          "description": "A person is seen falling through the air in front of a massive, ornate pipe organ within a large, gothic-style hall. The scene is filled with towering stone columns covered in ivy and intricate architectural details, creating a dramatic and cinematic atmosphere."
+        },
+        {
+          "index": 32,
+          "time": 158542000000,
+          "reason": "scene",
+          "description": "A person's legs and feet are suspended in the air above a dark, textured surface. A thick, tan rope is coiled on the ground below and extends upward toward the person."
+        },
+        {
+          "index": 33,
+          "time": 168542000000,
+          "reason": "interval",
+          "description": "A person with white hair stands with their back to the camera, looking toward a large, arched opening in a dark, industrial-looking structure. The setting appears to be a weathered, cavernous space filled with debris, ropes, and metallic machinery. The overall atmosphere is somber and cinematic, with dim lighting casting long shadows across the floor."
+        },
+        {
+          "index": 34,
+          "time": 172292000000,
+          "reason": "scene",
+          "description": "A warm, dimly lit indoor scene features a collection of books and a lamp on the left, while a large, technical blueprint hangs on the wall to the right. A second lamp with a red shade sits in the foreground, casting a soft glow across the room. The composition creates a cozy, studious atmosphere with deep shadows and vintage textures."
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "wall": 181484534488,
+      "ended": 179444434522,
+      "last_window": 2043528436,
+      "windows": 7,
+      "frames": 35,
+      "reasons": {
+        "first": 1,
+        "interval": 4,
+        "scene": 30
+      },
+      "cuts": {
+        "end": 1,
+        "silence": 6
+      },
+      "failed": 0,
+      "same_as_unpaced": true,
+      "window_lags": {
+        "arrival_to_event": {
+          "n": 7,
+          "mean": 6727813599,
+          "p50": 3126208491,
+          "p90": 21168040620,
+          "max": 21168040620
+        },
+        "event_to_answer": {
+          "n": 7,
+          "mean": 1739194658,
+          "p50": 1836652456,
+          "p90": 2731743944,
+          "max": 2731743944
+        },
+        "queued": {
+          "n": 7,
+          "mean": 55422,
+          "p50": 54062,
+          "p90": 74953,
+          "max": 74953
+        },
+        "request": {
+          "n": 7,
+          "mean": 1739139236,
+          "p50": 1836604329,
+          "p90": 2731689882,
+          "max": 2731689882
+        },
+        "waited": 0,
+        "max_in_flight": 2
+      },
+      "frame_lags": {
+        "arrival_to_event": {
+          "n": 35,
+          "mean": 112943988,
+          "p50": 113388766,
+          "p90": 154064584,
+          "max": 177093730
+        },
+        "event_to_answer": {
+          "n": 35,
+          "mean": 1562570977,
+          "p50": 1570701067,
+          "p90": 2042568268,
+          "max": 2322632421
+        },
+        "queued": {
+          "n": 35,
+          "mean": 49721,
+          "p50": 46045,
+          "p90": 66810,
+          "max": 77985
+        },
+        "request": {
+          "n": 35,
+          "mean": 1562521256,
+          "p50": 1570663903,
+          "p90": 2042529602,
+          "max": 2322574052
+        },
+        "waited": 0,
+        "max_in_flight": 2
+      },
+      "lags": [
+        {
+          "kind": "window",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 750,
+          "event_to_answer_ms": 1836,
+          "queued_ms": 0,
+          "request_ms": 1836,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 1,
+          "source_ms": 27930,
+          "arrival_to_event_ms": 5417,
+          "event_to_answer_ms": 2731,
+          "queued_ms": 0,
+          "request_ms": 2731,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 2,
+          "source_ms": 53695,
+          "arrival_to_event_ms": 14751,
+          "event_to_answer_ms": 1031,
+          "queued_ms": 0,
+          "request_ms": 1031,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 3,
+          "source_ms": 78057,
+          "arrival_to_event_ms": 1876,
+          "event_to_answer_ms": 2032,
+          "queued_ms": 0,
+          "request_ms": 2032,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 4,
+          "source_ms": 104420,
+          "arrival_to_event_ms": 3126,
+          "event_to_answer_ms": 1089,
+          "queued_ms": 0,
+          "request_ms": 1089,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 5,
+          "source_ms": 131530,
+          "arrival_to_event_ms": 21168,
+          "event_to_answer_ms": 1412,
+          "queued_ms": 0,
+          "request_ms": 1412,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 6,
+          "source_ms": 156750,
+          "arrival_to_event_ms": 3,
+          "event_to_answer_ms": 2040,
+          "queued_ms": 0,
+          "request_ms": 2040,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 21,
+          "event_to_answer_ms": 533,
+          "queued_ms": 0,
+          "request_ms": 533,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 1,
+          "source_ms": 8917,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1456,
+          "queued_ms": 0,
+          "request_ms": 1456,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 2,
+          "source_ms": 13458,
+          "arrival_to_event_ms": 133,
+          "event_to_answer_ms": 2108,
+          "queued_ms": 0,
+          "request_ms": 2108,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 3,
+          "source_ms": 18417,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1701,
+          "queued_ms": 0,
+          "request_ms": 1701,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 4,
+          "source_ms": 25000,
+          "arrival_to_event_ms": 165,
+          "event_to_answer_ms": 1747,
+          "queued_ms": 0,
+          "request_ms": 1747,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 5,
+          "source_ms": 35000,
+          "arrival_to_event_ms": 177,
+          "event_to_answer_ms": 1738,
+          "queued_ms": 0,
+          "request_ms": 1738,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 6,
+          "source_ms": 40250,
+          "arrival_to_event_ms": 145,
+          "event_to_answer_ms": 2239,
+          "queued_ms": 0,
+          "request_ms": 2239,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 7,
+          "source_ms": 42083,
+          "arrival_to_event_ms": 124,
+          "event_to_answer_ms": 1654,
+          "queued_ms": 0,
+          "request_ms": 1653,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 8,
+          "source_ms": 45625,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 2322,
+          "queued_ms": 0,
+          "request_ms": 2322,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 9,
+          "source_ms": 49792,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1710,
+          "queued_ms": 0,
+          "request_ms": 1710,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 10,
+          "source_ms": 51125,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 1719,
+          "queued_ms": 0,
+          "request_ms": 1719,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 11,
+          "source_ms": 53667,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1480,
+          "queued_ms": 0,
+          "request_ms": 1480,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 12,
+          "source_ms": 56667,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1521,
+          "queued_ms": 0,
+          "request_ms": 1521,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 13,
+          "source_ms": 64458,
+          "arrival_to_event_ms": 10,
+          "event_to_answer_ms": 633,
+          "queued_ms": 0,
+          "request_ms": 633,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 14,
+          "source_ms": 69917,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1600,
+          "queued_ms": 0,
+          "request_ms": 1600,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 15,
+          "source_ms": 74083,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1566,
+          "queued_ms": 0,
+          "request_ms": 1566,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 16,
+          "source_ms": 79375,
+          "arrival_to_event_ms": 124,
+          "event_to_answer_ms": 1569,
+          "queued_ms": 0,
+          "request_ms": 1569,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 17,
+          "source_ms": 82125,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1416,
+          "queued_ms": 0,
+          "request_ms": 1415,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 18,
+          "source_ms": 84833,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1258,
+          "queued_ms": 0,
+          "request_ms": 1258,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 19,
+          "source_ms": 92417,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1272,
+          "queued_ms": 0,
+          "request_ms": 1272,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 20,
+          "source_ms": 95417,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1714,
+          "queued_ms": 0,
+          "request_ms": 1714,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 21,
+          "source_ms": 98208,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1570,
+          "queued_ms": 0,
+          "request_ms": 1570,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 22,
+          "source_ms": 102417,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1311,
+          "queued_ms": 0,
+          "request_ms": 1311,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 23,
+          "source_ms": 112417,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1560,
+          "queued_ms": 0,
+          "request_ms": 1560,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 24,
+          "source_ms": 116708,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1268,
+          "queued_ms": 0,
+          "request_ms": 1268,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 25,
+          "source_ms": 119875,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1574,
+          "queued_ms": 0,
+          "request_ms": 1574,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 26,
+          "source_ms": 129875,
+          "arrival_to_event_ms": 153,
+          "event_to_answer_ms": 2042,
+          "queued_ms": 0,
+          "request_ms": 2042,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 27,
+          "source_ms": 134917,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1570,
+          "queued_ms": 0,
+          "request_ms": 1570,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 28,
+          "source_ms": 139917,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1404,
+          "queued_ms": 0,
+          "request_ms": 1404,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 29,
+          "source_ms": 143292,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1584,
+          "queued_ms": 0,
+          "request_ms": 1584,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 30,
+          "source_ms": 145792,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1566,
+          "queued_ms": 0,
+          "request_ms": 1566,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 31,
+          "source_ms": 152875,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1438,
+          "queued_ms": 0,
+          "request_ms": 1438,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 32,
+          "source_ms": 158542,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1308,
+          "queued_ms": 0,
+          "request_ms": 1308,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 33,
+          "source_ms": 168542,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 1874,
+          "queued_ms": 0,
+          "request_ms": 1874,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 34,
+          "source_ms": 172292,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1646,
+          "queued_ms": 0,
+          "request_ms": 1646,
+          "ok": true
+        }
+      ],
+      "steps": 7,
+      "settled_grew": true,
+      "wer": {
+        "edits": 35,
+        "length": 97,
+        "rate": 0.36082474226804123
+      },
+      "scored": 7,
+      "seams": 6,
+      "unmatched": 4,
+      "transcript": "We have main engine start. Four, three, two, one. Go. They jerked up. Look, Celia, we have to follow our passions. You have your robotics and I just want to be awesome in space. Why don't you just admit that you're freaked out by my robot hand? I'm not freaked out by it's All right, fine. I'm freaked out. I'm having nightmares that I'm being chased by this giant robotic claw. We're done. Robot's memory synced and lock. This is pretty freaking. [No speech detected] Should you be down there? I heard you guys talked about last night. It's not my fault, you know. [Music]",
+      "descriptions": [
+        {
+          "index": 0,
+          "time": 0,
+          "reason": "first",
+          "description": "This image is a solid, uniform black rectangle. It contains no other colors, shapes, or patterns."
+        },
+        {
+          "index": 1,
+          "time": 8917000000,
+          "reason": "scene",
+          "description": "This image shows a close-up, low-angle view of massive, industrial cylindrical structures that resemble rocket engines or large storage tanks. The machinery is weathered and metallic, featuring complex scaffolding and red structural supports amidst a hazy, atmospheric background."
+        },
+        {
+          "index": 2,
+          "time": 13458000000,
+          "reason": "scene",
+          "description": "This image shows a close-up, low-angle view of massive, industrial-looking structures that resemble large, metallic silos or cooling towers. The scene is bathed in a bright, hazy light that creates a glowing, cinematic atmosphere, obscuring some of the intricate mechanical details. The structures appear to be part of a complex, futuristic, or sci-fi industrial facility."
+        },
+        {
+          "index": 3,
+          "time": 18417000000,
+          "reason": "scene",
+          "description": "A sprawling, industrial cityscape is filled with numerous tall, skeletal metal structures and scaffolding that stretch toward a hazy sky. In the center, a bright, ethereal light pierces through the thick fog, creating a dramatic focal point amidst the dense urban machinery. The overall atmosphere is somber and dystopian, characterized by a muted color palette and a sense of overwhelming scale."
+        },
+        {
+          "index": 4,
+          "time": 25000000000,
+          "reason": "scene",
+          "description": "A man and a woman are standing on a bridge in a city, both looking towards the right side of the frame. The man is wearing a dark jacket over a patterned shirt, while the woman is dressed in a blue and black vest over a blue long-sleeve shirt."
+        },
+        {
+          "index": 5,
+          "time": 35000000000,
+          "reason": "interval",
+          "description": "A young man and a woman are standing on a bridge in a city, facing each other in a tense confrontation. The woman is wearing a blue and black jacket and appears to be pointing a mechanical, robotic arm toward the man. The background features a canal and traditional European-style buildings lined with green trees."
+        },
+        {
+          "index": 6,
+          "time": 40250000000,
+          "reason": "scene",
+          "description": "This image features two glowing, wireframe humanoid figures, one orange and one blue, appearing to interact in a dark, industrial setting. The background is filled with complex, shadowy machinery and structural elements, creating a high-tech or sci-fi atmosphere. The scene is illuminated by the vibrant light of the digital outlines against the dim, gritty environment."
+        },
+        {
+          "index": 7,
+          "time": 42083000000,
+          "reason": "scene",
+          "description": "This cinematic image shows a dark, sprawling, and futuristic cityscape filled with massive, decaying industrial structures. The text \"40 YEARS LATER\" is centered in the frame, suggesting a time jump in a science fiction setting. Glowing pink and blue lights emerge from the shadows, highlighting the gritty and atmospheric environment."
+        },
+        {
+          "index": 8,
+          "time": 45625000000,
+          "reason": "scene",
+          "description": "Two glowing, wireframe humanoid figures, one orange and one blue, stand amidst a dark, industrial, and cluttered environment. The scene has a high-tech, digital aesthetic, featuring scattered red and blue light artifacts that suggest a glitchy or virtual reality setting."
+        },
+        {
+          "index": 9,
+          "time": 49792000000,
+          "reason": "scene",
+          "description": "A person's hand is shown interacting with a complex array of electronic equipment, featuring various knobs, buttons, and glowing digital displays. The scene is overlaid with futuristic, holographic-style graphics and data readouts in shades of green and blue, creating a high-tech, sci-fi aesthetic."
+        },
+        {
+          "index": 10,
+          "time": 51125000000,
+          "reason": "scene",
+          "description": "A man with curly hair and glasses is focused on a task in a high-tech laboratory setting. The scene is overlaid with glowing, translucent digital graphics and data visualizations in shades of pink, green, and blue. Other individuals in white lab coats are visible in the background, contributing to the scientific atmosphere."
+        },
+        {
+          "index": 11,
+          "time": 53667000000,
+          "reason": "scene",
+          "description": "This image features two people working with various electronic components and equipment, overlaid with vibrant, glowing digital graphics and data visualizations. The scene blends a physical workspace with futuristic, holographic elements, creating a high-tech or sci-fi atmosphere."
+        },
+        {
+          "index": 12,
+          "time": 56667000000,
+          "reason": "scene",
+          "description": "This image features a highly detailed human brain resting on a white plate, appearing as if it is being presented as a specimen. The brain is surrounded by glowing pink light and digital, holographic-style data overlays, suggesting a theme of advanced neuroscience or artificial intelligence."
+        },
+        {
+          "index": 13,
+          "time": 64458000000,
+          "reason": "scene",
+          "description": "This image is a solid, uniform black rectangle. It contains no colors, shapes, or patterns other than a single, consistent dark tone."
+        },
+        {
+          "index": 14,
+          "time": 69917000000,
+          "reason": "scene",
+          "description": "This image depicts a dark, dystopian cityscape where traditional European-style architecture is juxtaposed with massive, industrial machinery and towering structures. In the background, a large airship floats through a heavy, overcast sky filled with smoke and smog. The overall atmosphere is somber and cinematic, suggesting a steampunk or science fiction setting."
+        },
+        {
+          "index": 15,
+          "time": 74083000000,
+          "reason": "scene",
+          "description": "A dark, cinematic shot shows the interior of a complex, industrial structure filled with heavy ropes, cables, and large metal bells. In the background, a person is visible sitting amidst the machinery, looking out toward a misty, blue-toned landscape. The overall atmosphere is moody and mysterious, characterized by deep shadows and a cold color palette."
+        },
+        {
+          "index": 16,
+          "time": 79375000000,
+          "reason": "scene",
+          "description": "A newspaper with the headline \"ROBOTICIST CREATES KILLER ROBOTS\" is draped over the head of a person lying down. A hand is visible on the right side, holding the edge of the crumpled paper. The scene is dimly lit, creating a somber and dramatic atmosphere."
+        },
+        {
+          "index": 17,
+          "time": 82125000000,
+          "reason": "scene",
+          "description": "A man is shown in profile, aiming a large, futuristic-looking rifle while lying down. He is wearing a dark, quilted jacket and is positioned behind a stone balustrade in a misty, blue-toned environment."
+        },
+        {
+          "index": 18,
+          "time": 84833000000,
+          "reason": "scene",
+          "description": "A view through a circular lens reveals a large, dark, industrial structure or vehicle overlooking a misty, desaturated cityscape. The foreground is dominated by complex machinery and scaffolding, while the background shows faint outlines of buildings under a heavy fog."
+        },
+        {
+          "index": 19,
+          "time": 92417000000,
+          "reason": "scene",
+          "description": "A close-up shot shows a person peering intensely through the scope of a large, futuristic-looking weapon. The scene is bathed in a cool, blue-toned light, creating a tense and cinematic atmosphere."
+        },
+        {
+          "index": 20,
+          "time": 95417000000,
+          "reason": "scene",
+          "description": "A large, steampunk-style airship floats through a misty, blue-toned sky above a dense cityscape of traditional European-style buildings. The scene is viewed through a circular, blurred frame, creating a sense of looking out from a window or portal. The overall atmosphere is cinematic and mysterious, characterized by a heavy fog and a muted color palette."
+        },
+        {
+          "index": 21,
+          "time": 98208000000,
+          "reason": "scene",
+          "description": "A person lies on a balcony or rooftop, partially covered by a newspaper and dark clothing. In the background, a soldier in tactical gear aims a rifle toward the horizon through a stone balustrade. The scene is dimly lit, with a few candles providing a soft glow against the blue-toned atmosphere."
+        },
+        {
+          "index": 22,
+          "time": 102417000000,
+          "reason": "scene",
+          "description": "Viewed through a circular lens, a large, steampunk-style airship floats above a dense cityscape of traditional European-style buildings. The scene is shrouded in a thick, blue-toned fog, giving the entire image a mysterious and cinematic atmosphere."
+        },
+        {
+          "index": 23,
+          "time": 112417000000,
+          "reason": "interval",
+          "description": "A large, steampunk-style airship floats through a hazy sky above a dense cityscape of traditional European-style buildings. The vessel is heavily detailed with various mechanical parts, lights, and exhaust, appearing as if it is viewed through a circular lens or portal."
+        },
+        {
+          "index": 24,
+          "time": 116708000000,
+          "reason": "scene",
+          "description": "A man is seen in profile, aiming a large, futuristic-looking rifle through a scope. He is positioned behind a stone balustrade, appearing to be on a balcony or elevated platform overlooking a misty, blue-toned landscape."
+        },
+        {
+          "index": 25,
+          "time": 119875000000,
+          "reason": "scene",
+          "description": "An elderly man with white hair lies on a bed, appearing to be in a state of rest or distress. In the background, a soldier in tactical gear is positioned behind a railing, aiming a rifle. The scene is dimly lit with a cool, blueish tone, creating a somber or tense atmosphere."
+        },
+        {
+          "index": 26,
+          "time": 129875000000,
+          "reason": "interval",
+          "description": "An older man with grey hair and a beard is shown in a medium shot, appearing to be in distress or pain. He is wearing a dark, patterned jacket and is positioned in what looks like a rustic, dimly lit room or balcony. In the background, another person is partially visible, sitting near a window or opening."
+        },
+        {
+          "index": 27,
+          "time": 134917000000,
+          "reason": "scene",
+          "description": "An older man with grey hair sits alone on a wooden deck, looking somber in a dimly lit, atmospheric setting. He is surrounded by various nautical equipment, ropes, and structural pillars, all shrouded in a thick, blue-toned mist. The scene has a cinematic and melancholic quality, suggesting a moment of quiet reflection or solitude."
+        },
+        {
+          "index": 28,
+          "time": 139917000000,
+          "reason": "scene",
+          "description": "A man is shown in profile, aiming a large, futuristic-looking rifle equipped with a scope. He is positioned behind a stone balustrade, set against a hazy, blue-toned background."
+        },
+        {
+          "index": 29,
+          "time": 143292000000,
+          "reason": "scene",
+          "description": "A middle-aged man with gray hair and a beard stands on a balcony, holding onto a thick rope with a serious expression. In the background, another person is crouched near a railing, appearing to hold a weapon. The scene is set in a dimly lit, atmospheric environment with a soft, blue-toned light."
+        },
+        {
+          "index": 30,
+          "time": 145792000000,
+          "reason": "scene",
+          "description": "A man with a focused and intense expression peers from behind a large, dark object, possibly a weapon or piece of equipment. The scene is dimly lit with a cool, blueish tone, creating a tense and cinematic atmosphere. In the foreground, blurred architectural elements and a small juice box add depth to the composition."
+        },
+        {
+          "index": 31,
+          "time": 152875000000,
+          "reason": "scene",
+          "description": "A person is seen falling through the air in front of a massive, ornate pipe organ within a large, gothic-style hall. The scene is filled with towering stone columns covered in ivy and intricate architectural details, creating a dramatic and cinematic atmosphere."
+        },
+        {
+          "index": 32,
+          "time": 158542000000,
+          "reason": "scene",
+          "description": "A person's legs and feet are suspended in the air above a dark, textured surface. A thick, tan rope is coiled on the ground below and extends upward toward the person."
+        },
+        {
+          "index": 33,
+          "time": 168542000000,
+          "reason": "interval",
+          "description": "A person with white hair stands with their back to the camera, looking toward a large, arched opening in a dark, industrial-looking structure. The setting appears to be a weathered, cavernous space filled with debris, ropes, and metallic machinery. The overall atmosphere is somber and cinematic, illuminated by dim, moody lighting."
+        },
+        {
+          "index": 34,
+          "time": 172292000000,
+          "reason": "scene",
+          "description": "A warm, dimly lit indoor scene features a collection of books and a lamp on the left, while a large, technical blueprint hangs on the wall to the right. A second lamp with a red shade sits in the foreground, casting a soft glow across the room. The composition creates a cozy, studious atmosphere with deep shadows and vintage textures."
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "wall": 181854520281,
+      "ended": 179505672604,
+      "last_window": 2353791218,
+      "windows": 7,
+      "frames": 35,
+      "reasons": {
+        "first": 1,
+        "interval": 4,
+        "scene": 30
+      },
+      "cuts": {
+        "end": 1,
+        "silence": 6
+      },
+      "failed": 0,
+      "same_as_unpaced": true,
+      "window_lags": {
+        "arrival_to_event": {
+          "n": 7,
+          "mean": 6727885299,
+          "p50": 3125907397,
+          "p90": 21168096207,
+          "max": 21168096207
+        },
+        "event_to_answer": {
+          "n": 7,
+          "mean": 1767648770,
+          "p50": 1785368755,
+          "p90": 2725550021,
+          "max": 2725550021
+        },
+        "queued": {
+          "n": 7,
+          "mean": 58578,
+          "p50": 57237,
+          "p90": 79238,
+          "max": 79238
+        },
+        "request": {
+          "n": 7,
+          "mean": 1767590192,
+          "p50": 1785311518,
+          "p90": 2725508253,
+          "max": 2725508253
+        },
+        "waited": 0,
+        "max_in_flight": 2
+      },
+      "frame_lags": {
+        "arrival_to_event": {
+          "n": 35,
+          "mean": 112658402,
+          "p50": 113640573,
+          "p90": 154596442,
+          "max": 165025225
+        },
+        "event_to_answer": {
+          "n": 35,
+          "mean": 1562412864,
+          "p50": 1547588866,
+          "p90": 2015912885,
+          "max": 2896680457
+        },
+        "queued": {
+          "n": 35,
+          "mean": 49491,
+          "p50": 44681,
+          "p90": 70521,
+          "max": 87244
+        },
+        "request": {
+          "n": 35,
+          "mean": 1562363372,
+          "p50": 1547553867,
+          "p90": 2015869577,
+          "max": 2896626768
+        },
+        "waited": 0,
+        "max_in_flight": 2
+      },
+      "lags": [
+        {
+          "kind": "window",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 751,
+          "event_to_answer_ms": 1785,
+          "queued_ms": 0,
+          "request_ms": 1785,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 1,
+          "source_ms": 27930,
+          "arrival_to_event_ms": 5417,
+          "event_to_answer_ms": 2725,
+          "queued_ms": 0,
+          "request_ms": 2725,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 2,
+          "source_ms": 53695,
+          "arrival_to_event_ms": 14751,
+          "event_to_answer_ms": 804,
+          "queued_ms": 0,
+          "request_ms": 803,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 3,
+          "source_ms": 78057,
+          "arrival_to_event_ms": 1876,
+          "event_to_answer_ms": 1968,
+          "queued_ms": 0,
+          "request_ms": 1968,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 4,
+          "source_ms": 104420,
+          "arrival_to_event_ms": 3125,
+          "event_to_answer_ms": 1160,
+          "queued_ms": 0,
+          "request_ms": 1160,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 5,
+          "source_ms": 131530,
+          "arrival_to_event_ms": 21168,
+          "event_to_answer_ms": 1581,
+          "queued_ms": 0,
+          "request_ms": 1581,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 6,
+          "source_ms": 156750,
+          "arrival_to_event_ms": 4,
+          "event_to_answer_ms": 2348,
+          "queued_ms": 0,
+          "request_ms": 2348,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 21,
+          "event_to_answer_ms": 522,
+          "queued_ms": 0,
+          "request_ms": 522,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 1,
+          "source_ms": 8917,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1345,
+          "queued_ms": 0,
+          "request_ms": 1345,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 2,
+          "source_ms": 13458,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1818,
+          "queued_ms": 0,
+          "request_ms": 1818,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 3,
+          "source_ms": 18417,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1615,
+          "queued_ms": 0,
+          "request_ms": 1614,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 4,
+          "source_ms": 25000,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1834,
+          "queued_ms": 0,
+          "request_ms": 1834,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 5,
+          "source_ms": 35000,
+          "arrival_to_event_ms": 165,
+          "event_to_answer_ms": 1570,
+          "queued_ms": 0,
+          "request_ms": 1570,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 6,
+          "source_ms": 40250,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1650,
+          "queued_ms": 0,
+          "request_ms": 1650,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 7,
+          "source_ms": 42083,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1881,
+          "queued_ms": 0,
+          "request_ms": 1881,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 8,
+          "source_ms": 45625,
+          "arrival_to_event_ms": 143,
+          "event_to_answer_ms": 2896,
+          "queued_ms": 0,
+          "request_ms": 2896,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 9,
+          "source_ms": 49792,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 2015,
+          "queued_ms": 0,
+          "request_ms": 2015,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 10,
+          "source_ms": 51125,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 2367,
+          "queued_ms": 0,
+          "request_ms": 2367,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 11,
+          "source_ms": 53667,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1620,
+          "queued_ms": 0,
+          "request_ms": 1620,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 12,
+          "source_ms": 56667,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 1414,
+          "queued_ms": 0,
+          "request_ms": 1414,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 13,
+          "source_ms": 64458,
+          "arrival_to_event_ms": 10,
+          "event_to_answer_ms": 599,
+          "queued_ms": 0,
+          "request_ms": 599,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 14,
+          "source_ms": 69917,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1491,
+          "queued_ms": 0,
+          "request_ms": 1491,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 15,
+          "source_ms": 74083,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1523,
+          "queued_ms": 0,
+          "request_ms": 1523,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 16,
+          "source_ms": 79375,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 2141,
+          "queued_ms": 0,
+          "request_ms": 2141,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 17,
+          "source_ms": 82125,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1696,
+          "queued_ms": 0,
+          "request_ms": 1696,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 18,
+          "source_ms": 84833,
+          "arrival_to_event_ms": 82,
+          "event_to_answer_ms": 1265,
+          "queued_ms": 0,
+          "request_ms": 1265,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 19,
+          "source_ms": 92417,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1235,
+          "queued_ms": 0,
+          "request_ms": 1235,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 20,
+          "source_ms": 95417,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1548,
+          "queued_ms": 0,
+          "request_ms": 1548,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 21,
+          "source_ms": 98208,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1488,
+          "queued_ms": 0,
+          "request_ms": 1488,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 22,
+          "source_ms": 102417,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1266,
+          "queued_ms": 0,
+          "request_ms": 1266,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 23,
+          "source_ms": 112417,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1329,
+          "queued_ms": 0,
+          "request_ms": 1329,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 24,
+          "source_ms": 116708,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1298,
+          "queued_ms": 0,
+          "request_ms": 1298,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 25,
+          "source_ms": 119875,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1604,
+          "queued_ms": 0,
+          "request_ms": 1604,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 26,
+          "source_ms": 129875,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 1792,
+          "queued_ms": 0,
+          "request_ms": 1792,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 27,
+          "source_ms": 134917,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1690,
+          "queued_ms": 0,
+          "request_ms": 1690,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 28,
+          "source_ms": 139917,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1278,
+          "queued_ms": 0,
+          "request_ms": 1278,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 29,
+          "source_ms": 143292,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1513,
+          "queued_ms": 0,
+          "request_ms": 1513,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 30,
+          "source_ms": 145792,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1516,
+          "queued_ms": 0,
+          "request_ms": 1516,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 31,
+          "source_ms": 152875,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1460,
+          "queued_ms": 0,
+          "request_ms": 1459,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 32,
+          "source_ms": 158542,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1252,
+          "queued_ms": 0,
+          "request_ms": 1252,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 33,
+          "source_ms": 168542,
+          "arrival_to_event_ms": 164,
+          "event_to_answer_ms": 1589,
+          "queued_ms": 0,
+          "request_ms": 1588,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 34,
+          "source_ms": 172292,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1547,
+          "queued_ms": 0,
+          "request_ms": 1547,
+          "ok": true
+        }
+      ],
+      "steps": 7,
+      "settled_grew": true,
+      "wer": {
+        "edits": 35,
+        "length": 97,
+        "rate": 0.36082474226804123
+      },
+      "scored": 7,
+      "seams": 6,
+      "unmatched": 4,
+      "transcript": "We have main engine start. Four, three, two, one. Go. They jerked up. Look, Celia, we have to follow our passions. You have your robotics and I just want to be awesome in space. Why don't you just admit that you're freaked out by my robot hand? I'm not freaked out by it's All right, fine. I'm freaked out. I'm having nightmares that I'm being chased by this giant robotic claw. We're done. Robot's memory synced and lock. This is pretty freaking. [No speech detected] Should you be down there? I heard you guys talked about last night. It's not my fault, you know. [Music]",
+      "descriptions": [
+        {
+          "index": 0,
+          "time": 0,
+          "reason": "first",
+          "description": "This image is a solid, uniform black rectangle. It contains no other colors, shapes, or patterns."
+        },
+        {
+          "index": 1,
+          "time": 8917000000,
+          "reason": "scene",
+          "description": "This image shows a close-up, low-angle view of massive, industrial cylindrical structures that resemble rocket engines or large storage tanks. The machinery is weathered and metallic, featuring complex scaffolding and red structural supports amidst a hazy, atmospheric background."
+        },
+        {
+          "index": 2,
+          "time": 13458000000,
+          "reason": "scene",
+          "description": "This image shows a close-up, low-angle view of massive, industrial-looking structures that resemble large, metallic silos or cooling towers. The scene is bathed in a bright, hazy light that creates a glowing, cinematic atmosphere, obscuring some of the intricate mechanical details. The structures appear to be part of a complex, futuristic, or sci-fi industrial facility."
+        },
+        {
+          "index": 3,
+          "time": 18417000000,
+          "reason": "scene",
+          "description": "A sprawling, industrial cityscape is filled with numerous tall, skeletal metal structures and scaffolding that stretch toward a hazy sky. In the center, a bright, ethereal light pierces through the thick fog, creating a dramatic focal point amidst the dense urban machinery. The overall atmosphere is somber and dystopian, characterized by a muted color palette and a sense of overwhelming scale."
+        },
+        {
+          "index": 4,
+          "time": 25000000000,
+          "reason": "scene",
+          "description": "A man and a woman are standing on a bridge in a city, both looking towards the right side of the frame. The man is wearing a dark jacket over a patterned shirt, while the woman is dressed in a blue and black vest over a blue long-sleeve shirt."
+        },
+        {
+          "index": 5,
+          "time": 35000000000,
+          "reason": "interval",
+          "description": "A young man and a woman are standing on a bridge in a city, facing each other in a tense confrontation. The woman is wearing a blue and black jacket and appears to be pointing a mechanical, robotic arm toward the man. The background features a canal and traditional European-style buildings lined with green trees."
+        },
+        {
+          "index": 6,
+          "time": 40250000000,
+          "reason": "scene",
+          "description": "This image features two glowing, wireframe humanoid figures, one orange and one blue, appearing to interact in a dark, industrial setting. The background is filled with complex, shadowy machinery and structural elements, creating a high-tech or sci-fi atmosphere. The scene is illuminated by the vibrant light of the digital outlines against the dim, gritty environment."
+        },
+        {
+          "index": 7,
+          "time": 42083000000,
+          "reason": "scene",
+          "description": "This cinematic image shows a dark, sprawling, and futuristic cityscape filled with massive, decaying industrial structures. The text \"40 YEARS LATER\" is centered in the frame, suggesting a time jump in a science fiction setting. Glowing pink and blue lights emerge from the shadows, highlighting the gritty and atmospheric environment."
+        },
+        {
+          "index": 8,
+          "time": 45625000000,
+          "reason": "scene",
+          "description": "Two glowing, wireframe humanoid figures, one orange and one blue, stand amidst a dark, industrial, and cluttered environment. The scene has a high-tech, digital aesthetic, featuring scattered red and blue light artifacts that suggest a glitchy or virtual reality setting."
+        },
+        {
+          "index": 9,
+          "time": 49792000000,
+          "reason": "scene",
+          "description": "A person's hand is shown interacting with a complex array of electronic equipment, featuring various knobs, buttons, and glowing digital displays. The scene is overlaid with futuristic, holographic-style graphics and data readouts in shades of green and blue, creating a high-tech, sci-fi aesthetic."
+        },
+        {
+          "index": 10,
+          "time": 51125000000,
+          "reason": "scene",
+          "description": "A man with curly hair and glasses is focused on a task in a high-tech laboratory setting. The scene is overlaid with glowing, translucent digital graphics and data visualizations in shades of pink, green, and blue. Other individuals in white lab coats are visible in the background, contributing to the scientific atmosphere."
+        },
+        {
+          "index": 11,
+          "time": 53667000000,
+          "reason": "scene",
+          "description": "This image features two people working with various electronic components and equipment, overlaid with vibrant, glowing digital graphics and data visualizations. The scene blends a physical workspace with futuristic, holographic elements, creating a high-tech or sci-fi atmosphere."
+        },
+        {
+          "index": 12,
+          "time": 56667000000,
+          "reason": "scene",
+          "description": "This image features a highly detailed human brain resting on a white plate, appearing as if it is being presented as a specimen. The brain is surrounded by glowing pink light and digital, holographic-style data overlays, suggesting a theme of advanced neuroscience or artificial intelligence."
+        },
+        {
+          "index": 13,
+          "time": 64458000000,
+          "reason": "scene",
+          "description": "This image is a solid, uniform black rectangle. It contains no colors, shapes, or patterns other than a single, consistent dark tone."
+        },
+        {
+          "index": 14,
+          "time": 69917000000,
+          "reason": "scene",
+          "description": "This image depicts a dark, dystopian cityscape where traditional European-style architecture is juxtaposed with massive, industrial machinery and towering structures. In the background, a large airship floats through a heavy, overcast sky filled with smoke and smog. The overall atmosphere is somber and cinematic, suggesting a steampunk or science fiction setting."
+        },
+        {
+          "index": 15,
+          "time": 74083000000,
+          "reason": "scene",
+          "description": "A dark, cinematic shot shows the interior of a complex, industrial structure filled with heavy ropes, cables, and large metal bells. In the background, a person is visible sitting amidst the machinery, looking out toward a misty, blue-toned landscape. The overall atmosphere is moody and mysterious, characterized by deep shadows and a cold color palette."
+        },
+        {
+          "index": 16,
+          "time": 79375000000,
+          "reason": "scene",
+          "description": "A newspaper with the headline \"ROBOTICIST CREATES KILLER ROBOTS\" is draped over the head of a person lying down. A hand is visible on the right side, holding the edge of the crumpled paper. The scene is dimly lit, creating a somber and dramatic atmosphere."
+        },
+        {
+          "index": 17,
+          "time": 82125000000,
+          "reason": "scene",
+          "description": "A man is shown in profile, aiming a large, futuristic-looking rifle while lying down. He is wearing a dark, quilted jacket and is positioned behind a stone balustrade in a misty, blue-toned environment."
+        },
+        {
+          "index": 18,
+          "time": 84833000000,
+          "reason": "scene",
+          "description": "A view through a circular lens reveals a large, dark, industrial structure or vehicle overlooking a misty, desaturated cityscape. The foreground is dominated by complex machinery and scaffolding, while the background shows faint outlines of buildings under a heavy fog."
+        },
+        {
+          "index": 19,
+          "time": 92417000000,
+          "reason": "scene",
+          "description": "A close-up shot shows a person peering intensely through the scope of a large, futuristic-looking weapon. The scene is bathed in a cool, blue-toned light, creating a tense and cinematic atmosphere."
+        },
+        {
+          "index": 20,
+          "time": 95417000000,
+          "reason": "scene",
+          "description": "A large, steampunk-style airship floats through a misty, blue-toned sky above a dense cityscape of traditional European-style buildings. The scene is viewed through a circular, blurred frame, creating a sense of looking out from a window or portal. The overall atmosphere is cinematic and mysterious, characterized by a heavy fog and a muted color palette."
+        },
+        {
+          "index": 21,
+          "time": 98208000000,
+          "reason": "scene",
+          "description": "A person lies on a balcony or rooftop, partially covered by a newspaper and dark clothing. In the background, a soldier in tactical gear aims a rifle toward the horizon through a stone balustrade. The scene is dimly lit, with a few candles providing a soft glow against the blue-toned atmosphere."
+        },
+        {
+          "index": 22,
+          "time": 102417000000,
+          "reason": "scene",
+          "description": "Viewed through a circular lens, a large, steampunk-style airship floats above a dense cityscape of traditional European-style buildings. The scene is shrouded in a thick, blue-toned fog, giving the entire image a mysterious and cinematic atmosphere."
+        },
+        {
+          "index": 23,
+          "time": 112417000000,
+          "reason": "interval",
+          "description": "A large, steampunk-style airship floats through a hazy sky above a dense cityscape of traditional European-style buildings. The vessel is heavily detailed with various mechanical parts, lights, and exhaust, appearing as if it is viewed through a circular lens or portal."
+        },
+        {
+          "index": 24,
+          "time": 116708000000,
+          "reason": "scene",
+          "description": "A man is seen in profile, aiming a large, futuristic-looking rifle through a scope. He is positioned behind a stone balustrade, appearing to be on a balcony or elevated platform overlooking a misty, blue-toned landscape."
+        },
+        {
+          "index": 25,
+          "time": 119875000000,
+          "reason": "scene",
+          "description": "An elderly man with white hair lies on a bed, appearing to be in a state of rest or distress. In the background, a soldier in tactical gear is positioned behind a railing, aiming a rifle. The scene is dimly lit with a cool, blueish tone, creating a somber or tense atmosphere."
+        },
+        {
+          "index": 26,
+          "time": 129875000000,
+          "reason": "interval",
+          "description": "An older man with grey hair and a beard is shown in a medium shot, appearing to be in distress or pain. He is wearing a dark, patterned jacket and is positioned in what looks like a rustic, dimly lit room or balcony. In the background, another person is partially visible, sitting near a window or opening."
+        },
+        {
+          "index": 27,
+          "time": 134917000000,
+          "reason": "scene",
+          "description": "An older man with grey hair sits alone on a wooden deck, looking somber in a dimly lit, atmospheric setting. He is surrounded by various nautical equipment, ropes, and structural pillars, all shrouded in a thick, blue-toned mist. The scene has a cinematic and melancholic quality, suggesting a moment of quiet reflection or solitude."
+        },
+        {
+          "index": 28,
+          "time": 139917000000,
+          "reason": "scene",
+          "description": "A man is shown in profile, aiming a large, futuristic-looking rifle equipped with a scope. He is positioned behind a stone balustrade, set against a hazy, blue-toned background."
+        },
+        {
+          "index": 29,
+          "time": 143292000000,
+          "reason": "scene",
+          "description": "A middle-aged man with gray hair and a beard stands on a balcony, holding onto a thick rope with a serious expression. In the background, another person is crouched near a railing, appearing to hold a weapon. The scene is set in a dimly lit, atmospheric environment with a soft, blue-toned light."
+        },
+        {
+          "index": 30,
+          "time": 145792000000,
+          "reason": "scene",
+          "description": "A man with a focused and intense expression peers from behind a large, dark object, possibly a weapon or piece of equipment. The scene is dimly lit with a cool, blueish tone, creating a tense and cinematic atmosphere. In the foreground, blurred architectural elements and a small juice box add depth to the composition."
+        },
+        {
+          "index": 31,
+          "time": 152875000000,
+          "reason": "scene",
+          "description": "A person is seen falling through the air in front of a massive, ornate pipe organ within a large, gothic-style hall. The scene is filled with towering stone columns covered in ivy and intricate architectural details, creating a dramatic and cinematic atmosphere."
+        },
+        {
+          "index": 32,
+          "time": 158542000000,
+          "reason": "scene",
+          "description": "A person's legs and feet are suspended in the air above a dark, textured surface. A thick, tan rope is coiled on the ground below and extends upward toward the person."
+        },
+        {
+          "index": 33,
+          "time": 168542000000,
+          "reason": "interval",
+          "description": "A person with white hair stands with their back to the camera, looking toward a large, arched opening in a dark, industrial-looking structure. The setting appears to be a weathered, cavernous space filled with debris, ropes, and metallic machinery. The overall atmosphere is somber and cinematic, illuminated by dim, moody lighting."
+        },
+        {
+          "index": 34,
+          "time": 172292000000,
+          "reason": "scene",
+          "description": "A warm, dimly lit indoor scene features a collection of books and a lamp on the left, while a large, technical blueprint hangs on the wall to the right. A second lamp with a red shade sits in the foreground, casting a soft glow across the room. The composition creates a cozy, studious atmosphere with deep shadows and vintage textures."
+        }
+      ]
+    }
+  ],
+  "cancel": {
+    "trigger": "frame 19",
+    "at": 92323205192,
+    "source_at": 92417000000,
+    "events": 22,
+    "stream_stopped": 263769410,
+    "returned": 263769700,
+    "stream_errors": [
+      "context canceled"
+    ],
+    "answered_before": 21,
+    "in_flight": 1,
+    "in_flight_cancelled": 1,
+    "in_flight_return": 153266,
+    "queued": 0,
+    "queued_cancelled": 0,
+    "files": 22,
+    "yielded": 22,
+    "processes": 0
+  }
+}

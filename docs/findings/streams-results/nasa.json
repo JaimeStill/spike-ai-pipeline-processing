@@ -1,0 +1,3316 @@
+{
+  "source": {
+    "name": "nasa",
+    "title": "NASA, ISS Expedition 60 in-flight event with Pittsburgh stations, 640x360 H.264 30 fps, AAC 22.05 kHz stereo",
+    "files": [
+      "video/nasa-iss-inflight-pittsburgh/nasa-iss-inflight-pittsburgh-640x360.mp4"
+    ],
+    "sha256": [
+      "f4da9018bd1ce24fe69bbee41b2e44118b1556c3ec56677e5b2de676ba4c9197"
+    ],
+    "license": "NASA media: generally not subject to copyright in the US; acknowledge NASA, imply no endorsement; NASA emblems and logos (insignia) are not covered (https://www.nasa.gov/nasa-brand-center/images-and-media/)",
+    "redistributable": true,
+    "seconds": 1531.233333,
+    "truth_note": "approximate: NASA's live captions, upper case, \"\u003e\u003e\" at each turn, which end at 18:36 of 25:31; only the windows that end by then are scored",
+    "truth_words": 2580
+  },
+  "settings": {
+    "audio_model": "ggml-org/gemma-4-E4B-it-GGUF:Q8_0",
+    "vision_model": "google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0",
+    "prompt": "Describe this picture in two or three sentences.",
+    "output_cap": 512,
+    "slots": 4,
+    "overlap": 2000000000,
+    "min_silence": 300000000,
+    "percentile": 10,
+    "floor_window": 4000000000,
+    "margin": 12,
+    "scene_threshold": 0.2,
+    "max_gap": 10000000000,
+    "max_side": 0
+  },
+  "started": "2026-11-06T17:09:53.639872759Z",
+  "unpaced": {
+    "wall": 7920944791,
+    "speed": 193.31448121439126,
+    "windows": 62,
+    "frames": 156,
+    "reasons": {
+      "first": 1,
+      "interval": 151,
+      "scene": 4
+    },
+    "cuts": {
+      "end": 1,
+      "limit": 2,
+      "silence": 59
+    }
+  },
+  "file_paths": [
+    {
+      "detector": "silencedetect",
+      "windows": 67,
+      "failed": 0,
+      "plan_time": 1712822797,
+      "wall": 62373387348,
+      "wer": {
+        "edits": 1208,
+        "length": 2583,
+        "rate": 0.46767324816105305
+      },
+      "scored": 47,
+      "transcript": "[Music] [Music] [Music] [Music] [Music] [Music] [Music] [Music] [Music] [Music] [No speech detected] Station, this is Houston. Are you ready for the event? Houston, this is Station. We're ready. WTAE, this is Mission Control Houston. Please call Station for a voice check. Station, this is Kelly Sato with WTAE. How do you hear me? Kelly, we we read you loud and clear. Welcome aboard the International Space Station. Thank you so much. I have chills right now. What an amazing opportunity. I know we just have a few minutes with both of you, so I would love to start uh Andrew Morgan with you. Your parents are going to be able to watch this from Newcastle. You are a Pittsburgh area native. What do you want to say hi to everybody there in Western Pennsylvania. My parents and my grandparents and son uncles all live there in the Newcastle area. Uh I grew up as a military brat. My dad was an active duty officer and Newcastle was always what I called home. That was where we went to on the holidays and and that's what my children also know as a home. That's where they go for the holidays as well. So it's a special place so is so is space i've never interviewed someone that's floating before what is it like to grow up in this area and now be joining us via the space station through satellite that has to be an amazing feeling Well, it's a tremendous honor. Uh we view, you know, Nick and I are both military officers and uh we've been serving our country all of our lives and uh all of our careers and now this is just a continuation of that service to be on board the International Space Station representing not just our country, but an international partnership and the uh the entire all of humankind. It's it's a tremendous honor for us. Absolutely. Uh Nick, while we have you here to uh with us as well, talk to us about your current situation and and what it is like to experience anti-gravity, something most of us will never get a chance to experience here on earth. Uh space is is a is just this amazing place where everything floats and and that's why we're here because on the space station we have the ability to do experiments in the presence of of weightlessness where gravity's not the dominant force and things just float around and and that helps us really peel back some of the science and understand exactly how things work at the at the really small level and that gives us the breakthroughs uh that we need so that's why we're up here. The space station is a laboratory to discover how how things work when everything floats. And I got to tell you it's it's a lot of fun at a personal level to be able to do backflips and front flips and and just fly around the station uh like I always wanted to when I was a little kid. And it's even more fun when we're having dinner together, uh throwing food at each other and trying to catch it or trying to eat off a spoon with no hands. That's got to be the elephant in the room because I know what you're doing is so important scientifically but it also looks like so much fun too. And and speaking of that, Andre, I know you had a chance to do your first spacewalk not long ago. If you can, describe to our viewers here in Pennsylvania what that's been like uh that that is true just two weeks ago Nick and I did our it was Nick's third spacewalk my first spacewalk uh was wonderful to do it with my friend and uh he was a great mentor through it when we went out that hatch we were over the Mediterranean you could look down and you could pick out clearly the geography below us you could see the Italian peninsula the island of sicily and then we saw the nile river it was beautiful but after that we went to work for about six and a half hours and i really didn't have much of an opportunity to look back at the earth but the views that we did have were amazing do you ever try to locate home when you're up there pennsylvania west virginia We uh we flew over the east coast earlier today. We make an orbit around the earth every hour and a half and the geography under us is constantly changing. Uh but we love uh flights over North America. Right now we have a great view of the hurricane and we've been tracking that, taking photos of Hurricane Dorian as it's made its way north off the east coast and providing uh photos and imagery so people can see as the storms developed and and we've been keeping an eye on it for everyone. Yeah, that's actually a really good point that Dr. Morgan, I know you took an amazing picture and that you tweeted out of this hurricane. Have you ever seen anything like that from your perspective up there before? It's incredible we see clouds constantly all over but when you see a cloud mass form over the course of a couple of days as the storm matured into a bigger larger more powerful storm and the eye became more consolidated it's amazing the power that this planet is able to produce. If you can I know we just see the two of you there in this shot but explain to us what the culture is like up there how many people are with you if anyone else out. Uh the crew on board the International Space Station is a crew of six and we have uh three Americans, one Italian and two Russian cosmonauts as well. And uh we're all working for one International Space Station program. Uh even though we all uh ultimately work for our individual space agencies, up here we're like a family. It is it's a wonderful experience to eat our meals together and to relax together but also to work alongside each other. Uh earlier today Nick and I spent half the day doing an experiment called fluid shifts working together where we're looking at how our physiology changes in microgravity. Um so we're living, working, playing together. All six of us. How long will the two of you stay there? All right. So Drew gives me a hard time and says that I'm a short timer now because I only have about another month. Uh but my mission is 203 days and between eight and nine months. Um and so I'll return in the spring of 2020. And Nick will leave here shortly. Uh his his time on board ISS will end at the beginning of October. Gotcha. Something that's been big news down here is the mission to the moon in 2024. What can you tell us about that? I cannot transcribe the audio because no audio file was provided. Please upload the goal of getting us back to the moon and and putting the first woman and the next man on the surface of the moon and and then doing it in a way that allows us to sustain that because that's the proving ground where we're going to learn what we need to learn in order to press further on to Mars. And so it's an exciting time. You know, every day you keep to you you can feel the momentum and the energy building uh behind this idea of returning to the moon and you know it's palpable even up here even though we're isolated and away from everyone on the ground. Uh so if you're interested in getting involved with the space program, now's the time. Uh whether it's, you know, on the commercial side or NASA or, you know, we're bringing it together from a global collaboration trying to get back to the moon. Uh so it's it's just a it's uh we're very fortunate to be where we're at at this time and uh things are looking very good and and promising in the future. And last question for you Dr. Morgan, especially being from here I think you offer a hope to kids who might look at this as a very real career possibility. What do you want to say to those kids who are interested in getting into this? this. Well, I you know I have always I said that the formula is very simple. Uh you should do what you love, uh find that thing that you love do it well and then always be a good team player along the way and you know I didn't plan a career around how best to become an astronaut I just stuck to that formula and whether that leads to being an astronaut or not it will definitely lead to a fulfilling career and so that's my best advice and when one more thing we do have something for the viewership area that I know will be a a big hit uh with the upcoming NFL season kicking off this week. There are Pittsburgh Steelers fans on board the International Space Station. Yes, yes, that is awesome. I hope you're cheering on with us on Sunday. Thank you guys so much for your time. We really appreciate it. The Steelers will appreciate knowing they're getting support from space. Thank you guys. We're thinking about you and wishing you the best of luck. Thanks very much for your time. Station, this is Houston ACR. That concludes the WTAE portion of the event. Please stand by for a voice check from KDKA. Station, this is David Highfield with KDKA. Do you hear me? David re-read you loud and clear. Welcome aboard the International Space Station. Thanks for for talking with us. We're going to get started here. We're going to begin taping this. Welcome back. We are so excited to chat with two astronauts while they are on board the International Space Station right now. In fact, one of them is from our area. Dr. Andrew Morgan was born in Morgantown, and his parents, Richard and Janice, live in Newcastle. He considers our area, the Pittsburgh area, his home. And also joining us is Nick Hague, who grew up in Kansas. Thank you both for making time for us. and uh first off Andrew since you're from our area is there anyone that you would like to say hi to I consider Western Pennsylvania and the Newcastle area to be home. You know, I I grew up as a military brat. My dad was a career military officer and it was important for me to have a place to call home. And my parents, my grandparents and all aunts and uncles and cousins all live there in the Newcastle area and uh and it's a special place to me. So it's a real privilege to be a part of your viewership area and say hello to everyone. so thanks very much now nick you both took part in a spacewalk recently that was pretty important tell us about that what was that about Yes, so uh not too long ago, uh it seems like a month ago, but it was only just over a week ago. Uh we were able to uh Drew did his first spacewalk. I went out for my third time and it was to install a docking adapter to to essentially give us a second port so that the commercial crew vehicles that were going to launch our cruises out of Florida and have a have a place to to dock to on the station. So, uh in the very near future, uh early next year, we're going to be receiving crews uh from Florida uh for the first time in a long time, you know. Both of us launched out of the Baikonur Cosmodrome on a Soyuz vehicle. Uh and so we're we're getting that capability back within the United States and so that's a huge milestone for us. Uh obviously, an experience like that doing a spacewalk, especially when it's when it's with a friend is uh is you know, truly out of this world and it's hard to put words to it just how how how inspiring the whole experience is. Andrew, I want to ask you about the spacewalk as well because you're out there for six and a half hours and I also by the way I love how you're passing the mic back and forth. I never thought about this but with no gravity you can just sort of toss the mic to each other, huh?"
+    },
+    {
+      "detector": "tracker",
+      "windows": 62,
+      "failed": 0,
+      "plan_time": 853879913,
+      "wall": 54377006019,
+      "wer": {
+        "edits": 1304,
+        "length": 2580,
+        "rate": 0.5054263565891473
+      },
+      "scored": 45,
+      "transcript": "[Music] [Music] [Music] [Music] [Music] [Music] [Music] [music] [Music] [Music] [Music] Please provide the audio you would like me to transcribe. Station, this is Houston. Are you ready for the event? Houston, this is Station. We're ready. WTAE, this is Mission Control Houston. Please call Station for a voice check. Station, this is Kelly Sato with WTAE. How do you hear me? Kelly, we we read you loud and clear. Welcome aboard the International Space Station. Thank you so much. I have chills right now. What an amazing opportunity. I know we just have a few minutes with both of you, so I would love to start Andrew Morgan with you. Your parents are going to be able to watch this from Newcastle. You are a Pittsburgh area native. What do you want to say hi to everybody there in Western Pennsylvania. My parents and my grandparents and son uncles all live there in the Newcastle area. I grew up as a military brat. My dad was an active duty officer and Newcastle was always what I called home. That was where we went to on the holidays and and that's what my children also know as a home. That's where they go for the holidays as well. So it's a special place. Well, I'd like to say hi to everybody there in Western Pennsylvania. My parents and my grandparents and son uncles all live there in the Newcastle area. I grew up as a military brat. My dad was an active duty officer and Newcastle was always what I called home. That was where we went to on the holidays and and that's what my children also know as a home. That's where they go for the holidays as well. So it's a special place so is so is space i've never interviewed someone that's floating before what is it like to grow up in this area and now be joining us via the space station through satellite that has to be an amazing feeling Well, it's a tremendous honor. Uh we view, you know, Nick and I are both military officers and uh we've been serving our country all of our lives and uh all of our careers and now this is just a continuation of that service to be on board the international space station representing not just our country, but an international partnership and the uh the entire all of humankind. It's it's a tremendous honor for us. Absolutely. Uh Nick, while we have you here to uh with us as well, talk to us about your current situation and and what it is like to experience anti-gravity, something most of us will never get a chance to experience here on earth. Uh space is is a is just this amazing place where everything floats. And and that's why we're here because on the space station we have the ability to do experiments in the presence of of weightlessness where gravity's not the dominant force and things just float around and and that helps us really peel back some of the science and understand exactly how things work at the at the really small level and that gives us the breakthroughs uh that we need. So that's why we're up here. The space station is a laboratory to discover how how things work when everything floats. And I got to tell you it's it's a lot of fun at a personal level to be able to do back flips and front flips and and just fly around the station uh like I always wanted to when I was a little kid. And it's even more fun when we're having dinner together, uh throwing food at each other and and trying to catch it or trying to eat off a spoon with no hands. that got to be the elephant in the room because i know what you're doing is so important scientifically but it also looks like so much fun too and and speaking of that andr i know you had a chance to do your first spacewalk not long ago if you can describe to our viewers here in pennsylvania what that's been like uh that that is true just two weeks ago nick and i did our it was nick's third spacewalk my first spacewalk uh was wonderful to do it with my friend and uh he was a great mentor through it when we went out that hatch we were over the mediterranean you could look down and you could pick out clearly the geography below us you could see the italian peninsula the island of sicily and then we saw the nile river it was beautiful but after that we went to work for about six and a half hours and i really didn't have much of an opportunity to look back at the up there, Pennsylvania, West Virginia? We uh we flew over the East Coast earlier today. We make an orbit around the Earth every hour and a half and the geography under us is constantly changing. Uh but we love uh flights over north america right now we have a great view of the hurricane and we've been tracking that taking photos of hurricane dorian as it's made its way north off the east coast um and providing uh photos and imagery so people can see as the storm's developed and and we've been keeping an eye on it for everyone Yeah, that's actually a really good point, Dr. Morgan. I know you took an amazing picture and that you tweeted out of this hurricane. Have you ever seen anything like that from your perspective up there before? It's incredible we see clouds constantly all over, but when you see a cloud mass form over the course of a couple of days as the storm matured into a bigger, larger, more powerful storm and the eye became more consolidated it's amazing the power that this planet is able to produce. If you can I know we just see the two of you there in this shot but explain to us what the culture is like up there. How many people are with you if anyone else. Uh the crew on board the International Space Station is a crew of six and we have uh three Americans, one Italian and two Russian cosmonauts as well. And uh we're all working for one International Space Station program uh even though we all uh ultimately work for our individual space agencies. Up here we're like a family. It is a it's a wonderful experience to eat our meals together and to relax together but also to work alongside each other. Earlier today Nick and I spent half the day doing an experiment called fluid shifts working together where we're looking at how our physiology changes in microgravity. Um so we're living, working, playing together. All six of us. How long will the two of you stay there? So Drew gives me a hard time and says that I'm a short timer now because I only have about another month. Uh but my mission is 203 days and between eight and nine months um and so I'll return in the spring of 2020. And Nick will leave here shortly. Uh his his time on board ISS will end at the beginning of October. Gotcha. Something that's been big news down here is the back to the moon and and putting the first woman and the next man on the surface of the moon and and then doing it in a way that allows us to sustain that because that's the proving ground where we're going to learn what we need to learn in order to press further on to Mars. And so it's an exciting time. Uh you know, every day you keep to you you can feel the momentum and the energy building uh behind this idea of returning to the moon and you know, it's palpable even up here even though we're isolated and away from everyone on the ground. Uh so if you're interested in getting involved with the space program, now's the time. Uh whether it's, you know, on the commercial side or NASA or you know, we're bringing it together from a a global collaboration trying to get back to the moon. Uh so it's it's just a it's a we're very fortunate to be where we're at at this time and uh things are looking very good and and promising in the future. And last question for you Dr. Morgan, especially being from here, I think you offer a hope to kids who might look at this as a very real career possibility. What do you want to say to those kids who are interested in getting into this. Well, I you know I have always I said that the formula is very simple. Uh you should do what you love, uh find that thing that you love, do it well, and then always be a good team player along the way. And you know, I didn't plan a career around how best to become an astronaut. I just stuck to that formula, and whether that leads to being an astronaut or not, it will definitely lead to a fulfilling career. And so that's my best advice. And when one more thing we do have something for the viewership area that I know will be a a big hit uh with the upcoming NFL season kicking off this week. There are Pittsburgh Steelers fans on board the International Space Station. Yes, yes, that is awesome. I hope you're cheering on with us on Sunday. Thank you guys so much for your time. We really appreciate it. The Steelers will appreciate knowing they're getting support from space. Thank you guys. We're thinking about you and wishing you the best of luck. Thanks very much for your time. Station, this is Houston ACR. That concludes the WTAE portion of the event. Please stand by for a voice check from KDKA. Station, this is David Highfield with KDKA. Do you hear me? David, we read you loud and clear. Welcome aboard the International Space Station. Much for for talking with us. We're going to get started here. We're going to begin taping this. Welcome back. We are so excited to chat with two astronauts while they are on board the International Space Station right now. In fact, one of them is from our area. Dr. Andrew Morgan was born in Morgantown, and his parents, Richard and Janice, live in Newcastle. He considers our area, the Pittsburgh area, his home. And also joining us is Nick Hague, who grew up in Kansas. Thank you both for making time for us. And uh first off, Andrew, since you're from our area, is there anyone that you would like to say hi to here in Western Pennsylvania? Yes, as you mentioned, I consider Western Pennsylvania and the New Casellary to be home. You know, I I grew up as a military brat. My dad was a career military officer and it was important for me to have a place to call home. And my parents, my grandparents and all aunts and uncles and cousins all live there in the Newcastle area and uh and it's a special place to me. So it's real privilege to be a part of your viewership area and say hello to everyone. So thanks very much. Now Nick, you both took part in a spacewalk recently that was pretty important. Tell us about that. What was that about? Yes, so uh not too long ago, uh it seems like a month ago, but it was only just over a week ago. Uh we were able to uh Drew did his first spacewalk. I went out for my third time and it was to install a docking adapter to to essentially give us a second port so that the commercial crew vehicles that were going to launch our crews out of Florida and have a have a place to to dock to on the station. So, uh in the very near future, uh early next year, we're going to be receiving crews uh from Florida uh for the first time in a long time, you know. Both of us launched out of the Baikonur Cosmodrome on a Soyuz vehicle. Uh and so we're we're getting that capability back within the United States and so that's a huge milestone for us. Uh obviously, an experience like that doing a spacewalk, especially when it's when it's with a friend is is you know truly out of this world and it's hard to put words to it just how how how inspiring the whole experience is. Andrew, I want to ask you about the spacewalk as well because you're out there for six and a half hours and I also by the way I love how you're passing the mic back and forth."
+    }
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "wall": 1532714110347,
+      "ended": 1530751570629,
+      "last_window": 1875900170,
+      "windows": 62,
+      "frames": 156,
+      "reasons": {
+        "first": 1,
+        "interval": 151,
+        "scene": 4
+      },
+      "cuts": {
+        "end": 1,
+        "limit": 2,
+        "silence": 59
+      },
+      "failed": 0,
+      "same_as_unpaced": true,
+      "window_lags": {
+        "arrival_to_event": {
+          "n": 62,
+          "mean": 6541773273,
+          "p50": 3167804488,
+          "p90": 9567340744,
+          "max": 65267906578
+        },
+        "event_to_answer": {
+          "n": 62,
+          "mean": 2548380688,
+          "p50": 2506766162,
+          "p90": 3328069649,
+          "max": 4429995261
+        },
+        "queued": {
+          "n": 62,
+          "mean": 53945,
+          "p50": 49933,
+          "p90": 69351,
+          "max": 119947
+        },
+        "request": {
+          "n": 62,
+          "mean": 2548326743,
+          "p50": 2506721379,
+          "p90": 3328020416,
+          "max": 4429951149
+        },
+        "waited": 0,
+        "max_in_flight": 3
+      },
+      "frame_lags": {
+        "arrival_to_event": {
+          "n": 156,
+          "mean": 44350355,
+          "p50": 41090728,
+          "p90": 61333174,
+          "max": 71881773
+        },
+        "event_to_answer": {
+          "n": 156,
+          "mean": 1580582105,
+          "p50": 1521440009,
+          "p90": 1868518071,
+          "max": 3340445438
+        },
+        "queued": {
+          "n": 156,
+          "mean": 47561,
+          "p50": 39061,
+          "p90": 64342,
+          "max": 314126
+        },
+        "request": {
+          "n": 156,
+          "mean": 1580534544,
+          "p50": 1521403019,
+          "p90": 1868479163,
+          "max": 3340391440
+        },
+        "waited": 0,
+        "max_in_flight": 2
+      },
+      "lags": [
+        {
+          "kind": "window",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 24234,
+          "event_to_answer_ms": 2245,
+          "queued_ms": 0,
+          "request_ms": 2245,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 1,
+          "source_ms": 13000,
+          "arrival_to_event_ms": 368,
+          "event_to_answer_ms": 1936,
+          "queued_ms": 0,
+          "request_ms": 1936,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 2,
+          "source_ms": 40760,
+          "arrival_to_event_ms": 734,
+          "event_to_answer_ms": 1610,
+          "queued_ms": 0,
+          "request_ms": 1610,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 3,
+          "source_ms": 68620,
+          "arrival_to_event_ms": 35867,
+          "event_to_answer_ms": 1910,
+          "queued_ms": 0,
+          "request_ms": 1910,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 4,
+          "source_ms": 95060,
+          "arrival_to_event_ms": 22668,
+          "event_to_answer_ms": 1817,
+          "queued_ms": 0,
+          "request_ms": 1817,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 5,
+          "source_ms": 108280,
+          "arrival_to_event_ms": 2334,
+          "event_to_answer_ms": 2703,
+          "queued_ms": 0,
+          "request_ms": 2703,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 6,
+          "source_ms": 135470,
+          "arrival_to_event_ms": 65267,
+          "event_to_answer_ms": 3521,
+          "queued_ms": 0,
+          "request_ms": 3520,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 7,
+          "source_ms": 157405,
+          "arrival_to_event_ms": 37236,
+          "event_to_answer_ms": 2375,
+          "queued_ms": 0,
+          "request_ms": 2375,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 8,
+          "source_ms": 185405,
+          "arrival_to_event_ms": 9270,
+          "event_to_answer_ms": 2452,
+          "queued_ms": 0,
+          "request_ms": 2452,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 9,
+          "source_ms": 213405,
+          "arrival_to_event_ms": 8434,
+          "event_to_answer_ms": 1931,
+          "queued_ms": 0,
+          "request_ms": 1931,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 10,
+          "source_ms": 240762,
+          "arrival_to_event_ms": 8467,
+          "event_to_answer_ms": 2298,
+          "queued_ms": 0,
+          "request_ms": 2298,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 11,
+          "source_ms": 260300,
+          "arrival_to_event_ms": 3167,
+          "event_to_answer_ms": 2705,
+          "queued_ms": 0,
+          "request_ms": 2705,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 12,
+          "source_ms": 287155,
+          "arrival_to_event_ms": 2800,
+          "event_to_answer_ms": 1660,
+          "queued_ms": 0,
+          "request_ms": 1660,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 13,
+          "source_ms": 312445,
+          "arrival_to_event_ms": 9567,
+          "event_to_answer_ms": 1733,
+          "queued_ms": 0,
+          "request_ms": 1733,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 14,
+          "source_ms": 330850,
+          "arrival_to_event_ms": 3334,
+          "event_to_answer_ms": 3014,
+          "queued_ms": 0,
+          "request_ms": 3014,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 15,
+          "source_ms": 355450,
+          "arrival_to_event_ms": 1567,
+          "event_to_answer_ms": 2985,
+          "queued_ms": 0,
+          "request_ms": 2984,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 16,
+          "source_ms": 382650,
+          "arrival_to_event_ms": 9267,
+          "event_to_answer_ms": 1682,
+          "queued_ms": 0,
+          "request_ms": 1681,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 17,
+          "source_ms": 401380,
+          "arrival_to_event_ms": 934,
+          "event_to_answer_ms": 3328,
+          "queued_ms": 0,
+          "request_ms": 3328,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 18,
+          "source_ms": 429060,
+          "arrival_to_event_ms": 1567,
+          "event_to_answer_ms": 2232,
+          "queued_ms": 0,
+          "request_ms": 2232,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 19,
+          "source_ms": 455525,
+          "arrival_to_event_ms": 768,
+          "event_to_answer_ms": 3032,
+          "queued_ms": 0,
+          "request_ms": 3032,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 20,
+          "source_ms": 482710,
+          "arrival_to_event_ms": 3800,
+          "event_to_answer_ms": 2898,
+          "queued_ms": 0,
+          "request_ms": 2898,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 21,
+          "source_ms": 506935,
+          "arrival_to_event_ms": 367,
+          "event_to_answer_ms": 2991,
+          "queued_ms": 0,
+          "request_ms": 2991,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 22,
+          "source_ms": 534560,
+          "arrival_to_event_ms": 468,
+          "event_to_answer_ms": 3226,
+          "queued_ms": 0,
+          "request_ms": 3226,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 23,
+          "source_ms": 562525,
+          "arrival_to_event_ms": 6300,
+          "event_to_answer_ms": 1977,
+          "queued_ms": 0,
+          "request_ms": 1977,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 24,
+          "source_ms": 584240,
+          "arrival_to_event_ms": 7901,
+          "event_to_answer_ms": 2394,
+          "queued_ms": 0,
+          "request_ms": 2394,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 25,
+          "source_ms": 604290,
+          "arrival_to_event_ms": 5200,
+          "event_to_answer_ms": 2143,
+          "queued_ms": 0,
+          "request_ms": 2143,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 26,
+          "source_ms": 627100,
+          "arrival_to_event_ms": 2401,
+          "event_to_answer_ms": 2711,
+          "queued_ms": 0,
+          "request_ms": 2711,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 27,
+          "source_ms": 653965,
+          "arrival_to_event_ms": 2034,
+          "event_to_answer_ms": 2648,
+          "queued_ms": 0,
+          "request_ms": 2648,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 28,
+          "source_ms": 679900,
+          "arrival_to_event_ms": 7500,
+          "event_to_answer_ms": 2506,
+          "queued_ms": 0,
+          "request_ms": 2506,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 29,
+          "source_ms": 700485,
+          "arrival_to_event_ms": 2401,
+          "event_to_answer_ms": 2353,
+          "queued_ms": 0,
+          "request_ms": 2353,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 30,
+          "source_ms": 726055,
+          "arrival_to_event_ms": 2534,
+          "event_to_answer_ms": 2485,
+          "queued_ms": 0,
+          "request_ms": 2485,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 31,
+          "source_ms": 754007,
+          "arrival_to_event_ms": 3900,
+          "event_to_answer_ms": 2451,
+          "queued_ms": 0,
+          "request_ms": 2451,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 32,
+          "source_ms": 778080,
+          "arrival_to_event_ms": 201,
+          "event_to_answer_ms": 3517,
+          "queued_ms": 0,
+          "request_ms": 3517,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 33,
+          "source_ms": 805940,
+          "arrival_to_event_ms": 3334,
+          "event_to_answer_ms": 3163,
+          "queued_ms": 0,
+          "request_ms": 3163,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 34,
+          "source_ms": 833745,
+          "arrival_to_event_ms": 268,
+          "event_to_answer_ms": 3387,
+          "queued_ms": 0,
+          "request_ms": 3387,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 35,
+          "source_ms": 861552,
+          "arrival_to_event_ms": 9567,
+          "event_to_answer_ms": 2866,
+          "queued_ms": 0,
+          "request_ms": 2866,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 36,
+          "source_ms": 879955,
+          "arrival_to_event_ms": 3334,
+          "event_to_answer_ms": 2353,
+          "queued_ms": 0,
+          "request_ms": 2353,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 37,
+          "source_ms": 904560,
+          "arrival_to_event_ms": 6567,
+          "event_to_answer_ms": 2753,
+          "queued_ms": 0,
+          "request_ms": 2753,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 38,
+          "source_ms": 932255,
+          "arrival_to_event_ms": 7701,
+          "event_to_answer_ms": 1449,
+          "queued_ms": 0,
+          "request_ms": 1449,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 39,
+          "source_ms": 952555,
+          "arrival_to_event_ms": 2134,
+          "event_to_answer_ms": 2797,
+          "queued_ms": 0,
+          "request_ms": 2797,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 40,
+          "source_ms": 978450,
+          "arrival_to_event_ms": 6034,
+          "event_to_answer_ms": 2833,
+          "queued_ms": 0,
+          "request_ms": 2833,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 41,
+          "source_ms": 1000415,
+          "arrival_to_event_ms": 3167,
+          "event_to_answer_ms": 2799,
+          "queued_ms": 0,
+          "request_ms": 2799,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 42,
+          "source_ms": 1028217,
+          "arrival_to_event_ms": 367,
+          "event_to_answer_ms": 2979,
+          "queued_ms": 0,
+          "request_ms": 2979,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 43,
+          "source_ms": 1056188,
+          "arrival_to_event_ms": 2500,
+          "event_to_answer_ms": 3503,
+          "queued_ms": 0,
+          "request_ms": 3503,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 44,
+          "source_ms": 1081730,
+          "arrival_to_event_ms": 3134,
+          "event_to_answer_ms": 3138,
+          "queued_ms": 0,
+          "request_ms": 3138,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 45,
+          "source_ms": 1106620,
+          "arrival_to_event_ms": 3800,
+          "event_to_answer_ms": 2245,
+          "queued_ms": 0,
+          "request_ms": 2245,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 46,
+          "source_ms": 1130965,
+          "arrival_to_event_ms": 2767,
+          "event_to_answer_ms": 4429,
+          "queued_ms": 0,
+          "request_ms": 4429,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 47,
+          "source_ms": 1156235,
+          "arrival_to_event_ms": 7067,
+          "event_to_answer_ms": 2135,
+          "queued_ms": 0,
+          "request_ms": 2134,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 48,
+          "source_ms": 1177310,
+          "arrival_to_event_ms": 201,
+          "event_to_answer_ms": 3194,
+          "queued_ms": 0,
+          "request_ms": 3194,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 49,
+          "source_ms": 1205170,
+          "arrival_to_event_ms": 1101,
+          "event_to_answer_ms": 2858,
+          "queued_ms": 0,
+          "request_ms": 2858,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 50,
+          "source_ms": 1232085,
+          "arrival_to_event_ms": 6534,
+          "event_to_answer_ms": 2755,
+          "queued_ms": 0,
+          "request_ms": 2755,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 51,
+          "source_ms": 1253610,
+          "arrival_to_event_ms": 3234,
+          "event_to_answer_ms": 3409,
+          "queued_ms": 0,
+          "request_ms": 3409,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 52,
+          "source_ms": 1278370,
+          "arrival_to_event_ms": 2235,
+          "event_to_answer_ms": 2244,
+          "queued_ms": 0,
+          "request_ms": 2244,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 53,
+          "source_ms": 1304185,
+          "arrival_to_event_ms": 6501,
+          "event_to_answer_ms": 2584,
+          "queued_ms": 0,
+          "request_ms": 2584,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 54,
+          "source_ms": 1325765,
+          "arrival_to_event_ms": 4167,
+          "event_to_answer_ms": 2731,
+          "queued_ms": 0,
+          "request_ms": 2731,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 55,
+          "source_ms": 1351417,
+          "arrival_to_event_ms": 2700,
+          "event_to_answer_ms": 3050,
+          "queued_ms": 0,
+          "request_ms": 3050,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 56,
+          "source_ms": 1379058,
+          "arrival_to_event_ms": 4067,
+          "event_to_answer_ms": 2491,
+          "queued_ms": 0,
+          "request_ms": 2491,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 57,
+          "source_ms": 1406564,
+          "arrival_to_event_ms": 167,
+          "event_to_answer_ms": 805,
+          "queued_ms": 0,
+          "request_ms": 805,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 58,
+          "source_ms": 1434407,
+          "arrival_to_event_ms": 534,
+          "event_to_answer_ms": 1828,
+          "queued_ms": 0,
+          "request_ms": 1828,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 59,
+          "source_ms": 1461855,
+          "arrival_to_event_ms": 167,
+          "event_to_answer_ms": 1894,
+          "queued_ms": 0,
+          "request_ms": 1894,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 60,
+          "source_ms": 1489690,
+          "arrival_to_event_ms": 19347,
+          "event_to_answer_ms": 1962,
+          "queued_ms": 0,
+          "request_ms": 1962,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 61,
+          "source_ms": 1509935,
+          "arrival_to_event_ms": 8,
+          "event_to_answer_ms": 1867,
+          "queued_ms": 0,
+          "request_ms": 1867,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1640,
+          "queued_ms": 0,
+          "request_ms": 1640,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 1,
+          "source_ms": 10000,
+          "arrival_to_event_ms": 71,
+          "event_to_answer_ms": 1859,
+          "queued_ms": 0,
+          "request_ms": 1859,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 2,
+          "source_ms": 20000,
+          "arrival_to_event_ms": 71,
+          "event_to_answer_ms": 1668,
+          "queued_ms": 0,
+          "request_ms": 1668,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 3,
+          "source_ms": 30000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1705,
+          "queued_ms": 0,
+          "request_ms": 1705,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 4,
+          "source_ms": 40000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 2203,
+          "queued_ms": 0,
+          "request_ms": 2203,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 5,
+          "source_ms": 50000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1658,
+          "queued_ms": 0,
+          "request_ms": 1658,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 6,
+          "source_ms": 60000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1802,
+          "queued_ms": 0,
+          "request_ms": 1802,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 7,
+          "source_ms": 70000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1652,
+          "queued_ms": 0,
+          "request_ms": 1652,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 8,
+          "source_ms": 80000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1398,
+          "queued_ms": 0,
+          "request_ms": 1398,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 9,
+          "source_ms": 90000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1846,
+          "queued_ms": 0,
+          "request_ms": 1846,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 10,
+          "source_ms": 100000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1694,
+          "queued_ms": 0,
+          "request_ms": 1694,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 11,
+          "source_ms": 110000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1787,
+          "queued_ms": 0,
+          "request_ms": 1787,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 12,
+          "source_ms": 120000,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 1579,
+          "queued_ms": 0,
+          "request_ms": 1579,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 13,
+          "source_ms": 130000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1652,
+          "queued_ms": 0,
+          "request_ms": 1652,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 14,
+          "source_ms": 140000,
+          "arrival_to_event_ms": 62,
+          "event_to_answer_ms": 3058,
+          "queued_ms": 0,
+          "request_ms": 3058,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 15,
+          "source_ms": 150000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1840,
+          "queued_ms": 0,
+          "request_ms": 1840,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 16,
+          "source_ms": 160000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1628,
+          "queued_ms": 0,
+          "request_ms": 1628,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 17,
+          "source_ms": 170000,
+          "arrival_to_event_ms": 71,
+          "event_to_answer_ms": 1698,
+          "queued_ms": 0,
+          "request_ms": 1698,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 18,
+          "source_ms": 180000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1979,
+          "queued_ms": 0,
+          "request_ms": 1979,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 19,
+          "source_ms": 190000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1702,
+          "queued_ms": 0,
+          "request_ms": 1702,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 20,
+          "source_ms": 200000,
+          "arrival_to_event_ms": 71,
+          "event_to_answer_ms": 1873,
+          "queued_ms": 0,
+          "request_ms": 1873,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 21,
+          "source_ms": 210000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1868,
+          "queued_ms": 0,
+          "request_ms": 1868,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 22,
+          "source_ms": 220000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1747,
+          "queued_ms": 0,
+          "request_ms": 1747,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 23,
+          "source_ms": 230000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1833,
+          "queued_ms": 0,
+          "request_ms": 1833,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 24,
+          "source_ms": 240000,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1978,
+          "queued_ms": 0,
+          "request_ms": 1978,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 25,
+          "source_ms": 250000,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1359,
+          "queued_ms": 0,
+          "request_ms": 1359,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 26,
+          "source_ms": 260000,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1560,
+          "queued_ms": 0,
+          "request_ms": 1560,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 27,
+          "source_ms": 270000,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 2760,
+          "queued_ms": 0,
+          "request_ms": 2760,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 28,
+          "source_ms": 280000,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1542,
+          "queued_ms": 0,
+          "request_ms": 1541,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 29,
+          "source_ms": 290000,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1690,
+          "queued_ms": 0,
+          "request_ms": 1690,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 30,
+          "source_ms": 293666,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1975,
+          "queued_ms": 0,
+          "request_ms": 1975,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 31,
+          "source_ms": 301566,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 1613,
+          "queued_ms": 0,
+          "request_ms": 1613,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 32,
+          "source_ms": 311566,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1227,
+          "queued_ms": 0,
+          "request_ms": 1227,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 33,
+          "source_ms": 321566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1276,
+          "queued_ms": 0,
+          "request_ms": 1276,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 34,
+          "source_ms": 331566,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1492,
+          "queued_ms": 0,
+          "request_ms": 1492,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 35,
+          "source_ms": 341566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1313,
+          "queued_ms": 0,
+          "request_ms": 1313,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 36,
+          "source_ms": 351566,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1311,
+          "queued_ms": 0,
+          "request_ms": 1311,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 37,
+          "source_ms": 361566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 2364,
+          "queued_ms": 0,
+          "request_ms": 2364,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 38,
+          "source_ms": 371566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1379,
+          "queued_ms": 0,
+          "request_ms": 1379,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 39,
+          "source_ms": 381566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1555,
+          "queued_ms": 0,
+          "request_ms": 1555,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 40,
+          "source_ms": 391566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1292,
+          "queued_ms": 0,
+          "request_ms": 1292,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 41,
+          "source_ms": 401566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1590,
+          "queued_ms": 0,
+          "request_ms": 1590,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 42,
+          "source_ms": 411566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1349,
+          "queued_ms": 0,
+          "request_ms": 1349,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 43,
+          "source_ms": 421566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1316,
+          "queued_ms": 0,
+          "request_ms": 1316,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 44,
+          "source_ms": 431566,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 2206,
+          "queued_ms": 0,
+          "request_ms": 2206,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 45,
+          "source_ms": 441566,
+          "arrival_to_event_ms": 61,
+          "event_to_answer_ms": 1315,
+          "queued_ms": 0,
+          "request_ms": 1315,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 46,
+          "source_ms": 451566,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 1702,
+          "queued_ms": 0,
+          "request_ms": 1702,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 47,
+          "source_ms": 461566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1173,
+          "queued_ms": 0,
+          "request_ms": 1173,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 48,
+          "source_ms": 471566,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1520,
+          "queued_ms": 0,
+          "request_ms": 1520,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 49,
+          "source_ms": 481566,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1804,
+          "queued_ms": 0,
+          "request_ms": 1803,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 50,
+          "source_ms": 491566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1262,
+          "queued_ms": 0,
+          "request_ms": 1262,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 51,
+          "source_ms": 501566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1592,
+          "queued_ms": 0,
+          "request_ms": 1592,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 52,
+          "source_ms": 511566,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1235,
+          "queued_ms": 0,
+          "request_ms": 1235,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 53,
+          "source_ms": 521600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1219,
+          "queued_ms": 0,
+          "request_ms": 1219,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 54,
+          "source_ms": 531600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1456,
+          "queued_ms": 0,
+          "request_ms": 1456,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 55,
+          "source_ms": 541600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 2421,
+          "queued_ms": 0,
+          "request_ms": 2421,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 56,
+          "source_ms": 551600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1718,
+          "queued_ms": 0,
+          "request_ms": 1718,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 57,
+          "source_ms": 561600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1219,
+          "queued_ms": 0,
+          "request_ms": 1219,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 58,
+          "source_ms": 571600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1479,
+          "queued_ms": 0,
+          "request_ms": 1479,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 59,
+          "source_ms": 581600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1557,
+          "queued_ms": 0,
+          "request_ms": 1557,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 60,
+          "source_ms": 591600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1389,
+          "queued_ms": 0,
+          "request_ms": 1389,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 61,
+          "source_ms": 601600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1822,
+          "queued_ms": 0,
+          "request_ms": 1822,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 62,
+          "source_ms": 611600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1370,
+          "queued_ms": 0,
+          "request_ms": 1370,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 63,
+          "source_ms": 621600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1246,
+          "queued_ms": 0,
+          "request_ms": 1246,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 64,
+          "source_ms": 631600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1824,
+          "queued_ms": 0,
+          "request_ms": 1824,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 65,
+          "source_ms": 641600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1260,
+          "queued_ms": 0,
+          "request_ms": 1260,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 66,
+          "source_ms": 651600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1676,
+          "queued_ms": 0,
+          "request_ms": 1676,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 67,
+          "source_ms": 661600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1269,
+          "queued_ms": 0,
+          "request_ms": 1269,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 68,
+          "source_ms": 671600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1649,
+          "queued_ms": 0,
+          "request_ms": 1649,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 69,
+          "source_ms": 681600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1361,
+          "queued_ms": 0,
+          "request_ms": 1361,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 70,
+          "source_ms": 691600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1516,
+          "queued_ms": 0,
+          "request_ms": 1516,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 71,
+          "source_ms": 701600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1367,
+          "queued_ms": 0,
+          "request_ms": 1367,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 72,
+          "source_ms": 711600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1640,
+          "queued_ms": 0,
+          "request_ms": 1640,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 73,
+          "source_ms": 721600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1750,
+          "queued_ms": 0,
+          "request_ms": 1750,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 74,
+          "source_ms": 731600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1699,
+          "queued_ms": 0,
+          "request_ms": 1699,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 75,
+          "source_ms": 741600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1713,
+          "queued_ms": 0,
+          "request_ms": 1713,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 76,
+          "source_ms": 751600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1212,
+          "queued_ms": 0,
+          "request_ms": 1212,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 77,
+          "source_ms": 761600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1617,
+          "queued_ms": 0,
+          "request_ms": 1616,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 78,
+          "source_ms": 771600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1567,
+          "queued_ms": 0,
+          "request_ms": 1567,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 79,
+          "source_ms": 781600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1618,
+          "queued_ms": 0,
+          "request_ms": 1618,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 80,
+          "source_ms": 791600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1300,
+          "queued_ms": 0,
+          "request_ms": 1300,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 81,
+          "source_ms": 801600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1414,
+          "queued_ms": 0,
+          "request_ms": 1414,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 82,
+          "source_ms": 811600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1659,
+          "queued_ms": 0,
+          "request_ms": 1659,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 83,
+          "source_ms": 821600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1261,
+          "queued_ms": 0,
+          "request_ms": 1261,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 84,
+          "source_ms": 831600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1649,
+          "queued_ms": 0,
+          "request_ms": 1649,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 85,
+          "source_ms": 841600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1433,
+          "queued_ms": 0,
+          "request_ms": 1433,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 86,
+          "source_ms": 851600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1299,
+          "queued_ms": 0,
+          "request_ms": 1299,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 87,
+          "source_ms": 861600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1521,
+          "queued_ms": 0,
+          "request_ms": 1521,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 88,
+          "source_ms": 871600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1306,
+          "queued_ms": 0,
+          "request_ms": 1306,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 89,
+          "source_ms": 881600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1473,
+          "queued_ms": 0,
+          "request_ms": 1472,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 90,
+          "source_ms": 891600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 2382,
+          "queued_ms": 0,
+          "request_ms": 2382,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 91,
+          "source_ms": 901600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1407,
+          "queued_ms": 0,
+          "request_ms": 1407,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 92,
+          "source_ms": 911600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1435,
+          "queued_ms": 0,
+          "request_ms": 1435,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 93,
+          "source_ms": 921600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1528,
+          "queued_ms": 0,
+          "request_ms": 1528,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 94,
+          "source_ms": 931600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1345,
+          "queued_ms": 0,
+          "request_ms": 1345,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 95,
+          "source_ms": 941600,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 2243,
+          "queued_ms": 0,
+          "request_ms": 2243,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 96,
+          "source_ms": 951600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1312,
+          "queued_ms": 0,
+          "request_ms": 1312,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 97,
+          "source_ms": 961600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1254,
+          "queued_ms": 0,
+          "request_ms": 1254,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 98,
+          "source_ms": 971600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1489,
+          "queued_ms": 0,
+          "request_ms": 1489,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 99,
+          "source_ms": 981600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1310,
+          "queued_ms": 0,
+          "request_ms": 1310,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 100,
+          "source_ms": 991600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1296,
+          "queued_ms": 0,
+          "request_ms": 1296,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 101,
+          "source_ms": 1001600,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1382,
+          "queued_ms": 0,
+          "request_ms": 1382,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 102,
+          "source_ms": 1011600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1399,
+          "queued_ms": 0,
+          "request_ms": 1398,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 103,
+          "source_ms": 1021600,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1717,
+          "queued_ms": 0,
+          "request_ms": 1717,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 104,
+          "source_ms": 1031633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1600,
+          "queued_ms": 0,
+          "request_ms": 1600,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 105,
+          "source_ms": 1041633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1592,
+          "queued_ms": 0,
+          "request_ms": 1592,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 106,
+          "source_ms": 1051633,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1414,
+          "queued_ms": 0,
+          "request_ms": 1413,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 107,
+          "source_ms": 1061633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1641,
+          "queued_ms": 0,
+          "request_ms": 1641,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 108,
+          "source_ms": 1071633,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 1705,
+          "queued_ms": 0,
+          "request_ms": 1705,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 109,
+          "source_ms": 1081633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1685,
+          "queued_ms": 0,
+          "request_ms": 1685,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 110,
+          "source_ms": 1091633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1529,
+          "queued_ms": 0,
+          "request_ms": 1529,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 111,
+          "source_ms": 1101633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1353,
+          "queued_ms": 0,
+          "request_ms": 1353,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 112,
+          "source_ms": 1111633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1555,
+          "queued_ms": 0,
+          "request_ms": 1555,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 113,
+          "source_ms": 1121633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1355,
+          "queued_ms": 0,
+          "request_ms": 1355,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 114,
+          "source_ms": 1131633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1324,
+          "queued_ms": 0,
+          "request_ms": 1324,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 115,
+          "source_ms": 1141633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1517,
+          "queued_ms": 0,
+          "request_ms": 1517,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 116,
+          "source_ms": 1151633,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 1350,
+          "queued_ms": 0,
+          "request_ms": 1350,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 117,
+          "source_ms": 1161633,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 3340,
+          "queued_ms": 0,
+          "request_ms": 3340,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 118,
+          "source_ms": 1171633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1304,
+          "queued_ms": 0,
+          "request_ms": 1304,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 119,
+          "source_ms": 1181633,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1374,
+          "queued_ms": 0,
+          "request_ms": 1374,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 120,
+          "source_ms": 1191633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1781,
+          "queued_ms": 0,
+          "request_ms": 1781,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 121,
+          "source_ms": 1201633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1630,
+          "queued_ms": 0,
+          "request_ms": 1630,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 122,
+          "source_ms": 1211633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1488,
+          "queued_ms": 0,
+          "request_ms": 1488,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 123,
+          "source_ms": 1221633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1651,
+          "queued_ms": 0,
+          "request_ms": 1650,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 124,
+          "source_ms": 1231633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1268,
+          "queued_ms": 0,
+          "request_ms": 1268,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 125,
+          "source_ms": 1241633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1626,
+          "queued_ms": 0,
+          "request_ms": 1626,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 126,
+          "source_ms": 1251633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1920,
+          "queued_ms": 0,
+          "request_ms": 1920,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 127,
+          "source_ms": 1261633,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1501,
+          "queued_ms": 0,
+          "request_ms": 1501,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 128,
+          "source_ms": 1271633,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 1564,
+          "queued_ms": 0,
+          "request_ms": 1564,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 129,
+          "source_ms": 1281633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1691,
+          "queued_ms": 0,
+          "request_ms": 1691,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 130,
+          "source_ms": 1291633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1353,
+          "queued_ms": 0,
+          "request_ms": 1353,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 131,
+          "source_ms": 1301633,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1459,
+          "queued_ms": 0,
+          "request_ms": 1458,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 132,
+          "source_ms": 1311633,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1344,
+          "queued_ms": 0,
+          "request_ms": 1344,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 133,
+          "source_ms": 1321633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1702,
+          "queued_ms": 0,
+          "request_ms": 1702,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 134,
+          "source_ms": 1331633,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1358,
+          "queued_ms": 0,
+          "request_ms": 1358,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 135,
+          "source_ms": 1341633,
+          "arrival_to_event_ms": 51,
+          "event_to_answer_ms": 1425,
+          "queued_ms": 0,
+          "request_ms": 1425,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 136,
+          "source_ms": 1351633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 3226,
+          "queued_ms": 0,
+          "request_ms": 3225,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 137,
+          "source_ms": 1361633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1326,
+          "queued_ms": 0,
+          "request_ms": 1326,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 138,
+          "source_ms": 1371633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1603,
+          "queued_ms": 0,
+          "request_ms": 1603,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 139,
+          "source_ms": 1381633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1424,
+          "queued_ms": 0,
+          "request_ms": 1424,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 140,
+          "source_ms": 1391633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1334,
+          "queued_ms": 0,
+          "request_ms": 1334,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 141,
+          "source_ms": 1401633,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1798,
+          "queued_ms": 0,
+          "request_ms": 1798,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 142,
+          "source_ms": 1401966,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1576,
+          "queued_ms": 0,
+          "request_ms": 1576,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 143,
+          "source_ms": 1411966,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1664,
+          "queued_ms": 0,
+          "request_ms": 1664,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 144,
+          "source_ms": 1421966,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1238,
+          "queued_ms": 0,
+          "request_ms": 1237,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 145,
+          "source_ms": 1431966,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1432,
+          "queued_ms": 0,
+          "request_ms": 1432,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 146,
+          "source_ms": 1438066,
+          "arrival_to_event_ms": 10,
+          "event_to_answer_ms": 1328,
+          "queued_ms": 0,
+          "request_ms": 1328,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 147,
+          "source_ms": 1448066,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1493,
+          "queued_ms": 0,
+          "request_ms": 1493,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 148,
+          "source_ms": 1458066,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1264,
+          "queued_ms": 0,
+          "request_ms": 1263,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 149,
+          "source_ms": 1468066,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1184,
+          "queued_ms": 0,
+          "request_ms": 1184,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 150,
+          "source_ms": 1478066,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1140,
+          "queued_ms": 0,
+          "request_ms": 1140,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 151,
+          "source_ms": 1488066,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1181,
+          "queued_ms": 0,
+          "request_ms": 1181,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 152,
+          "source_ms": 1498066,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1301,
+          "queued_ms": 0,
+          "request_ms": 1301,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 153,
+          "source_ms": 1508066,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1249,
+          "queued_ms": 0,
+          "request_ms": 1249,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 154,
+          "source_ms": 1518066,
+          "arrival_to_event_ms": 41,
+          "event_to_answer_ms": 1445,
+          "queued_ms": 0,
+          "request_ms": 1445,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 155,
+          "source_ms": 1528066,
+          "arrival_to_event_ms": 40,
+          "event_to_answer_ms": 1319,
+          "queued_ms": 0,
+          "request_ms": 1319,
+          "ok": true
+        }
+      ],
+      "steps": 58,
+      "settled_grew": true,
+      "wer": {
+        "edits": 1229,
+        "length": 2580,
+        "rate": 0.47635658914728685
+      },
+      "scored": 45,
+      "seams": 61,
+      "unmatched": 27,
+      "transcript": "[Music] [Music] [Music] [Music] [Music] [Music] [Music] [Music] [Music] [Music] [Music] No speech detected. Station, this is Houston. Are you ready for the event? Houston, this is Station. We're ready. WTAE, this is Mission Control Houston. Please call Station for a voice check. Station, this is Kelly Sato with WTAE. How do you hear me? Kelly, we we read you loud and clear. Welcome aboard the International Space Station. Thank you so much. I have chills right now. What an amazing opportunity. I know we just have a few minutes with both of you, so I would love to start Andrew Morgan with you. Your parents are going to be able to watch this from Newcastle. You are a Pittsburgh area native. What do you want to say hi to everybody there in Western Pennsylvania. My parents and my grandparents and son uncles all live there in the Newcastle area. I grew up as a military brat. My dad was an active duty officer and Newcastle was always what I called home. That was where we went to on the holidays and and that's what my children also know as a home. That's where they go for the holidays as well. So it's a special place so is so is space i've never interviewed someone that's floating before what is it like to grow up in this area and now be joining us via the space station through satellite that has to be an amazing feeling Well, it's a tremendous honor. Uh we view, you know, Nick and I are both military officers and uh we've been serving our country all of our lives and uh all of our careers and now this is just a continuation of that service to be on board the international space station representing not just our country, but an international partnership and the uh the entire all of humankind. It's it's a tremendous honor for us. Absolutely. Uh Nick, while we have you here to uh with us as well, talk to us about your current situation and and what it is like to experience anti-gravity, something most of us will never get a chance to experience here on earth. Uh space is is a is just this amazing place where everything floats. And and that's why we're here because on the space station we have the ability to do experiments in the presence of of weightlessness where gravity's not the dominant force and things just float around and and that helps us really peel back some of the science and understand exactly how things work at the at the really small level and that gives us the breakthroughs uh that we need. So that's why we're up here. The space station is a laboratory to discover how how things work when everything floats. And I got to tell you it's it's a lot of fun at a personal level to be able to do back flips and front flips and and just fly around the station uh like I always wanted to when I was a little kid. And it's even more fun when we're having dinner together, uh throwing food at each other and and trying to catch it or trying to eat off a spoon with no hands. that got to be the elephant in the room because i know what you're doing is so important scientifically but it also looks like so much fun too and and speaking of that andr i know you had a chance to do your first spacewalk not long ago if you can describe to our viewers here in pennsylvania what that's been like uh that that is true just two weeks ago nick and i did our it was nick's third spacewalk my first spacewalk uh was wonderful to do it with my friend and uh he was a great mentor through it when we went out that hatch we were over the mediterranean you could look down and you could pick out clearly the geography below us you could see the italian peninsula the island of sicily and then we saw the nile river it was beautiful but after that we went to work for about six and a half hours and i really didn't have much of an opportunity to look back at the up there, Pennsylvania, West Virginia? We uh we flew over the East Coast earlier today. We make an orbit around the Earth every hour and a half and the geography under us is constantly changing. Uh but we love uh flights over north america right now we have a great view of the hurricane and we've been tracking that taking photos of hurricane dorian as it's made its way north off the east coast um and providing uh photos and imagery so people can see as the storm's developed and and we've been keeping an eye on it for everyone Yeah, that's actually a really good point, Dr. Morgan. I know you took an amazing picture and that you tweeted out of this hurricane. Have you ever seen anything like that from your perspective up there before? It's incredible we see clouds constantly all over, but when you see a cloud mass form over the course of a couple of days as the storm matured into a bigger, larger, more powerful storm and the eye became more consolidated it's amazing the power that this planet is able to produce. If you can I know we just see the two of you there in this shot but explain to us what the culture is like up there. How many people are with you if anyone else. Uh the crew on board the International Space Station is a crew of six and we have uh three Americans, one Italian and two Russian cosmonauts as well. And uh we're all working for one International Space Station program, uh even though we all uh ultimately work for our individual space agencies. Up here we're like a family. It is a it's a wonderful experience to eat our meals together and to relax together but also to work alongside each other. Earlier today Nick and I spent half the day doing an experiment called fluid shifts working together where we're looking at how our physiology changes in microgravity. Um so we're living, working, playing together. All six of us. How long will the two of you stay there? So Drew gives me a hard time and says that I'm a short timer now because I only have about another month. Uh but my mission is 203 days and between eight and nine months um and so I'll return in the spring of 2020 and Nick will leave here shortly his his time on board ISS will end at the beginning of October Gotcha something that's been big news down here is the back to the moon and and putting the first woman and the next man on the surface of the moon and and then doing it in a way that allows us to sustain that because that's the proving ground where we're going to learn what we need to learn in order to press further on to Mars. And so it's an exciting time. Uh you know, every day you keep to you you can feel the momentum and the energy building uh behind this idea of returning to the moon and you know, it's palpable even up here even though we're isolated and away from everyone on the ground. Uh so if you're interested in getting involved with the space program, now's the time. Uh whether it's, you know, on the commercial side or NASA or you know, we're bringing it together from a a global collaboration trying to get back to the moon. Uh so it's it's just a it's a we're very fortunate to be where we're at at this time and uh things are looking very good and and promising in the future. And last question for you Dr. Morgan, especially being from here, I think you offer a hope to kids who might look at this as a very real career possibility. What do you want to say to those kids who are interested in getting into this. Well, I you know I have always I said that the formula is very simple. Uh you should do what you love, uh find that thing that you love, do it well, and then always be a good team player along the way. And you know, I didn't plan a career around how best to become an astronaut. I just stuck to that formula, and whether that leads to being an astronaut or not, it will definitely lead to a fulfilling career. And so that's my best advice. And when one more thing we do have something for the viewership area that I know will be a a big hit uh with the upcoming NFL season kicking off this week. There are Pittsburgh Steelers fans on board the International Space Station. Yes, yes, that is awesome. I hope you're cheering on with us on Sunday. Thank you guys so much for your time. We really appreciate it. The Steelers will appreciate knowing they're getting support from space. Thank you guys. We're thinking about you and wishing you the best of luck. Thanks very much for your time. Station, this is Houston ACR. That concludes the WTAE portion of the event. Please stand by for a voice check from KDKA. Station, this is David Highfield with KDKA. Do you hear me? David, we read you loud and clear. Welcome aboard the International Space Station. Much for for talking with us. We're going to get started here. We're going to begin taping this. Welcome back. We are so excited to chat with two astronauts while they are on board the International Space Station right now. In fact, one of them is from our area. Dr. Andrew Morgan was born in Morgantown, and his parents, Richard and Janice, live in Newcastle. He considers our area, the Pittsburgh area, his home. And also joining us is Nick Hague, who grew up in Kansas. Thank you both for making time for us. And uh first off, Andrew, since you're from our area, is there anyone that you would like to say hi to here in Western Pennsylvania? Yes, as you mentioned, I consider Western Pennsylvania and the New Casellary to be home. You know, I I grew up as a military brat. My dad was a career military officer and it was important for me to have a place to call home and my parents, my grandparents and all aunts and uncles and cousins all live there in the Newcastle area and uh and it's a special place to me so it's real privilege to be a part of your viewership area and say hello to everyone so thanks very much. Now Nick, you both took part in a spacewalk recently that was pretty important. Tell us about that. What was that about? Yes, so uh not too long ago, uh it seems like a month ago, but it was only just over a week ago. Uh we were able to uh Drew did his first spacewalk. I went out for my third time and it was to install a docking adapter to to essentially give us a second port so that the commercial crew vehicles that were going to launch our crews out of Florida and have a have a place to to dock to on the station. So, uh in the very near future, uh early next year, we're going to be receiving crews uh from Florida uh for the first time in a long time, you know. Both of us launched out of the Baikonur Cosmodrome on a Soyuz vehicle. Uh and so we're we're getting that capability back within the United States and so that's a huge milestone for us. Uh obviously, an experience like that doing a spacewalk, especially when it's when it's with a friend is is you know truly out of this world and it's hard to put words to it just how how how inspiring the whole experience is. Andrew, I want to ask you about the spacewalk as well because you're out there for six and a half hours and I also by the way I love how you're passing the mic back and forth.",
+      "descriptions": [
+        {
+          "index": 0,
+          "time": 0,
+          "reason": "first",
+          "description": "This image is a promotional graphic for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text indicates the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue-toned map of the Earth from space."
+        },
+        {
+          "index": 1,
+          "time": 10000000000,
+          "reason": "interval",
+          "description": "This image is a graphic announcement for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text specifies the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue-toned map of the world with a subtle, glowing aesthetic."
+        },
+        {
+          "index": 2,
+          "time": 20000000000,
+          "reason": "interval",
+          "description": "This image is a promotional graphic for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text indicates the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue, stylized map of the Earth and abstract geometric shapes."
+        },
+        {
+          "index": 3,
+          "time": 30000000000,
+          "reason": "interval",
+          "description": "This image is a graphic announcement for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text specifies the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue, stylized depiction of Earth and space."
+        },
+        {
+          "index": 4,
+          "time": 40000000000,
+          "reason": "interval",
+          "description": "This image is a promotional graphic for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text indicates the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue-toned, stylized map of the Earth from space."
+        },
+        {
+          "index": 5,
+          "time": 50000000000,
+          "reason": "interval",
+          "description": "This image is a promotional graphic for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan. The text indicates the event is part of Expedition 60 and is scheduled for September 5, 2019, at 10:00 AM ET. The background features a blue-toned map of the Earth and the NASA logo in the bottom right corner."
+        },
+        {
+          "index": 6,
+          "time": 60000000000,
+          "reason": "interval",
+          "description": "This image is a title slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan. The text indicates the event is part of Expedition 60 and was scheduled for 10:00 AM ET on September 5, 2019. The background features a blue-toned map of the world with a subtle, high-tech aesthetic."
+        },
+        {
+          "index": 7,
+          "time": 70000000000,
+          "reason": "interval",
+          "description": "This image is a title slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan as part of Expedition 60. The text indicates the event is scheduled for 10:00 AM ET on September 5, 2019, broadcasting from the Johnson Space Center. The background features a blue, stylized depiction of Earth from space."
+        },
+        {
+          "index": 8,
+          "time": 80000000000,
+          "reason": "interval",
+          "description": "This image is a title slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text, which includes the date of September 5, 2019, is set against a blue background featuring a faint map of the Earth."
+        },
+        {
+          "index": 9,
+          "time": 90000000000,
+          "reason": "interval",
+          "description": "This image is a graphic announcement for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text specifies the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a stylized blue map of the Earth with a subtle glow."
+        },
+        {
+          "index": 10,
+          "time": 100000000000,
+          "reason": "interval",
+          "description": "This image is a presentation slide announcing a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text specifies the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue, stylized map of the world with a subtle, high-tech aesthetic."
+        },
+        {
+          "index": 11,
+          "time": 110000000000,
+          "reason": "interval",
+          "description": "This image is a graphic announcement for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan. The text indicates the event is part of Expedition 60 and is scheduled for 10:00 AM ET on September 5, 2019, broadcasting from the Johnson Space Center. The background features a blue gradient with a faint map of the Earth and the NASA logo in the corner."
+        },
+        {
+          "index": 12,
+          "time": 120000000000,
+          "reason": "interval",
+          "description": "This image is a title slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan as part of Expedition 60. The text, which includes the date of September 5, 2019, is set against a blue background featuring a stylized map of the Earth."
+        },
+        {
+          "index": 13,
+          "time": 130000000000,
+          "reason": "interval",
+          "description": "This image is a title slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text indicates the event was scheduled for 10:00 AM ET on September 5, 2019, broadcasting from the Johnson Space Center. The background features a blue, stylized map of the world with a subtle glow."
+        },
+        {
+          "index": 14,
+          "time": 140000000000,
+          "reason": "interval",
+          "description": "This image is a promotional slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text indicates the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue-toned map of the world and a stylized graphic design."
+        },
+        {
+          "index": 15,
+          "time": 150000000000,
+          "reason": "interval",
+          "description": "This image is a promotional graphic for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text announces the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a stylized blue view of Earth from space."
+        },
+        {
+          "index": 16,
+          "time": 160000000000,
+          "reason": "interval",
+          "description": "This image is a title slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text indicates the event is scheduled for 10:00 AM ET on September 5, 2019, broadcasting from the Johnson Space Center. The background features a blue, stylized depiction of Earth from space."
+        },
+        {
+          "index": 17,
+          "time": 170000000000,
+          "reason": "interval",
+          "description": "This image is a graphic announcement for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text specifies the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue-toned, stylized map of the Earth and space."
+        },
+        {
+          "index": 18,
+          "time": 180000000000,
+          "reason": "interval",
+          "description": "This image is a graphic announcement for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text specifies that the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue-toned, stylized map of the Earth from space."
+        },
+        {
+          "index": 19,
+          "time": 190000000000,
+          "reason": "interval",
+          "description": "This image is a presentation slide announcing a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan from Expedition 60. The event is scheduled for 10:00 AM ET on September 5, 2019, with the broadcast originating from the Johnson Space Center. The background features a blue, stylized map of the world with a subtle glow."
+        },
+        {
+          "index": 20,
+          "time": 200000000000,
+          "reason": "interval",
+          "description": "This image is a digital announcement slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan. The text indicates the event is part of Expedition 60 and is scheduled for 10:00 AM ET on September 5, 2019, broadcasting from the Johnson Space Center. The background features a stylized blue gradient with a faint map of the world and the NASA logo in the bottom right corner."
+        },
+        {
+          "index": 21,
+          "time": 210000000000,
+          "reason": "interval",
+          "description": "This image is a graphic announcement for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan. The text indicates the event is part of Expedition 60 and will take place on September 5, 2019, at 10:00 AM ET. The background features a stylized blue map of the world and the NASA logo."
+        },
+        {
+          "index": 22,
+          "time": 220000000000,
+          "reason": "interval",
+          "description": "This image is a promotional graphic for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text announces the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue, stylized map of the world with a subtle glow."
+        },
+        {
+          "index": 23,
+          "time": 230000000000,
+          "reason": "interval",
+          "description": "This image is a graphic announcement for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text indicates the event will take place on September 5, 2019, at 10:00 AM ET, broadcasting from the Johnson Space Center. The background features a blue, stylized map of the Earth with a subtle NASA logo in the bottom right corner."
+        },
+        {
+          "index": 24,
+          "time": 240000000000,
+          "reason": "interval",
+          "description": "This image is a title slide for a live in-flight interview with NASA astronauts Nick Hague and Andrew Morgan during Expedition 60. The text indicates the event was scheduled for 10:00 AM ET on September 5, 2019, broadcasting from the Johnson Space Center. The background features a blue-toned, stylized map of the Earth from space."
+        },
+        {
+          "index": 25,
+          "time": 250000000000,
+          "reason": "interval",
+          "description": "This image shows a large, dimly lit control room or operations center filled with numerous workstations. Each station is equipped with multiple computer monitors, and several people can be seen working at their desks. The room is organized in rows, creating a professional and high-tech atmosphere."
+        },
+        {
+          "index": 26,
+          "time": 260000000000,
+          "reason": "interval",
+          "description": "This high-angle shot shows a large, modern control room filled with multiple workstations arranged in curved rows. Several people are seated at these desks, which are equipped with numerous computer monitors, keyboards, and various technical equipment. The room features large windows overlooking another area and walls decorated with various circular emblems or logos."
+        },
+        {
+          "index": 27,
+          "time": 270000000000,
+          "reason": "interval",
+          "description": "This high-angle shot shows a large, modern mission control center filled with numerous workstations arranged in curved rows. Each station is equipped with multiple computer monitors, and several operators are seated at their desks, focused on their screens. The room features a large observation window overlooking a dark area, likely a control room or a simulation space."
+        },
+        {
+          "index": 28,
+          "time": 280000000000,
+          "reason": "interval",
+          "description": "This high-angle shot shows a large, modern office space filled with numerous workstations arranged in rows. Each desk is equipped with multiple computer monitors, and several employees can be seen working at their stations. The room features a professional atmosphere with neutral-colored walls and various office supplies scattered throughout the workspace."
+        },
+        {
+          "index": 29,
+          "time": 290000000000,
+          "reason": "interval",
+          "description": "This high-angle shot shows a large, modern control room filled with numerous workstations equipped with multiple computer monitors. Several people are seated at these desks, focused on their screens, while the room is decorated with various logos and emblems on the walls. The space is organized with long, curved desks and professional equipment, suggesting a high-tech monitoring or command center."
+        },
+        {
+          "index": 30,
+          "time": 293666667000,
+          "reason": "scene",
+          "description": "This image shows a modern office space filled with several workstations, each equipped with multiple computer monitors and ergonomic chairs. Several people are seated at their desks, focused on their work in a professional, open-plan environment. The room is organized with various office supplies, papers, and personal items scattered across the desks."
+        },
+        {
+          "index": 31,
+          "time": 301566667000,
+          "reason": "scene",
+          "description": "Two astronauts in blue shirts are inside a spacecraft, appearing to be in a microgravity environment. One astronaut is holding a microphone and looking toward the camera, while the other stands beside him, looking forward. The background is filled with complex scientific equipment, wires, and various modules of the space station."
+        },
+        {
+          "index": 32,
+          "time": 311566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are floating in a space station, smiling at the camera. They are surrounded by various scientific equipment, wires, and technical components characteristic of a spacecraft interior."
+        },
+        {
+          "index": 33,
+          "time": 321566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are floating inside the International Space Station, smiling at the camera. They are surrounded by various scientific equipment, wires, and technical modules that characterize the interior of the spacecraft."
+        },
+        {
+          "index": 34,
+          "time": 331566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing inside a spacecraft or space station. They are surrounded by various technical equipment, wires, and modules, with a view of a circular hatch in the background."
+        },
+        {
+          "index": 35,
+          "time": 341566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside a spacecraft, smiling at the camera. They are surrounded by complex scientific equipment, wires, and various international flags hanging in the background."
+        },
+        {
+          "index": 36,
+          "time": 351566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, wires, and technical modules that characterize the interior of a spacecraft."
+        },
+        {
+          "index": 37,
+          "time": 361566667000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, smiling at the camera. They appear to be in a high-tech, cluttered environment filled with various scientific equipment and cables."
+        },
+        {
+          "index": 38,
+          "time": 371566667000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various scientific equipment and cables. They are both smiling and looking toward the camera, appearing to be engaged in a video broadcast or mission activity."
+        },
+        {
+          "index": 39,
+          "time": 381566667000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They are smiling and looking toward the camera, with one man holding a microphone as if giving a presentation or interview. The background is filled with complex scientific equipment, wires, and various modules of the space station."
+        },
+        {
+          "index": 40,
+          "time": 391566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They are smiling at the camera, surrounded by various scientific equipment, wires, and technical modules."
+        },
+        {
+          "index": 41,
+          "time": 401566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, wires, and technical modules that characterize the interior of a spacecraft."
+        },
+        {
+          "index": 42,
+          "time": 411566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are standing inside the International Space Station, appearing to film a video or broadcast. They are surrounded by complex scientific equipment, wires, and various modules that make up the interior of the spacecraft."
+        },
+        {
+          "index": 43,
+          "time": 421566667000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, surrounded by various scientific equipment and wires. They are looking toward the camera, with one man holding a microphone as if conducting an interview or presentation."
+        },
+        {
+          "index": 44,
+          "time": 431566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are standing inside a spacecraft, likely the International Space Station, looking towards the camera. They are surrounded by various scientific equipment, wires, and technical components characteristic of a space laboratory."
+        },
+        {
+          "index": 45,
+          "time": 441566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and tan pants are standing inside a spacecraft, likely the International Space Station. They are smiling and appear to be engaged in a conversation or a demonstration while surrounded by various scientific equipment and cables."
+        },
+        {
+          "index": 46,
+          "time": 451566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside the International Space Station, smiling at the camera. They are surrounded by various scientific equipment, wires, and modules that make up the interior of the spacecraft."
+        },
+        {
+          "index": 47,
+          "time": 461566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside the International Space Station. They are smiling and gesturing towards the camera amidst a complex background of scientific equipment and wires."
+        },
+        {
+          "index": 48,
+          "time": 471566667000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various scientific equipment and cables. They are both smiling and looking toward the camera, appearing to be in the middle of a video broadcast or demonstration."
+        },
+        {
+          "index": 49,
+          "time": 481566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are seen inside the International Space Station. They appear to be filming a video or communicating, with one astronaut holding a microphone. The background is filled with various scientific equipment, wires, and modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 50,
+          "time": 491566667000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are smiling and posing for a photo inside a spacecraft or space station. They are surrounded by various technical equipment, wires, and panels, with a circular hatch visible in the background."
+        },
+        {
+          "index": 51,
+          "time": 501566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are seen floating inside the International Space Station. They appear to be smiling and interacting with each other in the microgravity environment. The background is filled with various scientific equipment, cables, and structural components of the spacecraft."
+        },
+        {
+          "index": 52,
+          "time": 511566667000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling while working with equipment inside the International Space Station. They are surrounded by various scientific instruments, wires, and technical modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 53,
+          "time": 521600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, wires, and technical modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 54,
+          "time": 531600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by complex scientific equipment and wires. They are looking toward the camera, with one man holding a microphone as if preparing to speak or present."
+        },
+        {
+          "index": 55,
+          "time": 541600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are standing inside the International Space Station, smiling and looking toward the camera. They appear to be in the middle of a conversation or a video recording, surrounded by various scientific equipment and cables."
+        },
+        {
+          "index": 56,
+          "time": 551600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They are looking toward the camera, with one man holding a microphone as if preparing to speak or interview. The background is filled with complex scientific equipment, wires, and various modules of the station."
+        },
+        {
+          "index": 57,
+          "time": 561600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft or space station, looking towards the camera. They are surrounded by complex machinery, wires, and various pieces of scientific equipment."
+        },
+        {
+          "index": 58,
+          "time": 571600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside the International Space Station. They are smiling and looking toward the camera, appearing to be in the middle of a conversation or a video recording. The background is filled with various scientific equipment, wires, and modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 59,
+          "time": 581600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various scientific equipment and cables. They are looking toward the camera, with one man holding a microphone as if preparing to speak or conduct an interview."
+        },
+        {
+          "index": 60,
+          "time": 591600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are floating inside the International Space Station. They are positioned in the center of the frame, looking toward the camera with smiles. The background is filled with complex scientific equipment, wires, and various modules of the space station."
+        },
+        {
+          "index": 61,
+          "time": 601600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station, surrounded by complex machinery and wires. They are both smiling and looking toward the camera, appearing to be in a professional yet friendly mood. The background is filled with various scientific equipment, cables, and technical components typical of a space environment."
+        },
+        {
+          "index": 62,
+          "time": 611600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants stand side-by-side inside the International Space Station. They are surrounded by a complex array of scientific equipment, wires, and various modules that make up the spacecraft's interior."
+        },
+        {
+          "index": 63,
+          "time": 621600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are posing for a photo inside a spacecraft or space station. They are surrounded by various scientific equipment, wires, and technical components typical of a high-tech laboratory environment."
+        },
+        {
+          "index": 64,
+          "time": 631600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station, surrounded by complex machinery and wires. They appear to be filming a video or conducting an activity, with one man holding a small device toward the camera. The interior is densely packed with various scientific equipment, cables, and structural components."
+        },
+        {
+          "index": 65,
+          "time": 641600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside the International Space Station. They are posing for a photo in a cramped, highly technical environment filled with various equipment, wires, and modules."
+        },
+        {
+          "index": 66,
+          "time": 651600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing inside the International Space Station. They are surrounded by various scientific equipment, cables, and modules that make up the interior of the spacecraft."
+        },
+        {
+          "index": 67,
+          "time": 661600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, wires, and modules that characterize the interior of a spacecraft."
+        },
+        {
+          "index": 68,
+          "time": 671600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a highly technical, crowded compartment of a spacecraft, likely the International Space Station. They appear to be engaged in a conversation or a video broadcast, surrounded by various wires, equipment, and structural panels."
+        },
+        {
+          "index": 69,
+          "time": 681600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by complex scientific equipment and cables. They are looking toward the camera, with one astronaut holding a microphone as if preparing for an interview or broadcast."
+        },
+        {
+          "index": 70,
+          "time": 691600000000,
+          "reason": "interval",
+          "description": "Two astronauts are standing inside the International Space Station, looking toward the camera. They are both wearing blue short-sleeved shirts and khaki pants, with one astronaut holding a camera or device. The background is filled with complex scientific equipment, wires, and various modules of the space station."
+        },
+        {
+          "index": 71,
+          "time": 701600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside the International Space Station. They are surrounded by various scientific equipment, wires, and technical modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 72,
+          "time": 711600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and tan pants are working inside a highly technical, crowded module of the International Space Station. They are surrounded by a complex array of wires, equipment, and various scientific instruments. One astronaut appears to be adjusting or inspecting a piece of equipment while the other looks on."
+        },
+        {
+          "index": 73,
+          "time": 721600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. One man is smiling and looking toward the other, while the second man holds a microphone as if he is speaking or recording. The background is filled with complex scientific equipment, wires, and various modules characteristic of a space station interior."
+        },
+        {
+          "index": 74,
+          "time": 731600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various scientific equipment and cables. They are both smiling and looking toward the camera, appearing to be engaged in a video call or recording."
+        },
+        {
+          "index": 75,
+          "time": 741600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside the International Space Station. They are smiling and looking toward the camera, appearing to be in the middle of a conversation or presentation. The background is filled with various scientific equipment, cables, and modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 76,
+          "time": 751600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside the International Space Station. They are surrounded by various scientific equipment, wires, and modules that make up the interior of the spacecraft."
+        },
+        {
+          "index": 77,
+          "time": 761600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are floating inside the International Space Station, surrounded by various scientific equipment and cables. One astronaut is looking toward the other, while the second astronaut appears to be speaking or recording a message."
+        },
+        {
+          "index": 78,
+          "time": 771600000000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts are standing inside a spacecraft, appearing to be in a space station environment. They are looking toward the camera, with one man holding a microphone as if giving a presentation or interview. The background is filled with complex scientific equipment, wires, and various modules of the station."
+        },
+        {
+          "index": 79,
+          "time": 781600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue polo shirts are standing inside a spacecraft, likely the International Space Station, surrounded by complex scientific equipment and wires. One astronaut is smiling at the camera while the other holds a microphone, appearing to be in the middle of a presentation or broadcast."
+        },
+        {
+          "index": 80,
+          "time": 791600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various equipment and cables. One astronaut is looking at the camera while the other is speaking into a handheld microphone."
+        },
+        {
+          "index": 81,
+          "time": 801600000000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various equipment and cables. They are both smiling and looking toward the camera, appearing to be in the middle of a video broadcast or mission update."
+        },
+        {
+          "index": 82,
+          "time": 811600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside the International Space Station. They are smiling and looking toward the camera, with one astronaut holding a microphone. The background is filled with various scientific equipment, wires, and modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 83,
+          "time": 821600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue polo shirts and khaki pants are standing inside a spacecraft, smiling at the camera. They are surrounded by complex scientific equipment, wires, and various international flags mounted on the walls."
+        },
+        {
+          "index": 84,
+          "time": 831600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing for a photo inside the International Space Station. They are surrounded by a complex array of scientific equipment, wires, and various modules that make up the spacecraft's interior."
+        },
+        {
+          "index": 85,
+          "time": 841600000000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various scientific equipment and cables. They are both smiling and looking toward the camera, appearing to be engaged in a video broadcast or recording."
+        },
+        {
+          "index": 86,
+          "time": 851600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing in what appears to be a spacecraft or space station module. They are surrounded by various technical equipment, wires, and panels, with several flags visible in the background."
+        },
+        {
+          "index": 87,
+          "time": 861600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by complex machinery and wires. They appear to be looking toward the camera, possibly during a video broadcast or mission update."
+        },
+        {
+          "index": 88,
+          "time": 871600000000,
+          "reason": "interval",
+          "description": "Two astronauts are smiling and interacting inside the International Space Station, surrounded by various scientific equipment and cables. One astronaut is holding up a yellow t-shirt, while the other looks on with a smile."
+        },
+        {
+          "index": 89,
+          "time": 881600000000,
+          "reason": "interval",
+          "description": "Two astronauts are smiling and posing inside the International Space Station while holding up a bright orange \"Terrible Towel.\" They are surrounded by various scientific equipment, cables, and technical modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 90,
+          "time": 891600000000,
+          "reason": "interval",
+          "description": "Two astronauts are smiling and posing for a photo inside the International Space Station. They are both wearing blue shirts and khaki pants while floating in a microgravity environment."
+        },
+        {
+          "index": 91,
+          "time": 901600000000,
+          "reason": "interval",
+          "description": "An astronaut in a blue shirt holds up a yellow \"Terrible Towel\" inside the International Space Station. He is standing next to another man in a blue shirt, both smiling for the camera amidst various scientific equipment and cables."
+        },
+        {
+          "index": 92,
+          "time": 911600000000,
+          "reason": "interval",
+          "description": "An astronaut in a blue shirt and khaki pants is captured mid-air, appearing to float or tumble inside the International Space Station. The background is filled with complex scientific equipment, wires, and various modules characteristic of a spacecraft interior."
+        },
+        {
+          "index": 93,
+          "time": 921600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are seen jumping in a high-tech, cluttered environment that appears to be inside a spacecraft or space station. They are surrounded by various scientific equipment, wires, and panels, with a view of Earth visible through a window in the background."
+        },
+        {
+          "index": 94,
+          "time": 931600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside a spacecraft, smiling at the camera. They are surrounded by complex scientific equipment, wires, and various modules of the space station."
+        },
+        {
+          "index": 95,
+          "time": 941600000000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are seen inside a spacecraft, appearing to float in a microgravity environment. They are surrounded by complex scientific equipment, wires, and various modules that make up the interior of the station."
+        },
+        {
+          "index": 96,
+          "time": 951600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, wires, and modules that make up the interior of the spacecraft."
+        },
+        {
+          "index": 97,
+          "time": 961600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, wires, and technical modules that characterize the interior of a spacecraft."
+        },
+        {
+          "index": 98,
+          "time": 971600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and tan pants stand side-by-side inside the International Space Station. They are surrounded by complex scientific equipment, wires, and various international flags hanging in the background."
+        },
+        {
+          "index": 99,
+          "time": 981600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, wires, and modules that make up the interior of the spacecraft."
+        },
+        {
+          "index": 100,
+          "time": 991600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing for a photo inside a spacecraft. They are surrounded by a complex array of wires, equipment, and various compartments that make up the interior of the station."
+        },
+        {
+          "index": 101,
+          "time": 1001600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are floating inside the International Space Station. They are positioned in the center of the frame, looking toward the camera in a cluttered, high-tech environment filled with wires, equipment, and various modules."
+        },
+        {
+          "index": 102,
+          "time": 1011600000000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts are standing inside a spacecraft, likely the International Space Station, surrounded by complex machinery and wires. They are both smiling at the camera, appearing to be in a positive mood during their mission."
+        },
+        {
+          "index": 103,
+          "time": 1021600000000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants stand side-by-side in a highly technical, cluttered environment, likely inside the International Space Station. They are surrounded by various scientific equipment, wires, and panels, with several international flags visible on the wall behind them."
+        },
+        {
+          "index": 104,
+          "time": 1031633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside a spacecraft, appearing to be in a module of the International Space Station. They are looking towards each other and smiling, seemingly engaged in a conversation. The background is filled with complex scientific equipment, wires, and various compartments typical of a space station environment."
+        },
+        {
+          "index": 105,
+          "time": 1041633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They appear to be engaged in a conversation or a demonstration, with one man holding a microphone. The background is filled with complex scientific equipment, wires, and various modules of the station."
+        },
+        {
+          "index": 106,
+          "time": 1051633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing in what appears to be a space station module. They are surrounded by various scientific equipment, wires, and technical components. One man is looking at the camera while the other is speaking into a handheld microphone."
+        },
+        {
+          "index": 107,
+          "time": 1061633333000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They are looking toward the camera, with one man holding a microphone as if preparing to speak or conduct an interview. The background is filled with complex scientific equipment, wires, and various modules characteristic of a space station environment."
+        },
+        {
+          "index": 108,
+          "time": 1071633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, appearing to be in a microgravity environment. One man is looking toward the other while the second man holds a microphone and speaks. The background is filled with complex scientific equipment, wires, and various international flags."
+        },
+        {
+          "index": 109,
+          "time": 1081633333000,
+          "reason": "interval",
+          "description": "Two men are standing inside a spacecraft, likely the International Space Station, surrounded by complex machinery, wires, and equipment. One man is wearing a blue polo shirt and smiling, while the other man in a similar blue shirt is holding a microphone as if speaking."
+        },
+        {
+          "index": 110,
+          "time": 1091633333000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They appear to be filming a video or conducting an interview, with one man holding a microphone. The background is filled with complex scientific equipment, wires, and various international flags."
+        },
+        {
+          "index": 111,
+          "time": 1101633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They are surrounded by complex scientific equipment, wires, and various modules that fill the cramped interior."
+        },
+        {
+          "index": 112,
+          "time": 1111633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are smiling and laughing while working inside the International Space Station. They are surrounded by various scientific equipment, cables, and modules that characterize the interior of a spacecraft."
+        },
+        {
+          "index": 113,
+          "time": 1121633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are smiling and standing inside a spacecraft or space station. They appear to be in a high-tech environment filled with various wires, equipment, and scientific modules."
+        },
+        {
+          "index": 114,
+          "time": 1131633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are smiling and posing for a photo inside a spacecraft or space station. They are surrounded by various scientific equipment, wires, and technical modules in a cramped, high-tech environment."
+        },
+        {
+          "index": 115,
+          "time": 1141633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, cables, and technical modules that characterize the interior of a spacecraft."
+        },
+        {
+          "index": 116,
+          "time": 1151633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, smiling at the camera. They appear to be in a high-tech, cluttered environment filled with various wires, equipment, and panels."
+        },
+        {
+          "index": 117,
+          "time": 1161633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and tan pants are standing inside the International Space Station, surrounded by various scientific equipment and cables. They are smiling at the camera, appearing to be in the middle of a video broadcast or mission update."
+        },
+        {
+          "index": 118,
+          "time": 1171633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and tan pants are standing inside a spacecraft, likely the International Space Station. They are smiling at the camera amidst a complex background of wires, equipment, and various international flags."
+        },
+        {
+          "index": 119,
+          "time": 1181633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by complex equipment and wires. They are smiling and looking toward the camera, appearing to be in the middle of a conversation or a demonstration."
+        },
+        {
+          "index": 120,
+          "time": 1191633333000,
+          "reason": "interval",
+          "description": "Two astronauts are seen inside the International Space Station, appearing to float in a microgravity environment. They are both wearing blue short-sleeved shirts and are looking toward the camera, with one astronaut holding a small device. The background is filled with complex scientific equipment, wires, and various modules of the space station."
+        },
+        {
+          "index": 121,
+          "time": 1201633333000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts are standing inside a highly technical, cluttered environment that appears to be a spacecraft or space station. They are looking toward the camera, with one man holding a small device as if presenting it. The background is filled with various wires, panels, equipment, and structural components typical of a high-tech laboratory."
+        },
+        {
+          "index": 122,
+          "time": 1211633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They are surrounded by complex scientific equipment, wires, and various modules that fill the cramped interior. One astronaut is holding a microphone, appearing to be in the middle of a presentation or communication."
+        },
+        {
+          "index": 123,
+          "time": 1221633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station, surrounded by various scientific equipment and cables. They are both smiling at the camera, with one man holding a microphone as if they are conducting an interview or recording a message."
+        },
+        {
+          "index": 124,
+          "time": 1231633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, cables, and modules that characterize the interior of a spacecraft."
+        },
+        {
+          "index": 125,
+          "time": 1241633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are floating inside a spacecraft, likely the International Space Station. They are smiling and looking toward the camera, with one astronaut holding a microphone as if giving a presentation or interview. The background is filled with complex scientific equipment, wires, and various modules of the station."
+        },
+        {
+          "index": 126,
+          "time": 1251633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing in a highly technical, cluttered environment that appears to be the interior of a spacecraft or space station. They are looking toward the camera, with one man holding a microphone as if conducting an interview or presentation. The background is filled with various wires, equipment, and panels, including a circular hatchway."
+        },
+        {
+          "index": 127,
+          "time": 1261633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They are surrounded by various scientific equipment, wires, and technical components typical of a space laboratory."
+        },
+        {
+          "index": 128,
+          "time": 1271633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various scientific equipment and cables. They appear to be looking at the camera and speaking, possibly conducting a live broadcast or recording a video."
+        },
+        {
+          "index": 129,
+          "time": 1281633333000,
+          "reason": "interval",
+          "description": "Two men in blue polo shirts are standing in a high-tech, cluttered environment that appears to be inside a spacecraft or space station. They are facing the camera, with one man holding a microphone as if they are conducting a broadcast or presentation. The background is filled with various scientific equipment, wires, and panels, suggesting a complex laboratory setting."
+        },
+        {
+          "index": 130,
+          "time": 1291633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by complex equipment and wires. They are both smiling at the camera, with one man holding a microphone as if preparing for an interview or broadcast."
+        },
+        {
+          "index": 131,
+          "time": 1301633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They are smiling at the camera, surrounded by various scientific equipment, wires, and technical modules."
+        },
+        {
+          "index": 132,
+          "time": 1311633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by various scientific equipment and cables. They are looking toward the camera, with one astronaut holding a microphone as if conducting an interview or presentation."
+        },
+        {
+          "index": 133,
+          "time": 1321633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are standing inside a spacecraft, likely the International Space Station. They appear to be looking at the camera and speaking, possibly during a live broadcast or video recording. The background is filled with complex scientific equipment, wires, and various modules of the station."
+        },
+        {
+          "index": 134,
+          "time": 1331633333000,
+          "reason": "interval",
+          "description": "Two men in blue shirts are standing inside a spacecraft, likely the International Space Station, surrounded by complex scientific equipment and wires. They are looking toward the camera, appearing to be filming a video or conducting a demonstration in a microgravity environment."
+        },
+        {
+          "index": 135,
+          "time": 1341633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are standing inside a spacecraft, appearing to be in a microgravity environment. They are surrounded by complex scientific equipment, wires, and various international flags hanging from the ceiling. One astronaut is holding a bright orange piece of fabric or clothing."
+        },
+        {
+          "index": 136,
+          "time": 1351633333000,
+          "reason": "interval",
+          "description": "Two men are smiling and posing for a photo inside the International Space Station, holding up a yellow sign that reads \"The Terrible Towel.\" They are surrounded by various scientific equipment, wires, and storage compartments characteristic of a spacecraft interior."
+        },
+        {
+          "index": 137,
+          "time": 1361633333000,
+          "reason": "interval",
+          "description": "Two astronauts are smiling and posing inside the International Space Station, holding up a yellow banner together. The background is filled with various scientific equipment, wires, and storage compartments characteristic of a spacecraft interior."
+        },
+        {
+          "index": 138,
+          "time": 1371633333000,
+          "reason": "interval",
+          "description": "An astronaut in a blue shirt is floating horizontally in a zero-gravity environment, appearing to be in a mid-air pose. Another person is positioned behind them, seemingly assisting or interacting with the floating astronaut. The background is filled with the complex, cluttered interior of a spacecraft, featuring various wires, panels, and equipment."
+        },
+        {
+          "index": 139,
+          "time": 1381633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts are smiling and posing inside the International Space Station. One astronaut is holding up a bright yellow t-shirt that says \"Terrible Towel\" on it. The background is filled with various scientific equipment, wires, and international flags."
+        },
+        {
+          "index": 140,
+          "time": 1391633333000,
+          "reason": "interval",
+          "description": "Two astronauts are smiling and posing for a photo inside the International Space Station, surrounded by various scientific equipment and cables. One astronaut is holding a microphone, while the other holds up a yellow sign that reads \"Terrible Twirl.\""
+        },
+        {
+          "index": 141,
+          "time": 1401633333000,
+          "reason": "interval",
+          "description": "Two astronauts in blue shirts and khaki pants are smiling and posing for a photo inside the International Space Station. They are surrounded by various scientific equipment, wires, and modules that make up the interior of the spacecraft."
+        },
+        {
+          "index": 142,
+          "time": 1401966667000,
+          "reason": "scene",
+          "description": "This high-angle shot shows a modern office space filled with several workstations equipped with multiple computer monitors. Several employees are seated at their desks, focused on their work in a professional, open-plan environment."
+        },
+        {
+          "index": 143,
+          "time": 1411966667000,
+          "reason": "interval",
+          "description": "This image shows a modern office space filled with multiple workstations, each equipped with several computer monitors. Several people are seated at these desks, focused on their work in a professional, high-tech environment."
+        },
+        {
+          "index": 144,
+          "time": 1421966667000,
+          "reason": "interval",
+          "description": "This image features an astronaut floating in the dark expanse of space, set against a backdrop of distant stars. The words \"EXPLORE HUMANS IN SPACE\" are prominently displayed in large, white capital letters across the center of the frame."
+        },
+        {
+          "index": 145,
+          "time": 1431966667000,
+          "reason": "interval",
+          "description": "This image features an astronaut floating in the dark expanse of space, surrounded by distant stars and cosmic dust. The center of the image displays the text \"EXPLORE HUMANS in SPACE\" in a bold, white font. The overall composition creates a sense of vastness and the mystery of space exploration."
+        },
+        {
+          "index": 146,
+          "time": 1438066667000,
+          "reason": "scene",
+          "description": "This image features the official NASA logo, which consists of a blue sphere with white stars and a red, swooping vector. The word \"NASA\" is written in large, white, serif letters across the center of the sphere. The entire emblem is set against a solid black background."
+        },
+        {
+          "index": 147,
+          "time": 1448066667000,
+          "reason": "interval",
+          "description": "The image features the official NASA logo, which consists of a blue sphere filled with white stars and a white swoosh. A prominent red, curved shape cuts across the center of the emblem. The word \"NASA\" is written in large, white, bold letters across the middle of the design."
+        },
+        {
+          "index": 148,
+          "time": 1458066667000,
+          "reason": "interval",
+          "description": "This image features the NASA logo, which consists of the agency's name in white letters set against a blue circular background. A red, swooping shape cuts across the circle, accompanied by white orbital lines and small white dots representing stars."
+        },
+        {
+          "index": 149,
+          "time": 1468066667000,
+          "reason": "interval",
+          "description": "This image features the NASA logo, which consists of the agency's name in white letters set against a blue circular background. A red, swooping shape cuts across the circle, and white dots representing stars are scattered throughout the blue field."
+        },
+        {
+          "index": 150,
+          "time": 1478066667000,
+          "reason": "interval",
+          "description": "This image features the official NASA logo, which consists of a blue sphere filled with white stars and a red swoosh. The word \"NASA\" is written in large, white, bold letters across the center of the sphere."
+        },
+        {
+          "index": 151,
+          "time": 1488066667000,
+          "reason": "interval",
+          "description": "This image features the official NASA logo, which consists of a blue sphere containing white stars and a red, swooping vector. The word \"NASA\" is written in large, white, serif letters across the center of the blue circle."
+        },
+        {
+          "index": 152,
+          "time": 1498066667000,
+          "reason": "interval",
+          "description": "This high-angle shot, taken from the International Space Station, shows the curvature of the Earth against the black void of space. Below the horizon, a vast expanse of white clouds is scattered across a deep blue ocean."
+        },
+        {
+          "index": 153,
+          "time": 1508066667000,
+          "reason": "interval",
+          "description": "This image shows a wide view of Earth's horizon as seen from space, featuring a vast expanse of blue ocean and scattered white clouds. The curvature of the planet is clearly visible against the deep blackness of space."
+        },
+        {
+          "index": 154,
+          "time": 1518066667000,
+          "reason": "interval",
+          "description": "This high-angle shot, taken from the International Space Station, shows a vast expanse of white clouds scattered across the blue Earth. The curvature of the planet is visible against the black void of space, creating a striking horizon line."
+        },
+        {
+          "index": 155,
+          "time": 1528066667000,
+          "reason": "interval",
+          "description": "This image shows a view of Earth from space, featuring a vast expanse of white clouds scattered across a deep blue ocean. The curvature of the planet is visible against the black void of space, with a thin, glowing atmosphere lining the horizon."
+        }
+      ]
+    }
+  ],
+  "cancel": {
+    "trigger": "frame 78",
+    "at": 771379090799,
+    "source_at": 771600000000,
+    "events": 110,
+    "stream_stopped": 324387288,
+    "returned": 324387626,
+    "stream_errors": [
+      "context canceled"
+    ],
+    "answered_before": 109,
+    "in_flight": 1,
+    "in_flight_cancelled": 1,
+    "in_flight_return": 191953,
+    "queued": 0,
+    "queued_cancelled": 0,
+    "files": 110,
+    "yielded": 110,
+    "processes": 0
+  }
+}

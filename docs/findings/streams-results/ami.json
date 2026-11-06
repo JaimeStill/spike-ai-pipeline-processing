@@ -1,0 +1,2688 @@
+{
+  "source": {
+    "name": "ami",
+    "title": "AMI ES2002a, the overhead camera (352x288, MPEG-4 Part 2, 25 fps) muxed with the Mix-Headset WAV (16 kHz mono)",
+    "files": [
+      "video/ami-es2002a/ami-es2002a-overhead.avi",
+      "audio/long/ami-es2002a-mix-headset.wav"
+    ],
+    "sha256": [
+      "b71fa5842c5a8cb3063194e2d2afb048a3977c2181917805015cbf2b449684d9",
+      "9c76866990fcc8b84006dc32d273ad99df439090b748ebe72103bb78c3216ee7"
+    ],
+    "license": "CC-BY-4.0",
+    "redistributable": true,
+    "seconds": 1272.64,
+    "truth_note": "AMI's manual word-level transcription of each speaker, ordered by its segments' starts, as the audio finding scores it; overlapping speech is ordered by segment, which no single-stream transcript can match exactly",
+    "truth_words": 2455
+  },
+  "settings": {
+    "audio_model": "ggml-org/gemma-4-E4B-it-GGUF:Q8_0",
+    "vision_model": "google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0",
+    "prompt": "Describe this picture in two or three sentences.",
+    "output_cap": 512,
+    "slots": 4,
+    "overlap": 2000000000,
+    "min_silence": 300000000,
+    "percentile": 10,
+    "floor_window": 4000000000,
+    "margin": 12,
+    "scene_threshold": 0.2,
+    "max_gap": 10000000000,
+    "max_side": 0
+  },
+  "started": "2026-11-06T16:36:52.524217579Z",
+  "unpaced": {
+    "wall": 2507807264,
+    "speed": 507.47121529990113,
+    "windows": 49,
+    "frames": 125,
+    "reasons": {
+      "first": 1,
+      "interval": 124
+    },
+    "cuts": {
+      "end": 1,
+      "silence": 48
+    }
+  },
+  "file_paths": [
+    {
+      "detector": "silencedetect",
+      "windows": 50,
+      "failed": 0,
+      "plan_time": 275307538,
+      "wall": 43914063173,
+      "wer": {
+        "edits": 754,
+        "length": 2455,
+        "rate": 0.3071283095723014
+      },
+      "scored": 50,
+      "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. I you have to think. I put it in the back but yeah, it's got right. Okay, right. Can it all. Bits doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? gets rush and you arrived on time um we need a switch to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project it's uh designing a remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my wife's mum would be a monkey because um the small cute and furry and when plan it becomes real you know i'm going to be up there with them right just the gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Actually, told you a whole lot more about beagles. Okay, to we might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot now. Impressionist. Time draw. Got you. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. the insight. Maybe harmless and mild and interesting. Okay. Guys still didn't know what I'm going to write about. Um superb sketch by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um he's a mixture of uh a various things. Um and what did I like about him? Um that's wish to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh and he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's ever been conditioned. Maybe. And um where did you find this just down here. Okay. Um what do we do next? Um Okay. Uh we're now I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question wholesale wholesale i imagine it probably is wholesale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want um Um. All right. But I I didn't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on how he designed it at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movable. Yeah. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the well the country like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down um Right away I'm making some kind of assumptions about what what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no is it as much as that 16 17 18p yeah it say so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here Okay. Um will does anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually, that would be useful, Lou, wouldn't it? If you knew like what your money would get you. No. Mhm. The here interesting thing about discussing um production of a remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah so so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something my parents want to I bought them one remote controls because they got fed up of having like four or five different remote controls for each device right right so from him it was just how many devices does it control right so in function one of the priorities might be to combine as many uses right so do you think that should be like a main design him of our remote controller that you know your your satellite and your regular telly and your vcr and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're going from being just like little sort of scribble boards to cameras, mp3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or um or even a you know notes about um what you want to watch like you might put in there oh I want to watch such and such and look that's a good idea so extra functionalities yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that that then there in there um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if there's nothing else okay Um so anything else anybody wants to add about what they don't like about remote controllers they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it. It's usually quite small or when you're lying right on the couch or on the table. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep yeah they're i mean is that something we'd want to include you think i don't know sure okay maybe i remember when the first remote control my my family had was on a cable actually the cable between in the tv and big like buttons that sort of like like on a blender or something my goodness and um you know when i think about what they are now it's better but actually it's still kind of i don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable okay it could be it could be the it could be that functionally that doesn't make it any better but that just the appeal of i'm not having you know these days as every things in people's homes are becoming more and more like chic you know um nicer materials and okay might be okay be worth exploring right well um so just to wrap up the next meeting's going to be in 30 minutes so that's about um about 10 to 12 by my watch um so in between now and then um as the industrial designer you're going to be working on you know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um Okay. Yeah, so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message a lot seniors and I thought I would, so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a a design commitment to television features. Okay, well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. Yes, there's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um, yeah. Yeah, that's the main actor. Okay. Right? Okay. Well, that's that's the end of the meeting then. Um Thank you all for coming. Great that we thought they wanted us today, isn't it? Um Right. Great. How do you turn this thing off? let function and oh there we go so i think if you can just leave it on maybe and then um okay this is turned itself off try try pushing the function and ef uh-huh Mhm. Oh, there it is. It's just Thank goodness. Okay. Right. It's all very high tech, I must say. I I don't know if I got like you guys go back to your um for your instructions what to do with fragging getting me video the cathedral kind of it feels like and I'm fucking myself I'll take the big project next semester. This is quite big shit. Ah. What courses are you taking? Um well I'm talking about the USP. Yeah. All the night. Uh I've uh computer design altering systems um idea next semester. Oh, next semester. Um computer security um could it architecture um sorry. I don't know. Sorry. It is in infrastructure. No. And I go? I I don't know. I mean I really no hi it's the face to go where i was you up it just sounds i i was i wasn't expecting the"
+    },
+    {
+      "detector": "tracker",
+      "windows": 49,
+      "failed": 0,
+      "plan_time": 144921169,
+      "wall": 42872348631,
+      "wer": {
+        "edits": 793,
+        "length": 2455,
+        "rate": 0.3230142566191446
+      },
+      "scored": 49,
+      "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. I you have to think. I put it in the back but yeah, this got it. Okay, right. Can I all? Bit doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? And you arrived on time. Um, near situated design and your remote control. Um, as you can see it's supposed to be original, trendy and user-friendly. Um, so that's kind of our our brief. So why? Um, and so there are three different stages to the design. Um, I'm not really sure what what you guys have already received. Um, in your emails, what did you get? Um, I just got the project announcement about the project it's uh designing remote control yeah that's that that everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So, who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, nice. All right. My favorite animal is like Abigail. Uh, character favorite characteristics of it is that right yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and be fit and in robust good health so this is blue blue beagle my family's beagle. Right. Lovely. Yeah, my wife and mum be a monkey. as um a small cute and furry and when plan it becomes real and i'm going to be up there with them right just a bit gear you can take as long over this as you like because we haven't got an awful lot to discuss ok what we do, we do. Don't feel like you're in a rush anyway. Okay. Actually, tell the whole lot more about beagles. Okay, too. We might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot tonight. Impressionist. Time draw. Is that a whale? Yeah. Hey. Um oh my I don't know it's just the first animal I can think of to top of my head. Um yes, the big reason is cuz I'm allergic to most animals. An allergic to animals for so um fish was a natural choice. Um yeah, and I kind of like wheels. They come in and go eat everything and stuff. Very harmless and mild and interesting. Okay. Guys still didn't know what I'm going to write about. Um. Superb sketch, by the way. Tails a bit bigger, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um. That doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um, it's a mixture of uh various things um and what did i like about him um that's just to suggest that his tail wags um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um uh and he's quite quite wee as well this is quite amusing is he aware that this is his own tail he's chasing it is i think it is he only does it after his hardest dinner and um he just all of a sudden is get up and start chasing his tail in around the living room an after dinner dog then yeah probably when he was little he got lots of attention for doing it and yeah he's probably been conditioned maybe mentioned. Maybe. And um where did you find this just down here? Okay. Um what do we do next? Um Okay. Uh when I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay Okay. So cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf? Um I don't know. I imagine that's a good question. Our sale. Our selling. I imagine it probably is our sale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want. Um Um all right but i i don't know i mean do you think the fact that it's going to be sold internationally will have a bearing on howy designer at all yes i think it will um all right away i'm wondering if there is um like with dvd players if there are zones oh yeah regions and stuff yeah frequencies or something yeah Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movement. Yeah. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms of like the characteristics of the country, like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down um Right away I'm making some kind of assumptions about what what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no is it as much as that 16 17 18p yeah it's so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here okay Okay. Um will does anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually that would be useful though, wouldn't it? If you knew like what your money would get you. No. The here interesting thing about discussing um production of remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah. So so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls. Or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something. My parents want to um bought um remote controls because um they got fed up with having like four or five different remote controls for each device, right? Right. So um from them it was just how many devices does it control? Right. So in function one of the priorities might be to combine as many uses. Right. So do you think that should be like a main design aim of a remote control that, you know, I think so. your your satellite and your regular telly and your vcr and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're gone from being just like little sort of scribble boards to cameras, mp3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or um or even like you know notes about um what you want to watch like you might put in there oh I want to watch that sensationuka that's a good idea so extra functionality yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that that then there in their um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if you've nothing else okay Um so anything else anybody wants to add about what they don't like about remote controls they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it, they're usually quite small or when you want it right, it's beneath the couch or on the table. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep yeah they're i mean is that something we'd want to include you think i don't know sure okay maybe i remember when the first remote control my my family had was on a cable actually the cable between in the tv and big like buttons that sort of like like on a blender or something my goodness and um you know when i think about what they are now it's better but actually it's still kind of i don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable mhm okay well i guess that's up to the designer it could be it could be that functionally that doesn't make it any better but that just the appeal of i've not having you know these days as every people things in people's homes are becoming more and more like chic, you know. Yeah. Um nicer materials and okay. might be okay. Be worth exploring. Right. Well, um so it is to wrap up. The next meeting is going to be in 30 minutes, so that's about um about 10 to 12 by my watch. Um so in between now and then, um as the industrial designer, you're going to be working on you know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um. Okay. Yeah, so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message, I looked to seniors and I thought I would, so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a a design commitment to television features. Okay, well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you'd probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. There's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um yeah. Getting that's the main factor okay right okay well that's that's the end of the meeting then um thank you all for coming great that was it that went to list today isn't it um right great how do you turn this thing off let function and oh there we go so i think if you can just leave it on maybe and then um okay this has turned itself off try try pushing the function and a f a ha oh there it is it's just there is. thank goodness. okay. right. it's all very high tech i must say. i i don't know like you guys go back to your for your instructions. so you want to structure it into what to them plugging good thing we don't have a capacitor kind of a feels like and on performance I thought they would do that project next semester. This is quite tricky. Ah. What courses are you taking? Um well I'm talking about the ASP. Yeah. All the night uh computer design, altering systems. Um um uh I don't know next semester. Oh, next semester um computer security um could be optics and um I don't know yeah basically no. Sorry. Everything in the first no, I don't do nothing. Got it? I I don't know. I mean I don't even know how it's supposed to get into where Eliza are to just start i was just just i i was i wasn't expecting the"
+    }
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "wall": 1250401739625,
+      "ended": 1247606396252,
+      "last_window": 1177360716,
+      "windows": 49,
+      "frames": 125,
+      "reasons": {
+        "first": 1,
+        "interval": 124
+      },
+      "cuts": {
+        "end": 1,
+        "silence": 48
+      },
+      "failed": 0,
+      "same_as_unpaced": true,
+      "window_lags": {
+        "arrival_to_event": {
+          "n": 49,
+          "mean": 1767722319,
+          "p50": 1201100740,
+          "p90": 4441029382,
+          "max": 6281491662
+        },
+        "event_to_answer": {
+          "n": 49,
+          "mean": 2564947541,
+          "p50": 2595059625,
+          "p90": 3429269786,
+          "max": 4521045165
+        },
+        "queued": {
+          "n": 49,
+          "mean": 52172,
+          "p50": 50276,
+          "p90": 68459,
+          "max": 73599
+        },
+        "request": {
+          "n": 49,
+          "mean": 2564895368,
+          "p50": 2595018959,
+          "p90": 3429207879,
+          "max": 4520991080
+        },
+        "waited": 0,
+        "max_in_flight": 2
+      },
+      "frame_lags": {
+        "arrival_to_event": {
+          "n": 125,
+          "mean": 20874209,
+          "p50": 20592330,
+          "p90": 20740047,
+          "max": 43206722
+        },
+        "event_to_answer": {
+          "n": 125,
+          "mean": 1579319178,
+          "p50": 1464938399,
+          "p90": 1749461881,
+          "max": 3898191724
+        },
+        "queued": {
+          "n": 125,
+          "mean": 49979,
+          "p50": 43862,
+          "p90": 71596,
+          "max": 330324
+        },
+        "request": {
+          "n": 125,
+          "mean": 1579269198,
+          "p50": 1464902386,
+          "p90": 1749356803,
+          "max": 3898136100
+        },
+        "waited": 0,
+        "max_in_flight": 1
+      },
+      "lags": [
+        {
+          "kind": "window",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 760,
+          "event_to_answer_ms": 2064,
+          "queued_ms": 0,
+          "request_ms": 2064,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 1,
+          "source_ms": 27725,
+          "arrival_to_event_ms": 4441,
+          "event_to_answer_ms": 1479,
+          "queued_ms": 0,
+          "request_ms": 1479,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 2,
+          "source_ms": 51340,
+          "arrival_to_event_ms": 961,
+          "event_to_answer_ms": 2766,
+          "queued_ms": 0,
+          "request_ms": 2766,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 3,
+          "source_ms": 78545,
+          "arrival_to_event_ms": 1520,
+          "event_to_answer_ms": 3272,
+          "queued_ms": 0,
+          "request_ms": 3272,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 4,
+          "source_ms": 105020,
+          "arrival_to_event_ms": 202,
+          "event_to_answer_ms": 3164,
+          "queued_ms": 0,
+          "request_ms": 3164,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 5,
+          "source_ms": 132875,
+          "arrival_to_event_ms": 2041,
+          "event_to_answer_ms": 2192,
+          "queued_ms": 0,
+          "request_ms": 2192,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 6,
+          "source_ms": 158805,
+          "arrival_to_event_ms": 761,
+          "event_to_answer_ms": 2985,
+          "queued_ms": 0,
+          "request_ms": 2985,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 7,
+          "source_ms": 186517,
+          "arrival_to_event_ms": 761,
+          "event_to_answer_ms": 1238,
+          "queued_ms": 0,
+          "request_ms": 1238,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 8,
+          "source_ms": 213775,
+          "arrival_to_event_ms": 721,
+          "event_to_answer_ms": 2196,
+          "queued_ms": 0,
+          "request_ms": 2196,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 9,
+          "source_ms": 241085,
+          "arrival_to_event_ms": 6281,
+          "event_to_answer_ms": 1114,
+          "queued_ms": 0,
+          "request_ms": 1114,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 10,
+          "source_ms": 262780,
+          "arrival_to_event_ms": 1201,
+          "event_to_answer_ms": 2108,
+          "queued_ms": 0,
+          "request_ms": 2108,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 11,
+          "source_ms": 289530,
+          "arrival_to_event_ms": 1601,
+          "event_to_answer_ms": 4108,
+          "queued_ms": 0,
+          "request_ms": 4108,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 12,
+          "source_ms": 315980,
+          "arrival_to_event_ms": 320,
+          "event_to_answer_ms": 2998,
+          "queued_ms": 0,
+          "request_ms": 2998,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 13,
+          "source_ms": 343725,
+          "arrival_to_event_ms": 2240,
+          "event_to_answer_ms": 2560,
+          "queued_ms": 0,
+          "request_ms": 2560,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 14,
+          "source_ms": 369490,
+          "arrival_to_event_ms": 441,
+          "event_to_answer_ms": 3232,
+          "queued_ms": 0,
+          "request_ms": 3232,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 15,
+          "source_ms": 397330,
+          "arrival_to_event_ms": 2601,
+          "event_to_answer_ms": 2355,
+          "queued_ms": 0,
+          "request_ms": 2355,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 16,
+          "source_ms": 422820,
+          "arrival_to_event_ms": 2561,
+          "event_to_answer_ms": 3070,
+          "queued_ms": 0,
+          "request_ms": 3070,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 17,
+          "source_ms": 448275,
+          "arrival_to_event_ms": 721,
+          "event_to_answer_ms": 3060,
+          "queued_ms": 0,
+          "request_ms": 3060,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 18,
+          "source_ms": 476207,
+          "arrival_to_event_ms": 1401,
+          "event_to_answer_ms": 2444,
+          "queued_ms": 0,
+          "request_ms": 2443,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 19,
+          "source_ms": 502830,
+          "arrival_to_event_ms": 1881,
+          "event_to_answer_ms": 2595,
+          "queued_ms": 0,
+          "request_ms": 2595,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 20,
+          "source_ms": 528995,
+          "arrival_to_event_ms": 760,
+          "event_to_answer_ms": 3429,
+          "queued_ms": 0,
+          "request_ms": 3429,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 21,
+          "source_ms": 556265,
+          "arrival_to_event_ms": 5121,
+          "event_to_answer_ms": 2330,
+          "queued_ms": 0,
+          "request_ms": 2330,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 22,
+          "source_ms": 579135,
+          "arrival_to_event_ms": 2961,
+          "event_to_answer_ms": 3848,
+          "queued_ms": 0,
+          "request_ms": 3848,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 23,
+          "source_ms": 604155,
+          "arrival_to_event_ms": 720,
+          "event_to_answer_ms": 1809,
+          "queued_ms": 0,
+          "request_ms": 1809,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 24,
+          "source_ms": 631482,
+          "arrival_to_event_ms": 400,
+          "event_to_answer_ms": 1217,
+          "queued_ms": 0,
+          "request_ms": 1217,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 25,
+          "source_ms": 659366,
+          "arrival_to_event_ms": 401,
+          "event_to_answer_ms": 4521,
+          "queued_ms": 0,
+          "request_ms": 4520,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 26,
+          "source_ms": 687263,
+          "arrival_to_event_ms": 2641,
+          "event_to_answer_ms": 2501,
+          "queued_ms": 0,
+          "request_ms": 2500,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 27,
+          "source_ms": 712645,
+          "arrival_to_event_ms": 1161,
+          "event_to_answer_ms": 2101,
+          "queued_ms": 0,
+          "request_ms": 2101,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 28,
+          "source_ms": 739927,
+          "arrival_to_event_ms": 521,
+          "event_to_answer_ms": 2653,
+          "queued_ms": 0,
+          "request_ms": 2653,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 29,
+          "source_ms": 767568,
+          "arrival_to_event_ms": 3640,
+          "event_to_answer_ms": 3093,
+          "queued_ms": 0,
+          "request_ms": 3093,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 30,
+          "source_ms": 791935,
+          "arrival_to_event_ms": 4601,
+          "event_to_answer_ms": 2971,
+          "queued_ms": 0,
+          "request_ms": 2971,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 31,
+          "source_ms": 815290,
+          "arrival_to_event_ms": 2200,
+          "event_to_answer_ms": 2832,
+          "queued_ms": 0,
+          "request_ms": 2832,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 32,
+          "source_ms": 841110,
+          "arrival_to_event_ms": 561,
+          "event_to_answer_ms": 3257,
+          "queued_ms": 0,
+          "request_ms": 3257,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 33,
+          "source_ms": 868565,
+          "arrival_to_event_ms": 5080,
+          "event_to_answer_ms": 2390,
+          "queued_ms": 0,
+          "request_ms": 2390,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 34,
+          "source_ms": 891520,
+          "arrival_to_event_ms": 1640,
+          "event_to_answer_ms": 3451,
+          "queued_ms": 0,
+          "request_ms": 3451,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 35,
+          "source_ms": 917830,
+          "arrival_to_event_ms": 4161,
+          "event_to_answer_ms": 3148,
+          "queued_ms": 0,
+          "request_ms": 3148,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 36,
+          "source_ms": 941665,
+          "arrival_to_event_ms": 3840,
+          "event_to_answer_ms": 2970,
+          "queued_ms": 0,
+          "request_ms": 2970,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 37,
+          "source_ms": 966020,
+          "arrival_to_event_ms": 3001,
+          "event_to_answer_ms": 2855,
+          "queued_ms": 0,
+          "request_ms": 2855,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 38,
+          "source_ms": 991005,
+          "arrival_to_event_ms": 1000,
+          "event_to_answer_ms": 2917,
+          "queued_ms": 0,
+          "request_ms": 2917,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 39,
+          "source_ms": 1018512,
+          "arrival_to_event_ms": 1760,
+          "event_to_answer_ms": 1940,
+          "queued_ms": 0,
+          "request_ms": 1940,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 40,
+          "source_ms": 1044765,
+          "arrival_to_event_ms": 1401,
+          "event_to_answer_ms": 2384,
+          "queued_ms": 0,
+          "request_ms": 2384,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 41,
+          "source_ms": 1071395,
+          "arrival_to_event_ms": 2361,
+          "event_to_answer_ms": 2996,
+          "queued_ms": 0,
+          "request_ms": 2996,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 42,
+          "source_ms": 1097050,
+          "arrival_to_event_ms": 1120,
+          "event_to_answer_ms": 1825,
+          "queued_ms": 0,
+          "request_ms": 1825,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 43,
+          "source_ms": 1124000,
+          "arrival_to_event_ms": 320,
+          "event_to_answer_ms": 1772,
+          "queued_ms": 0,
+          "request_ms": 1772,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 44,
+          "source_ms": 1151950,
+          "arrival_to_event_ms": 480,
+          "event_to_answer_ms": 1619,
+          "queued_ms": 0,
+          "request_ms": 1619,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 45,
+          "source_ms": 1179635,
+          "arrival_to_event_ms": 961,
+          "event_to_answer_ms": 2042,
+          "queued_ms": 0,
+          "request_ms": 2042,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 46,
+          "source_ms": 1206872,
+          "arrival_to_event_ms": 360,
+          "event_to_answer_ms": 1818,
+          "queued_ms": 0,
+          "request_ms": 1818,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 47,
+          "source_ms": 1234831,
+          "arrival_to_event_ms": 0,
+          "event_to_answer_ms": 2799,
+          "queued_ms": 0,
+          "request_ms": 2799,
+          "ok": true
+        },
+        {
+          "kind": "window",
+          "index": 48,
+          "source_ms": 1262390,
+          "arrival_to_event_ms": 4,
+          "event_to_answer_ms": 1173,
+          "queued_ms": 0,
+          "request_ms": 1173,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 0,
+          "source_ms": 0,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1330,
+          "queued_ms": 0,
+          "request_ms": 1330,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 1,
+          "source_ms": 10000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1486,
+          "queued_ms": 0,
+          "request_ms": 1486,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 2,
+          "source_ms": 20000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1378,
+          "queued_ms": 0,
+          "request_ms": 1378,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 3,
+          "source_ms": 30000,
+          "arrival_to_event_ms": 21,
+          "event_to_answer_ms": 1749,
+          "queued_ms": 0,
+          "request_ms": 1749,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 4,
+          "source_ms": 40000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1652,
+          "queued_ms": 0,
+          "request_ms": 1652,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 5,
+          "source_ms": 50000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1429,
+          "queued_ms": 0,
+          "request_ms": 1428,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 6,
+          "source_ms": 60000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1233,
+          "queued_ms": 0,
+          "request_ms": 1233,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 7,
+          "source_ms": 70000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1454,
+          "queued_ms": 0,
+          "request_ms": 1453,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 8,
+          "source_ms": 80000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1350,
+          "queued_ms": 0,
+          "request_ms": 1350,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 9,
+          "source_ms": 90000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1618,
+          "queued_ms": 0,
+          "request_ms": 1618,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 10,
+          "source_ms": 100000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1451,
+          "queued_ms": 0,
+          "request_ms": 1451,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 11,
+          "source_ms": 110000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 2442,
+          "queued_ms": 0,
+          "request_ms": 2442,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 12,
+          "source_ms": 120000,
+          "arrival_to_event_ms": 30,
+          "event_to_answer_ms": 1537,
+          "queued_ms": 0,
+          "request_ms": 1537,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 13,
+          "source_ms": 130000,
+          "arrival_to_event_ms": 21,
+          "event_to_answer_ms": 1255,
+          "queued_ms": 0,
+          "request_ms": 1255,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 14,
+          "source_ms": 140000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1615,
+          "queued_ms": 0,
+          "request_ms": 1615,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 15,
+          "source_ms": 150000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1585,
+          "queued_ms": 0,
+          "request_ms": 1585,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 16,
+          "source_ms": 160000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1374,
+          "queued_ms": 0,
+          "request_ms": 1374,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 17,
+          "source_ms": 170000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1458,
+          "queued_ms": 0,
+          "request_ms": 1458,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 18,
+          "source_ms": 180000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1611,
+          "queued_ms": 0,
+          "request_ms": 1611,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 19,
+          "source_ms": 190000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 2542,
+          "queued_ms": 0,
+          "request_ms": 2542,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 20,
+          "source_ms": 200000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1468,
+          "queued_ms": 0,
+          "request_ms": 1468,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 21,
+          "source_ms": 210000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1353,
+          "queued_ms": 0,
+          "request_ms": 1353,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 22,
+          "source_ms": 220000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1527,
+          "queued_ms": 0,
+          "request_ms": 1527,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 23,
+          "source_ms": 230000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1454,
+          "queued_ms": 0,
+          "request_ms": 1454,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 24,
+          "source_ms": 240000,
+          "arrival_to_event_ms": 21,
+          "event_to_answer_ms": 1527,
+          "queued_ms": 0,
+          "request_ms": 1527,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 25,
+          "source_ms": 250000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1338,
+          "queued_ms": 0,
+          "request_ms": 1338,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 26,
+          "source_ms": 260000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1483,
+          "queued_ms": 0,
+          "request_ms": 1483,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 27,
+          "source_ms": 270000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1581,
+          "queued_ms": 0,
+          "request_ms": 1581,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 28,
+          "source_ms": 280000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1571,
+          "queued_ms": 0,
+          "request_ms": 1571,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 29,
+          "source_ms": 290000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1593,
+          "queued_ms": 0,
+          "request_ms": 1593,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 30,
+          "source_ms": 300000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1546,
+          "queued_ms": 0,
+          "request_ms": 1546,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 31,
+          "source_ms": 310000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1632,
+          "queued_ms": 0,
+          "request_ms": 1632,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 32,
+          "source_ms": 320000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 3287,
+          "queued_ms": 0,
+          "request_ms": 3287,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 33,
+          "source_ms": 330000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1538,
+          "queued_ms": 0,
+          "request_ms": 1538,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 34,
+          "source_ms": 340000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1350,
+          "queued_ms": 0,
+          "request_ms": 1350,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 35,
+          "source_ms": 350000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1334,
+          "queued_ms": 0,
+          "request_ms": 1334,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 36,
+          "source_ms": 360000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1537,
+          "queued_ms": 0,
+          "request_ms": 1537,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 37,
+          "source_ms": 370000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1331,
+          "queued_ms": 0,
+          "request_ms": 1331,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 38,
+          "source_ms": 380000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1407,
+          "queued_ms": 0,
+          "request_ms": 1407,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 39,
+          "source_ms": 390000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1728,
+          "queued_ms": 0,
+          "request_ms": 1727,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 40,
+          "source_ms": 400000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 3229,
+          "queued_ms": 0,
+          "request_ms": 3229,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 41,
+          "source_ms": 410000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1394,
+          "queued_ms": 0,
+          "request_ms": 1394,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 42,
+          "source_ms": 420000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1387,
+          "queued_ms": 0,
+          "request_ms": 1387,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 43,
+          "source_ms": 430000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1422,
+          "queued_ms": 0,
+          "request_ms": 1422,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 44,
+          "source_ms": 440000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1891,
+          "queued_ms": 0,
+          "request_ms": 1891,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 45,
+          "source_ms": 450000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1493,
+          "queued_ms": 0,
+          "request_ms": 1493,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 46,
+          "source_ms": 460000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1371,
+          "queued_ms": 0,
+          "request_ms": 1371,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 47,
+          "source_ms": 470000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1923,
+          "queued_ms": 0,
+          "request_ms": 1923,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 48,
+          "source_ms": 480000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 2371,
+          "queued_ms": 0,
+          "request_ms": 2371,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 49,
+          "source_ms": 490000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1481,
+          "queued_ms": 0,
+          "request_ms": 1481,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 50,
+          "source_ms": 500000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1294,
+          "queued_ms": 0,
+          "request_ms": 1294,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 51,
+          "source_ms": 510000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1360,
+          "queued_ms": 0,
+          "request_ms": 1360,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 52,
+          "source_ms": 520000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1565,
+          "queued_ms": 0,
+          "request_ms": 1565,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 53,
+          "source_ms": 530000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1515,
+          "queued_ms": 0,
+          "request_ms": 1515,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 54,
+          "source_ms": 540000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1376,
+          "queued_ms": 0,
+          "request_ms": 1376,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 55,
+          "source_ms": 550000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1577,
+          "queued_ms": 0,
+          "request_ms": 1577,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 56,
+          "source_ms": 560000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 2961,
+          "queued_ms": 0,
+          "request_ms": 2961,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 57,
+          "source_ms": 570000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1405,
+          "queued_ms": 0,
+          "request_ms": 1405,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 58,
+          "source_ms": 580000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1595,
+          "queued_ms": 0,
+          "request_ms": 1595,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 59,
+          "source_ms": 590000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1453,
+          "queued_ms": 0,
+          "request_ms": 1453,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 60,
+          "source_ms": 600000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1505,
+          "queued_ms": 0,
+          "request_ms": 1505,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 61,
+          "source_ms": 610000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 3042,
+          "queued_ms": 0,
+          "request_ms": 3042,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 62,
+          "source_ms": 620000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1471,
+          "queued_ms": 0,
+          "request_ms": 1471,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 63,
+          "source_ms": 630000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1424,
+          "queued_ms": 0,
+          "request_ms": 1424,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 64,
+          "source_ms": 640000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1286,
+          "queued_ms": 0,
+          "request_ms": 1286,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 65,
+          "source_ms": 650000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1286,
+          "queued_ms": 0,
+          "request_ms": 1285,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 66,
+          "source_ms": 660000,
+          "arrival_to_event_ms": 43,
+          "event_to_answer_ms": 1398,
+          "queued_ms": 0,
+          "request_ms": 1398,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 67,
+          "source_ms": 670000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1435,
+          "queued_ms": 0,
+          "request_ms": 1435,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 68,
+          "source_ms": 680000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1470,
+          "queued_ms": 0,
+          "request_ms": 1470,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 69,
+          "source_ms": 690000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 3898,
+          "queued_ms": 0,
+          "request_ms": 3898,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 70,
+          "source_ms": 700000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1543,
+          "queued_ms": 0,
+          "request_ms": 1543,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 71,
+          "source_ms": 710000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1520,
+          "queued_ms": 0,
+          "request_ms": 1520,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 72,
+          "source_ms": 720000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1424,
+          "queued_ms": 0,
+          "request_ms": 1424,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 73,
+          "source_ms": 730000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1464,
+          "queued_ms": 0,
+          "request_ms": 1464,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 74,
+          "source_ms": 740000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1453,
+          "queued_ms": 0,
+          "request_ms": 1453,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 75,
+          "source_ms": 750000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1409,
+          "queued_ms": 0,
+          "request_ms": 1409,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 76,
+          "source_ms": 760000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1675,
+          "queued_ms": 0,
+          "request_ms": 1675,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 77,
+          "source_ms": 770000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 2767,
+          "queued_ms": 0,
+          "request_ms": 2767,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 78,
+          "source_ms": 780000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1614,
+          "queued_ms": 0,
+          "request_ms": 1614,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 79,
+          "source_ms": 790000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1367,
+          "queued_ms": 0,
+          "request_ms": 1367,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 80,
+          "source_ms": 800000,
+          "arrival_to_event_ms": 21,
+          "event_to_answer_ms": 1594,
+          "queued_ms": 0,
+          "request_ms": 1594,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 81,
+          "source_ms": 810000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1446,
+          "queued_ms": 0,
+          "request_ms": 1446,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 82,
+          "source_ms": 820000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1312,
+          "queued_ms": 0,
+          "request_ms": 1312,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 83,
+          "source_ms": 830000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1437,
+          "queued_ms": 0,
+          "request_ms": 1437,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 84,
+          "source_ms": 840000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1592,
+          "queued_ms": 0,
+          "request_ms": 1592,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 85,
+          "source_ms": 850000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1339,
+          "queued_ms": 0,
+          "request_ms": 1339,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 86,
+          "source_ms": 860000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1540,
+          "queued_ms": 0,
+          "request_ms": 1540,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 87,
+          "source_ms": 870000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1307,
+          "queued_ms": 0,
+          "request_ms": 1307,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 88,
+          "source_ms": 880000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1383,
+          "queued_ms": 0,
+          "request_ms": 1383,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 89,
+          "source_ms": 890000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1558,
+          "queued_ms": 0,
+          "request_ms": 1558,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 90,
+          "source_ms": 900000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1722,
+          "queued_ms": 0,
+          "request_ms": 1722,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 91,
+          "source_ms": 910000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1561,
+          "queued_ms": 0,
+          "request_ms": 1561,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 92,
+          "source_ms": 920000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1493,
+          "queued_ms": 0,
+          "request_ms": 1493,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 93,
+          "source_ms": 930000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1418,
+          "queued_ms": 0,
+          "request_ms": 1418,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 94,
+          "source_ms": 940000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1690,
+          "queued_ms": 0,
+          "request_ms": 1690,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 95,
+          "source_ms": 950000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1690,
+          "queued_ms": 0,
+          "request_ms": 1690,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 96,
+          "source_ms": 960000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1621,
+          "queued_ms": 0,
+          "request_ms": 1621,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 97,
+          "source_ms": 970000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1407,
+          "queued_ms": 0,
+          "request_ms": 1407,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 98,
+          "source_ms": 980000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1336,
+          "queued_ms": 0,
+          "request_ms": 1336,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 99,
+          "source_ms": 990000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1386,
+          "queued_ms": 0,
+          "request_ms": 1386,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 100,
+          "source_ms": 1000000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1401,
+          "queued_ms": 0,
+          "request_ms": 1401,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 101,
+          "source_ms": 1010000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1636,
+          "queued_ms": 0,
+          "request_ms": 1636,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 102,
+          "source_ms": 1020000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1418,
+          "queued_ms": 0,
+          "request_ms": 1418,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 103,
+          "source_ms": 1030000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1253,
+          "queued_ms": 0,
+          "request_ms": 1253,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 104,
+          "source_ms": 1040000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1424,
+          "queued_ms": 0,
+          "request_ms": 1424,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 105,
+          "source_ms": 1050000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1381,
+          "queued_ms": 0,
+          "request_ms": 1381,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 106,
+          "source_ms": 1060000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1273,
+          "queued_ms": 0,
+          "request_ms": 1273,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 107,
+          "source_ms": 1070000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1404,
+          "queued_ms": 0,
+          "request_ms": 1404,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 108,
+          "source_ms": 1080000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1518,
+          "queued_ms": 0,
+          "request_ms": 1518,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 109,
+          "source_ms": 1090000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1514,
+          "queued_ms": 0,
+          "request_ms": 1514,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 110,
+          "source_ms": 1100000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1037,
+          "queued_ms": 0,
+          "request_ms": 1036,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 111,
+          "source_ms": 1110000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1280,
+          "queued_ms": 0,
+          "request_ms": 1280,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 112,
+          "source_ms": 1120000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1458,
+          "queued_ms": 0,
+          "request_ms": 1457,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 113,
+          "source_ms": 1130000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1541,
+          "queued_ms": 0,
+          "request_ms": 1541,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 114,
+          "source_ms": 1140000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1455,
+          "queued_ms": 0,
+          "request_ms": 1455,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 115,
+          "source_ms": 1150000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1426,
+          "queued_ms": 0,
+          "request_ms": 1426,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 116,
+          "source_ms": 1160000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1246,
+          "queued_ms": 0,
+          "request_ms": 1246,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 117,
+          "source_ms": 1170000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1478,
+          "queued_ms": 0,
+          "request_ms": 1478,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 118,
+          "source_ms": 1180000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1140,
+          "queued_ms": 0,
+          "request_ms": 1140,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 119,
+          "source_ms": 1190000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1662,
+          "queued_ms": 0,
+          "request_ms": 1662,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 120,
+          "source_ms": 1200000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1432,
+          "queued_ms": 0,
+          "request_ms": 1432,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 121,
+          "source_ms": 1210000,
+          "arrival_to_event_ms": 21,
+          "event_to_answer_ms": 2273,
+          "queued_ms": 0,
+          "request_ms": 2273,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 122,
+          "source_ms": 1220000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1303,
+          "queued_ms": 0,
+          "request_ms": 1303,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 123,
+          "source_ms": 1230000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1445,
+          "queued_ms": 0,
+          "request_ms": 1444,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 124,
+          "source_ms": 1240000,
+          "arrival_to_event_ms": 20,
+          "event_to_answer_ms": 1473,
+          "queued_ms": 0,
+          "request_ms": 1473,
+          "ok": true
+        }
+      ],
+      "steps": 48,
+      "settled_grew": true,
+      "wer": {
+        "edits": 791,
+        "length": 2455,
+        "rate": 0.32219959266802445
+      },
+      "scored": 49,
+      "seams": 48,
+      "unmatched": 19,
+      "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. I you have to think. I put it in the back but yeah, this got it. Okay, right. Can I all? Bit doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? And you arrived on time. your arrival don't time. Um, near situated design and your remote control. Um, as you can see, it's supposed to be original, trendy and user-friendly. Um, so that's kind of our our brief. So why? Um, and so there are three different stages to the design. Um, I'm not really sure what what you guys have already received. Um, in your emails, what did you get? Um, I just got the project announcement about the project it's uh designing remote control yeah that's that that everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So, who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, nice. All right. My favorite animal is like Abigail. Uh, character favorite characteristics of it is that right yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and be fit and in robust good health so this is blue blue beagle my family's beagle. Right. Lovely. Yeah, my wife and mum be a monkey. as I'm a small cute and furry and when plan it becomes real I'm going to be up there with them right just a bit gear you can take as long over this as you like because we haven't got an awful lot to discuss ok what we do, we do. Don't feel like you're in a rush anyway. Okay. Actually, tell the whole lot more about beagles. Okay, too. We might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot tonight. Impressionist. Time draw. Is that a whale? Yeah. Hey. Um oh my I don't know it's just the first animal I can think of to top of my head. Um yes, the big reason is cuz I'm allergic to most animals. An allergic to animals for so um fish was a natural choice. Um yeah, and I kind of like wheels. They come in and go eat everything and stuff. Very harmless and mild and interesting. Okay. Guys, still didn't know what I'm going to write about. Um. Superb sketch, by the way. Tails a bit bigger, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um. That doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um, it's a mixture of uh various things um and what did i like about him um that's just to suggest that his tail wags um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um uh and he's quite quite wee as well this is quite amusing is he aware that this is his own tail he's chasing it is i think it is he only does it after his hardest dinner and um he just all of a sudden is get up and start chasing his tail in around the living room an after dinner dog then yeah probably when he was little he got lots of attention for doing it and yeah he's probably been conditioned maybe mentioned. Maybe. And um where did you find this just down here? Okay. Um what do we do next? Um Okay, uh we now need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay Okay. So cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf? Um I don't know. I imagine that's a good question. Our sale. Our selling. I imagine it probably is our sale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want. Um Um all right but i i don't know i mean do you think the fact that it's going to be sold internationally will have a bearing on howy designer at all yes i think it will um all right away i'm wondering if there is um like with dvd players if there are zones oh yeah regions and stuff yeah frequencies or something yeah Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movement. Yeah. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the characteristics of the country, like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down um Right away I'm making some kind of assumptions about what what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no is it as much as that 16 17 18p yeah it's so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here okay Okay. Um will does anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually that would be useful though, wouldn't it? If you knew like what your money would get you. No. The here interesting thing about discussing um production of remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah. So so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls. Or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something. My parents want to um bought um remote controls because um they got fed up with having like four or five different remote controls for each device, right? Right. So um for them it was just how many devices they'd control. Right. So in function one of the priorities might be to combine as many uses. Right. So do you think that should be like a main design aim of a remote control that, you know, I think so. your your satellite and your regular telly and your vcr and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're gone from being just like little sort of scribble boards to cameras, mp3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or um or even like you know notes about um what you want to watch like you might put in there oh I want to watch that sensationuka that's a good idea so extra functionality yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that that then there in their um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if you've nothing else okay Um so anything else anybody wants to add about what they don't like about remote controls they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it, they're usually quite small or when you want it right, it's beneath the couch or on the table. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep yeah they're i mean is that something we'd want to include you think i don't know sure okay maybe i remember when the first remote control my my family had was on a cable actually the cable between in the tv and big like buttons that sort of like like on a blender or something my goodness and um you know when i think about what they are now it's better but actually it's still kind of i don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable mhm okay well i guess that's up to the designer it could be it could be that functionally that doesn't make it any better but that just the appeal of i've not having you know these days as every people things in people's homes are becoming more and more like chic, you know. Yeah. Um nicer materials and okay. might be okay. Be worth exploring. Right. Well, um so I just to wrap up, the next meeting is going to be in 30 minutes, so that's about um about 10 to 12 by my watch. Um so in between now and then, um as the industrial designer, you're going to be working on you know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um. Okay. Yeah, so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message I looked seniors and I thought I would so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a a design commitment to television features. Okay, well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. There's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um yeah. Getting on that's the main factor okay right okay well that's that's the end of the meeting then um thank you all for coming great that we'd get on to this today isn't it um right great how do you turn this thing off let function and oh there we go so i think if you can just leave it on maybe and then um okay this has turned itself off try try pushing the function and a f a ha oh there it is it's just there is. thank goodness. okay. right. this is all very high tech i must say. i i don't know like you guys go back to your for your instructions. so you want to structure it into what to them plugging good thing we don't have a capacitor kind of a feels like and on performance I thought they would do that project next semester. This is quite tricky. Ah. What courses are you taking? Um well I'm talking about the ASP. Yeah. All the night uh computer design, altering systems. Um um uh I don't know next semester. Oh, next semester um computer security um could be optics and um I don't know yeah basically no. Sorry. Everything in the first no, I don't do nothing. Got it? I I don't know. I mean I don't even know how it's supposed to get into where Eliza are to just start i was just just i i was i wasn't expecting the",
+      "descriptions": [
+        {
+          "index": 0,
+          "time": 0,
+          "reason": "first",
+          "description": "A group of people is gathered around a large, oval-shaped wooden table in a room. The table is covered with various electronic devices, including laptops, wires, and other equipment. The scene appears to be a collaborative workspace or a technical setup in progress."
+        },
+        {
+          "index": 1,
+          "time": 10000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with various items, including several laptops, notebooks, pens, and tangled cables. The people are positioned around the perimeter of the table, appearing to be engaged in a collaborative session or presentation."
+        },
+        {
+          "index": 2,
+          "time": 20000000000,
+          "reason": "interval",
+          "description": "An overhead, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, notebooks, papers, and tangled cables. Several chairs are positioned around the table, some occupied by people and others empty."
+        },
+        {
+          "index": 3,
+          "time": 30000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and cables, suggesting an active working session or presentation. Several individuals are seated or standing around the table, focused on the tasks at hand."
+        },
+        {
+          "index": 4,
+          "time": 40000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, notebooks, and several tangled black cables. Several individuals are seated around the table, some working on laptops while others appear to be engaged in discussion."
+        },
+        {
+          "index": 5,
+          "time": 50000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-view shot shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops, papers, and various office supplies are scattered across the table's surface. The room is filled with several dark blue chairs arranged around the perimeter of the table."
+        },
+        {
+          "index": 6,
+          "time": 60000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops and various pieces of electronic equipment are spread across the table as the participants engage in a discussion."
+        },
+        {
+          "index": 7,
+          "time": 70000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, notebooks, papers, and several tangled black cables. Several dark blue chairs are arranged around the table, and the room features light-colored walls and a dark floor."
+        },
+        {
+          "index": 8,
+          "time": 80000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, notebooks, papers, and electronic cables. Several individuals are seated around the table, appearing to be engaged in a collaborative discussion or workshop."
+        },
+        {
+          "index": 9,
+          "time": 90000000000,
+          "reason": "interval",
+          "description": "An overhead, wide-angle shot shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled black cables. Several dark blue chairs are arranged around the table, and the room features white walls and a dark floor."
+        },
+        {
+          "index": 10,
+          "time": 100000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a room. The table is cluttered with various items, including laptops, papers, and electronic equipment with tangled wires. Several individuals are seated around the table, appearing to be engaged in a collaborative meeting or technical task."
+        },
+        {
+          "index": 11,
+          "time": 110000000000,
+          "reason": "interval",
+          "description": "A group of people is gathered around a large, oval-shaped wooden table in a meeting room, appearing to be engaged in a collaborative session. The table is cluttered with various items, including laptops, papers, and several tangled black cables. The scene is captured from a high-angle, wide-view perspective, looking down at the participants and their workspace."
+        },
+        {
+          "index": 12,
+          "time": 120000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various electronic components, suggesting a collaborative technical or research session. Several individuals are seated around the table, focused on their work or discussions."
+        },
+        {
+          "index": 13,
+          "time": 130000000000,
+          "reason": "interval",
+          "description": "A group of people is gathered around a large, oval-shaped wooden table in a room with blue walls. Several laptops, papers, and various electronic cables are spread across the table as the individuals appear to be engaged in a meeting or collaborative work session."
+        },
+        {
+          "index": 14,
+          "time": 140000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several chairs are arranged around the table, some occupied by people and others empty."
+        },
+        {
+          "index": 15,
+          "time": 150000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various electronic devices, including laptops, wires, and technical equipment. Several individuals are seated around the table, focused on the items spread before them."
+        },
+        {
+          "index": 16,
+          "time": 160000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows four people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. The room has a modern aesthetic with dark blue chairs and light-colored walls."
+        },
+        {
+          "index": 17,
+          "time": 170000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several empty chairs are arranged around the table, suggesting a collaborative workspace or a seminar setting."
+        },
+        {
+          "index": 18,
+          "time": 180000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several individuals are seated in dark chairs around the table, appearing to be engaged in a collaborative session."
+        },
+        {
+          "index": 19,
+          "time": 190000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several chairs are positioned around the table, some occupied by people and others empty."
+        },
+        {
+          "index": 20,
+          "time": 200000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several chairs are positioned around the table, some occupied by people and others empty."
+        },
+        {
+          "index": 21,
+          "time": 210000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a room. The table is covered with various electronic devices, including laptops, wires, and musical equipment. Several dark chairs are arranged around the table, and the room features white walls and dark flooring."
+        },
+        {
+          "index": 22,
+          "time": 220000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several dark blue chairs are arranged around the table, with some people visible from above as they participate in the session."
+        },
+        {
+          "index": 23,
+          "time": 230000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several dark-colored chairs are arranged around the table, and the room features light-colored walls and a dark floor."
+        },
+        {
+          "index": 24,
+          "time": 240000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several individuals are seated or standing around the table, appearing to be engaged in a collaborative session or workshop."
+        },
+        {
+          "index": 25,
+          "time": 250000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops and various electronic cables are spread across the table's surface. The people are positioned around the perimeter of the table, appearing to be engaged in a collaborative session."
+        },
+        {
+          "index": 26,
+          "time": 260000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden conference table in a meeting room. The table is cluttered with various items, including several laptops, papers, and electronic equipment. Several purple chairs are arranged around the table, and the room features neutral-colored walls and dark flooring."
+        },
+        {
+          "index": 27,
+          "time": 270000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. Several laptops, papers, and various electronic devices are scattered across the table's surface. The room is filled with several purple chairs arranged around the table and a few people standing or sitting near the edges."
+        },
+        {
+          "index": 28,
+          "time": 280000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. Several individuals are seated or standing around the table, which is cluttered with laptops, papers, and various office supplies. The room is brightly lit, and the perspective creates a distorted, fish-eye effect on the surrounding walls and furniture."
+        },
+        {
+          "index": 29,
+          "time": 290000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several individuals are seated around the table, appearing to be engaged in a discussion or collaborative work session."
+        },
+        {
+          "index": 30,
+          "time": 300000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and cables, suggesting an active working session or presentation. Several individuals are seated in dark chairs around the perimeter of the table, focused on the tasks at hand."
+        },
+        {
+          "index": 31,
+          "time": 310000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several people are seated in dark chairs around the table, appearing to be engaged in a discussion or collaborative work."
+        },
+        {
+          "index": 32,
+          "time": 320000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several individuals are seated or standing around the table, appearing to be engaged in a collaborative session."
+        },
+        {
+          "index": 33,
+          "time": 330000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops and various pieces of equipment are spread across the table, suggesting a collaborative workspace or a technical workshop. The room is filled with several purple chairs arranged around the perimeter of the table."
+        },
+        {
+          "index": 34,
+          "time": 340000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people seated around a large, oval wooden conference table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several people are positioned around the table, some facing the center and others facing away."
+        },
+        {
+          "index": 35,
+          "time": 350000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several individuals are seated around the table, appearing to be engaged in a meeting or collaborative work session."
+        },
+        {
+          "index": 36,
+          "time": 360000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several dark blue chairs are arranged around the table, and the room features white walls and a dark floor."
+        },
+        {
+          "index": 37,
+          "time": 370000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several people are seated in purple chairs around the perimeter of the table."
+        },
+        {
+          "index": 38,
+          "time": 380000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several purple chairs are arranged around the table, with some people seated and others standing nearby."
+        },
+        {
+          "index": 39,
+          "time": 390000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, cables, and electronic equipment. Several people are seated in dark chairs around the perimeter of the table, engaged in what appears to be a technical discussion or workshop."
+        },
+        {
+          "index": 40,
+          "time": 400000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval-shaped wooden conference table. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several people are seated in dark chairs around the table, some appearing to be engaged in a meeting or collaborative work."
+        },
+        {
+          "index": 41,
+          "time": 410000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several dark blue chairs are arranged around the table, and the room features light-colored walls and a dark floor."
+        },
+        {
+          "index": 42,
+          "time": 420000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval-shaped wooden conference table. Several laptops, papers, and various cables are scattered across the table's surface. The people are seated in dark chairs around the perimeter of the table in a meeting setting."
+        },
+        {
+          "index": 43,
+          "time": 430000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several people are seated around the table, some facing the camera and others with their backs turned."
+        },
+        {
+          "index": 44,
+          "time": 440000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval-shaped wooden conference table. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several people are visible around the table, some facing the camera and others facing away."
+        },
+        {
+          "index": 45,
+          "time": 450000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several people are seated in dark chairs around the table, some appearing to be engaged in discussion or working on their devices."
+        },
+        {
+          "index": 46,
+          "time": 460000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a room. The table is cluttered with various items, including laptops, papers, and tangled wires. Several individuals are seated around the table, appearing to be engaged in a meeting or collaborative work session."
+        },
+        {
+          "index": 47,
+          "time": 470000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval wooden conference table. The table is cluttered with various items, including several laptops, notebooks, papers, and tangled black cables. The room is dimly lit, with the focus centered on the meeting occurring around the table."
+        },
+        {
+          "index": 48,
+          "time": 480000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows four people sitting around a large, oval-shaped wooden table in a room. The table is cluttered with laptops, papers, and various electronic cables. The people are positioned around the table, appearing to be engaged in a meeting or collaborative work session."
+        },
+        {
+          "index": 49,
+          "time": 490000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows four people seated around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, wires, and electronic equipment. The room features dark blue chairs and a neutral-colored floor."
+        },
+        {
+          "index": 50,
+          "time": 500000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled wires. Several people are seated around the table, focused on their work or discussions."
+        },
+        {
+          "index": 51,
+          "time": 510000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with laptops, notebooks, papers, and various cables connecting the devices. Several people are seated around the table, focused on their work or discussions."
+        },
+        {
+          "index": 52,
+          "time": 520000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval-shaped wooden conference table. The table is cluttered with various items, including several laptops, papers, and tangled black cables. The room is dimly lit, with the focus centered on the meeting space."
+        },
+        {
+          "index": 53,
+          "time": 530000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval-shaped wooden conference table. The table is cluttered with various items, including laptops, papers, and electronic cables, suggesting a collaborative working session or meeting. Several dark-colored chairs are arranged around the table, some occupied by people and others empty."
+        },
+        {
+          "index": 54,
+          "time": 540000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops and various documents are spread across the table, suggesting a collaborative work session or presentation. The room is dimly lit, with the focus centered on the activity around the table."
+        },
+        {
+          "index": 55,
+          "time": 550000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people seated around a large, oval wooden conference table in a meeting room. Several laptops, papers, and various cables are scattered across the table's surface. The room is dimly lit, with the focus centered on the meeting occurring around the table."
+        },
+        {
+          "index": 56,
+          "time": 560000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled wires, suggesting an active working session or technical setup. Several dark chairs are arranged around the perimeter of the table, with some individuals partially visible as they focus on their tasks."
+        },
+        {
+          "index": 57,
+          "time": 570000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval wooden conference table. The table is cluttered with various items, including laptops, papers, and tangled black cables. Several dark blue chairs are arranged around the table, with some people visible from above as they work."
+        },
+        {
+          "index": 58,
+          "time": 580000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. Several laptops, papers, and various cables are scattered across the table surface. The room is dimly lit, with the focus centered on the meeting setup."
+        },
+        {
+          "index": 59,
+          "time": 590000000000,
+          "reason": "interval",
+          "description": "An overhead, wide-angle shot shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various cables, suggesting an active working session or presentation. The room is dimly lit, with the focus centered on the collaborative activity occurring at the table."
+        },
+        {
+          "index": 60,
+          "time": 600000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops, papers, and various cables are spread across the table's surface. The room is filled with several dark blue chairs arranged around the perimeter of the table."
+        },
+        {
+          "index": 61,
+          "time": 610000000000,
+          "reason": "interval",
+          "description": "A high-angle, overhead shot shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various cables, suggesting an active working session or presentation. The room features dark blue chairs and a modern, minimalist interior design."
+        },
+        {
+          "index": 62,
+          "time": 620000000000,
+          "reason": "interval",
+          "description": "An overhead view shows four people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled black cables. The room features dark blue walls and a dark carpet, creating a professional setting."
+        },
+        {
+          "index": 63,
+          "time": 630000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. The room is dimly lit, with the focus primarily on the activity occurring around the table."
+        },
+        {
+          "index": 64,
+          "time": 640000000000,
+          "reason": "interval",
+          "description": "An overhead view shows four people sitting around a large, oval-shaped wooden table in a meeting room. The table is cluttered with several laptops, papers, and various cables connecting the devices. The room features dark blue carpeting and several purple chairs arranged around the workspace."
+        },
+        {
+          "index": 65,
+          "time": 650000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval wooden table in a meeting room. Several laptops and various papers are spread across the table as the individuals appear to be engaged in a discussion or collaborative work."
+        },
+        {
+          "index": 66,
+          "time": 660000000000,
+          "reason": "interval",
+          "description": "A high-angle, bird's-eye view shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various electronic cables connecting the devices. Several individuals are actively engaged in a discussion or collaborative work session."
+        },
+        {
+          "index": 67,
+          "time": 670000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. Several laptops and various cables are scattered across the table, suggesting a collaborative working session or a technical presentation. The room is dimly lit, with the focus centered on the activity around the table."
+        },
+        {
+          "index": 68,
+          "time": 680000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various electronic cables, suggesting a collaborative working session or a technical workshop. Several people are seated around the table, focused on their tasks or discussions."
+        },
+        {
+          "index": 69,
+          "time": 690000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-view shot shows a group of people seated around a large, oval wooden conference table. The table is cluttered with various items, including laptops, papers, and tangled wires, suggesting an active working session. Several dark-colored chairs are arranged around the table, and the room appears to be a modern office or meeting space."
+        },
+        {
+          "index": 70,
+          "time": 700000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. Several laptops, notebooks, and various cables are scattered across the table surface. The room is dimly lit, with the focus centered on the collaborative workspace."
+        },
+        {
+          "index": 71,
+          "time": 710000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops and various cables are scattered across the table, suggesting a collaborative working session or a technical presentation. The room is filled with several dark chairs arranged around the perimeter of the table."
+        },
+        {
+          "index": 72,
+          "time": 720000000000,
+          "reason": "interval",
+          "description": "An overhead, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various electronic cables, suggesting a collaborative working session or a workshop. Several people are seated around the table, focused on their tasks or discussions."
+        },
+        {
+          "index": 73,
+          "time": 730000000000,
+          "reason": "interval",
+          "description": "A top-down view shows four people sitting around a large, oval-shaped wooden table in a meeting room. The table is cluttered with laptops, papers, and various electronic cables and devices. The room features dark blue chairs and a neutral-colored wall in the background."
+        },
+        {
+          "index": 74,
+          "time": 740000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various electronic cables, suggesting a collaborative working session or a technical workshop. Several individuals are seated around the table, focused on their tasks or discussions."
+        },
+        {
+          "index": 75,
+          "time": 750000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including several laptops, papers, and tangled black cables. Several dark chairs are arranged around the perimeter of the table, with some people seated and others partially visible."
+        },
+        {
+          "index": 76,
+          "time": 760000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled black cables. Several people are seated in dark chairs around the perimeter of the table, engaged in what appears to be a collaborative session."
+        },
+        {
+          "index": 77,
+          "time": 770000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval wooden table in a meeting room. Several laptops, papers, and various cables are scattered across the table surface. The people are positioned around the perimeter of the table, appearing to be engaged in a discussion or collaborative work session."
+        },
+        {
+          "index": 78,
+          "time": 780000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled black cables. Several people are visible from above, some leaning over the table while others sit upright."
+        },
+        {
+          "index": 79,
+          "time": 790000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including several laptops, papers, and tangled black cables. Several dark chairs are arranged around the perimeter of the table, where the participants are seated."
+        },
+        {
+          "index": 80,
+          "time": 800000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled wires. Several dark chairs are arranged around the table, and the room features light-colored walls and a dark floor."
+        },
+        {
+          "index": 81,
+          "time": 810000000000,
+          "reason": "interval",
+          "description": "This high-angle, overhead shot shows a group of people seated around a large, oval-shaped wooden table in a meeting room. Several laptops and various papers are spread across the table, suggesting an active working session or presentation. The room is dimly lit, with the focus centered on the collaborative activity occurring at the table."
+        },
+        {
+          "index": 82,
+          "time": 820000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops, papers, and various electronic cables are scattered across the table surface. The people are seated in dark chairs arranged around the perimeter of the table."
+        },
+        {
+          "index": 83,
+          "time": 830000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, wires, and electronic equipment. Several individuals are seated around the table, appearing to be engaged in a collaborative work session or technical demonstration."
+        },
+        {
+          "index": 84,
+          "time": 840000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled wires. Several individuals are seated around the table, appearing to be engaged in a collaborative session or workshop."
+        },
+        {
+          "index": 85,
+          "time": 850000000000,
+          "reason": "interval",
+          "description": "An overhead view shows four people seated around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various electronic cables connecting the devices. The room is dimly lit, with the focus centered on the workspace and the people gathered around it."
+        },
+        {
+          "index": 86,
+          "time": 860000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops, papers, and various electronic cables are scattered across the table's surface. The people are seated in dark chairs, appearing to be engaged in a collaborative work session or presentation."
+        },
+        {
+          "index": 87,
+          "time": 870000000000,
+          "reason": "interval",
+          "description": "An overhead view shows four people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including several laptops, papers, and tangled black cables. The room features dark blue chairs and a neutral-colored floor."
+        },
+        {
+          "index": 88,
+          "time": 880000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled wires. Several dark chairs are arranged around the perimeter of the table, where people are engaged in work or discussion."
+        },
+        {
+          "index": 89,
+          "time": 890000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic cables. Several individuals are seated around the table, appearing to be engaged in a collaborative discussion or workshop."
+        },
+        {
+          "index": 90,
+          "time": 900000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including several laptops, papers, and tangled black cables. Several dark-colored chairs are arranged around the perimeter of the table, with some people visible from above."
+        },
+        {
+          "index": 91,
+          "time": 910000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including several laptops, papers, and tangled black cables. Several dark blue chairs are arranged around the table, with some people seated and others appearing to be standing or moving."
+        },
+        {
+          "index": 92,
+          "time": 920000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including several laptops, notebooks, papers, and tangled black cables. Several dark-colored chairs are arranged around the perimeter of the table, with some people partially visible as they work."
+        },
+        {
+          "index": 93,
+          "time": 930000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including several laptops, papers, and electronic equipment. Several empty chairs are arranged around the perimeter of the table, suggesting a professional or collaborative setting."
+        },
+        {
+          "index": 94,
+          "time": 940000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with laptops, papers, and various office supplies, suggesting an active working session or presentation. Several dark-colored chairs are arranged around the perimeter of the table, and the room's walls and lighting create a professional atmosphere."
+        },
+        {
+          "index": 95,
+          "time": 950000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including several laptops, papers, and tangled black cables. Several dark chairs are arranged around the perimeter of the table, some occupied by people and others empty."
+        },
+        {
+          "index": 96,
+          "time": 960000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with laptops, papers, and various electronic cables, suggesting a collaborative working session or a workshop. Several dark chairs are arranged around the table, with some people seated and others partially visible."
+        },
+        {
+          "index": 97,
+          "time": 970000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-view shot shows a group of people gathered around a large, oval wooden table in a meeting room. Several laptops and various papers are spread across the table, suggesting a collaborative working session or a presentation. The room is filled with several purple chairs arranged around the perimeter of the table."
+        },
+        {
+          "index": 98,
+          "time": 980000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled wires. Several empty chairs are arranged around the perimeter of the table and the room."
+        },
+        {
+          "index": 99,
+          "time": 990000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people seated around a large, oval-shaped wooden conference table. The table is cluttered with various items, including laptops, papers, and tangled black cables. Several empty purple chairs are arranged around the perimeter of the table."
+        },
+        {
+          "index": 100,
+          "time": 1000000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several empty chairs are arranged around the table, suggesting a collaborative workspace or a seminar setting."
+        },
+        {
+          "index": 101,
+          "time": 1010000000000,
+          "reason": "interval",
+          "description": "A high-angle, top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several laptops and various pieces of electronic equipment are spread across the table, suggesting a collaborative workspace or a technical workshop. The room is dimly lit, with the focus centered on the activity occurring around the table."
+        },
+        {
+          "index": 102,
+          "time": 1020000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled wires. Several dark blue chairs are positioned around the table, and the room's walls and floor are visible in the periphery."
+        },
+        {
+          "index": 103,
+          "time": 1030000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several empty chairs are arranged around the perimeter of the table."
+        },
+        {
+          "index": 104,
+          "time": 1040000000000,
+          "reason": "interval",
+          "description": "A top-down view shows four people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, notebooks, and tangled wires. The room features dark blue chairs and a neutral-colored floor."
+        },
+        {
+          "index": 105,
+          "time": 1050000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic cables. Several dark chairs are arranged around the perimeter of the table, with some people partially visible as they work."
+        },
+        {
+          "index": 106,
+          "time": 1060000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled wires. Several dark-colored chairs are arranged around the perimeter of the table."
+        },
+        {
+          "index": 107,
+          "time": 1070000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including several laptops, notebooks, papers, and electronic devices. Several dark-colored chairs are arranged around the perimeter of the table, with some people visible from above."
+        },
+        {
+          "index": 108,
+          "time": 1080000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several chairs are positioned around the table, some occupied by people and others empty."
+        },
+        {
+          "index": 109,
+          "time": 1090000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people seated around a large, oval-shaped wooden conference table. The table is cluttered with various items, including laptops, papers, and cables, suggesting an active meeting or workspace. Several dark-colored chairs are arranged around the table, and the room appears to be a modern office or meeting space."
+        },
+        {
+          "index": 110,
+          "time": 1100000000000,
+          "reason": "interval",
+          "description": "An overhead view shows four people seated around a large, oval-shaped wooden table in a room. The table is cluttered with various items, including laptops, papers, and tangled wires."
+        },
+        {
+          "index": 111,
+          "time": 1110000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people seated around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several chairs are arranged around the table, some occupied and some empty."
+        },
+        {
+          "index": 112,
+          "time": 1120000000000,
+          "reason": "interval",
+          "description": "A top-down view shows four people seated around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and tangled black cables. The room is dimly lit, with the focus centered on the group gathered around the table."
+        },
+        {
+          "index": 113,
+          "time": 1130000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people seated around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and cables, while several dark chairs are arranged around the perimeter. The room's walls and ceiling are light-colored, creating a stark contrast with the dark furniture and clothing."
+        },
+        {
+          "index": 114,
+          "time": 1140000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, notebooks, and electronic equipment. Several chairs are positioned around the table, some occupied by people and others empty."
+        },
+        {
+          "index": 115,
+          "time": 1150000000000,
+          "reason": "interval",
+          "description": "A top-down view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, wires, and electronic equipment. Several people are seated in dark chairs around the table, appearing to be engaged in a collaborative session or technical demonstration."
+        },
+        {
+          "index": 116,
+          "time": 1160000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a room. The table is cluttered with various items, including laptops, papers, and electronic equipment. Several chairs are positioned around the table, some occupied and some empty."
+        },
+        {
+          "index": 117,
+          "time": 1170000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and several tangled black cables. Several chairs are positioned around the table, some occupied by people and others empty."
+        },
+        {
+          "index": 118,
+          "time": 1180000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large wooden table in a room. The table is cluttered with various electronic devices, papers, and cables, suggesting a collaborative workspace or a technical workshop."
+        },
+        {
+          "index": 119,
+          "time": 1190000000000,
+          "reason": "interval",
+          "description": "An overhead view shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. The table is cluttered with various items, including laptops, papers, and cables, suggesting an active working session or workshop. Several individuals are seated around the table, some leaning in toward the center of the workspace."
+        },
+        {
+          "index": 120,
+          "time": 1200000000000,
+          "reason": "interval",
+          "description": "An overhead view shows several people gathered around a large, oval-shaped table in a room. The table is cluttered with various electronic devices, wires, and papers, suggesting a collaborative technical or research setting. Several chairs are positioned around the table, some occupied and some empty."
+        },
+        {
+          "index": 121,
+          "time": 1210000000000,
+          "reason": "interval",
+          "description": "This high-angle, wide-shot photograph shows a group of people gathered around a large, oval-shaped wooden table in a meeting room. Several individuals are seated in dark chairs, some working on laptops or looking at papers, while various electronic devices and cables are scattered across the tabletop."
+        },
+        {
+          "index": 122,
+          "time": 1220000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide-angle shot shows a group of people gathered around a large, light-colored wooden table in a meeting room. Several dark blue chairs are arranged around the table, and various items like laptops, papers, and wires are scattered across the tabletop."
+        },
+        {
+          "index": 123,
+          "time": 1230000000000,
+          "reason": "interval",
+          "description": "This high-angle, wide-shot photograph shows a group of people gathered around a large, oval-shaped wooden table in a room. The table is cluttered with various electronic devices, wires, and papers, suggesting a collaborative workspace or a laboratory setting. Several individuals are seated or standing around the table, focused on the equipment and their discussions."
+        },
+        {
+          "index": 124,
+          "time": 1240000000000,
+          "reason": "interval",
+          "description": "A high-angle, wide shot shows a large wooden conference table surrounded by several dark chairs in a room with white walls. On the table, various electronic devices, wires, and papers are scattered around, suggesting a workspace or a technical setup. Two people are visible at the edges of the table, appearing to be working or preparing for a meeting."
+        }
+      ]
+    }
+  ],
+  "cancel": {
+    "trigger": "frame 64",
+    "at": 639773536454,
+    "source_at": 640000000000,
+    "events": 89,
+    "stream_stopped": 437186483,
+    "returned": 437186830,
+    "stream_errors": [
+      "context canceled"
+    ],
+    "answered_before": 88,
+    "in_flight": 1,
+    "in_flight_cancelled": 1,
+    "in_flight_return": 107935,
+    "queued": 0,
+    "queued_cancelled": 0,
+    "files": 89,
+    "yielded": 89,
+    "processes": 0
+  }
+}
