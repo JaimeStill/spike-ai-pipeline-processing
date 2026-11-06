@@ -86,9 +86,25 @@ func TestSpecsMatchTheirVersions(t *testing.T) {
 				t.Errorf("%s's pattern on %q: %q, want 9.0.2", tt.spec.Program, out, m)
 			}
 		}
-		if tt.spec.Minimum != audio.FFmpegMinimum {
-			t.Errorf("%s's minimum %s, want %s", tt.spec.Program, tt.spec.Minimum, audio.FFmpegMinimum)
-		}
+	}
+}
+
+// TestSpecsRefuseOld builds the stand-ins through the exec runner from the Specs as the package
+// returns them: 9.0.2 passes, and the runner itself refuses 8.1, below the Specs' minimum.
+func TestSpecsRefuseOld(t *testing.T) {
+	for version, ok := range map[string]bool{"9.0.2": true, "8.1": false} {
+		t.Run(version, func(t *testing.T) {
+			installStandins(t, version)
+			for _, spec := range []tool.Spec{audio.FFmpegSpec(), audio.FFprobeSpec()} {
+				tl, err := tool.NewExec(t.Context(), spec)
+				switch {
+				case ok && (err != nil || tl.Version().String() != version):
+					t.Errorf("NewExec(%s) over %s = %v, %v; want %s", spec.Program, version, tl, err, version)
+				case !ok && !errors.Is(err, tool.ErrTooOld):
+					t.Errorf("NewExec(%s) over %s returned %v, want ErrTooOld", spec.Program, version, err)
+				}
+			}
+		})
 	}
 }
 
