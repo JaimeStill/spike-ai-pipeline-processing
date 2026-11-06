@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -218,4 +219,83 @@ func TestJoinReconstructs(t *testing.T) {
 			}
 		}
 	}
+}
+
+// checkSettled joins every prefix of transcripts, the first k, and checks Join's settled prefix
+// against the join of them all: the words before the prefix's latest seam, and its seams, are the
+// whole join's.
+func checkSettled(t *testing.T, transcripts []string, req audio.JoinRequest) {
+	t.Helper()
+	full, err := audio.Join(transcripts, req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for k := 1; k <= len(transcripts); k++ {
+		part, err := audio.Join(transcripts[:k], req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		settled := 0
+		if k > 1 {
+			settled = part.Seams[k-2].Position
+		}
+		if !slices.Equal(part.Words[:settled], full.Words[:settled]) {
+			t.Fatalf("the first %d of %q: settled words %q, the whole join's %q",
+				k, transcripts, part.Words[:settled], full.Words[:settled])
+		}
+		if !slices.Equal(part.Seams, full.Seams[:k-1]) {
+			t.Fatalf("the first %d of %q: seams %+v, the whole join's %+v", k, transcripts, part.Seams, full.Seams[:k-1])
+		}
+	}
+}
+
+// TestJoinSettledPrefix joins random window transcripts, from a fixed seed, as they would arrive,
+// each prefix of them in turn: the words before the latest seam never change as more arrive. The
+// transcripts are drawn from a small vocabulary, so words repeat across seams, and each window's
+// edges are perturbed as a cut word is heard differently, some windows empty as a failed one is,
+// so seams match, splice short, and fail to match.
+func TestJoinSettledPrefix(t *testing.T) {
+	vocabulary := strings.Fields("the a of to he she was in it his her and money state mind future, Future. — would")
+	rng := rand.New(rand.NewPCG(8, 9))
+	for range 500 {
+		var words []string
+		for range 20 + rng.IntN(200) {
+			words = append(words, vocabulary[rng.IntN(len(vocabulary))])
+		}
+		var transcripts []string
+		for start := 0; start < len(words); {
+			end := min(len(words), start+3+rng.IntN(30))
+			w := slices.Clone(words[start:end])
+			if rng.IntN(4) == 0 && len(w) > 0 {
+				w[0] = vocabulary[rng.IntN(len(vocabulary))]
+			}
+			if rng.IntN(4) == 0 && len(w) > 0 {
+				w = w[:len(w)-1]
+			}
+			if rng.IntN(10) == 0 {
+				w = nil
+			}
+			transcripts = append(transcripts, strings.Join(w, " "))
+			start = max(start+1, end-rng.IntN(9))
+		}
+		checkSettled(t, transcripts, audio.JoinRequest{SeamWords: []int{0, 2, 5, 40}[rng.IntN(4)]})
+	}
+}
+
+// TestJoinSettledPrefixReal joins the levels fixture's transcript cut into windows as a plan of it
+// would be, each window's last few words heard again at the next one's start, one cut word heard
+// differently and one window failed: the words before the latest seam never change as more
+// arrive.
+func TestJoinSettledPrefixReal(t *testing.T) {
+	var f levelsFixture
+	readTruth(t, levelsTruth, &f)
+	words := strings.Fields(strings.ToLower(strings.Join(f.Transcript, " ")))
+	var transcripts []string
+	for start := 0; start < len(words); start += 40 {
+		w := slices.Clone(words[start:min(len(words), start+45)])
+		transcripts = append(transcripts, strings.Join(w, " "))
+	}
+	transcripts[1] = "ing " + transcripts[1] + "."
+	transcripts[3] = ""
+	checkSettled(t, transcripts, audio.JoinRequest{})
 }

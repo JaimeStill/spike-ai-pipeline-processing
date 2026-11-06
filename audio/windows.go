@@ -261,7 +261,7 @@ func removeTemp(path string) {
 // path. Its error names the window; a failed window leaves no file.
 func (s *Splitter) window(ctx context.Context, req WindowsRequest, src Source, file *WindowFile) (string, error) {
 	w := file.Window
-	first, end := sample(w.Start), sample(w.End)
+	first, end := Sample(w.Start), Sample(w.End)
 	want := int(end - first)
 	fail := func(err error) (string, error) {
 		return "", fmt.Errorf("audio: window %d of %d, %v: %w", file.Index, file.Count, w.Span, err)
@@ -297,7 +297,7 @@ func (s *Splitter) window(ctx context.Context, req WindowsRequest, src Source, f
 	case len(data) > 2*want:
 		return fail(fmt.Errorf("ffmpeg wrote more than the window's %d samples", want))
 	}
-	wav := waveFile(data)
+	wav := WAV(data)
 	sum := sha256.Sum256(wav)
 	tmp, err := writeTemp(req.Dir, wav)
 	if err != nil {
@@ -321,16 +321,19 @@ func (c *capped) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-// sample returns the sample at SampleRate nearest d, without overflow for any Duration.
-func sample(d time.Duration) int64 {
+// Sample returns the index of the sample at SampleRate nearest d, without overflow for any
+// Duration: a window of span s holds the samples from Sample(s.Start) up to but not including
+// Sample(s.End).
+func Sample(d time.Duration) int64 {
 	return int64(d/time.Second)*SampleRate + (int64(d%time.Second)*SampleRate+int64(time.Second)/2)/int64(time.Second)
 }
 
-// waveFile returns pcm, mono 16-bit little-endian samples at SampleRate, as a WAV file: the
-// canonical 44-byte header, a RIFF chunk holding a 16-byte PCM fmt chunk and the data chunk, then
-// the samples. It is the header ffmpeg's own WAV muxer writes with -bitexact, which leaves out its
-// encoder tag.
-func waveFile(pcm []byte) []byte {
+// WAV returns pcm, mono 16-bit little-endian samples at SampleRate, as a WAV file: the canonical
+// 44-byte header, a RIFF chunk holding a 16-byte PCM fmt chunk and the data chunk, then the
+// samples. It is the header ffmpeg's own WAV muxer writes with -bitexact, which leaves out its
+// encoder tag, and every window is written through it, so the same samples are the same bytes
+// whichever package cut them.
+func WAV(pcm []byte) []byte {
 	const (
 		channels   = 1
 		bits       = 16

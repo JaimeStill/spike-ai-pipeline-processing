@@ -8,8 +8,8 @@ Go builds only what the layer must own. Mature system tools do the specialized w
 tool contract this layer defines in its `tool` package, as herald's processing layer did: an exec
 runner for binaries and scripts, and a container runner for pinned images. The tools the layer's
 adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
-correction, ffmpeg and ffprobe for audio, and planned for video, spike-ai-pipeline-office's Open
-XML CLI for office documents, LibreOffice in a container for legacy office formats only,
+correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
+office documents, LibreOffice in a container for legacy office formats only,
 spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages, and
 spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages.
 
@@ -17,8 +17,10 @@ Its packages, each below in turn: `tool`, the contract every program runs behind
 names the stage content goes to by its signature; `inspect`, which inspects every part before its
 stage; `dispatch`, which walks an input and every part found in it to the stages, with the
 format packages' adapters, an index, and a pool; the format packages, `picture`, `document`,
-`office`, `email`, and `onenote`, each pre-inference preparation of its formats; and `audio`, which
-cuts speech into windows a model's audio input takes whole and joins their transcripts.
+`office`, `email`, and `onenote`, each pre-inference preparation of its formats; `audio`, which
+cuts speech into windows a model's audio input takes whole and joins their transcripts; and
+`media`, which reads a live or recorded source's audio and video through one ffmpeg run and
+streams its windows and frames as they arrive.
 `internal/cli` holds the CLI contract the format packages share.
 
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
@@ -72,8 +74,8 @@ and files the tool writes there belong to the caller.
 
 ```go
 probe, err := tool.NewContainer(ctx, "", tool.Image{
-	Ref: "linuxserver/ffmpeg:9.0.2-cli-ls88@sha256:" +
-		"f4191c1abe18d75c49a23f7224d1403d55334f80013a47cb096f5056cf19617b",
+	Ref: "linuxserver/ffmpeg:9.0.2-cli-ls89@sha256:" +
+		"822d04f0b2d0c4847430f5cc90f20ea48be866bb502ece63fdeb729400bf5361",
 }, spec)
 ```
 
@@ -133,7 +135,7 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
 that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, archives other
-than ZIP, video, or text yet.
+than ZIP, or text yet.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -243,15 +245,20 @@ PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; 
 mail's records, each message's attachments found as parts, then its record, then its Markdown,
 an embedded message mail gives no file for prepared inline in its attachment's place;
 `OneNoteStage`, onenote's records, each page's record then its Markdown, and each of its media
-found as a part; and `AudioStage`, an audio part's plan as a record, then each of its windows in
+found as a part; `AudioStage`, an audio part's plan as a record, then each of its windows in
 plan order as an audio output, a 16 kHz mono WAV whose Meta carries its index, span, cut, and
-seams, for a layer above to transcribe and join with `audio.Join`. A found part's `Where` names
-its place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is
+seams, for a layer above to transcribe and join with `audio.Join`; and `VideoStage`, an MP4,
+Matroska, WebM, or AVI read by one unpaced run of media's `Streamer`, which yields a plan record
+of its settings, then each frame as a PNG image output and each window as an audio output, with
+the threshold it was cut under, interleaved as the run completes them. A found part's `Where`
+names its place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is
 dispatched again, so a PDF attached to a message reaches the document stage and a page's ink
-becomes a PNG. Kinds no adapter reads yet, ODF, RTF, WordPerfect, xlsb, HEIC, WebP, AVIF, and
-video, are no processor yet, as is audio when the caller has no ffmpeg and registers no audio
-stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with no
-audio stream fails, its error wrapping `audio.ErrNoAudio`.
+becomes a PNG. Kinds no adapter reads yet, ODF, RTF, WordPerfect, xlsb, HEIC, WebP, and AVIF, are
+no processor yet, as are audio and video when the caller has no ffmpeg and registers no audio or
+video stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with
+no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields frames only when it
+has no audio stream and windows only when it has no video stream; one with neither fails, its
+error wrapping `media.ErrNoMedia`.
 
 `ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry at a
 time: each file entry is written into the part's directory under its content's SHA-256 and found as
@@ -302,6 +309,11 @@ speech, err := dispatch.NewAudioStage(dispatch.AudioConfig{
 if err != nil {
 	return err
 }
+// The video stage's Streamer runs ffmpeg and ffprobe too, one unpaced run per part.
+videos, err := dispatch.NewVideoStage(dispatch.VideoConfig{Streamer: st, Version: dispatch.Versions(ff, fp)})
+if err != nil {
+	return err
+}
 // The zip stage enforces the bomb rule as written under the dispatcher's inspect.Options.
 archives, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: opts})
 if err != nil {
@@ -311,7 +323,7 @@ d, err := dispatch.New(dispatch.Config{
 	Stages: dispatch.Stages{
 		route.Document: docs, route.Office: offices, route.VisionConverted: pictures,
 		route.Vision: dispatch.NewVisionStage(), route.Nested: mail, route.OneNote: notes,
-		route.Archive: archives, route.Audio: speech,
+		route.Archive: archives, route.Audio: speech, route.Video: videos,
 	},
 	Index: dispatch.NewMemoryIndex(), Dir: work, Inspect: opts,
 })
@@ -663,9 +675,11 @@ and `FFprobeSpec` declare, minimum `FFmpegMinimum`, 9.0, and the container runne
 `FFmpegImage`, works in three steps:
 
 - `Splitter.Detect` probes the source through ffprobe, refusing one with no audio stream with
-  `ErrNoAudio` before ffmpeg runs, and finds the stream's silences through ffmpeg's volumedetect
-  and silencedetect: by default those at least 0.3 s long and 15 dB below the mean volume, which
-  a `Request` may change or replace with a fixed threshold.
+  `ErrNoAudio` before ffmpeg runs, and finds the stream's silences with the detector the
+  `Request`'s `Detector` names. `DetectorSilencedetect`, the default, runs ffmpeg's volumedetect
+  and silencedetect and finds the silences at least 0.3 s long and 15 dB below the mean volume,
+  which a `Request` may change or replace with a fixed threshold. `DetectorTracker` feeds a
+  `Tracker` the 16 kHz mono PCM ffmpeg decodes.
 - `Splitter.Plan` plans the windows from them, as the pure `PlanWindows` does: each at most
   `WindowLimit`, 30 s, overlap included, each but the last ending at the middle of the latest
   silence its 30 s allow, or at the limit when they allow none. The next window starts
@@ -675,11 +689,28 @@ and `FFprobeSpec` declare, minimum `FFmpegMinimum`, 9.0, and the container runne
   `WindowsRequest.Concurrency` ffmpeg runs at once, each a 16 kHz mono 16-bit WAV named by its
   SHA-256 in the request's media directory. Both runners write the same bytes.
 
+A `Tracker`, built by `NewTracker` from a `Request`, finds a stream's silences as its 16 kHz mono
+PCM arrives. It compares each 10 ms frame's energy, `FrameLength`, with a rolling threshold: the
+`Percentile` of the frames' energy over the last `FloorWindow`, plus a `Margin`, by default the
+10th percentile over 4 s plus 12 dB, or a fixed `Threshold` in their place. The threshold follows
+a change of level or noise floor partway through a stream, which silencedetect's, fixed for a
+run, can't; that is why the tracker is Go rather than a tool behind an adapter, and `audio`'s
+package documentation records the measurements. Each `Silence` reports the threshold in force when
+it opened, and the same samples give the same silences however they are chunked. A `Planner`,
+built by `NewPlanner`, plans a stream's windows by `PlanWindows`' policy as its silences and
+position arrive, and returns each window once the stream passes the window's limit or ends; given
+everything at once, it gives `PlanWindows`' plan. Under `DetectorTracker`, `Splitter.Plan` gives
+the plan a Tracker and a Planner give over the same PCM, so a file's windows are the ones `media`
+cuts from it. `Sample` and `WAV`, a time's sample and a window's WAV, are exported, so `media`
+writes the same bytes.
+
 `Join` merges the windows' transcripts, in plan order, into one `Transcript`. At each seam it
 slides the later window's first words over the earlier window's last ones, as Hugging Face
 transformers' best-offset merge does, compares them lowercased with punctuation dropped, and
 splices the two at the middle of the best alignment that matches at least 2 words. A seam that
 matches fewer is concatenated whole. Each `Seam` reports whether it matched and where it is.
+Each seam's merge reads only the windows up to it, so joining the transcripts received so far
+again, as more arrive, leaves every word before the latest seam unchanged.
 
 ```go
 ff, err := tool.NewExec(ctx, audio.FFmpegSpec())
@@ -716,6 +747,82 @@ slightly better on read speech and an accented call, and worse on a 4-speaker me
 against 0.258) and an 8-speaker call (0.069 against 0.053). Seams carried more edits than the rest
 of a transcript, most of the excess at unmatched seams, and a gpt-oss-120b pass over the words at
 each seam made every run worse. The run results it cites are in `docs/findings/audio-results/`.
+
+`media` reads a source's audio and video through one ffmpeg run and streams them as they arrive,
+as the windows and frames a model takes, on Linux, the standard library, `audio`, and `tool`. It
+provides pre-inference preparation only: a layer above sends the windows and frames to a model. A
+`Streamer`, built by `NewStreamer` over a `Config` of an ffmpeg and an ffprobe Tool, both required,
+which `audio.FFmpegSpec` and `audio.FFprobeSpec` declare, minimum `audio.FFmpegMinimum`, 9.0, and
+the container runner runs in `audio.FFmpegImage`, takes a `Request`: one `Source`, the media
+directory `Dir`, and the settings of its windows and frames. A Source names exactly one of:
+
+- `File`, read unpaced, as fast as ffmpeg decodes it, or, with `Paced`, at real time through
+  ffmpeg's `-readrate 1`, as a live source arrives. ffmpeg writes its frames into a hidden
+  directory beside the file, so the file's directory must be writable.
+- `Reader`, a stream the caller holds, fed to ffmpeg's stdin as it is read. A container that needs
+  to seek, such as an MP4 whose index follows its media, can't be read from it.
+- `URL`, a source ffmpeg reads itself, whose scheme is srt, rtmp, http, https, an HLS playlist's
+  included, or udp.
+
+Each run allows ffmpeg only its source's protocols, through `-protocol_whitelist`, so a playlist
+can't open another protocol or a local file. Through the container runner, a URL run joins the
+docker network the ffmpeg Tool's `Image` names, and is refused when it names none. A request that
+names no source or more than one, paces anything but a file, names any other scheme, rtsp among
+them, or sets a field out of range is refused with `ErrRequest`, audio's own, before anything
+runs. ffprobe finds a file's first audio and video streams before the run. A reader or a URL
+can't be probed ahead, so its run takes the streams `Tracks` names, both by default, and one the
+source lacks fails the run with `ErrNoMedia` before any event.
+
+`Streamer.Events` runs ffmpeg once and yields an `Event` for each window and frame as soon as it is
+complete, a lazy `iter.Seq2[Event, error]`, windows in plan order and frames in source-time order,
+interleaved:
+
+- **Windows.** ffmpeg writes the audio to stdout as 16 kHz mono PCM. An `audio.Tracker` finds its
+  silences as it arrives, under the request's fixed or rolling threshold, and an `audio.Planner`
+  plans the windows. Each `Window` is cut once the stream passes its 30 s limit or ends, written
+  through `audio.WAV`, the same bytes `Splitter.Windows` cuts under `DetectorTracker`, and carries
+  its index, span, cut, seams, samples, and the threshold it was cut under. No silencedetect runs.
+- **Frames.** ffmpeg's select filter takes the first frame, each whose scene score is past
+  `SceneThreshold`, `DefaultSceneThreshold`, 0.2, and each `MaxGap`, `DefaultMaxGap`, 10 s, or
+  more after the last taken. Each `Frame` is a PNG at the source's resolution, or scaled down to
+  fit `MaxSide`, and carries its `Reason`, `ReasonFirst`, `ReasonScene`, or `ReasonInterval`, and
+  its size.
+
+Each event carries its source time and `Arrived`, the wall-clock time its last sample or frame
+arrived from ffmpeg. Each window and frame is named by its SHA-256 in the media directory. Pacing
+changes when an event comes, never what it is, and the two runners write the same files. A context
+that ends stops ffmpeg through either runner, and the stream yields its error once; a loop that
+stops early stops the run; and the media directory holds only the windows and frames the stream
+yielded.
+
+```go
+st, err := media.NewStreamer(media.Config{FFmpeg: ff, FFprobe: fp})
+if err != nil {
+	return err
+}
+req := media.Request{Source: media.Source{URL: "srt://127.0.0.1:9000"}, Dir: dir}
+for ev, err := range st.Events(ctx, req) {
+	if err != nil {
+		return err
+	}
+	switch {
+	case ev.Window != nil:
+		// send ev.Window.Path to a speech model; audio.Join merges the transcripts as they land
+	case ev.Frame != nil:
+		// send ev.Frame.Path to a vision model
+	}
+}
+```
+
+[docs/findings/streams.md](docs/findings/streams.md) records three real videos read at real time,
+Tears of Steel's 180 s clip, AMI ES2002a's 21-minute meeting, and NASA's 25.5-minute in-flight
+event, with each window sent to Gemma 4 E4B and each frame to Gemma 4 26B-A4B as it arrived. The
+paced runs gave the unpaced read's windows and frames byte for byte, and no window, frame, or
+request failed. A window came once the stream passed its 30 s limit, at most 15.0 s after its last
+sample, and was transcribed 0.8 to 4.6 s later; a frame came 20 to 170 ms after ffmpeg reported it;
+and neither model queued. The live transcript matched audio's file path under the same detector
+(AMI word error rate 0.322 against 0.323), and a cancellation ended the stream within 0.44 s,
+leaving only the events yielded. The run results it cites are in `docs/findings/streams-results/`.
 
 Every format package follows one adapter convention, so a dispatcher, and the next format, meet
 the same shape:
@@ -757,8 +864,11 @@ refused; `audio` is a splitter, not a reader: its `Request` names no media direc
 planning writes nothing, and only `Splitter.Windows`'s `WindowsRequest` names one, its `Dir`; the
 source is read in place rather than spooled; ffmpeg's failures are the Tool's `*tool.ExitError`,
 ffmpeg having no exit contract; and a window names no route, since a speech model is its one
-stage; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which run
-before a part's stage rather than as one.
+stage; `media` is a streamer, not a reader: its `Request` names the media directory, its `Dir`; a
+file source is read in place rather than spooled; ffmpeg's failures are the Tool's
+`*tool.ExitError`; and a window or frame names no route, since a speech model takes windows and a
+vision model frames; and `route` and `inspect` are pure functions, with no Tool, Config, or
+Request, which run before a part's stage rather than as one.
 
 Known limits:
 
@@ -818,6 +928,12 @@ Known limits:
 - `audio.Join` can't tell a model's own words from speech: in the audio finding, E4B answered a
   window a few seconds long with its instruction in 2 of 3 runs, and the join kept those words in
   order. A guard against it belongs to the layer that transcribes.
+- `media` reads no rtsp source or capture device, and doesn't reconnect an http(s) source. A
+  reader can't carry a container that needs to seek.
+- A `media` window waits for the stream to pass its 30 s limit, so the first comes after 30 s of
+  audio, and one that ends early in a long silence waits up to 30 s.
+- ffmpeg stops pacing a file once its video stream ends, so a paced file's audio past its video
+  arrives at once.
 
 The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
 under the race detector, and lint, the integration, bakeoff, and findings tags included. `mise run
@@ -856,7 +972,15 @@ measures `audio` on ~/docs' long sources, each checked against the corpus manife
 joined through the speech harness, an unsplit pass over each one's first 10 minutes, and a
 gpt-oss-120b seam pass, scored by normalized WER and seam edits; a run keeps its results only in
 the directory `AUDIO_FINDINGS_RESULTS` names
-([docs/findings/audio.md](docs/findings/audio.md), "Rerunning").
+([docs/findings/audio.md](docs/findings/audio.md), "Rerunning"). `mise run findings-floor` runs
+the tracker's tuning grid, with silencedetect beside it, over the level-change fixtures and
+~/docs' long sources, unchanged and with a gain step or a noise floor added at 10 minutes, and
+logs each setting's windows cut at the limit; it calls no model and keeps nothing. `mise run
+findings-streams` measures `media` on ~/docs' videos read at real time, each window sent to Gemma 4
+E4B and each frame to Gemma 4 26B-A4B as it arrives, beside audio's file path and a cancellation
+midway; its paced runs take about 75 minutes, and a run keeps its results only in the directory
+`STREAMS_FINDINGS_RESULTS` names ([docs/findings/streams.md](docs/findings/streams.md),
+"Rerunning").
 
 The tests' vision and speech harnesses, the bake-offs, the staged flow, and the findings tier are
 test code, not released.
@@ -868,8 +992,10 @@ docker, server 20.10 or later, for the container runner. For `office`: spike-ai-
 the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the metafile
 trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a read, which
 mise pins, at 0.3.0, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
-0.1.0 or later, which mise pins from its GitHub release for the tests. For `audio`: ffmpeg and
-ffprobe 9.0 or later on PATH, or docker, which runs them in `audio.FFmpegImage`. The renderer
+0.1.0 or later, which mise pins from its GitHub release for the tests. For `audio` and `media`:
+ffmpeg and ffprobe 9.0 or later on PATH, or docker, which runs them in `audio.FFmpegImage`; a URL
+source through docker needs the image to name a docker network. `mise run fixtures:streams`
+rebuilds `audio/testdata`'s streams fixtures through the host's ffmpeg. The renderer
 bake-off also runs poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to
 regenerate the fixtures in `document/testdata`, and .NET, which mise installs, only to rebuild
 `email/testdata`'s built .msg, as their READMEs say.
@@ -877,9 +1003,13 @@ regenerate the fixtures in `document/testdata`, and .NET, which mise installs, o
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision and speech
 harnesses the integration, bake-off, and findings tiers run on; no released package imports it.
 `internal/visiontest`, the router client and response helpers the vision tests share, and
-`internal/audiotest`, the speech harness, build under the integration and findings tags alone.
-`internal/goldentest`, the golden sums, and `internal/textscore`, the character and word error
-rates the bake-offs and the ink and audio findings score by, are test helpers too, built untagged.
+`internal/audiotest`, the speech harness, build under the integration and findings tags alone,
+and `internal/corpustest`, the readers of ~/docs that check each file against the corpus
+manifest, under the findings tag alone.
+`internal/goldentest`, the golden sums; `internal/textscore`, the character and word error rates
+the bake-offs and the ink and audio findings score by; and `internal/mediatest`, the stand-in for
+media's ffmpeg run that media's and dispatch's unit tests share, are test helpers too, built
+untagged.
 It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer are
 in the root repository's README.
 

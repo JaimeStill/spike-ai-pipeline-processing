@@ -1,0 +1,121 @@
+{
+  "source": "speech.flac",
+  "sample_rate": 16000,
+  "duration_ms": 75230,
+  "attenuation_db": -6,
+  "floor": {
+    "color": "pink",
+    "amplitude": 0.004,
+    "seed": 1
+  },
+  "gaps": [
+    {
+      "start_ms": 6590,
+      "end_ms": 7590
+    },
+    {
+      "start_ms": 14735,
+      "end_ms": 15735
+    },
+    {
+      "start_ms": 20570,
+      "end_ms": 21570
+    },
+    {
+      "start_ms": 24410,
+      "end_ms": 25410
+    },
+    {
+      "start_ms": 32000,
+      "end_ms": 33000
+    },
+    {
+      "start_ms": 40145,
+      "end_ms": 41145
+    },
+    {
+      "start_ms": 45980,
+      "end_ms": 46980
+    },
+    {
+      "start_ms": 49820,
+      "end_ms": 50820
+    },
+    {
+      "start_ms": 57410,
+      "end_ms": 58410
+    },
+    {
+      "start_ms": 65555,
+      "end_ms": 66555
+    },
+    {
+      "start_ms": 71390,
+      "end_ms": 72390
+    }
+  ],
+  "transcript": [
+    "HE WAS IN A FEVERED STATE OF MIND OWING TO THE BLIGHT HIS WIFE'S ACTION THREATENED TO CAST UPON HIS ENTIRE FUTURE",
+    "HE WOULD HAVE TO PAY HER THE MONEY WHICH SHE WOULD NOW REGULARLY DEMAND OR THERE WOULD BE TROUBLE IT DID NOT MATTER WHAT HE DID",
+    "HURSTWOOD WALKED THE FLOOR MENTALLY ARRANGING THE CHIEF POINTS OF HIS SITUATION",
+    "HE ALSO THOUGHT OF HIS MANAGERIAL POSITION",
+    "HE WAS IN A FEVERED STATE OF MIND OWING TO THE BLIGHT HIS WIFE'S ACTION THREATENED TO CAST UPON HIS ENTIRE FUTURE",
+    "HE WOULD HAVE TO PAY HER THE MONEY WHICH SHE WOULD NOW REGULARLY DEMAND OR THERE WOULD BE TROUBLE IT DID NOT MATTER WHAT HE DID",
+    "HURSTWOOD WALKED THE FLOOR MENTALLY ARRANGING THE CHIEF POINTS OF HIS SITUATION",
+    "HE ALSO THOUGHT OF HIS MANAGERIAL POSITION",
+    "HE WAS IN A FEVERED STATE OF MIND OWING TO THE BLIGHT HIS WIFE'S ACTION THREATENED TO CAST UPON HIS ENTIRE FUTURE",
+    "HE WOULD HAVE TO PAY HER THE MONEY WHICH SHE WOULD NOW REGULARLY DEMAND OR THERE WOULD BE TROUBLE IT DID NOT MATTER WHAT HE DID",
+    "HURSTWOOD WALKED THE FLOOR MENTALLY ARRANGING THE CHIEF POINTS OF HIS SITUATION",
+    "HE ALSO THOUGHT OF HIS MANAGERIAL POSITION"
+  ],
+  "change_ms": 30000,
+  "first_mean_volume_db": -31.2,
+  "fixed_threshold_db": -46.2,
+  "min_silence_ms": 300,
+  "gaps_after_change": [
+    {
+      "start_ms": 32000,
+      "end_ms": 33000
+    },
+    {
+      "start_ms": 40145,
+      "end_ms": 41145
+    },
+    {
+      "start_ms": 45980,
+      "end_ms": 46980
+    },
+    {
+      "start_ms": 49820,
+      "end_ms": 50820
+    },
+    {
+      "start_ms": 57410,
+      "end_ms": 58410
+    },
+    {
+      "start_ms": 65555,
+      "end_ms": 66555
+    },
+    {
+      "start_ms": 71390,
+      "end_ms": 72390
+    }
+  ],
+  "variants": [
+    {
+      "file": "speech-gain.wav",
+      "change": "gain",
+      "gain_db": 12
+    },
+    {
+      "file": "speech-noise.wav",
+      "change": "noise",
+      "noise": {
+        "color": "pink",
+        "amplitude": 0.04,
+        "seed": 2
+      }
+    }
+  ]
+}

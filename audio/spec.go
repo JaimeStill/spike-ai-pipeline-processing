@@ -13,12 +13,12 @@ import (
 const FFmpegMinimum = "9.0"
 
 // FFmpegImage is the default image ffmpeg and ffprobe run in through the container runner:
-// linuxserver/ffmpeg's 9.0.2 CLI image, build ls88, pinned by its multi-arch index digest. Its
+// linuxserver/ffmpeg's 9.0.2 CLI image, build ls89, pinned by its multi-arch index digest. Its
 // own entrypoint is an init that changes users, which the runner's lockdown refuses; the runner
 // makes the Spec's program the entrypoint in its place, so tool.Image{Ref: FFmpegImage} is the
 // whole of it. A caller may run another image, or the tools on the host through the exec runner.
-const FFmpegImage = "linuxserver/ffmpeg:9.0.2-cli-ls88@sha256:" +
-	"f4191c1abe18d75c49a23f7224d1403d55334f80013a47cb096f5056cf19617b"
+const FFmpegImage = "linuxserver/ffmpeg:9.0.2-cli-ls89@sha256:" +
+	"822d04f0b2d0c4847430f5cc90f20ea48be866bb502ece63fdeb729400bf5361"
 
 // FFmpegSpec declares FFmpeg's ffmpeg, minimum 9.0, for either runner's constructor. ffmpeg
 // -version prints "ffmpeg version n9.0.2 ..." on a host whose build is tagged from git and

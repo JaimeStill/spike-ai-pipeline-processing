@@ -19,25 +19,12 @@ import (
 // Join. There is no stand-in tier: the requests are test code, and the layer above owns
 // inference.
 
-const (
-	// maxSpeechWER bounds the joined transcript's normalized word error rate against the truth.
-	// Measured on gb10-2, set A, greedy, in 3 runs at each concurrency: 0.000, 0 edits of 134
-	// words, every run. The bound, about 6 edits of the 134, leaves room for a few words' drift
-	// across llama.cpp builds and model revisions; a seam that loses or repeats the overlap is
-	// maxSeamErrors' to catch.
-	maxSpeechWER = 0.05
-	// maxSeamErrors bounds the edits within textscore.SeamRadius words of each seam. Measured: 0
-	// in every run. The seam's 2 s overlap holds 2 words, "managerial position", so a splice that
-	// drops or repeats it makes 2 edits; 1 leaves room for one word misheard near the seam.
-	maxSeamErrors = 1
-)
-
 // TestSpeechTranscript transcribes the speech fixture's two windows through audiotest.Run at
 // concurrency 1 and at 4, E4B's slots, greedily and in English, and checks the joined transcript
 // against the fixture's truth: every window transcribed, no more calls in flight than the
-// concurrency, every seam matched, the normalized WER under maxSpeechWER, and the edits at each
-// seam at most maxSeamErrors. It logs a recorded line per window, its span, transcript, and
-// latency, the seam's report, the WER, and the wall time at each concurrency.
+// concurrency, every seam matched, the normalized WER under audiotest.SpeechWER, and the edits at
+// each seam at most audiotest.SpeechSeamErrors. It logs a recorded line per window, its span,
+// transcript, and latency, the seam's report, the WER, and the wall time at each concurrency.
 func TestSpeechTranscript(t *testing.T) {
 	tr := audiotest.Greedy(t)
 	path, err := filepath.Abs(filepath.Join("testdata", "speech.flac"))
@@ -92,13 +79,13 @@ func TestSpeechTranscript(t *testing.T) {
 			if !seam.Matched {
 				t.Errorf("concurrency %d: seam %d is unmatched", concurrency, i)
 			}
-			if seamErrors[i] > maxSeamErrors {
-				t.Errorf("concurrency %d: seam %d has %d edits near it, want at most %d", concurrency, i, seamErrors[i], maxSeamErrors)
+			if seamErrors[i] > audiotest.SpeechSeamErrors {
+				t.Errorf("concurrency %d: seam %d has %d edits near it, want at most %d", concurrency, i, seamErrors[i], audiotest.SpeechSeamErrors)
 			}
 		}
 		t.Logf("recorded: concurrency %d: WER %.3f (%d edits of %d words): %q", concurrency, wer, edits, length, joined)
-		if wer >= maxSpeechWER {
-			t.Errorf("concurrency %d: WER %.3f, want under %.3f", concurrency, wer, maxSpeechWER)
+		if wer >= audiotest.SpeechWER {
+			t.Errorf("concurrency %d: WER %.3f, want under %.3f", concurrency, wer, audiotest.SpeechWER)
 		}
 	}
 }

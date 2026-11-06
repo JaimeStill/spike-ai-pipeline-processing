@@ -15,7 +15,10 @@
 // Its exported identifiers:
 //
 //   - [Model] is set A's audio model, Gemma 4 E4B.
-//   - [Transcriber] is the client, model, language, and native fields each window is sent with.
+//   - [SpeechWER] and [SpeechSeamErrors] bound a transcript of speech.flac's stream against its
+//     truth: its normalized WER, and its edits near each seam.
+//   - [Transcriber] is the client, model, language, and native fields each window is sent with;
+//     [Transcriber.Transcribe] sends one window's WAV.
 //   - [Greedy] returns the router's Transcriber for Model: language en, temperature 0.
 //   - [Request] is one source through the harness: its Splitter, source, media directory,
 //     Transcriber, and concurrency.

@@ -86,9 +86,51 @@ type Request struct {
 	// DefaultBelow, 15 dB, unless Threshold is set. Below zero is refused.
 	Below float64
 	// Threshold, when not zero, is a fixed silence threshold in dB relative to full scale, such
-	// as -40, in place of one relative to the mean volume, which then isn't measured. It must be
-	// below zero, and Below must be zero with it.
+	// as -40, in place of one relative to the mean volume, or to the tracker's rolling floor,
+	// which then isn't measured. It must be below zero, and Below must be zero with it; with
+	// DetectorTracker, it must be -120 dB or more, and Percentile, FloorWindow, and Margin zero.
 	Threshold float64
+	// Detector is how the silences are found: DetectorSilencedetect, the zero value, through
+	// volumedetect and silencedetect; or DetectorTracker, through a Tracker fed the PCM ffmpeg
+	// decodes.
+	Detector Detector
+	// Percentile is the tracker's percentile of frame energy, as a Tracker says: zero is
+	// DefaultPercentile, the 10th; it must be under 100. Only DetectorTracker reads it; it must be
+	// zero with DetectorSilencedetect.
+	Percentile float64
+	// FloorWindow is the tracker's rolling window, the frames the percentile is taken over: zero
+	// is DefaultFloorWindow, 4 s; it must otherwise be from 1 s to 10 minutes. Only
+	// DetectorTracker reads it; it must be zero with DetectorSilencedetect.
+	FloorWindow time.Duration
+	// Margin is how far above the percentile, in dB, the tracker's threshold is: zero is
+	// DefaultMargin, 12 dB; below zero is refused. Only DetectorTracker reads it; it must be zero
+	// with DetectorSilencedetect.
+	Margin float64
+}
+
+// Detector is how Detect finds a source's silences.
+type Detector int
+
+const (
+	// DetectorSilencedetect, the zero Detector, finds the silences through ffmpeg: volumedetect
+	// measures the mean volume, and silencedetect finds the silences below a threshold the mean
+	// less Below, or a fixed Threshold, for the whole source.
+	DetectorSilencedetect Detector = iota
+	// DetectorTracker finds the silences through a Tracker, fed the source's audio stream as
+	// ffmpeg decodes it to 16 kHz mono 16-bit PCM: the threshold follows the stream's noise floor,
+	// or is a fixed Threshold.
+	DetectorTracker
+)
+
+// String returns the detector's name: silencedetect or tracker.
+func (d Detector) String() string {
+	switch d {
+	case DetectorSilencedetect:
+		return "silencedetect"
+	case DetectorTracker:
+		return "tracker"
+	}
+	return fmt.Sprintf("Detector(%d)", int(d))
 }
 
 // detection is a request's detection settings, its defaults applied.
@@ -98,6 +140,8 @@ type detection struct {
 	below      float64
 	threshold  float64
 	fixed      bool
+	// tracker is the tracker's settings, set with DetectorTracker; nil with silencedetect.
+	tracker *tracker
 }
 
 // check validates req's detection fields and applies their defaults; an invalid field is an error
@@ -111,6 +155,24 @@ func (req Request) check() (detection, error) {
 		return detection{}, fmt.Errorf("audio: source path %s: %w: %w", req.Path, ErrRequest, err)
 	}
 	d := detection{path: path, minSilence: cmp.Or(req.MinSilence, DefaultMinSilence)}
+	switch req.Detector {
+	case DetectorSilencedetect:
+		if req.Percentile != 0 || req.FloorWindow != 0 || req.Margin != 0 {
+			return detection{}, fmt.Errorf("audio: the tracker's settings with silencedetect: %w", ErrRequest)
+		}
+	case DetectorTracker:
+		if req.Below != 0 {
+			return detection{}, fmt.Errorf("audio: %v dB below the mean volume, which the tracker doesn't measure: %w", req.Below, ErrRequest)
+		}
+		tr, err := req.checkTracker()
+		if err != nil {
+			return detection{}, err
+		}
+		d.tracker, d.threshold, d.fixed = &tr, req.Threshold, req.Threshold != 0
+		return d, nil
+	default:
+		return detection{}, fmt.Errorf("audio: detector %v: %w", req.Detector, ErrRequest)
+	}
 	switch {
 	case req.MinSilence < 0:
 		return detection{}, fmt.Errorf("audio: minimum silence %v is below zero: %w", req.MinSilence, ErrRequest)
@@ -235,17 +297,24 @@ func seconds(s string) (time.Duration, error) {
 type Detection struct {
 	// Source is the source, as Probe reads it.
 	Source Source
+	// Detector is the detector that found the silences.
+	Detector Detector
 	// MeanVolume is the audio stream's mean volume in dB, as volumedetect measures it; zero when
-	// the request's Threshold is fixed, which needs no measure.
+	// the request's Threshold is fixed, which needs no measure, or with DetectorTracker.
 	MeanVolume float64
 	// Threshold is the silence threshold silencedetect ran with, in dB: MeanVolume less the
-	// request's Below, or the request's fixed Threshold.
+	// request's Below, or the request's fixed Threshold. With DetectorTracker, it is the fixed
+	// Threshold, or zero for a rolling one, whose thresholds are Thresholds.
 	Threshold float64
-	// MinSilence is the shortest silence silencedetect ran with.
+	// MinSilence is the shortest silence detected.
 	MinSilence time.Duration
 	// Silences are the silences, in order, each within 0 and the source's Duration: a silence
 	// still open at the stream's end ends at Duration.
 	Silences []Span
+	// Thresholds, with DetectorTracker, are the thresholds in force when the silences opened,
+	// in dB, Thresholds[i] Silences[i]'s, as each Silence the Tracker found reports it; nil with
+	// DetectorSilencedetect, whose threshold for every silence is Threshold.
+	Thresholds []float64
 }
 
 // meanVolume matches volumedetect's mean volume line; ffmpeg prints it to the tenth of a dB.
@@ -263,8 +332,10 @@ var (
 // source, refusing one with no audio stream, with ErrNoAudio, before ffmpeg runs. With a relative
 // threshold, one ffmpeg run's volumedetect measures the audio stream's mean volume, and the
 // threshold is that less req.Below; a second run's silencedetect then finds the silences of at
-// least req.MinSilence below the threshold, the only run with a fixed one. Every run maps the
-// audio stream Probe found, and reads the source by its absolute path.
+// least req.MinSilence below the threshold, the only run with a fixed one. With DetectorTracker,
+// one ffmpeg run decodes the audio stream to 16 kHz mono 16-bit PCM, which a Tracker of req's
+// settings is fed as it comes, and the silences are the Tracker's, each threshold in Thresholds.
+// Every run maps the audio stream Probe found, and reads the source by its absolute path.
 func (s *Splitter) Detect(ctx context.Context, req Request) (Detection, error) {
 	d, err := req.check()
 	if err != nil {
@@ -280,6 +351,20 @@ func (s *Splitter) detect(ctx context.Context, d detection) (Detection, error) {
 		return Detection{}, err
 	}
 	det := Detection{Source: src, Threshold: d.threshold, MinSilence: d.minSilence}
+	if d.tracker != nil {
+		det.Detector = DetectorTracker
+		silences, err := s.track(ctx, d.path, src, newTracker(*d.tracker))
+		if err != nil {
+			return Detection{}, err
+		}
+		for _, x := range silences {
+			n := len(det.Silences)
+			if det.Silences = appendSilence(det.Silences, x.Span, src.Duration); len(det.Silences) > n {
+				det.Thresholds = append(det.Thresholds, x.Threshold)
+			}
+		}
+		return det, nil
+	}
 	if !d.fixed {
 		mean := math.NaN()
 		err := s.filter(ctx, d.path, src, "volumedetect", func(line string) error {
@@ -342,6 +427,52 @@ func appendSilence(silences []Span, s Span, duration time.Duration) []Span {
 		return silences
 	}
 	return append(silences, s)
+}
+
+// track decodes the source's audio stream through ffmpeg to 16 kHz, SampleRate, mono 16-bit PCM,
+// as a window's run does but whole, and feeds it to tr as it comes, returning the silences tr
+// finds. ffmpeg's stdout is fed to tr as ffmpeg writes it, so the samples are never held whole.
+func (s *Splitter) track(ctx context.Context, path string, src Source, tr *Tracker) ([]Silence, error) {
+	feed := &trackerWriter{tracker: tr}
+	stderr := &lineWriter{line: func(string) error { return nil }}
+	err := s.ffmpeg.Run(ctx, tool.Invocation{
+		Args:   decodeArgs(path, src),
+		Dir:    filepath.Dir(path),
+		Stdout: feed,
+		Stderr: stderr,
+	})
+	stderr.flush()
+	if err != nil {
+		if stderr.last != "" {
+			return nil, fmt.Errorf("audio: ffmpeg decoding %s: %w: %s", path, err, stderr.last)
+		}
+		return nil, fmt.Errorf("audio: ffmpeg decoding %s: %w", path, err)
+	}
+	return append(feed.silences, tr.End()...), nil
+}
+
+// decodeArgs are ffmpeg's arguments to decode the source's audio stream to 16 kHz, SampleRate,
+// mono 16-bit little-endian PCM on its stdout, as a window's run does without its trim.
+func decodeArgs(path string, src Source) []string {
+	return []string{
+		"-nostdin", "-hide_banner", "-nostats", "-loglevel", "error",
+		"-flags:a", "+bitexact", "-i", path, "-map", "0:" + strconv.Itoa(src.Stream),
+		"-af", fmt.Sprintf("aresample=%d", SampleRate),
+		"-ac", "1", "-ar", strconv.Itoa(SampleRate), "-c:a", "pcm_s16le",
+		"-flags:a", "+bitexact", "-fflags", "+bitexact", "-f", "s16le", "-",
+	}
+}
+
+// trackerWriter feeds what is written to it to a Tracker, keeping the silences it returns; its
+// writes never fail.
+type trackerWriter struct {
+	tracker  *Tracker
+	silences []Silence
+}
+
+func (w *trackerWriter) Write(p []byte) (int, error) {
+	w.silences = append(w.silences, w.tracker.Feed(p)...)
+	return len(p), nil
 }
 
 // filter runs ffmpeg over the source's audio stream through one audio filter, discarding the

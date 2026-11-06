@@ -13,6 +13,7 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/media"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
@@ -75,6 +76,14 @@ func allStages(t *testing.T) dispatch.Stages {
 	if err != nil {
 		t.Fatal(err)
 	}
+	streamer, err := media.NewStreamer(media.Config{FFmpeg: ff, FFprobe: fp})
+	if err != nil {
+		t.Fatal(err)
+	}
+	videos, err := dispatch.NewVideoStage(dispatch.VideoConfig{Streamer: streamer, Version: dispatch.Versions(ff, fp)})
+	if err != nil {
+		t.Fatal(err)
+	}
 	return dispatch.Stages{
 		route.Document:        docs,
 		route.Office:          offices,
@@ -83,6 +92,7 @@ func allStages(t *testing.T) dispatch.Stages {
 		route.Nested:          emailStage(t),
 		route.OneNote:         onenoteStage(t),
 		route.Audio:           audios,
+		route.Video:           videos,
 	}
 }
 

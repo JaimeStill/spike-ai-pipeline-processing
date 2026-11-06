@@ -4,14 +4,7 @@ package audio_test
 
 import (
 	"bufio"
-	"bytes"
-	"cmp"
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
-	"encoding/xml"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -21,6 +14,7 @@ import (
 	"testing"
 	"unicode"
 
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/corpustest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/textscore"
 )
 
@@ -70,15 +64,10 @@ type crossCheck struct {
 // findingSources are the finding's sources, in the order the task runs them.
 var findingSources = []findingSource{
 	{
-		Name:  "ami",
-		Title: "AMI ES2002a, Mix-Headset (21.2 min, 4 speakers, a meeting)",
-		Audio: "audio/long/ami-es2002a-mix-headset.wav",
-		Truth: []string{
-			"audio/long/ami-es2002a-truth/ES2002a.A.words.xml", "audio/long/ami-es2002a-truth/ES2002a.A.segments.xml",
-			"audio/long/ami-es2002a-truth/ES2002a.B.words.xml", "audio/long/ami-es2002a-truth/ES2002a.B.segments.xml",
-			"audio/long/ami-es2002a-truth/ES2002a.C.words.xml", "audio/long/ami-es2002a-truth/ES2002a.C.segments.xml",
-			"audio/long/ami-es2002a-truth/ES2002a.D.words.xml", "audio/long/ami-es2002a-truth/ES2002a.D.segments.xml",
-		},
+		Name:            "ami",
+		Title:           "AMI ES2002a, Mix-Headset (21.2 min, 4 speakers, a meeting)",
+		Audio:           "audio/long/ami-es2002a-mix-headset.wav",
+		Truth:           corpustest.AMITruth,
 		Redistributable: true,
 		TruthNote: "AMI's manual word-level transcription of each speaker, ordered by its segments' starts, " +
 			"so a segment's words stay together; overlapping speech is ordered by segment, which no " +
@@ -120,54 +109,6 @@ var findingSources = []findingSource{
 			return truth{Text: cleanBookOCR(string(data))}, err
 		},
 	},
-}
-
-// manifestEntry is the part of a corpus manifest entry the finding reads.
-type manifestEntry struct {
-	Path            string `json:"path"`
-	SHA256          string `json:"sha256"`
-	Bytes           int64  `json:"bytes"`
-	License         string `json:"license"`
-	Redistributable bool   `json:"redistributable"`
-	SourceURL       string `json:"source_url"`
-}
-
-// checkCorpus checks each of paths in the corpus at docs against its MANIFEST.json entry by its
-// SHA-256 and size, and returns the entries.
-func checkCorpus(docs string, paths []string) ([]manifestEntry, error) {
-	data, err := os.ReadFile(filepath.Join(docs, "MANIFEST.json"))
-	if err != nil {
-		return nil, err
-	}
-	var manifest struct {
-		Files []manifestEntry `json:"files"`
-	}
-	if err := json.Unmarshal(data, &manifest); err != nil {
-		return nil, fmt.Errorf("%s: %w", filepath.Join(docs, "MANIFEST.json"), err)
-	}
-	var out []manifestEntry
-	for _, p := range paths {
-		i := slices.IndexFunc(manifest.Files, func(e manifestEntry) bool { return e.Path == p })
-		if i < 0 {
-			return nil, fmt.Errorf("%s isn't in the corpus manifest", p)
-		}
-		e := manifest.Files[i]
-		f, err := os.Open(filepath.Join(docs, p))
-		if err != nil {
-			return nil, err
-		}
-		h := sha256.New()
-		n, err := io.Copy(h, f)
-		_ = f.Close()
-		if err != nil {
-			return nil, err
-		}
-		if sum := hex.EncodeToString(h.Sum(nil)); sum != e.SHA256 || n != e.Bytes {
-			return nil, fmt.Errorf("%s: SHA-256 %s, %d bytes; the manifest's %s, %d bytes", p, sum, n, e.SHA256, e.Bytes)
-		}
-		out = append(out, e)
-	}
-	return out, nil
 }
 
 // readNLP returns the tokens of a Rev .nlp file, its first column, in order, separated by single
@@ -244,191 +185,11 @@ func readEarnings22(docs string) (truth, error) {
 	}}, nil
 }
 
-// amiWord is one word of an AMI words file: its text and times, and its place among the file's
-// elements.
-type amiWord struct {
-	ordinal    int
-	text       string
-	start, end float64
-}
-
-// amiSegment is one segment of an AMI segments file: its start, and the range of its words file's
-// elements it holds.
-type amiSegment struct {
-	speaker     string
-	start       float64
-	first, last string
-}
-
-// amiRange matches a segment's child reference: one element, or a range of them.
-var amiRange = regexp.MustCompile(`#id\(([^)]+)\)(?:\.\.id\(([^)]+)\))?`)
-
-// readAMI reads ES2002a's four speakers' words and segments. The truth is every segment's words,
-// segments in order of their start and then speaker, each segment's words in its file's order:
-// the <w> elements, punctuation (punc="true") left out, vocal sounds, disfluency markers, and
-// gaps too. The excerpt's truth is the same words whose middle is before excerptLength.
+// readAMI reads ES2002a's truth through corpustest.ReadAMI: the whole truth, and the excerpt's,
+// every word whose middle is before excerptLength.
 func readAMI(docs string) (truth, error) {
-	type placed struct {
-		seg   amiSegment
-		words []amiWord
-	}
-	var all []placed
-	for _, speaker := range []string{"A", "B", "C", "D"} {
-		dir := filepath.Join(docs, "audio/long/ami-es2002a-truth")
-		words, ordinals, err := readAMIWords(filepath.Join(dir, "ES2002a."+speaker+".words.xml"))
-		if err != nil {
-			return truth{}, err
-		}
-		segs, err := readAMISegments(filepath.Join(dir, "ES2002a."+speaker+".segments.xml"), speaker)
-		if err != nil {
-			return truth{}, err
-		}
-		covered := 0
-		for _, s := range segs {
-			first, ok1 := ordinals[s.first]
-			last, ok2 := ordinals[s.last]
-			if !ok1 || !ok2 {
-				return truth{}, fmt.Errorf("speaker %s: segment at %.3f s names %s..%s, not in its words", speaker, s.start, s.first, s.last)
-			}
-			p := placed{seg: s}
-			for _, w := range words {
-				if w.ordinal >= first && w.ordinal <= last {
-					p.words = append(p.words, w)
-				}
-			}
-			covered += len(p.words)
-			all = append(all, p)
-		}
-		if covered != len(words) {
-			return truth{}, fmt.Errorf("speaker %s: segments hold %d of %d words", speaker, covered, len(words))
-		}
-	}
-	slices.SortStableFunc(all, func(a, b placed) int {
-		return cmp.Or(cmp.Compare(a.seg.start, b.seg.start), cmp.Compare(a.seg.speaker, b.seg.speaker))
-	})
-	var text, excerpt []string
-	for _, p := range all {
-		for _, w := range p.words {
-			text = append(text, w.text)
-			if (w.start+w.end)/2 < excerptLength.Seconds() {
-				excerpt = append(excerpt, w.text)
-			}
-		}
-	}
-	return truth{Text: strings.Join(text, " "), Excerpt: strings.Join(excerpt, " "), Timed: true}, nil
-}
-
-// latin1 is the CharsetReader for AMI's ISO-8859-1 files: each byte is the rune of its value.
-func latin1(charset string, r io.Reader) (io.Reader, error) {
-	if !strings.EqualFold(charset, "ISO-8859-1") {
-		return nil, fmt.Errorf("charset %s", charset)
-	}
-	data, err := io.ReadAll(r)
-	if err != nil {
-		return nil, err
-	}
-	var b strings.Builder
-	for _, c := range data {
-		b.WriteRune(rune(c))
-	}
-	return strings.NewReader(b.String()), nil
-}
-
-// readAMIWords returns an AMI words file's words, punctuation left out, and every element's
-// ordinal by its id, which a segment's range names.
-func readAMIWords(path string) ([]amiWord, map[string]int, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, nil, err
-	}
-	d := xml.NewDecoder(bytes.NewReader(data))
-	d.CharsetReader = latin1
-	var words []amiWord
-	ordinals := map[string]int{}
-	ordinal := 0
-	for {
-		tok, err := d.Token()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, nil, fmt.Errorf("%s: %w", path, err)
-		}
-		se, ok := tok.(xml.StartElement)
-		if !ok || se.Name.Local == "root" {
-			continue
-		}
-		attr := map[string]string{}
-		for _, a := range se.Attr {
-			attr[a.Name.Local] = a.Value
-		}
-		ordinal++
-		ordinals[attr["id"]] = ordinal
-		if se.Name.Local != "w" {
-			continue
-		}
-		var w struct {
-			Text string `xml:",chardata"`
-		}
-		if err := d.DecodeElement(&w, &se); err != nil {
-			return nil, nil, fmt.Errorf("%s: %w", path, err)
-		}
-		if attr["punc"] == "true" {
-			continue
-		}
-		start, err1 := strconv.ParseFloat(attr["starttime"], 64)
-		end, err2 := strconv.ParseFloat(attr["endtime"], 64)
-		if err := cmp.Or(err1, err2); err != nil {
-			return nil, nil, fmt.Errorf("%s: word %s: %w", path, attr["id"], err)
-		}
-		words = append(words, amiWord{ordinal: ordinal, text: strings.TrimSpace(w.Text), start: start, end: end})
-	}
-	return words, ordinals, nil
-}
-
-// readAMISegments returns an AMI segments file's segments.
-func readAMISegments(path, speaker string) ([]amiSegment, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	d := xml.NewDecoder(bytes.NewReader(data))
-	d.CharsetReader = latin1
-	var segs []amiSegment
-	for {
-		tok, err := d.Token()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", path, err)
-		}
-		se, ok := tok.(xml.StartElement)
-		if !ok || se.Name.Local != "segment" {
-			continue
-		}
-		var s struct {
-			Start string `xml:"transcriber_start,attr"`
-			Child []struct {
-				Href string `xml:"href,attr"`
-			} `xml:"child"`
-		}
-		if err := d.DecodeElement(&s, &se); err != nil {
-			return nil, fmt.Errorf("%s: %w", path, err)
-		}
-		start, err := strconv.ParseFloat(s.Start, 64)
-		if err != nil {
-			return nil, fmt.Errorf("%s: segment start %q: %w", path, s.Start, err)
-		}
-		for _, c := range s.Child {
-			m := amiRange.FindStringSubmatch(c.Href)
-			if m == nil {
-				return nil, fmt.Errorf("%s: segment child %q", path, c.Href)
-			}
-			segs = append(segs, amiSegment{speaker: speaker, start: start, first: m[1], last: cmp.Or(m[2], m[1])})
-		}
-	}
-	return segs, nil
+	text, excerpt, err := corpustest.ReadAMI(docs, excerptLength)
+	return truth{Text: text, Excerpt: excerpt, Timed: true}, err
 }
 
 // runningHead matches the OCR's running heads, "The Statement of Stella Maberly" misread a page
@@ -483,10 +244,10 @@ func cleanBookOCR(ocr string) string {
 // manifest, with no model: it logs each truth's normalized words, its first and last words, and
 // the timed excerpt's or the cross-check's words, so the readers can be checked before a run.
 func TestFindingsTruth(t *testing.T) {
-	docs := corpusRoot(t)
+	docs := corpustest.Root(t)
 	for _, src := range findingSources {
 		t.Run(src.Name, func(t *testing.T) {
-			if _, err := checkCorpus(docs, append([]string{src.Audio}, src.Truth...)); err != nil {
+			if _, err := corpustest.Check(docs, append([]string{src.Audio}, src.Truth...)); err != nil {
 				t.Fatal(err)
 			}
 			tru, err := src.read(docs)
@@ -507,17 +268,4 @@ func TestFindingsTruth(t *testing.T) {
 			}
 		})
 	}
-}
-
-// corpusRoot returns the corpus root DOCS names, ~/docs when it is unset.
-func corpusRoot(t *testing.T) string {
-	t.Helper()
-	if docs := os.Getenv(docsEnv); docs != "" {
-		return docs
-	}
-	home, err := os.UserHomeDir()
-	if err != nil {
-		t.Fatal(err)
-	}
-	return filepath.Join(home, "docs")
 }

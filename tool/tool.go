@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 )
@@ -92,6 +93,8 @@ type Tool struct {
 	name    string
 	version Version
 	run     runFunc
+	// image is the image a container tool runs in; nil for the exec runner's.
+	image *Image
 }
 
 // Name returns the program's name; for a script, the script's.
@@ -99,6 +102,18 @@ func (t *Tool) Name() string { return t.name }
 
 // Version returns the program's version, found at construction; for a script, the interpreter's.
 func (t *Tool) Version() Version { return t.version }
+
+// Image returns the image a tool the container runner built runs in, its Network and CapAdd
+// included, and true; a tool the exec runner built returns false. An adapter whose runs need more
+// than the lockdown allows, such as a network, reads it to refuse a run the tool can't make.
+func (t *Tool) Image() (Image, bool) {
+	if t.image == nil {
+		return Image{}, false
+	}
+	image := *t.image
+	image.CapAdd = slices.Clone(image.CapAdd)
+	return image, true
+}
 
 // Run runs the program once, under ctx. A program that exits nonzero gives an *ExitError. When ctx
 // ends the run, the error matches ctx's (errors.Is context.Canceled or

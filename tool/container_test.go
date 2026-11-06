@@ -298,6 +298,26 @@ func TestContainerRelaxations(t *testing.T) {
 	}
 }
 
+// TestToolImage reports a container tool's image, its relaxations included, and none for an exec
+// tool; the image returned is a copy, so changing it changes no run.
+func TestToolImage(t *testing.T) {
+	dir := installDocker(t, "29.0.1")
+	addImage(t, dir, testRef)
+	want := tool.Image{Ref: testRef, Network: "bridge", CapAdd: []string{"NET_RAW"}}
+	tl := newContainer(t, want)
+	got, ok := tl.Image()
+	if !ok || got.Ref != want.Ref || got.Network != want.Network || !slices.Equal(got.CapAdd, want.CapAdd) {
+		t.Errorf("Image() = %+v, %v; want %+v, true", got, ok, want)
+	}
+	got.CapAdd[0] = "SYS_ADMIN"
+	if again, _ := tl.Image(); again.CapAdd[0] != "NET_RAW" {
+		t.Errorf("changing the returned image changed the tool's: %q", again.CapAdd)
+	}
+	if image, ok := newStandin(t).Image(); ok || image.Ref != "" {
+		t.Errorf("an exec tool's Image() = %+v, %v; want none", image, ok)
+	}
+}
+
 func TestContainerExitError(t *testing.T) {
 	dir := installDocker(t, "29.0.1")
 	addImage(t, dir, testRef)

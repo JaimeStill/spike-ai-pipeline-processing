@@ -80,6 +80,14 @@ func (t Transcript) Text() string { return strings.Join(t.Words, " ") }
 // the windows either side are concatenated around it. Join reads nothing but its arguments, so
 // the same arguments give the same transcript. No transcripts give an empty transcript.
 //
+// Join's settled prefix: each seam is merged from the windows up to the later of its two alone, so
+// re-running Join over the transcripts received so far, a stream's windows in plan order, leaves
+// every word before the latest seam unchanged. For transcripts t1 to tn, Join of t1 to tk, k at
+// least 2, has the same Seams as the first k-1 of Join of t1 to tn, and the same Words before its
+// last seam's Position; only the words from there on, the last window's, may change as more
+// arrive. A caller joining as the windows arrive may thus treat the words before the latest seam
+// as final.
+//
 // A SeamWords below zero, or 1, is an error wrapping ErrRequest.
 func Join(transcripts []string, req JoinRequest) (Transcript, error) {
 	bound := cmp.Or(req.SeamWords, DefaultSeamWords)

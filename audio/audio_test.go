@@ -227,12 +227,20 @@ func TestDetectRequestFields(t *testing.T) {
 func TestRequestRefusedBeforeRuns(t *testing.T) {
 	s := standinSplitter(t)
 	for name, req := range map[string]audio.Request{
-		"no path":                  {},
-		"negative minimum":         {Path: "a.flac", MinSilence: -time.Second},
-		"negative below":           {Path: "a.flac", Below: -1},
-		"positive threshold":       {Path: "a.flac", Threshold: 3},
-		"threshold and below":      {Path: "a.flac", Threshold: -40, Below: 10},
-		"overlap of half a window": {Path: "a.flac", Overlap: audio.WindowLimit / 2},
+		"no path":                            {},
+		"negative minimum":                   {Path: "a.flac", MinSilence: -time.Second},
+		"negative below":                     {Path: "a.flac", Below: -1},
+		"positive threshold":                 {Path: "a.flac", Threshold: 3},
+		"threshold and below":                {Path: "a.flac", Threshold: -40, Below: 10},
+		"overlap of half a window":           {Path: "a.flac", Overlap: audio.WindowLimit / 2},
+		"an unknown detector":                {Path: "a.flac", Detector: 2},
+		"silencedetect's percentile":         {Path: "a.flac", Percentile: 10},
+		"silencedetect's window":             {Path: "a.flac", FloorWindow: time.Minute},
+		"silencedetect's margin":             {Path: "a.flac", Margin: 6},
+		"the tracker below the mean":         {Path: "a.flac", Detector: audio.DetectorTracker, Below: 15},
+		"the tracker's threshold and margin": {Path: "a.flac", Detector: audio.DetectorTracker, Threshold: -40, Margin: 6},
+		"the tracker's short window":         {Path: "a.flac", Detector: audio.DetectorTracker, FloorWindow: time.Millisecond},
+		"the tracker with no path":           {Detector: audio.DetectorTracker},
 	} {
 		t.Run(name, func(t *testing.T) {
 			_, err := s.Plan(t.Context(), req)
@@ -257,6 +265,76 @@ func TestDetectFFmpegFails(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "Invalid data found") {
 		t.Errorf("err %q doesn't carry ffmpeg's last line", err)
+	}
+}
+
+// gainProbe is ffprobe's report of speech-gain.wav: 75.23 s of 16 kHz mono 16-bit PCM.
+const gainProbe = `{"streams":[` +
+	`{"index":0,"codec_name":"pcm_s16le","codec_type":"audio","sample_rate":"16000","channels":1,"duration":"75.230000"}],` +
+	`"format":{"duration":"75.230000"}}`
+
+// TestPlanTracker plans speech-gain.wav with the tracker, the stand-in ffmpeg decoding it to its
+// own samples: one ffmpeg run decodes the audio stream to 16 kHz mono 16-bit PCM, and the plan is
+// the incremental path's over the same samples, a Tracker and a Planner fed them as a stream, as
+// it is PlanWindows' of the silences Detect reports. Each silence reports its threshold.
+func TestPlanTracker(t *testing.T) {
+	s := standinSplitter(t)
+	t.Setenv(probeEnv, gainProbe)
+	t.Setenv(decodeEnv, filepath.Join("testdata", "speech-gain.wav"))
+	pcm := samplesOf(t, "speech-gain.wav")
+	for name, req := range map[string]audio.Request{
+		"defaults": {},
+		"settings": {Percentile: 20, FloorWindow: 10 * time.Second, Margin: 9, MinSilence: 400 * time.Millisecond, Overlap: time.Second},
+		"fixed":    {Threshold: -46.2},
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Setenv(logEnv, filepath.Join(t.TempDir(), "runs.log"))
+			req.Path, req.Detector = "speech-gain.wav", audio.DetectorTracker
+			plan, err := s.Plan(t.Context(), req)
+			if err != nil {
+				t.Fatal(err)
+			}
+			duration := 75230 * time.Millisecond
+			if want := streamPlan(t, pcm, req, 1<<15, duration); !reflect.DeepEqual(plan.Windows, want) {
+				t.Errorf("windows %v, the incremental path's %v", plan.Windows, want)
+			}
+			rs := runs(t)
+			if got := programs(rs); !slices.Equal(got, []string{"ffprobe", "ffmpeg"}) {
+				t.Fatalf("runs %q, want ffprobe, then ffmpeg once", got)
+			}
+			if got := filterOf(rs[1]); got != "aresample=16000" {
+				t.Errorf("ffmpeg's filter %q, want aresample=16000", got)
+			}
+			args := strings.Join(rs[1].Args, " ")
+			for _, want := range []string{"-map 0:0", "-ac 1 -ar 16000 -c:a pcm_s16le", "-f s16le -"} {
+				if !strings.Contains(args, want) {
+					t.Errorf("ffmpeg's arguments %q, without %q", args, want)
+				}
+			}
+			det, err := s.Detect(t.Context(), req)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if det.Detector != audio.DetectorTracker || det.MeanVolume != 0 || det.Threshold != req.Threshold {
+				t.Errorf("detector %v, mean %v dB, threshold %v dB; want the tracker, 0, and %v",
+					det.Detector, det.MeanVolume, det.Threshold, req.Threshold)
+			}
+			if len(det.Silences) == 0 || len(det.Thresholds) != len(det.Silences) {
+				t.Fatalf("%d silences and %d thresholds", len(det.Silences), len(det.Thresholds))
+			}
+			for i, th := range det.Thresholds {
+				if th >= 0 || (req.Threshold != 0 && th != req.Threshold) {
+					t.Errorf("silence %v's threshold %v dB", det.Silences[i], th)
+				}
+			}
+			again, err := audio.PlanWindows(det.Source.Duration, det.Silences, req)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(again, plan) {
+				t.Errorf("PlanWindows of Detect's silences %+v, Plan %+v", again, plan)
+			}
+		})
 	}
 }
 

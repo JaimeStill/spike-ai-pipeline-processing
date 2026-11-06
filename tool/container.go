@@ -120,7 +120,8 @@ func NewContainer(ctx context.Context, docker string, image Image, spec Spec) (*
 	if err != nil {
 		return nil, err
 	}
-	return &Tool{name: name, version: version, run: run}, nil
+	image.CapAdd = slices.Clone(image.CapAdd)
+	return &Tool{name: name, version: version, run: run, image: &image}, nil
 }
 
 // ensureImage pulls ref through drun, docker's runFunc, unless docker image inspect finds it

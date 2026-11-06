@@ -44,6 +44,9 @@ const (
 	// delaysEnv is a JSON object of how long, in milliseconds, a window run sleeps before writing
 	// its samples, by its first sample, "*" for the rest; none sleeps without it.
 	delaysEnv = "AUDIO_TEST_WINDOW_DELAYS"
+	// decodeEnv names a canonical 44-byte WAV whose samples a decoding run, the tracker's, writes
+	// to stdout, in chunks of uneven sizes.
+	decodeEnv = "AUDIO_TEST_DECODE"
 	// flightEnv, when set, names a directory each window run marks itself in, a file named by its
 	// process ID, while it sleeps; halfway through, it appends the number of runs marked there to
 	// the directory's counts file. A run that is killed leaves its mark.
@@ -95,6 +98,9 @@ func standin(name string, args []string) int {
 	}
 	filter := args[slices.Index(args, "-af")+1]
 	if slices.Contains(args, "s16le") {
+		if filter == "aresample=16000" {
+			return standinDecode()
+		}
 		return standinWindow(filter)
 	}
 	switch {
@@ -102,6 +108,25 @@ func standin(name string, args []string) int {
 		fmt.Fprint(os.Stderr, os.Getenv(volumeEnv))
 	case strings.HasPrefix(filter, "silencedetect="):
 		fmt.Fprint(os.Stderr, os.Getenv(silenceEnv))
+	}
+	return 0
+}
+
+// standinDecode is the stand-in ffmpeg's decoding run: it writes the samples of the WAV decodeEnv
+// names to stdout, in chunks of 1 to 7,919 bytes, so a sample is split across writes.
+func standinDecode() int {
+	data, err := os.ReadFile(os.Getenv(decodeEnv))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	pcm := data[44:]
+	for n := 1; len(pcm) > 0; n = n*31%7919 + 1 {
+		k := min(n, len(pcm))
+		if _, err := os.Stdout.Write(pcm[:k]); err != nil {
+			return 2
+		}
+		pcm = pcm[k:]
 	}
 	return 0
 }
