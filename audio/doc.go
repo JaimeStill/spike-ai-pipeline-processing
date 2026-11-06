@@ -89,6 +89,8 @@
 //   - [Splitter.Plan] plans a source's windows, as a Request says.
 //   - [Splitter.Windows] cuts a plan's windows as a [WindowsRequest] says, each a [WindowFile].
 //   - [SampleRate] is the windows' sample rate, 16 kHz.
+//   - [Sample] is the sample at SampleRate nearest a time, where a window's samples begin and end.
+//   - [WAV] writes 16 kHz mono 16-bit PCM as a window's WAV, with the canonical 44-byte header.
 //   - [PlanWindows] plans the windows of a duration and its silences, running nothing.
 //   - [Planner] plans a stream's windows as it arrives, by PlanWindows' policy; [NewPlanner] builds
 //     one.
