@@ -1,16 +1,22 @@
 # Results behind the streams finding
 
-[`../streams.md`](../streams.md) cites these files. They come from two runs of `mise run
+[`../streams.md`](../streams.md) cites these files. They come from three runs of `mise run
 findings-streams`, each recorded by setting `STREAMS_FINDINGS_RESULTS`, on branch `streams`, and
 one run of `mise run findings-floor`:
 
 - **findings-streams 2026-11-06**, all three sources, from 2026-11-06 16:25:59 to 17:50:25 UTC, at
-  processing commit `c3a7f72`: `findings.log`, `tears.json`, and `ami.json`. Its NASA section of
-  `findings.log` is the measurement before the open-silence fix, superseded.
+  processing commit `c3a7f72`: `findings.log` and `ami.json`. Its NASA and Tears of Steel sections
+  of `findings.log` are the measurements before the open-silence fix, superseded.
 - **findings-streams nasa 2026-11-06**, NASA alone (`STREAMS_FINDINGS_SOURCES=nasa`), from
   2026-11-06 18:07:48 to 18:48:02 UTC, at processing commit `5a8f16c`, which fixes a window inside
   a silence still open once the stream passes its limit: `findings-nasa.log` and `nasa.json`. Its
   windows are the first run's, by SHA-256.
+- **findings-streams tears 2026-11-06**, Tears of Steel alone (`STREAMS_FINDINGS_SOURCES=tears`),
+  from 2026-11-06 18:52:32 to 19:03:25 UTC, at processing commit `c820411`, whose code is
+  `5a8f16c`'s: `findings-tears.log` and `tears.json`. Its windows and frames are the first run's,
+  by SHA-256: each paced run equals its unpaced read, and an unpaced read at `c3a7f72` and at
+  `c820411` gave the same 7 windows, spans included, and 35 frames (an ad hoc read, not
+  committed).
 - `mise run findings-floor` at commit `c3a7f72`, from 2026-11-06 16:24:51 to 16:25:54 UTC:
   `floor.log`.
 
@@ -26,9 +32,10 @@ into a temporary directory for the run.
 
 | File | Test | What it records |
 |---|---|---|
-| `findings.log` | `TestFindingsStreams`, `TestFindingsStreamsReport` | The first run's `-v` output, verbatim: each event as it was yielded and answered, each settled step's new words, a `lag` line per event, each step's recorded line, and the report's table lines; its NASA section is the run before the fix |
+| `findings.log` | `TestFindingsStreams`, `TestFindingsStreamsReport` | The first run's `-v` output, verbatim: each event as it was yielded and answered, each settled step's new words, a `lag` line per event, each step's recorded line, and the report's table lines; its NASA and Tears of Steel sections are the runs before the fix |
 | `findings-nasa.log` | `TestFindingsStreams`, `TestFindingsStreamsReport` | The NASA run's `-v` output, verbatim, as `findings.log`, its report NASA's lines alone |
-| `tears.json` | `TestFindingsStreams` | Tears of Steel's 180 s clip: the source and settings, the unpaced read, the file path under each detector, the 3 paced runs with each event's lags, their distributions, the transcript and every frame's description, and the cancellation |
+| `findings-tears.log` | `TestFindingsStreams`, `TestFindingsStreamsReport` | The Tears of Steel run's `-v` output, verbatim, as `findings.log`, its report Tears' lines alone |
+| `tears.json` | `TestFindingsStreams` | Tears of Steel's 180 s clip: the source and settings, the unpaced read, the file path under each detector, the 3 paced runs with each event's lags, their distributions, the transcript and every frame's description, and the cancellation; from the Tears of Steel run, after the fix |
 | `ami.json` | `TestFindingsStreams` | AMI ES2002a's overhead camera muxed with its Mix-Headset WAV, as `tears.json`, 1 paced run |
 | `nasa.json` | `TestFindingsStreams` | NASA's ISS Expedition 60 in-flight event, as `tears.json`, 1 paced run, scored to 18:36 where its captions end; from the NASA run, after the fix |
 | `floor.log` | `TestFindingsFloor` | `mise run findings-floor`'s output, verbatim: the tracker's tuning grid over the level-change fixtures and three long sources |

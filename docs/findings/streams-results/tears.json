@@ -29,10 +29,10 @@
     "max_gap": 10000000000,
     "max_side": 0
   },
-  "started": "2026-11-06T16:25:59.517622034Z",
+  "started": "2026-11-06T18:52:32.894571545Z",
   "unpaced": {
-    "wall": 4142916973,
-    "speed": 43.44764840161811,
+    "wall": 4111305178,
+    "speed": 43.78171704771462,
     "windows": 7,
     "frames": 35,
     "reasons": {
@@ -50,22 +50,22 @@
       "detector": "silencedetect",
       "windows": 7,
       "failed": 0,
-      "plan_time": 261761436,
-      "wall": 4991063302,
+      "plan_time": 250761558,
+      "wall": 5992451027,
       "wer": {
         "edits": 33,
         "length": 97,
         "rate": 0.3402061855670103
       },
       "scored": 7,
-      "transcript": "We have main engine start. Four, three, two, one. Go. They jerked up. Look, Celia, we have to follow our passions. You have your robotics and I just want to be awesome in space. Why don't you just admit that you're freaked out by my robot hand? I I'm freaked out by it's All right, fine. I'm freaked out. I'm having nightmares that I'm being chased by his giant robotic claw. We're done. We're done. Robot's memory synced and plop. This is pretty freaking Should you be down there? I heard you guys talking last night. It's not my fault, you know. [Music] [Music]"
+      "transcript": "We have main engine start. Four, three, two, one. Go. They jerked up. Look, Celia, we have to follow our passions. You have your robotics and I just want to be awesome in space. Why don't you just admit that you're freaked out by my robot hand? I I'm freaked out by it's All right, fine. I'm freaked out. I'm having nightmares that I'm being chased by his giant robotic claw. We're done. We're done. Robot's memory synced and plop. This is pretty freaking. Should you be down there? I heard you guys talking last night. It's not my fault, you know. [Music] [Music]"
     },
     {
       "detector": "tracker",
       "windows": 7,
       "failed": 0,
-      "plan_time": 166255501,
-      "wall": 5122715949,
+      "plan_time": 144155541,
+      "wall": 5911344218,
       "wer": {
         "edits": 35,
         "length": 97,
@@ -78,9 +78,9 @@
   "runs": [
     {
       "run": 1,
-      "wall": 181684830113,
-      "ended": 179445761937,
-      "last_window": 2245074520,
+      "wall": 181369054543,
+      "ended": 179449996994,
+      "last_window": 1927491647,
       "windows": 7,
       "frames": 35,
       "reasons": {
@@ -97,63 +97,63 @@
       "window_lags": {
         "arrival_to_event": {
           "n": 7,
-          "mean": 6727878436,
-          "p50": 3126218642,
-          "p90": 21167858244,
-          "max": 21167858244
+          "mean": 1674844044,
+          "p50": 1876485390,
+          "p90": 3668364107,
+          "max": 3668364107
         },
         "event_to_answer": {
           "n": 7,
-          "mean": 1800250651,
-          "p50": 1754963502,
-          "p90": 2936742952,
-          "max": 2936742952
+          "mean": 1560510559,
+          "p50": 1712492717,
+          "p90": 2580820776,
+          "max": 2580820776
         },
         "queued": {
           "n": 7,
-          "mean": 48645,
-          "p50": 47326,
-          "p90": 68843,
-          "max": 68843
+          "mean": 57290,
+          "p50": 53088,
+          "p90": 85729,
+          "max": 85729
         },
         "request": {
           "n": 7,
-          "mean": 1800202005,
-          "p50": 1754913953,
-          "p90": 2936688446,
-          "max": 2936688446
+          "mean": 1560453268,
+          "p50": 1712445075,
+          "p90": 2580761236,
+          "max": 2580761236
         },
         "waited": 0,
-        "max_in_flight": 2
+        "max_in_flight": 1
       },
       "frame_lags": {
         "arrival_to_event": {
           "n": 35,
-          "mean": 112633952,
-          "p50": 123370757,
-          "p90": 154426477,
-          "max": 176069096
+          "mean": 109770792,
+          "p50": 113517093,
+          "p90": 144858390,
+          "max": 165052139
         },
         "event_to_answer": {
           "n": 35,
-          "mean": 1527190972,
-          "p50": 1622554489,
-          "p90": 1825883105,
-          "max": 1975204169
+          "mean": 1718238248,
+          "p50": 1741423877,
+          "p90": 1980102436,
+          "max": 2493938976
         },
         "queued": {
           "n": 35,
-          "mean": 51374,
-          "p50": 47503,
-          "p90": 73842,
-          "max": 82276
+          "mean": 51547,
+          "p50": 50659,
+          "p90": 73972,
+          "max": 84445
         },
         "request": {
           "n": 35,
-          "mean": 1527139598,
-          "p50": 1622519376,
-          "p90": 1825830910,
-          "max": 1975147797
+          "mean": 1718186701,
+          "p50": 1741370646,
+          "p90": 1980028464,
+          "max": 2493901001
         },
         "waited": 0,
         "max_in_flight": 2
@@ -163,90 +163,90 @@
           "kind": "window",
           "index": 0,
           "source_ms": 0,
-          "arrival_to_event_ms": 750,
-          "event_to_answer_ms": 1754,
+          "arrival_to_event_ms": 208,
+          "event_to_answer_ms": 1712,
           "queued_ms": 0,
-          "request_ms": 1754,
+          "request_ms": 1712,
           "ok": true
         },
         {
           "kind": "window",
           "index": 1,
           "source_ms": 27930,
-          "arrival_to_event_ms": 5417,
-          "event_to_answer_ms": 2936,
+          "arrival_to_event_ms": 2250,
+          "event_to_answer_ms": 2580,
           "queued_ms": 0,
-          "request_ms": 2936,
+          "request_ms": 2580,
           "ok": true
         },
         {
           "kind": "window",
           "index": 2,
           "source_ms": 53695,
-          "arrival_to_event_ms": 14751,
-          "event_to_answer_ms": 908,
+          "arrival_to_event_ms": 3668,
+          "event_to_answer_ms": 771,
           "queued_ms": 0,
-          "request_ms": 908,
+          "request_ms": 771,
           "ok": true
         },
         {
           "kind": "window",
           "index": 3,
           "source_ms": 78057,
-          "arrival_to_event_ms": 1875,
-          "event_to_answer_ms": 2181,
+          "arrival_to_event_ms": 1876,
+          "event_to_answer_ms": 1881,
           "queued_ms": 0,
-          "request_ms": 2181,
+          "request_ms": 1881,
           "ok": true
         },
         {
           "kind": "window",
           "index": 4,
           "source_ms": 104420,
-          "arrival_to_event_ms": 3126,
-          "event_to_answer_ms": 1172,
+          "arrival_to_event_ms": 917,
+          "event_to_answer_ms": 997,
           "queued_ms": 0,
-          "request_ms": 1172,
+          "request_ms": 997,
           "ok": true
         },
         {
           "kind": "window",
           "index": 5,
           "source_ms": 131530,
-          "arrival_to_event_ms": 21167,
-          "event_to_answer_ms": 1407,
+          "arrival_to_event_ms": 2792,
+          "event_to_answer_ms": 1060,
           "queued_ms": 0,
-          "request_ms": 1407,
+          "request_ms": 1060,
           "ok": true
         },
         {
           "kind": "window",
           "index": 6,
           "source_ms": 156750,
-          "arrival_to_event_ms": 6,
-          "event_to_answer_ms": 2239,
+          "arrival_to_event_ms": 8,
+          "event_to_answer_ms": 1919,
           "queued_ms": 0,
-          "request_ms": 2238,
+          "request_ms": 1918,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 0,
           "source_ms": 0,
-          "arrival_to_event_ms": 10,
-          "event_to_answer_ms": 502,
+          "arrival_to_event_ms": 21,
+          "event_to_answer_ms": 765,
           "queued_ms": 0,
-          "request_ms": 502,
+          "request_ms": 765,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 1,
           "source_ms": 8917,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1414,
+          "arrival_to_event_ms": 112,
+          "event_to_answer_ms": 1892,
           "queued_ms": 0,
-          "request_ms": 1414,
+          "request_ms": 1892,
           "ok": true
         },
         {
@@ -254,19 +254,19 @@
           "index": 2,
           "source_ms": 13458,
           "arrival_to_event_ms": 134,
-          "event_to_answer_ms": 1778,
+          "event_to_answer_ms": 1960,
           "queued_ms": 0,
-          "request_ms": 1778,
+          "request_ms": 1960,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 3,
           "source_ms": 18417,
-          "arrival_to_event_ms": 81,
-          "event_to_answer_ms": 1647,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1851,
           "queued_ms": 0,
-          "request_ms": 1646,
+          "request_ms": 1851,
           "ok": true
         },
         {
@@ -274,29 +274,29 @@
           "index": 4,
           "source_ms": 25000,
           "arrival_to_event_ms": 144,
-          "event_to_answer_ms": 1825,
+          "event_to_answer_ms": 1742,
           "queued_ms": 0,
-          "request_ms": 1825,
+          "request_ms": 1742,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 5,
           "source_ms": 35000,
-          "arrival_to_event_ms": 176,
-          "event_to_answer_ms": 1627,
+          "arrival_to_event_ms": 165,
+          "event_to_answer_ms": 1802,
           "queued_ms": 0,
-          "request_ms": 1627,
+          "request_ms": 1802,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 6,
           "source_ms": 40250,
-          "arrival_to_event_ms": 143,
-          "event_to_answer_ms": 1711,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1980,
           "queued_ms": 0,
-          "request_ms": 1711,
+          "request_ms": 1980,
           "ok": true
         },
         {
@@ -304,9 +304,9 @@
           "index": 7,
           "source_ms": 42083,
           "arrival_to_event_ms": 114,
-          "event_to_answer_ms": 1694,
+          "event_to_answer_ms": 1898,
           "queued_ms": 0,
-          "request_ms": 1694,
+          "request_ms": 1898,
           "ok": true
         },
         {
@@ -314,9 +314,9 @@
           "index": 8,
           "source_ms": 45625,
           "arrival_to_event_ms": 133,
-          "event_to_answer_ms": 1616,
+          "event_to_answer_ms": 1722,
           "queued_ms": 0,
-          "request_ms": 1616,
+          "request_ms": 1722,
           "ok": true
         },
         {
@@ -324,9 +324,9 @@
           "index": 9,
           "source_ms": 49792,
           "arrival_to_event_ms": 134,
-          "event_to_answer_ms": 1752,
+          "event_to_answer_ms": 1938,
           "queued_ms": 0,
-          "request_ms": 1752,
+          "request_ms": 1938,
           "ok": true
         },
         {
@@ -334,9 +334,9 @@
           "index": 10,
           "source_ms": 51125,
           "arrival_to_event_ms": 144,
-          "event_to_answer_ms": 1685,
+          "event_to_answer_ms": 1824,
           "queued_ms": 0,
-          "request_ms": 1685,
+          "request_ms": 1824,
           "ok": true
         },
         {
@@ -344,19 +344,19 @@
           "index": 11,
           "source_ms": 53667,
           "arrival_to_event_ms": 134,
-          "event_to_answer_ms": 1479,
+          "event_to_answer_ms": 1916,
           "queued_ms": 0,
-          "request_ms": 1479,
+          "request_ms": 1916,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 12,
           "source_ms": 56667,
-          "arrival_to_event_ms": 143,
-          "event_to_answer_ms": 1485,
+          "arrival_to_event_ms": 133,
+          "event_to_answer_ms": 1655,
           "queued_ms": 0,
-          "request_ms": 1485,
+          "request_ms": 1654,
           "ok": true
         },
         {
@@ -364,19 +364,19 @@
           "index": 13,
           "source_ms": 64458,
           "arrival_to_event_ms": 10,
-          "event_to_answer_ms": 629,
+          "event_to_answer_ms": 861,
           "queued_ms": 0,
-          "request_ms": 629,
+          "request_ms": 861,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 14,
           "source_ms": 69917,
-          "arrival_to_event_ms": 93,
-          "event_to_answer_ms": 1675,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1710,
           "queued_ms": 0,
-          "request_ms": 1675,
+          "request_ms": 1710,
           "ok": true
         },
         {
@@ -384,9 +384,9 @@
           "index": 15,
           "source_ms": 74083,
           "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1812,
+          "event_to_answer_ms": 1719,
           "queued_ms": 0,
-          "request_ms": 1812,
+          "request_ms": 1719,
           "ok": true
         },
         {
@@ -394,29 +394,29 @@
           "index": 16,
           "source_ms": 79375,
           "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1624,
+          "event_to_answer_ms": 1730,
           "queued_ms": 0,
-          "request_ms": 1624,
+          "request_ms": 1730,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 17,
           "source_ms": 82125,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1230,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1498,
           "queued_ms": 0,
-          "request_ms": 1230,
+          "request_ms": 1498,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 18,
           "source_ms": 84833,
-          "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1299,
+          "arrival_to_event_ms": 81,
+          "event_to_answer_ms": 1444,
           "queued_ms": 0,
-          "request_ms": 1299,
+          "request_ms": 1444,
           "ok": true
         },
         {
@@ -424,19 +424,19 @@
           "index": 19,
           "source_ms": 92417,
           "arrival_to_event_ms": 93,
-          "event_to_answer_ms": 1877,
+          "event_to_answer_ms": 2493,
           "queued_ms": 0,
-          "request_ms": 1877,
+          "request_ms": 2493,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 20,
           "source_ms": 95417,
-          "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1637,
+          "arrival_to_event_ms": 73,
+          "event_to_answer_ms": 2047,
           "queued_ms": 0,
-          "request_ms": 1637,
+          "request_ms": 2047,
           "ok": true
         },
         {
@@ -444,9 +444,9 @@
           "index": 21,
           "source_ms": 98208,
           "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1526,
+          "event_to_answer_ms": 1741,
           "queued_ms": 0,
-          "request_ms": 1526,
+          "request_ms": 1741,
           "ok": true
         },
         {
@@ -454,9 +454,9 @@
           "index": 22,
           "source_ms": 102417,
           "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1285,
+          "event_to_answer_ms": 1535,
           "queued_ms": 0,
-          "request_ms": 1285,
+          "request_ms": 1535,
           "ok": true
         },
         {
@@ -464,9 +464,9 @@
           "index": 23,
           "source_ms": 112417,
           "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1345,
+          "event_to_answer_ms": 1537,
           "queued_ms": 0,
-          "request_ms": 1345,
+          "request_ms": 1537,
           "ok": true
         },
         {
@@ -474,16 +474,6 @@
           "index": 24,
           "source_ms": 116708,
           "arrival_to_event_ms": 93,
-          "event_to_answer_ms": 1366,
-          "queued_ms": 0,
-          "request_ms": 1366,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 25,
-          "source_ms": 119875,
-          "arrival_to_event_ms": 103,
           "event_to_answer_ms": 1485,
           "queued_ms": 0,
           "request_ms": 1485,
@@ -491,22 +481,32 @@
         },
         {
           "kind": "frame",
+          "index": 25,
+          "source_ms": 119875,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1674,
+          "queued_ms": 0,
+          "request_ms": 1674,
+          "ok": true
+        },
+        {
+          "kind": "frame",
           "index": 26,
           "source_ms": 129875,
-          "arrival_to_event_ms": 174,
-          "event_to_answer_ms": 1626,
+          "arrival_to_event_ms": 153,
+          "event_to_answer_ms": 2048,
           "queued_ms": 0,
-          "request_ms": 1626,
+          "request_ms": 2048,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 27,
           "source_ms": 134917,
-          "arrival_to_event_ms": 92,
-          "event_to_answer_ms": 1622,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1777,
           "queued_ms": 0,
-          "request_ms": 1622,
+          "request_ms": 1777,
           "ok": true
         },
         {
@@ -514,29 +514,29 @@
           "index": 28,
           "source_ms": 139917,
           "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1340,
+          "event_to_answer_ms": 1483,
           "queued_ms": 0,
-          "request_ms": 1340,
+          "request_ms": 1483,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 29,
           "source_ms": 143292,
-          "arrival_to_event_ms": 134,
-          "event_to_answer_ms": 1666,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1809,
           "queued_ms": 0,
-          "request_ms": 1666,
+          "request_ms": 1809,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 30,
           "source_ms": 145792,
-          "arrival_to_event_ms": 154,
-          "event_to_answer_ms": 1829,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1550,
           "queued_ms": 0,
-          "request_ms": 1828,
+          "request_ms": 1549,
           "ok": true
         },
         {
@@ -544,19 +544,19 @@
           "index": 31,
           "source_ms": 152875,
           "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1545,
+          "event_to_answer_ms": 1705,
           "queued_ms": 0,
-          "request_ms": 1545,
+          "request_ms": 1704,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 32,
           "source_ms": 158542,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1204,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1515,
           "queued_ms": 0,
-          "request_ms": 1204,
+          "request_ms": 1515,
           "ok": true
         },
         {
@@ -564,19 +564,19 @@
           "index": 33,
           "source_ms": 168542,
           "arrival_to_event_ms": 154,
-          "event_to_answer_ms": 1975,
+          "event_to_answer_ms": 1970,
           "queued_ms": 0,
-          "request_ms": 1975,
+          "request_ms": 1970,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 34,
           "source_ms": 172292,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1621,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1846,
           "queued_ms": 0,
-          "request_ms": 1621,
+          "request_ms": 1846,
           "ok": true
         }
       ],
@@ -596,13 +596,13 @@
           "index": 0,
           "time": 0,
           "reason": "first",
-          "description": "This image is a solid, uniform black rectangle. It contains no other colors, shapes, or patterns."
+          "description": "This image is a solid, uniform black rectangle. It contains no colors, shapes, or patterns."
         },
         {
           "index": 1,
           "time": 8917000000,
           "reason": "scene",
-          "description": "This image shows a close-up, low-angle view of massive, industrial cylindrical structures that resemble rocket engines or large storage tanks. The machinery is weathered and metallic, featuring complex scaffolding and red structural supports amidst a hazy, atmospheric background."
+          "description": "This image shows a close-up, low-angle view of massive, industrial cylindrical structures that resemble rocket engines or large storage tanks. The machinery is composed of dark, weathered metal with visible rivets and scaffolding, all shrouded in a thick, atmospheric haze. The overall scene has a gritty, science-fiction aesthetic, suggesting a heavy industrial or spaceport setting."
         },
         {
           "index": 2,
@@ -614,31 +614,31 @@
           "index": 3,
           "time": 18417000000,
           "reason": "scene",
-          "description": "A sprawling, industrial cityscape is filled with numerous tall, skeletal metal structures and scaffolding that stretch toward a hazy sky. In the center, a bright, ethereal light pierces through the thick fog, creating a dramatic focal point amidst the dense urban machinery. The overall atmosphere is somber and dystopian, characterized by a muted color palette and a sense of overwhelming scale."
+          "description": "A sprawling, industrial cityscape is filled with numerous tall, skeletal metal structures and scaffolding under a hazy, overcast sky. In the center, a bright, ethereal light pierces through the fog, casting a powerful glow over the dense urban landscape. The foreground features the dark, detailed rooftops of traditional buildings, creating a stark contrast with the futuristic, mechanical skyline."
         },
         {
           "index": 4,
           "time": 25000000000,
           "reason": "scene",
-          "description": "A man and a woman are standing on a bridge in a city, both looking towards the right side of the frame. The man is wearing a dark jacket over a patterned shirt, while the woman is dressed in a blue and black vest over a blue long-sleeve shirt."
+          "description": "A man and a woman are standing on a bridge in a city, both looking towards the right side of the frame. The man is wearing a dark jacket over a patterned shirt, while the woman is wearing a blue and black vest over a blue long-sleeved shirt."
         },
         {
           "index": 5,
           "time": 35000000000,
           "reason": "interval",
-          "description": "A young man and a woman are standing on a bridge in a city, facing each other in a tense confrontation. The woman is wearing a blue and black jacket and appears to be pointing a mechanical, robotic arm toward the man. The background features a canal and traditional European-style buildings lined with green trees."
+          "description": "A young man and a woman are standing on a bridge in a city, facing each other in a tense confrontation. The woman is wearing a blue and black jacket and appears to be pointing a mechanical, robotic device at the man. The background features a canal and traditional European-style buildings lined with green trees."
         },
         {
           "index": 6,
           "time": 40250000000,
           "reason": "scene",
-          "description": "This image features two glowing, wireframe humanoid figures, one orange and one blue, appearing to interact in a dark, industrial setting. The background is filled with complex, shadowy machinery and structural elements, creating a high-tech or sci-fi atmosphere. The scene is illuminated by the vibrant light of the digital outlines against the dim, gritty environment."
+          "description": "This image features two glowing, wireframe humanoid figures, one orange and one blue, appearing to interact in a dark, industrial setting. The background is filled with complex, shadowy machinery and structural elements, creating a high-tech or sci-fi atmosphere. The scene is illuminated by vibrant neon light from the digital figures, casting a futuristic glow over the surroundings."
         },
         {
           "index": 7,
           "time": 42083000000,
           "reason": "scene",
-          "description": "This cinematic image shows a dark, sprawling, and futuristic cityscape filled with massive, decaying industrial structures. The text \"40 YEARS LATER\" is centered in the frame, suggesting a time jump in a science fiction setting. Glowing pink and blue lights emerge from the shadows, highlighting the gritty and atmospheric environment."
+          "description": "This cinematic image shows a dark, futuristic, and decaying cityscape or interior with massive, industrial structures looming overhead. The text \"40 YEARS LATER\" is centered in white, suggesting a time jump in a narrative. In the background, glowing pink and blue lights provide a stark contrast to the gritty, shadowy environment."
         },
         {
           "index": 8,
@@ -650,7 +650,7 @@
           "index": 9,
           "time": 49792000000,
           "reason": "scene",
-          "description": "A person's hand is shown interacting with a complex array of electronic equipment, featuring various knobs, buttons, and glowing digital displays. The scene is overlaid with futuristic, holographic-style graphics and data readouts in shades of green and blue, creating a high-tech, sci-fi aesthetic."
+          "description": "A person's hand is shown interacting with a complex array of electronic equipment, featuring various knobs, buttons, and glowing digital displays. The scene is overlaid with futuristic, holographic-style graphics and data readouts in shades of green and blue. The overall aesthetic suggests a high-tech laboratory or a sophisticated music production setup."
         },
         {
           "index": 10,
@@ -662,7 +662,7 @@
           "index": 11,
           "time": 53667000000,
           "reason": "scene",
-          "description": "This image features two people working with various electronic components and equipment, overlaid with vibrant, glowing digital graphics and data visualizations. The scene blends a physical workspace with futuristic, holographic elements, creating a high-tech or sci-fi atmosphere."
+          "description": "This image features two people working with various electronic components and equipment, overlaid with vibrant, glowing digital graphics and data visualizations. The scene blends a physical workspace with futuristic, holographic-style interfaces in shades of pink, blue, and green. The overall aesthetic suggests a high-tech or sci-fi setting involving advanced technology or data manipulation."
         },
         {
           "index": 12,
@@ -674,7 +674,7 @@
           "index": 13,
           "time": 64458000000,
           "reason": "scene",
-          "description": "This image is a solid, uniform black rectangle. It contains no colors, shapes, or patterns other than a single, consistent dark tone."
+          "description": "This image is a solid, uniform black rectangle. It contains no shapes, colors, or patterns other than a single, dark shade."
         },
         {
           "index": 14,
@@ -704,13 +704,13 @@
           "index": 18,
           "time": 84833000000,
           "reason": "scene",
-          "description": "A view through a circular lens reveals a large, dark, industrial structure or vehicle overlooking a misty, desaturated cityscape. The foreground is dominated by complex machinery and scaffolding, while the background shows faint outlines of buildings under a heavy fog."
+          "description": "A view through a circular lens reveals a large, dark, industrial structure or vehicle overlooking a misty, desaturated cityscape. The foreground is dominated by complex scaffolding and mechanical parts, while the background shows faint outlines of buildings under a hazy sky."
         },
         {
           "index": 19,
           "time": 92417000000,
           "reason": "scene",
-          "description": "A close-up shot shows a person peering intensely through the scope of a large, futuristic-looking weapon. The scene is bathed in a cool, blue-toned light, creating a tense and cinematic atmosphere."
+          "description": "A close-up shot shows a person peering intensely through the scope of a large, futuristic-looking weapon. The scene is bathed in a cool, blue-toned light, emphasizing the focused and serious expression in the person's eye."
         },
         {
           "index": 20,
@@ -734,7 +734,7 @@
           "index": 23,
           "time": 112417000000,
           "reason": "interval",
-          "description": "A large, steampunk-style airship floats through a hazy sky above a dense cityscape of traditional European-style buildings. The vessel is heavily detailed with various mechanical parts, lights, and exhaust, appearing as if it is viewed through a circular lens or portal."
+          "description": "A large, steampunk-style airship floats through a hazy sky above a dense cityscape of traditional European-style buildings. The vessel is heavily detailed with various mechanical parts, glowing lights, and exhaust, appearing as if viewed through a circular lens or portal."
         },
         {
           "index": 24,
@@ -746,7 +746,7 @@
           "index": 25,
           "time": 119875000000,
           "reason": "scene",
-          "description": "An elderly man with white hair lies on a bed, appearing to be in a state of rest or distress. In the background, a soldier in tactical gear is positioned behind a railing, aiming a rifle. The scene is dimly lit with a cool, blueish tone, creating a somber or tense atmosphere."
+          "description": "An elderly man with white hair lies on a bed, appearing to be in a state of rest or distress. In the background, a soldier in tactical gear is positioned behind a railing, aiming a rifle. The scene is dimly lit, creating a somber and tense atmosphere."
         },
         {
           "index": 26,
@@ -758,7 +758,7 @@
           "index": 27,
           "time": 134917000000,
           "reason": "scene",
-          "description": "An older man with grey hair sits alone on a wooden deck, looking somber in a dimly lit, atmospheric setting. He is surrounded by various nautical equipment, ropes, and structural pillars, all shrouded in a thick, blue-toned mist. The scene has a cinematic and melancholic quality, suggesting a moment of quiet reflection or solitude."
+          "description": "An older man with grey hair sits alone on a wooden deck, looking somber in a dimly lit, industrial-looking setting. The scene is filled with heavy ropes, metal structures, and shadows, creating a moody and cinematic atmosphere. In the background, another figure can be seen partially obscured by the mist and equipment."
         },
         {
           "index": 28,
@@ -776,13 +776,13 @@
           "index": 30,
           "time": 145792000000,
           "reason": "scene",
-          "description": "A man with a focused and intense expression peers from behind a large, dark object, possibly a weapon or piece of equipment. The scene is dimly lit with a cool, blueish tone, creating a tense and cinematic atmosphere. In the foreground, blurred architectural elements and a small juice box add depth to the composition."
+          "description": "A man with a focused and intense expression peers from behind a large, dark weapon equipped with a scope. He is positioned in a dimly lit, shadowy environment, partially obscured by stone pillars and a small juice box in the foreground."
         },
         {
           "index": 31,
           "time": 152875000000,
           "reason": "scene",
-          "description": "A person is seen falling through the air in front of a massive, ornate pipe organ within a large, gothic-style hall. The scene is filled with towering stone columns covered in ivy and intricate architectural details, creating a dramatic and cinematic atmosphere."
+          "description": "A person is seen falling through the air in front of a massive, ornate pipe organ within a large, gothic-style hall. The scene is filled with towering stone columns covered in ivy and intricate architectural details, creating a dramatic and cavernous atmosphere."
         },
         {
           "index": 32,
@@ -794,7 +794,7 @@
           "index": 33,
           "time": 168542000000,
           "reason": "interval",
-          "description": "A person with white hair stands with their back to the camera, looking toward a large, arched opening in a dark, industrial-looking structure. The setting appears to be a weathered, cavernous space filled with debris, ropes, and metallic machinery. The overall atmosphere is somber and cinematic, with dim lighting casting long shadows across the floor."
+          "description": "A person with white hair stands with their back to the camera, looking toward a large, arched opening in a dark, industrial-looking structure. The setting appears to be a weathered, cavernous space filled with debris, ropes, and metallic structures. The overall atmosphere is somber and cinematic, with dim lighting casting long shadows across the floor."
         },
         {
           "index": 34,
@@ -806,9 +806,9 @@
     },
     {
       "run": 2,
-      "wall": 181484534488,
-      "ended": 179444434522,
-      "last_window": 2043528436,
+      "wall": 181131770841,
+      "ended": 179444300333,
+      "last_window": 1692194277,
       "windows": 7,
       "frames": 35,
       "reasons": {
@@ -825,63 +825,63 @@
       "window_lags": {
         "arrival_to_event": {
           "n": 7,
-          "mean": 6727813599,
-          "p50": 3126208491,
-          "p90": 21168040620,
-          "max": 21168040620
+          "mean": 1674347366,
+          "p50": 1876220472,
+          "p90": 3668240318,
+          "max": 3668240318
         },
         "event_to_answer": {
           "n": 7,
-          "mean": 1739194658,
-          "p50": 1836652456,
-          "p90": 2731743944,
-          "max": 2731743944
+          "mean": 1528398759,
+          "p50": 1687434991,
+          "p90": 2581423890,
+          "max": 2581423890
         },
         "queued": {
           "n": 7,
-          "mean": 55422,
-          "p50": 54062,
-          "p90": 74953,
-          "max": 74953
+          "mean": 55012,
+          "p50": 57011,
+          "p90": 66963,
+          "max": 66963
         },
         "request": {
           "n": 7,
-          "mean": 1739139236,
-          "p50": 1836604329,
-          "p90": 2731689882,
-          "max": 2731689882
+          "mean": 1528343746,
+          "p50": 1687368028,
+          "p90": 2581364971,
+          "max": 2581364971
         },
         "waited": 0,
-        "max_in_flight": 2
+        "max_in_flight": 1
       },
       "frame_lags": {
         "arrival_to_event": {
           "n": 35,
-          "mean": 112943988,
-          "p50": 113388766,
-          "p90": 154064584,
-          "max": 177093730
+          "mean": 108805130,
+          "p50": 113135937,
+          "p90": 144885559,
+          "max": 164121232
         },
         "event_to_answer": {
           "n": 35,
-          "mean": 1562570977,
-          "p50": 1570701067,
-          "p90": 2042568268,
-          "max": 2322632421
+          "mean": 1381279639,
+          "p50": 1452686861,
+          "p90": 1580442441,
+          "max": 1796708414
         },
         "queued": {
           "n": 35,
-          "mean": 49721,
-          "p50": 46045,
-          "p90": 66810,
-          "max": 77985
+          "mean": 43922,
+          "p50": 39549,
+          "p90": 55022,
+          "max": 94525
         },
         "request": {
           "n": 35,
-          "mean": 1562521256,
-          "p50": 1570663903,
-          "p90": 2042529602,
-          "max": 2322574052
+          "mean": 1381235717,
+          "p50": 1452651869,
+          "p90": 1580347916,
+          "max": 1796671476
         },
         "waited": 0,
         "max_in_flight": 2
@@ -891,30 +891,30 @@
           "kind": "window",
           "index": 0,
           "source_ms": 0,
-          "arrival_to_event_ms": 750,
-          "event_to_answer_ms": 1836,
+          "arrival_to_event_ms": 208,
+          "event_to_answer_ms": 1697,
           "queued_ms": 0,
-          "request_ms": 1836,
+          "request_ms": 1697,
           "ok": true
         },
         {
           "kind": "window",
           "index": 1,
           "source_ms": 27930,
-          "arrival_to_event_ms": 5417,
-          "event_to_answer_ms": 2731,
+          "arrival_to_event_ms": 2250,
+          "event_to_answer_ms": 2581,
           "queued_ms": 0,
-          "request_ms": 2731,
+          "request_ms": 2581,
           "ok": true
         },
         {
           "kind": "window",
           "index": 2,
           "source_ms": 53695,
-          "arrival_to_event_ms": 14751,
-          "event_to_answer_ms": 1031,
+          "arrival_to_event_ms": 3668,
+          "event_to_answer_ms": 758,
           "queued_ms": 0,
-          "request_ms": 1031,
+          "request_ms": 758,
           "ok": true
         },
         {
@@ -922,59 +922,59 @@
           "index": 3,
           "source_ms": 78057,
           "arrival_to_event_ms": 1876,
-          "event_to_answer_ms": 2032,
+          "event_to_answer_ms": 1912,
           "queued_ms": 0,
-          "request_ms": 2032,
+          "request_ms": 1911,
           "ok": true
         },
         {
           "kind": "window",
           "index": 4,
           "source_ms": 104420,
-          "arrival_to_event_ms": 3126,
-          "event_to_answer_ms": 1089,
+          "arrival_to_event_ms": 918,
+          "event_to_answer_ms": 991,
           "queued_ms": 0,
-          "request_ms": 1089,
+          "request_ms": 991,
           "ok": true
         },
         {
           "kind": "window",
           "index": 5,
           "source_ms": 131530,
-          "arrival_to_event_ms": 21168,
-          "event_to_answer_ms": 1412,
+          "arrival_to_event_ms": 2793,
+          "event_to_answer_ms": 1069,
           "queued_ms": 0,
-          "request_ms": 1412,
+          "request_ms": 1069,
           "ok": true
         },
         {
           "kind": "window",
           "index": 6,
           "source_ms": 156750,
-          "arrival_to_event_ms": 3,
-          "event_to_answer_ms": 2040,
+          "arrival_to_event_ms": 4,
+          "event_to_answer_ms": 1687,
           "queued_ms": 0,
-          "request_ms": 2040,
+          "request_ms": 1687,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 0,
           "source_ms": 0,
-          "arrival_to_event_ms": 21,
-          "event_to_answer_ms": 533,
+          "arrival_to_event_ms": 10,
+          "event_to_answer_ms": 476,
           "queued_ms": 0,
-          "request_ms": 533,
+          "request_ms": 476,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 1,
           "source_ms": 8917,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1456,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1368,
           "queued_ms": 0,
-          "request_ms": 1456,
+          "request_ms": 1368,
           "ok": true
         },
         {
@@ -982,99 +982,99 @@
           "index": 2,
           "source_ms": 13458,
           "arrival_to_event_ms": 133,
-          "event_to_answer_ms": 2108,
+          "event_to_answer_ms": 1717,
           "queued_ms": 0,
-          "request_ms": 2108,
+          "request_ms": 1717,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 3,
           "source_ms": 18417,
-          "arrival_to_event_ms": 92,
-          "event_to_answer_ms": 1701,
+          "arrival_to_event_ms": 82,
+          "event_to_answer_ms": 1565,
           "queued_ms": 0,
-          "request_ms": 1701,
+          "request_ms": 1565,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 4,
           "source_ms": 25000,
-          "arrival_to_event_ms": 165,
-          "event_to_answer_ms": 1747,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1452,
           "queued_ms": 0,
-          "request_ms": 1747,
+          "request_ms": 1452,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 5,
           "source_ms": 35000,
-          "arrival_to_event_ms": 177,
-          "event_to_answer_ms": 1738,
+          "arrival_to_event_ms": 164,
+          "event_to_answer_ms": 1796,
           "queued_ms": 0,
-          "request_ms": 1738,
+          "request_ms": 1796,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 6,
           "source_ms": 40250,
-          "arrival_to_event_ms": 145,
-          "event_to_answer_ms": 2239,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1681,
           "queued_ms": 0,
-          "request_ms": 2239,
+          "request_ms": 1681,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 7,
           "source_ms": 42083,
-          "arrival_to_event_ms": 124,
-          "event_to_answer_ms": 1654,
+          "arrival_to_event_ms": 102,
+          "event_to_answer_ms": 1563,
           "queued_ms": 0,
-          "request_ms": 1653,
+          "request_ms": 1563,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 8,
           "source_ms": 45625,
-          "arrival_to_event_ms": 144,
-          "event_to_answer_ms": 2322,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1423,
           "queued_ms": 0,
-          "request_ms": 2322,
+          "request_ms": 1423,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 9,
           "source_ms": 49792,
-          "arrival_to_event_ms": 144,
-          "event_to_answer_ms": 1710,
+          "arrival_to_event_ms": 124,
+          "event_to_answer_ms": 1580,
           "queued_ms": 0,
-          "request_ms": 1710,
+          "request_ms": 1580,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 10,
           "source_ms": 51125,
-          "arrival_to_event_ms": 154,
-          "event_to_answer_ms": 1719,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1537,
           "queued_ms": 0,
-          "request_ms": 1719,
+          "request_ms": 1537,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 11,
           "source_ms": 53667,
-          "arrival_to_event_ms": 144,
-          "event_to_answer_ms": 1480,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1370,
           "queued_ms": 0,
-          "request_ms": 1480,
+          "request_ms": 1370,
           "ok": true
         },
         {
@@ -1082,9 +1082,9 @@
           "index": 12,
           "source_ms": 56667,
           "arrival_to_event_ms": 144,
-          "event_to_answer_ms": 1521,
+          "event_to_answer_ms": 1366,
           "queued_ms": 0,
-          "request_ms": 1521,
+          "request_ms": 1366,
           "ok": true
         },
         {
@@ -1092,19 +1092,19 @@
           "index": 13,
           "source_ms": 64458,
           "arrival_to_event_ms": 10,
-          "event_to_answer_ms": 633,
+          "event_to_answer_ms": 574,
           "queued_ms": 0,
-          "request_ms": 633,
+          "request_ms": 574,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 14,
           "source_ms": 69917,
-          "arrival_to_event_ms": 92,
-          "event_to_answer_ms": 1600,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1466,
           "queued_ms": 0,
-          "request_ms": 1600,
+          "request_ms": 1466,
           "ok": true
         },
         {
@@ -1112,19 +1112,19 @@
           "index": 15,
           "source_ms": 74083,
           "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1566,
+          "event_to_answer_ms": 1558,
           "queued_ms": 0,
-          "request_ms": 1566,
+          "request_ms": 1558,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 16,
           "source_ms": 79375,
-          "arrival_to_event_ms": 124,
-          "event_to_answer_ms": 1569,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1492,
           "queued_ms": 0,
-          "request_ms": 1569,
+          "request_ms": 1492,
           "ok": true
         },
         {
@@ -1132,9 +1132,9 @@
           "index": 17,
           "source_ms": 82125,
           "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1416,
+          "event_to_answer_ms": 1182,
           "queued_ms": 0,
-          "request_ms": 1415,
+          "request_ms": 1182,
           "ok": true
         },
         {
@@ -1142,9 +1142,9 @@
           "index": 18,
           "source_ms": 84833,
           "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1258,
+          "event_to_answer_ms": 1165,
           "queued_ms": 0,
-          "request_ms": 1258,
+          "request_ms": 1165,
           "ok": true
         },
         {
@@ -1152,29 +1152,29 @@
           "index": 19,
           "source_ms": 92417,
           "arrival_to_event_ms": 92,
-          "event_to_answer_ms": 1272,
+          "event_to_answer_ms": 1110,
           "queued_ms": 0,
-          "request_ms": 1272,
+          "request_ms": 1110,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 20,
           "source_ms": 95417,
-          "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1714,
+          "arrival_to_event_ms": 82,
+          "event_to_answer_ms": 1460,
           "queued_ms": 0,
-          "request_ms": 1714,
+          "request_ms": 1460,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 21,
           "source_ms": 98208,
-          "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1570,
+          "arrival_to_event_ms": 112,
+          "event_to_answer_ms": 1443,
           "queued_ms": 0,
-          "request_ms": 1570,
+          "request_ms": 1443,
           "ok": true
         },
         {
@@ -1182,29 +1182,29 @@
           "index": 22,
           "source_ms": 102417,
           "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1311,
+          "event_to_answer_ms": 1470,
           "queued_ms": 0,
-          "request_ms": 1311,
+          "request_ms": 1469,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 23,
           "source_ms": 112417,
-          "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1560,
+          "arrival_to_event_ms": 104,
+          "event_to_answer_ms": 1261,
           "queued_ms": 0,
-          "request_ms": 1560,
+          "request_ms": 1261,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 24,
           "source_ms": 116708,
-          "arrival_to_event_ms": 92,
-          "event_to_answer_ms": 1268,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1168,
           "queued_ms": 0,
-          "request_ms": 1268,
+          "request_ms": 1168,
           "ok": true
         },
         {
@@ -1212,29 +1212,29 @@
           "index": 25,
           "source_ms": 119875,
           "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1574,
+          "event_to_answer_ms": 1375,
           "queued_ms": 0,
-          "request_ms": 1574,
+          "request_ms": 1375,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 26,
           "source_ms": 129875,
-          "arrival_to_event_ms": 153,
-          "event_to_answer_ms": 2042,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 1511,
           "queued_ms": 0,
-          "request_ms": 2042,
+          "request_ms": 1511,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 27,
           "source_ms": 134917,
-          "arrival_to_event_ms": 92,
-          "event_to_answer_ms": 1570,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1454,
           "queued_ms": 0,
-          "request_ms": 1570,
+          "request_ms": 1454,
           "ok": true
         },
         {
@@ -1242,9 +1242,9 @@
           "index": 28,
           "source_ms": 139917,
           "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1404,
+          "event_to_answer_ms": 1364,
           "queued_ms": 0,
-          "request_ms": 1404,
+          "request_ms": 1364,
           "ok": true
         },
         {
@@ -1252,9 +1252,9 @@
           "index": 29,
           "source_ms": 143292,
           "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1584,
+          "event_to_answer_ms": 1462,
           "queued_ms": 0,
-          "request_ms": 1584,
+          "request_ms": 1462,
           "ok": true
         },
         {
@@ -1262,9 +1262,9 @@
           "index": 30,
           "source_ms": 145792,
           "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1566,
+          "event_to_answer_ms": 1415,
           "queued_ms": 0,
-          "request_ms": 1566,
+          "request_ms": 1415,
           "ok": true
         },
         {
@@ -1272,19 +1272,19 @@
           "index": 31,
           "source_ms": 152875,
           "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1438,
+          "event_to_answer_ms": 1313,
           "queued_ms": 0,
-          "request_ms": 1438,
+          "request_ms": 1313,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 32,
           "source_ms": 158542,
-          "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1308,
+          "arrival_to_event_ms": 114,
+          "event_to_answer_ms": 1201,
           "queued_ms": 0,
-          "request_ms": 1308,
+          "request_ms": 1201,
           "ok": true
         },
         {
@@ -1292,9 +1292,9 @@
           "index": 33,
           "source_ms": 168542,
           "arrival_to_event_ms": 154,
-          "event_to_answer_ms": 1874,
+          "event_to_answer_ms": 1531,
           "queued_ms": 0,
-          "request_ms": 1874,
+          "request_ms": 1531,
           "ok": true
         },
         {
@@ -1302,9 +1302,9 @@
           "index": 34,
           "source_ms": 172292,
           "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1646,
+          "event_to_answer_ms": 1456,
           "queued_ms": 0,
-          "request_ms": 1646,
+          "request_ms": 1456,
           "ok": true
         }
       ],
@@ -1522,7 +1522,7 @@
           "index": 33,
           "time": 168542000000,
           "reason": "interval",
-          "description": "A person with white hair stands with their back to the camera, looking toward a large, arched opening in a dark, industrial-looking structure. The setting appears to be a weathered, cavernous space filled with debris, ropes, and metallic machinery. The overall atmosphere is somber and cinematic, illuminated by dim, moody lighting."
+          "description": "A person with white hair stands with their back to the camera, looking toward a large, arched opening in a dark, industrial-looking structure. The setting appears to be a weathered, cavernous space filled with debris, ropes, and metallic machinery. The overall atmosphere is somber and cinematic, characterized by dim lighting and a sense of decay."
         },
         {
           "index": 34,
@@ -1534,9 +1534,9 @@
     },
     {
       "run": 3,
-      "wall": 181854520281,
-      "ended": 179505672604,
-      "last_window": 2353791218,
+      "wall": 181123586470,
+      "ended": 179447475919,
+      "last_window": 1681748144,
       "windows": 7,
       "frames": 35,
       "reasons": {
@@ -1553,63 +1553,63 @@
       "window_lags": {
         "arrival_to_event": {
           "n": 7,
-          "mean": 6727885299,
-          "p50": 3125907397,
-          "p90": 21168096207,
-          "max": 21168096207
+          "mean": 1674365110,
+          "p50": 1876388308,
+          "p90": 3668063519,
+          "max": 3668063519
         },
         "event_to_answer": {
           "n": 7,
-          "mean": 1767648770,
-          "p50": 1785368755,
-          "p90": 2725550021,
-          "max": 2725550021
+          "mean": 1520844652,
+          "p50": 1676102643,
+          "p90": 2568160382,
+          "max": 2568160382
         },
         "queued": {
           "n": 7,
-          "mean": 58578,
-          "p50": 57237,
-          "p90": 79238,
-          "max": 79238
+          "mean": 55218,
+          "p50": 55184,
+          "p90": 65844,
+          "max": 65844
         },
         "request": {
           "n": 7,
-          "mean": 1767590192,
-          "p50": 1785311518,
-          "p90": 2725508253,
-          "max": 2725508253
+          "mean": 1520789434,
+          "p50": 1676042138,
+          "p90": 2568094538,
+          "max": 2568094538
         },
         "waited": 0,
-        "max_in_flight": 2
+        "max_in_flight": 1
       },
       "frame_lags": {
         "arrival_to_event": {
           "n": 35,
-          "mean": 112658402,
-          "p50": 113640573,
-          "p90": 154596442,
-          "max": 165025225
+          "mean": 109343847,
+          "p50": 113343355,
+          "p90": 144707349,
+          "max": 164956189
         },
         "event_to_answer": {
           "n": 35,
-          "mean": 1562412864,
-          "p50": 1547588866,
-          "p90": 2015912885,
-          "max": 2896680457
+          "mean": 1429746294,
+          "p50": 1418436175,
+          "p90": 1671624916,
+          "max": 3757814716
         },
         "queued": {
           "n": 35,
-          "mean": 49491,
-          "p50": 44681,
-          "p90": 70521,
-          "max": 87244
+          "mean": 45956,
+          "p50": 42076,
+          "p90": 55074,
+          "max": 134225
         },
         "request": {
           "n": 35,
-          "mean": 1562363372,
-          "p50": 1547553867,
-          "p90": 2015869577,
-          "max": 2896626768
+          "mean": 1429700337,
+          "p50": 1418400241,
+          "p90": 1671589131,
+          "max": 3757769823
         },
         "waited": 0,
         "max_in_flight": 2
@@ -1619,30 +1619,30 @@
           "kind": "window",
           "index": 0,
           "source_ms": 0,
-          "arrival_to_event_ms": 751,
-          "event_to_answer_ms": 1785,
+          "arrival_to_event_ms": 209,
+          "event_to_answer_ms": 1681,
           "queued_ms": 0,
-          "request_ms": 1785,
+          "request_ms": 1681,
           "ok": true
         },
         {
           "kind": "window",
           "index": 1,
           "source_ms": 27930,
-          "arrival_to_event_ms": 5417,
-          "event_to_answer_ms": 2725,
+          "arrival_to_event_ms": 2251,
+          "event_to_answer_ms": 2568,
           "queued_ms": 0,
-          "request_ms": 2725,
+          "request_ms": 2568,
           "ok": true
         },
         {
           "kind": "window",
           "index": 2,
           "source_ms": 53695,
-          "arrival_to_event_ms": 14751,
-          "event_to_answer_ms": 804,
+          "arrival_to_event_ms": 3668,
+          "event_to_answer_ms": 775,
           "queued_ms": 0,
-          "request_ms": 803,
+          "request_ms": 775,
           "ok": true
         },
         {
@@ -1650,79 +1650,79 @@
           "index": 3,
           "source_ms": 78057,
           "arrival_to_event_ms": 1876,
-          "event_to_answer_ms": 1968,
+          "event_to_answer_ms": 1863,
           "queued_ms": 0,
-          "request_ms": 1968,
+          "request_ms": 1863,
           "ok": true
         },
         {
           "kind": "window",
           "index": 4,
           "source_ms": 104420,
-          "arrival_to_event_ms": 3125,
-          "event_to_answer_ms": 1160,
+          "arrival_to_event_ms": 917,
+          "event_to_answer_ms": 1002,
           "queued_ms": 0,
-          "request_ms": 1160,
+          "request_ms": 1002,
           "ok": true
         },
         {
           "kind": "window",
           "index": 5,
           "source_ms": 131530,
-          "arrival_to_event_ms": 21168,
-          "event_to_answer_ms": 1581,
+          "arrival_to_event_ms": 2792,
+          "event_to_answer_ms": 1078,
           "queued_ms": 0,
-          "request_ms": 1581,
+          "request_ms": 1078,
           "ok": true
         },
         {
           "kind": "window",
           "index": 6,
           "source_ms": 156750,
-          "arrival_to_event_ms": 4,
-          "event_to_answer_ms": 2348,
+          "arrival_to_event_ms": 5,
+          "event_to_answer_ms": 1676,
           "queued_ms": 0,
-          "request_ms": 2348,
+          "request_ms": 1676,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 0,
           "source_ms": 0,
-          "arrival_to_event_ms": 21,
-          "event_to_answer_ms": 522,
+          "arrival_to_event_ms": 10,
+          "event_to_answer_ms": 469,
           "queued_ms": 0,
-          "request_ms": 522,
+          "request_ms": 469,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 1,
           "source_ms": 8917,
-          "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1345,
+          "arrival_to_event_ms": 112,
+          "event_to_answer_ms": 1289,
           "queued_ms": 0,
-          "request_ms": 1345,
+          "request_ms": 1289,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 2,
           "source_ms": 13458,
-          "arrival_to_event_ms": 134,
-          "event_to_answer_ms": 1818,
+          "arrival_to_event_ms": 133,
+          "event_to_answer_ms": 1674,
           "queued_ms": 0,
-          "request_ms": 1818,
+          "request_ms": 1674,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 3,
           "source_ms": 18417,
-          "arrival_to_event_ms": 93,
-          "event_to_answer_ms": 1615,
+          "arrival_to_event_ms": 82,
+          "event_to_answer_ms": 1538,
           "queued_ms": 0,
-          "request_ms": 1614,
+          "request_ms": 1538,
           "ok": true
         },
         {
@@ -1730,49 +1730,49 @@
           "index": 4,
           "source_ms": 25000,
           "arrival_to_event_ms": 144,
-          "event_to_answer_ms": 1834,
+          "event_to_answer_ms": 1417,
           "queued_ms": 0,
-          "request_ms": 1834,
+          "request_ms": 1417,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 5,
           "source_ms": 35000,
-          "arrival_to_event_ms": 165,
-          "event_to_answer_ms": 1570,
+          "arrival_to_event_ms": 164,
+          "event_to_answer_ms": 3757,
           "queued_ms": 0,
-          "request_ms": 1570,
+          "request_ms": 3757,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 6,
           "source_ms": 40250,
-          "arrival_to_event_ms": 144,
-          "event_to_answer_ms": 1650,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1601,
           "queued_ms": 0,
-          "request_ms": 1650,
+          "request_ms": 1601,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 7,
           "source_ms": 42083,
-          "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1881,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1590,
           "queued_ms": 0,
-          "request_ms": 1881,
+          "request_ms": 1590,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 8,
           "source_ms": 45625,
-          "arrival_to_event_ms": 143,
-          "event_to_answer_ms": 2896,
+          "arrival_to_event_ms": 134,
+          "event_to_answer_ms": 1401,
           "queued_ms": 0,
-          "request_ms": 2896,
+          "request_ms": 1401,
           "ok": true
         },
         {
@@ -1780,19 +1780,19 @@
           "index": 9,
           "source_ms": 49792,
           "arrival_to_event_ms": 134,
-          "event_to_answer_ms": 2015,
+          "event_to_answer_ms": 1552,
           "queued_ms": 0,
-          "request_ms": 2015,
+          "request_ms": 1552,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 10,
           "source_ms": 51125,
-          "arrival_to_event_ms": 154,
-          "event_to_answer_ms": 2367,
+          "arrival_to_event_ms": 155,
+          "event_to_answer_ms": 1505,
           "queued_ms": 0,
-          "request_ms": 2367,
+          "request_ms": 1505,
           "ok": true
         },
         {
@@ -1800,19 +1800,19 @@
           "index": 11,
           "source_ms": 53667,
           "arrival_to_event_ms": 134,
-          "event_to_answer_ms": 1620,
+          "event_to_answer_ms": 1354,
           "queued_ms": 0,
-          "request_ms": 1620,
+          "request_ms": 1354,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 12,
           "source_ms": 56667,
-          "arrival_to_event_ms": 154,
-          "event_to_answer_ms": 1414,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1353,
           "queued_ms": 0,
-          "request_ms": 1414,
+          "request_ms": 1353,
           "ok": true
         },
         {
@@ -1820,19 +1820,19 @@
           "index": 13,
           "source_ms": 64458,
           "arrival_to_event_ms": 10,
-          "event_to_answer_ms": 599,
+          "event_to_answer_ms": 554,
           "queued_ms": 0,
-          "request_ms": 599,
+          "request_ms": 554,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 14,
           "source_ms": 69917,
-          "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1491,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1418,
           "queued_ms": 0,
-          "request_ms": 1491,
+          "request_ms": 1418,
           "ok": true
         },
         {
@@ -1840,156 +1840,6 @@
           "index": 15,
           "source_ms": 74083,
           "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1523,
-          "queued_ms": 0,
-          "request_ms": 1523,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 16,
-          "source_ms": 79375,
-          "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 2141,
-          "queued_ms": 0,
-          "request_ms": 2141,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 17,
-          "source_ms": 82125,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1696,
-          "queued_ms": 0,
-          "request_ms": 1696,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 18,
-          "source_ms": 84833,
-          "arrival_to_event_ms": 82,
-          "event_to_answer_ms": 1265,
-          "queued_ms": 0,
-          "request_ms": 1265,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 19,
-          "source_ms": 92417,
-          "arrival_to_event_ms": 93,
-          "event_to_answer_ms": 1235,
-          "queued_ms": 0,
-          "request_ms": 1235,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 20,
-          "source_ms": 95417,
-          "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1548,
-          "queued_ms": 0,
-          "request_ms": 1548,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 21,
-          "source_ms": 98208,
-          "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1488,
-          "queued_ms": 0,
-          "request_ms": 1488,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 22,
-          "source_ms": 102417,
-          "arrival_to_event_ms": 72,
-          "event_to_answer_ms": 1266,
-          "queued_ms": 0,
-          "request_ms": 1266,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 23,
-          "source_ms": 112417,
-          "arrival_to_event_ms": 113,
-          "event_to_answer_ms": 1329,
-          "queued_ms": 0,
-          "request_ms": 1329,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 24,
-          "source_ms": 116708,
-          "arrival_to_event_ms": 93,
-          "event_to_answer_ms": 1298,
-          "queued_ms": 0,
-          "request_ms": 1298,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 25,
-          "source_ms": 119875,
-          "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1604,
-          "queued_ms": 0,
-          "request_ms": 1604,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 26,
-          "source_ms": 129875,
-          "arrival_to_event_ms": 154,
-          "event_to_answer_ms": 1792,
-          "queued_ms": 0,
-          "request_ms": 1792,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 27,
-          "source_ms": 134917,
-          "arrival_to_event_ms": 92,
-          "event_to_answer_ms": 1690,
-          "queued_ms": 0,
-          "request_ms": 1690,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 28,
-          "source_ms": 139917,
-          "arrival_to_event_ms": 103,
-          "event_to_answer_ms": 1278,
-          "queued_ms": 0,
-          "request_ms": 1278,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 29,
-          "source_ms": 143292,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1513,
-          "queued_ms": 0,
-          "request_ms": 1513,
-          "ok": true
-        },
-        {
-          "kind": "frame",
-          "index": 30,
-          "source_ms": 145792,
-          "arrival_to_event_ms": 123,
           "event_to_answer_ms": 1516,
           "queued_ms": 0,
           "request_ms": 1516,
@@ -1997,32 +1847,182 @@
         },
         {
           "kind": "frame",
+          "index": 16,
+          "source_ms": 79375,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1439,
+          "queued_ms": 0,
+          "request_ms": 1439,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 17,
+          "source_ms": 82125,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1185,
+          "queued_ms": 0,
+          "request_ms": 1185,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 18,
+          "source_ms": 84833,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1167,
+          "queued_ms": 0,
+          "request_ms": 1167,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 19,
+          "source_ms": 92417,
+          "arrival_to_event_ms": 92,
+          "event_to_answer_ms": 1103,
+          "queued_ms": 0,
+          "request_ms": 1103,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 20,
+          "source_ms": 95417,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1494,
+          "queued_ms": 0,
+          "request_ms": 1494,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 21,
+          "source_ms": 98208,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1441,
+          "queued_ms": 0,
+          "request_ms": 1441,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 22,
+          "source_ms": 102417,
+          "arrival_to_event_ms": 72,
+          "event_to_answer_ms": 1405,
+          "queued_ms": 0,
+          "request_ms": 1405,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 23,
+          "source_ms": 112417,
+          "arrival_to_event_ms": 102,
+          "event_to_answer_ms": 1259,
+          "queued_ms": 0,
+          "request_ms": 1259,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 24,
+          "source_ms": 116708,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1195,
+          "queued_ms": 0,
+          "request_ms": 1195,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 25,
+          "source_ms": 119875,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1420,
+          "queued_ms": 0,
+          "request_ms": 1420,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 26,
+          "source_ms": 129875,
+          "arrival_to_event_ms": 144,
+          "event_to_answer_ms": 1671,
+          "queued_ms": 0,
+          "request_ms": 1671,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 27,
+          "source_ms": 134917,
+          "arrival_to_event_ms": 93,
+          "event_to_answer_ms": 1465,
+          "queued_ms": 0,
+          "request_ms": 1465,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 28,
+          "source_ms": 139917,
+          "arrival_to_event_ms": 103,
+          "event_to_answer_ms": 1131,
+          "queued_ms": 0,
+          "request_ms": 1131,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 29,
+          "source_ms": 143292,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1457,
+          "queued_ms": 0,
+          "request_ms": 1457,
+          "ok": true
+        },
+        {
+          "kind": "frame",
+          "index": 30,
+          "source_ms": 145792,
+          "arrival_to_event_ms": 123,
+          "event_to_answer_ms": 1410,
+          "queued_ms": 0,
+          "request_ms": 1410,
+          "ok": true
+        },
+        {
+          "kind": "frame",
           "index": 31,
           "source_ms": 152875,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1460,
+          "arrival_to_event_ms": 133,
+          "event_to_answer_ms": 1357,
           "queued_ms": 0,
-          "request_ms": 1459,
+          "request_ms": 1357,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 32,
           "source_ms": 158542,
-          "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1252,
+          "arrival_to_event_ms": 113,
+          "event_to_answer_ms": 1169,
           "queued_ms": 0,
-          "request_ms": 1252,
+          "request_ms": 1169,
           "ok": true
         },
         {
           "kind": "frame",
           "index": 33,
           "source_ms": 168542,
-          "arrival_to_event_ms": 164,
-          "event_to_answer_ms": 1589,
+          "arrival_to_event_ms": 154,
+          "event_to_answer_ms": 1769,
           "queued_ms": 0,
-          "request_ms": 1588,
+          "request_ms": 1769,
           "ok": true
         },
         {
@@ -2030,9 +2030,9 @@
           "index": 34,
           "source_ms": 172292,
           "arrival_to_event_ms": 123,
-          "event_to_answer_ms": 1547,
+          "event_to_answer_ms": 1495,
           "queued_ms": 0,
-          "request_ms": 1547,
+          "request_ms": 1495,
           "ok": true
         }
       ],
@@ -2263,22 +2263,22 @@
   ],
   "cancel": {
     "trigger": "frame 19",
-    "at": 92323205192,
+    "at": 92323003240,
     "source_at": 92417000000,
-    "events": 22,
-    "stream_stopped": 263769410,
-    "returned": 263769700,
+    "events": 23,
+    "stream_stopped": 263596636,
+    "returned": 263596949,
     "stream_errors": [
       "context canceled"
     ],
-    "answered_before": 21,
+    "answered_before": 22,
     "in_flight": 1,
     "in_flight_cancelled": 1,
-    "in_flight_return": 153266,
+    "in_flight_return": 127929,
     "queued": 0,
     "queued_cancelled": 0,
-    "files": 22,
-    "yielded": 22,
+    "files": 23,
+    "yielded": 23,
     "processes": 0
   }
 }

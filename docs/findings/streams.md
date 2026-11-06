@@ -13,13 +13,15 @@ matrix, the tracker's tuning, and the stream's headroom. The measurements answer
 spike (the root's `context/README.md`) for task `streams` (the root's goal record,
 `context/goals/experiment.ai.spike-ai-pipeline.md`).
 
-Every number on the paced runs comes from two runs of the findings tier, from the laptop, against
-gb10-2's llama.cpp router, build b12098, serving set A. Tears of Steel's and AMI's come from
-**findings-streams 2026-11-06**, `mise run findings-streams` from 2026-11-06 16:25:59 to 17:50:25
-UTC at processing commit `c3a7f72`. NASA's come from **findings-streams nasa 2026-11-06**, NASA
-alone, from 18:07:48 to 18:48:02 UTC at commit `5a8f16c`, which fixes a window inside a silence
-still open once the stream passes its limit (below, under the lags); its windows are the first
-run's, by SHA-256. The tracker's tuning comes from `mise run findings-floor` at `c3a7f72`, 16:24:51
+Every number on the paced runs comes from three runs of the findings tier, from the laptop,
+against gb10-2's llama.cpp router, build b12098, serving set A. AMI's come from **findings-streams
+2026-11-06**, `mise run findings-streams` from 2026-11-06 16:25:59 to 17:50:25 UTC at processing
+commit `c3a7f72`. Commit `5a8f16c` then fixed a window inside a silence still open once the stream
+passes its limit (below, under the lags), and the other two sources were run again alone:
+NASA's come from **findings-streams nasa 2026-11-06**, from 18:07:48 to 18:48:02 UTC at `5a8f16c`,
+and Tears of Steel's from **findings-streams tears 2026-11-06**, from 18:52:32 to 19:03:25 UTC at
+`c820411`, whose code is `5a8f16c`'s. Each re-run's windows and frames are the first run's, by
+SHA-256. The tracker's tuning comes from `mise run findings-floor` at `c3a7f72`, 16:24:51
 to 16:25:54 UTC. Their results are committed in [`streams-results/`](streams-results/README.md):
 the logs verbatim and each source's JSON, with every transcript and frame description.
 
@@ -31,12 +33,12 @@ events. Every request here is test code, in `media/harness_test.go` and `media/f
 | Question | Answer |
 |---|---|
 | Is a paced source processed as it arrives? | **Yes, on all three**: Tears of Steel's 180 s clip (3 runs), AMI ES2002a's 21.2 min meeting (1 run), and NASA's 25.5 min in-flight event (1 run), read at real time through one ffmpeg run each, 7, 49, and 62 windows and 35, 125, and 156 frames, the same files byte for byte as an unpaced read. No window, frame, or request failed; every stream ended cleanly. |
-| How long from a window's last sample to its event? | **The plan's wait**: a window is yielded once the stream passes its 30 s limit, or, on the Tears and AMI runs, before the fix, once any silence open there ended. AMI: median 1.2 s, at most 6.3 s. Tears: median 3.1 s, at most 21.2 s. NASA, after the fix: median 2.0 s, 7.9 s at the 90th percentile, and **15.0 s at most**, a window that ends 15 s before its limit. The stream itself adds 1 to 8 ms. |
-| And from the event to E4B's transcript? | **0.8 to 4.6 s, medians 1.8 to 2.6 s, never queued**: at most 2 windows in flight of E4B's 4 slots. |
-| Frames? | **Yielded 20 to 180 ms after ffmpeg reports them, described 0.5 to 3.9 s later, medians 1.4 to 1.6 s**. 26B-A4B kept up: no frame waited for a slot, at most 2 in flight, Tears' 30 scene cuts in 180 s included. |
+| How long from a window's last sample to its event? | **The plan's wait**: a window is yielded once the stream passes its 30 s limit, inside a silence or not. AMI: median 1.2 s, at most 6.3 s. Tears: median 1.9 s, at most 3.7 s. NASA: median 2.0 s, 7.9 s at the 90th percentile, and **15.0 s at most**, a window that ends 15 s before its limit. The stream itself adds 1 to 8 ms. |
+| And from the event to E4B's transcript? | **0.8 to 4.6 s, medians 1.7 to 2.6 s, never queued**: at most 2 windows in flight of E4B's 4 slots. |
+| Frames? | **Yielded 20 to 170 ms after ffmpeg reports them, described 0.5 to 3.9 s later, medians 1.4 to 1.7 s**. 26B-A4B kept up: no frame waited for a slot, at most 2 in flight, Tears' 30 scene cuts in 180 s included. |
 | Is the live transcript as good as the file path's? | **Yes, under the same detector**: AMI 0.322 live against 0.323 through audio's file path with the tracker, Tears 0.361 against 0.361 (approximate truth), NASA 0.476 against 0.478 (approximate truth). Against the file path's default, silencedetect, live is **0.015 worse on AMI** (0.307, the audio finding's 0.308), 0.021 on Tears, 0.009 on NASA. |
-| Does a cancellation midway stop cleanly? | **Yes, all three**: the stream yielded `context.Canceled` once and ended 0.26 to 0.44 s after the cancel; the request on the wire returned the context's error in under a millisecond; the media directory held exactly the 22, 89, and 110 events yielded, nothing was left beside the source, and no ffmpeg process remained. |
-| What headroom does the stream have? | **43 to 507 times real time unpaced**, end to end through media (Tears' 1150x480 slowest); the tracker alone about 48,000 times. |
+| Does a cancellation midway stop cleanly? | **Yes, all three**: the stream yielded `context.Canceled` once and ended 0.26 to 0.44 s after the cancel; the request on the wire returned the context's error in under a millisecond; the media directory held exactly the 23, 89, and 110 events yielded, nothing was left beside the source, and no ffmpeg process remained. |
+| What headroom does the stream have? | **44 to 507 times real time unpaced**, end to end through media (Tears' 1150x480 slowest); the tracker alone about 48,000 times. |
 
 ## The sources
 
@@ -135,7 +137,7 @@ its own, so its lags don't cut the measured ones short.
 
 | Source | Windows (cut) | Frames (reason) | Paced runs equal to the unpaced read | Stream ended | Last answer | Failed |
 |---|---|---|---|---|---|---|
-| `tears` | 7 (6 silence, 1 end) | 35 (1 first, 30 scene, 4 interval) | yes, every run, by SHA-256 | 179.4 to 179.5 s | 181.5 to 181.9 s | 0 |
+| `tears` | 7 (6 silence, 1 end) | 35 (1 first, 30 scene, 4 interval) | yes, every run, by SHA-256 | 179.4 to 179.5 s | 181.1 to 181.4 s | 0 |
 | `ami` | 49 (48 silence, 1 end) | 125 (1 first, 124 interval) | yes | 1,247.6 s | 1,250.4 s | 0 |
 | `nasa` | 62 (59 silence, 2 limit, 1 end) | 156 (1 first, 4 scene, 151 interval) | yes | 1,530.8 s | 1,532.4 s | 0 |
 
@@ -155,12 +157,12 @@ apart is paced only while its video lasts.
 ### Lags: windows
 
 The median, 90th percentile, and maximum over a run's windows, in seconds. Tears' three runs gave
-the same arrival lags to the millisecond, and request times within 0.3 s; its row is run 1's, the
-others in the JSON.
+the same arrival lags within 4 ms, and request times within 0.3 s; its row is run 1's, the others
+in the JSON.
 
 | Source | Windows | Arrival to event | Event to answer | Queued | Request | Last transcript after its window's last sample |
 |---|---|---|---|---|---|---|
-| `tears` | 7 | 3.13 / 21.17 / 21.17 (mean 6.73) | 1.75 / 2.94 / 2.94 | 0 | 1.75 / 2.94 / 2.94 | 2.04 to 2.35 s |
+| `tears` | 7 | 1.88 / 3.67 / 3.67 (mean 1.67) | 1.71 / 2.58 / 2.58 | 0 | 1.71 / 2.58 / 2.58 | 1.68 to 1.93 s |
 | `ami` | 49 | 1.20 / 4.44 / 6.28 (mean 1.77) | 2.60 / 3.43 / 4.52 | 0 | 2.60 / 3.43 / 4.52 | 1.18 s |
 | `nasa` | 62 | 2.03 / 7.90 / 15.03 (mean 3.22) | 2.49 / 3.57 / 4.56 | 0 | 2.49 / 3.57 / 4.56 | 1.62 s |
 
@@ -183,34 +185,34 @@ before their limits, in the event's first minutes of music, which E4B transcribe
 After the first 4 minutes no window waited more than 9.6 s.
 
 On AMI, whose talk leaves a silence near every limit, each window was yielded at its limit, 0.2 to
-6.3 s after its last sample; no open silence held one. Tears of Steel was measured before the fix,
-and open silences held four of its windows, in all three runs: windows 1, 2, 4, and 5 waited 5.4,
-14.8, 3.1, and 21.2 s, the last until the source ended at 180 s, where their limits came 2.2, 3.6,
-0.9, and 2.8 s after their last samples; it wasn't run again. A window cut at the source's end,
-whose wait is no plan's, came 1 to 8 ms after its last sample: the ffmpeg run, the tracker, and
-the WAV writing add nothing visible.
+6.3 s after its last sample; no open silence held one. On Tears of Steel after the fix, the same 7
+windows, byte for byte, each came at its limit in all three runs: windows 1, 2, 4, and 5 2.3, 3.7,
+0.9, and 2.8 s after their last samples, and no window waited more than 3.7 s; before it, open
+silences had held them 5.4, 14.8, 3.1, and 21.2 s, the last until the source ended at 180 s. A
+window cut at the source's end, whose wait is no plan's, came 1 to 8 ms after its last sample: the
+ffmpeg run, the tracker, and the WAV writing add nothing visible.
 
 **Event to answer is E4B alone.** No window ever waited for a slot: at most 2 transcriptions were
 in flight at once, of E4B's 4, since a window comes every 25 to 30 s and takes 0.8 to 4.6 s. So
 the end-to-end lag from a window's last sample to its transcript is the plan's wait plus about 2 to
 3 s: on AMI a median of 3.8 s, 7.3 s at the 90th percentile, and 7.6 s at most; on Tears of Steel a
-median of 4.2 to 4.3 s and at most 22.6 to 22.7 s; on NASA a median of 4.5 s, 10.2 s at the 90th
+median of 3.7 to 3.8 s and at most 4.8 s (22.7 s before the fix); on NASA a median of 4.5 s, 10.2 s at the 90th
 percentile, and 17.9 s at most.
 
 ### Lags: frames
 
 | Source | Frames | Arrival to event | Event to answer | Queued | Request | Waited for a slot | Most in flight |
 |---|---|---|---|---|---|---|---|
-| `tears` | 35 | 0.12 / 0.15 / 0.18 | 1.55 to 1.62 / 1.83 to 2.04 / 1.98 to 2.90 | 0 | as event to answer | 0 | 2 |
+| `tears` | 35 | 0.11 / 0.14 / 0.16 to 0.17 | 1.42 to 1.74 / 1.58 to 1.98 / 1.80 to 3.76 | 0 | as event to answer | 0 | 2 |
 | `ami` | 125 | 0.02 / 0.02 / 0.04 | 1.46 / 1.75 / 3.90 | 0 | as event to answer | 0 | 1 |
 | `nasa` | 156 | 0.04 / 0.06 / 0.07 | 1.43 / 1.82 / 3.63 | 0 | as event to answer | 0 | 2 |
 
 A frame is yielded once ffmpeg's image2 muxer has renamed its PNG whole and the metadata filter has
-reported it: 20 ms on AMI's 352x288 frames, 40 to 70 ms on NASA's 640x360, 110 to 180 ms on Tears'
+reported it: 20 ms on AMI's 352x288 frames, 40 to 70 ms on NASA's 640x360, 110 to 170 ms on Tears'
 1150x480: the PNG's encoding, which grows with the frame. **26B-A4B kept up with every frame**:
 Tears of Steel's 35 frames in 180 s, a cut every 5 s on average and 2 in flight at most, and AMI's
 and NASA's one every 10 s, never waited for a slot; each description took 1.5 to 2 s, under 4 s at
-worst. From a frame's arrival to its description: a median of 1.6 to 1.7 s on Tears of Steel,
+worst. From a frame's arrival to its description: a median of 1.5 to 1.9 s on Tears of Steel,
 1.5 s on AMI, and 1.5 s on NASA, at most 3.9 s.
 
 Every description describes its frame: Tears' first frame, black, is "a solid, uniform black
@@ -254,7 +256,7 @@ later step's join (7 steps a Tears run, 48 on AMI, 62 on NASA).
 
 | Source | Cancelled after | At, into the run | Events by then | Stream ended after the cancel | In flight | Waiting | Files left | Beside the source | ffmpeg left |
 |---|---|---|---|---|---|---|---|---|---|
-| `tears` | frame 19's request | 92.3 s | 22 | 264 ms | 1, cancelled, returned in 0.15 ms | 0 | 22, the 22 yielded | nothing | 0 |
+| `tears` | frame 19's request | 92.3 s | 23 | 264 ms | 1, cancelled, returned in 0.13 ms | 0 | 23, the 23 yielded | nothing | 0 |
 | `ami` | frame 64's request | 639.8 s | 89 | 437 ms | 1, cancelled, returned in 0.11 ms | 0 | 89, the 89 yielded | nothing | 0 |
 | `nasa` | frame 78's request | 771.4 s | 110 | 345 ms | 1, cancelled, returned in 0.10 ms | 0 | 110, the 110 yielded | nothing | 0 |
 
@@ -320,16 +322,16 @@ the windows, and scoring, selecting, and writing the frames as PNG:
 
 | Source | Length | Picture | Windows | Frames | Wall, unpaced | Times real time |
 |---|---|---|---|---|---|---|
-| `tears` | 180.0 s | 1150x480 H.264, 24 fps | 7 | 35 | 4.14 s | 43 |
+| `tears` | 180.0 s | 1150x480 H.264, 24 fps | 7 | 35 | 4.11 s | 44 |
 | `ami` | 1,272.6 s | 352x288 MPEG-4 Part 2, 25 fps | 49 | 125 | 2.51 s | 507 |
 | `nasa` | 1,531.2 s | 640x360 H.264, 30 fps | 62 | 156 | 7.56 s | 202 |
 
-The stream keeps up with a live source by 43 to 507 times: decoding and scoring every video frame
+The stream keeps up with a live source by 44 to 507 times: decoding and scoring every video frame
 for its scene change dominates, and grows with the picture, so Tears of Steel's 1150x480 is the
 slowest. The task's earlier standalone measurements, ffmpeg's decode and scene detection alone,
 2,100 times real time on AMI's camera and about 240 times on Tears of Steel, were taken without the
 PNG writing, the windows, and the pacing machinery; through media, end to end, the figures are
-these. A paced run's own cost is in the lags above: a frame is yielded 20 to 180 ms after ffmpeg
+these. A paced run's own cost is in the lags above: a frame is yielded 20 to 170 ms after ffmpeg
 reports it, and a window cut at the end 1 to 8 ms after its last sample.
 
 The tracker alone, fed AMI's 1,272.6 s of PCM in 32 KiB pieces, took 26 to 27 ms in 3 runs, about
@@ -350,8 +352,6 @@ measurement in this session's working tree, not a committed test.
   holds the window until it is a silence or ends, at most 0.3 s more. A shorter limit would cut the
   wait; it isn't in the package, and wasn't measured. The first window can't be yielded before 30 s
   of audio.
-- **Tears of Steel's lags are from before the open-silence fix.** Open silences held four of its
-  windows up to 18 s past their limits; it wasn't run again.
 - **One or three runs, one router build, one laptop.** Tears was run 3 times, AMI and NASA once;
   greedy decoding still varies by a few words between runs, from batching across the slots.
 - **The models were never pressed.** At these sources' rates no request waited for a slot; a
@@ -362,8 +362,8 @@ measurement in this session's working tree, not a committed test.
 - **The cancellations came when the models were idle** but for the one request they waited for;
   none cancelled with requests queued.
 - **The tracker's throughput** is an ad hoc measurement, not a committed test.
-- **The NASA event** was run once before the fix and once after, with its captions to 18:36 as
-  truth.
+- **Tears of Steel and the NASA event were run before the fix and after it**; AMI, which no open
+  silence held, only before. The NASA event's truth is its captions to 18:36.
 
 ## What it answers for evidence 13
 
@@ -373,9 +373,9 @@ Answered:
   yields its windows and frames as one lazy event stream, the same windows and frames, byte for
   byte, as an unpaced read, on three real videos up to 25.5 minutes.
 - Per-window latency: from a window's last sample to its event, the plan's wait for the window's
-  limit, 0 to 6.3 s on a meeting, up to 15.0 s on NASA's event, and up to 21.2 s on a film measured
-  before the open-silence fix; from the event to E4B's transcript, 0.8 to 4.6 s, with no
-  queueing. Per frame: 20 to 180 ms to the event and 0.5 to 3.9 s, a median of 1.5 to 1.6 s, to
+  limit, 0 to 6.3 s on a meeting, up to 3.7 s on a film, and up to 15.0 s on NASA's event; from
+  the event to E4B's transcript, 0.8 to 4.6 s, with no queueing. Per frame: 20 to 170 ms to the
+  event and 0.5 to 3.9 s, a median of 1.4 to 1.7 s, to
   26B-A4B's description, with no queueing either.
 - The live transcript is as accurate as audio's file path under the same detector: AMI 0.322
   against 0.323. Against the file path's default detector, silencedetect, it is 0.015 worse on
