@@ -84,8 +84,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Currency: `audio.FFmpegImage`, the README's, and the ffprobe integration tests'
   linuxserver/ffmpeg image 9.0.2-cli-ls88 to 9.0.2-cli-ls89, pinned by digest: a base-image
   rebuild, the same FFmpeg 9.0.2. An integration test checks that the image has the scdet, select,
-  and showinfo filters, the srt, rtmp, http, https, and udp protocols, and the hls demuxer and
-  muxer.
+  and showinfo filters and those media's run uses, settb, metadata, scale, format, and aresample,
+  the srt, rtmp, http, https, and udp protocols, and the hls demuxer and muxer.
 - The dispatcher's video parts, which had no processor, go to `VideoStage` where a caller
   registers one.
 
