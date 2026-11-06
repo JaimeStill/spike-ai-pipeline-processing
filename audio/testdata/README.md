@@ -1,10 +1,11 @@
 # testdata
 
-The audio package's speech fixture, for the integration tier's probe, silence detection, and plan
-through both runners, and its reference transcript. They are committed and never generated in the
-check; `mise run fixtures:audio` (`scripts/fixtures-audio.sh`) rebuilds them from the test corpus
-at `~/docs`, checking each source against the SHA-256 the corpus's `MANIFEST.json` pins and each
-output against the SHA-256 below.
+The audio package's speech fixture and its reference transcript. The audio package's tests and
+dispatch's audio stage tests probe, plan, and cut the fixture, through both runners in the
+integration tier, which also transcribes it against the transcript. Both files are committed and
+never generated in the check; `mise run fixtures:audio` (`scripts/fixtures-audio.sh`) rebuilds
+them from the test corpus at `~/docs`, checking each source against the SHA-256 the corpus's
+`MANIFEST.json` pins and each output against the SHA-256 below.
 
 | File | Source | License | Bytes | SHA-256 |
 | --- | --- | --- | --- | --- |

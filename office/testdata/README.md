@@ -131,11 +131,10 @@ What they hold:
 `golden/pictures.sha256` holds the SHA-256 of every picture `TestGoldenPictures`, in the
 integration tier, converts, and of each Markdown it writes, recorded at commit `aa71cc8`, before
 the picture package took the conversion over, so the move is proved to change no byte. The
-twelve sums of the EMF and WMF renders were recorded again when `picture.LibreOfficeImage` moved
-from Gotenberg 8.39.0 (LibreOffice 26.8.1.1) to 9.0.0 (LibreOffice 26.8.2.2), with no code
-changed: the new release rasterizes the metafiles differently below a pixel, the EMF's page one
-pixel shorter at the default scale, and the renders read the same. The test compares a run's sums
-against it. Setting `GOLDEN_RECORD=1` records the sums in place of comparing,
-and is done only at a commit before the code the sums guard changes, so they hold what that code
-wrote; it is never done to make a failing test pass, since a failure is the change the sums exist
-to catch.
+twelve sums of the EMF and WMF renders are LibreOffice 26.8.2.2's, in `picture.LibreOfficeImage`'s
+Gotenberg 9.0.0, recorded with no code changed. 26.8.2.2 rasterizes the metafiles differently
+from 26.8.1.1, Gotenberg 8.39.0's, by less than a pixel: the EMF's page is one pixel shorter at
+the default scale, and the renders read the same. The test compares a run's sums against the
+file. Setting `GOLDEN_RECORD=1` records the sums in place of comparing, and is done only at a
+commit before the code the sums guard changes, so they hold what that code wrote; it is never done
+to make a failing test pass, since a failure is the change the sums exist to catch.

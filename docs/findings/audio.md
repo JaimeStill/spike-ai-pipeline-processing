@@ -1,12 +1,13 @@
 # Finding: long audio, windowed at its silences, against one unsplit pass
 
 This page records what the measurements behind the `audio` package found on four long real
-recordings: how accurately Gemma 4 E4B transcribes them when the package cuts them at silences
-into windows under 30 s that overlap by 2 s, sends them 4 at once, and joins them by aligning the
-overlapping words at each seam; how the seams fare beside the rest of the transcript; what a
-gpt-oss-120b pass over the words at each seam does; and how the windowed transcription compares,
-in accuracy and time, with one unsplit request over the same first 10 minutes. They answer
-evidence 5 of the spike (the root's `context/README.md`) for task `audio` (the root's goal record,
+recordings. The package cuts each at its silences into windows under 30 s that overlap by 2 s,
+the test harness sends them to Gemma 4 E4B 4 at once, and the package joins the transcripts by
+aligning the overlapping words at each seam. The page reports how accurately E4B transcribes them
+so, how the seams fare beside the rest of the transcript, what a gpt-oss-120b pass over the words
+at each seam does, and how the windowed transcription compares, in accuracy and time, with one
+unsplit request over the same first 10 minutes. The measurements answer evidence 5 of the spike
+(the root's `context/README.md`) for task `audio` (the root's goal record,
 `context/goals/experiment.ai.spike-ai-pipeline.md`).
 
 Every number here comes from one run of the findings tier, **findings-audio 2026-11-05**:
@@ -142,15 +143,16 @@ rate.
 
 ### Scoring memory
 
-`textscore.Align` held the whole table, len(truth)+1 by len(transcript)+1 ints: for the
-audiobook's 41,600 words against a transcript as long, about 14 GB. It now holds every b-th row,
-b about the square root of the truth's length, from one pass, and traces back one block of b rows
-at a time, each block recomputed from the row held before it: the same rows, so exactly the same
-alignment, in about 2·√n rows of int32, twice one pass's work. At that size it took 7.3 s and
-allocated 73 MB on the laptop. `TestAlignWholeTable` holds it to the whole-table traceback it
-replaced, step for step, on 2,000 random pairs up to 200 long from alphabets of 2 to 26 symbols;
-`TestBestPrefix` and `TestBestPrefixEveryPrefix` hold `BestPrefix` to `EditDistance` over every
-prefix. `EditDistance`, the WER, already kept one row.
+The whole alignment table, len(truth)+1 by len(transcript)+1 ints, would take about 14 GB for
+the audiobook's 41,600 words against a transcript as long. `textscore.Align` instead holds every
+b-th row, b about the square root of the truth's length, from one pass, and traces back one block
+of b rows at a time, each block recomputed from the row held before it. It recomputes the same
+rows, so it gives exactly the same alignment, in about 2·√n rows of int32, for twice one pass's
+work. At the audiobook's size it took 7.3 s and allocated 73 MB on the laptop.
+`TestAlignWholeTable` holds it to a whole-table traceback, step for step, on 2,000 random pairs up
+to 200 long from alphabets of 2 to 26 symbols; `TestBestPrefix` and `TestBestPrefixEveryPrefix`
+hold `BestPrefix` to `EditDistance` over every prefix. `EditDistance`, which the WER uses, keeps
+one row.
 
 ## Results
 
@@ -226,9 +228,9 @@ also dropped correct words at a span's edge, where it couldn't see what followed
 year. The" to "of this fiscal year.", and "Importantly, income" to "Importantly,". There were 15
 refusals in all. 12 were answers that changed words: 11 corrected a spelling ("evelin" to
 "evelyn", "ppop" to "pop", "spectrums" to "spectrum") or a word ("protested" to "protest"), and
-one added a word ("jealous brooding" to "jealous bro brooding"). One
-dropped the span's tail mid-word ("sanctioning" to "sanction"), and 2 were empty answers, on
-LibriVox's run 3. No answer refused in words.
+one added a word ("jealous brooding" to "jealous bro brooding"). One dropped the span's tail
+mid-word ("sanctioning" to "sanction"), and 2 were empty answers, on LibriVox's run 3. No answer
+declined the task in words.
 
 ## Known limits
 

@@ -1,8 +1,8 @@
 //go:build (integration || findings) && linux
 
-// Package audiotest holds the integration and findings tiers' speech harness, which the test
-// packages that send a source's windows to an audio model on the llama.cpp router share. It
-// builds under the integration or findings tag alone, so no released file imports it or
+// Package audiotest holds the speech harness the integration and findings tiers share: it sends a
+// source's windows to an audio model on the llama.cpp router and joins the transcripts. It builds
+// under the integration or findings tag alone, so no released file imports it or
 // spike-ai-pipeline-client: inference is test code, and the audio package only prepares.
 //
 // The harness plans a source through an audio.Splitter, streams its windows through the

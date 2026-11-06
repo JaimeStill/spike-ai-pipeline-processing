@@ -94,13 +94,14 @@
 //   - [OneNoteStage], for route.OneNote: onenote's records, a page's record followed by its
 //     Markdown, and each of its media found as a part, "page <id>, <where>"; a medium onenote
 //     wrote no content for is a record.
-//   - [AudioStage], for route.Audio: a WAV, FLAC, MP3, Ogg, or M4A through audio's Splitter, its
-//     plan a record, an [AudioPlan], then each window cut in a silence, a 16 kHz mono WAV, an
-//     audio output in plan order, its Meta its index, span, cut, and seams, so a layer above
-//     transcribes each and joins their transcripts by audio.Join. It prepares; it transcribes
-//     nothing. A source with no audio stream fails, its error wrapping audio.ErrNoAudio, and a
-//     failed window fails the part once the other windows are yielded. A caller with no ffmpeg
-//     and ffprobe has no Splitter and registers no audio stage, so its audio is no processor yet.
+//   - [AudioStage], for route.Audio: a WAV, FLAC, MP3, Ogg, or M4A through audio's Splitter.
+//     The part's plan comes first, a record holding an [AudioPlan], then each window in plan
+//     order, an audio output holding a 16 kHz mono WAV, its Meta its index, span, cut, and seams.
+//     The stage transcribes nothing: a layer above transcribes each window and joins the
+//     transcripts with audio.Join. A source with no audio stream fails, its error wrapping
+//     audio.ErrNoAudio, and a failed window fails the part once the other windows are yielded. A
+//     caller with no ffmpeg and ffprobe has no Splitter and registers no audio stage, so its
+//     audio parts have no processor yet.
 //
 // No adapter takes route.Video yet: a video part is no processor yet, as is every part whose
 // route has no stage registered.

@@ -1,10 +1,10 @@
 # Results behind the audio finding
 
-[`../audio.md`](../audio.md) cites these files. They are one run, named here **findings-audio
-2026-11-05**: one run of `mise run findings-audio` from 2026-11-05 23:42:31 to 2026-11-06 01:29:50
-UTC, recorded by setting `AUDIO_FINDINGS_RESULTS`, with the code of processing commit `6e4e70f` on
-branch `audio` (the run was of its working tree before the commit, which differs from it only in
-one comment's figure in `internal/textscore/speech.go`).
+[`../audio.md`](../audio.md) cites these files. They come from one run of `mise run
+findings-audio`, named here **findings-audio 2026-11-05**, from 2026-11-05 23:42:31 to 2026-11-06
+01:29:50 UTC, recorded by setting `AUDIO_FINDINGS_RESULTS`. The run used the working tree that
+became processing commit `6e4e70f` on branch `audio`, which differs from it only in one comment's
+figure in `internal/textscore/speech.go`.
 
 The host is the laptop: Intel Core Ultra 9 185H, 22 logical CPUs, 30 GiB; Linux 7.2.15 x86_64; go
 1.27.3; the host's FFmpeg 9.0.2 through the exec runner. The models are gb10-2's llama.cpp router,

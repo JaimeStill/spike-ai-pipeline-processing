@@ -1,9 +1,10 @@
 # spike-ai-pipeline-processing
 
 The processing layer of spike-ai-pipeline, released by tag and built on by the root. It requires
-spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the integration and
-bake-off tiers run on. This context records only working knowledge the code and the README do not
-express; the spike's question and evidence live in the root repository's `context/README.md`.
+spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision and speech harnesses the
+integration, bake-off, and findings tiers run on. This context records only working knowledge the
+code and the README do not express; the spike's question and evidence live in the root
+repository's `context/README.md`.
 
 ## Capability map
 
@@ -71,9 +72,12 @@ express; the spike's question and evidence live in the root repository's `contex
   records inspection over ~/docs and vision's reading of OneNote ink, scored by internal/textscore
   as document's bake-offs are, and times the onenote adapter and the dispatcher, resumed and pooled,
   over mail's scale store.
-- **audio**: pre-inference preparation of speech: package audio over ffmpeg and ffprobe, through
-  either runner, probes a source, plans windows of at most 30 s cut at the middle of silences with
-  2 s seams, cuts them concurrently as 16 kHz mono WAV named by SHA-256, and joins the windows'
-  transcripts at the seams; dispatch's audio stage yields a part's plan as a record and its
-  windows as audio outputs. Transcription is test code.
+- **audio**: pre-inference preparation of speech. Package audio runs ffmpeg and ffprobe through
+  either runner: it probes a source, plans windows of at most 30 s ending at the middle of
+  silences, with 2 s seams, cuts them concurrently as 16 kHz mono WAV named by SHA-256, and joins
+  the windows' transcripts at the seams by transformers' best-offset merge. Dispatch's audio stage
+  yields a part's plan as a record and its windows as audio outputs. Transcription is test code:
+  internal/audiotest's speech harness and the findings tier, whose results
+  `docs/findings/audio.md` records, scored by internal/textscore's normalized word error rate and
+  seam edits.
 - **streams**: live and real-time-paced media, and chat streams, as events.
