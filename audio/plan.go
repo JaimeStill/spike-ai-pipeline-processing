@@ -142,6 +142,11 @@ func PlanWindows(duration time.Duration, silences []Span, req Request) (Plan, er
 // Planner returns PlanWindows' windows exactly: they are one policy, and PlanWindows is a Planner
 // given everything at once.
 //
+// A silence still open, one the stream is in, is given by Open: its start and how far it has
+// lasted. Since a window takes a silence that crosses its limit only up to the limit, a silence
+// open past a window's limit ends the window where the closed silence would, however long it
+// lasts, so the window is fixed once the stream passes its limit, inside the silence or not.
+//
 // A window's seams are the next window's start to its end; a Planner returns windows alone, and
 // window i's seam with window i+1 is Span{Start: windows[i+1].Start, End: windows[i].End}.
 //
@@ -152,8 +157,12 @@ type Planner struct {
 	// start is the start of the window not yet fixed, and windows the windows fixed before it.
 	start   time.Duration
 	windows int
-	// pos is the stream's position: every silence that begins before it has been given.
-	pos time.Duration
+	// pos is the stream's settled position: every silence that begins before it has been given.
+	// reach is the stream's position, pos or, while a silence is open from pos, how far it has
+	// lasted; open is whether one is.
+	pos   time.Duration
+	reach time.Duration
+	open  bool
 	// silences are the silences given that begin at start or later, sorted by start and then end.
 	silences []Span
 	ended    bool
@@ -175,8 +184,10 @@ func (p *Planner) Overlap() time.Duration { return p.overlap }
 // Silence gives the planner a silence of the stream. A silence before 0 is clipped to it, and an
 // empty one is dropped; silences may overlap, and come in any order but one: each must begin at the
 // stream's position or after, since the windows before it are planned from the silences already
-// given. A silence that begins before the position, or one given after End, is an error wrapping
-// ErrRequest.
+// given. While a silence is open, the only one that may begin before the stream's position is the
+// open one, closed: it begins at the open one's start and lasts at least as far, and giving it
+// closes the open one. A silence that begins before the position, one that begins inside the open
+// silence and isn't it, or one given after End, is an error wrapping ErrRequest.
 func (p *Planner) Silence(s Span) error {
 	if p.ended {
 		return fmt.Errorf("audio: a silence after the stream's end: %w", ErrRequest)
@@ -188,47 +199,89 @@ func (p *Planner) Silence(s Span) error {
 	if s.Start < p.pos {
 		return fmt.Errorf("audio: silence %v begins before the stream's position, %v: %w", s, p.pos, ErrRequest)
 	}
+	if p.open && s.Start < p.reach {
+		if s.Start != p.pos || s.End < p.reach {
+			return fmt.Errorf("audio: silence %v isn't the one open from %v to %v: %w", s, p.pos, p.reach, ErrRequest)
+		}
+		p.open = false
+	}
 	i, _ := slices.BinarySearchFunc(p.silences, s, compareSpans)
 	p.silences = slices.Insert(p.silences, i, s)
 	return nil
 }
 
+// Open moves the stream's position into a silence still open: s.Start is where it began, and s.End
+// how far it has lasted, the stream's position. It promises that every silence that begins before
+// s.Start has been given, that no other begins from s.Start to s.End, and that the open one is a
+// silence, as long as a silence must be, which Silence will give once it closes, lasting at least
+// to s.End. It returns the windows that fixes, in order: each window whose limit is before s.End,
+// the silence taken up to the limit, as PlanWindows takes the closed one.
+//
+// Open may be called again as the silence lasts, with the same start. Before the next Advance or
+// End, Silence must give the open one, closed. A silence that begins before 0 is clipped to it. An
+// empty one, a start before the stream's position or a start other than the open one's, an end
+// before the stream's position, or an Open after End, is an error wrapping ErrRequest.
+func (p *Planner) Open(s Span) ([]Window, error) {
+	s.Start = max(s.Start, 0)
+	switch {
+	case p.ended:
+		return nil, fmt.Errorf("audio: an open silence after the stream's end: %w", ErrRequest)
+	case s.Start >= s.End:
+		return nil, fmt.Errorf("audio: open silence %v is empty: %w", s, ErrRequest)
+	case s.Start < p.pos:
+		return nil, fmt.Errorf("audio: open silence %v begins before the stream's position, %v: %w", s, p.pos, ErrRequest)
+	case p.open && s.Start != p.pos:
+		return nil, fmt.Errorf("audio: open silence %v while the one from %v is open: %w", s, p.pos, ErrRequest)
+	case s.End < p.reach:
+		return nil, fmt.Errorf("audio: open silence %v ends before the stream's position, %v: %w", s, p.reach, ErrRequest)
+	}
+	p.pos, p.reach, p.open = s.Start, s.End, true
+	return p.fix(0, false), nil
+}
+
 // Advance moves the stream's position to pos, which promises that every silence that begins
 // before pos has been given, and returns the windows that fixes, in order: each window whose
-// limit, WindowLimit from its start, is before pos. A pos before the position, or an Advance
-// after End, is an error wrapping ErrRequest.
+// limit, WindowLimit from its start, is before pos. A pos before the position, an Advance while a
+// silence is open and not yet given closed, or an Advance after End, is an error wrapping
+// ErrRequest.
 func (p *Planner) Advance(pos time.Duration) ([]Window, error) {
-	if p.ended {
+	switch {
+	case p.ended:
 		return nil, fmt.Errorf("audio: an advance after the stream's end: %w", ErrRequest)
+	case p.open:
+		return nil, fmt.Errorf("audio: an advance with the silence from %v open: %w", p.pos, ErrRequest)
+	case pos < p.reach:
+		return nil, fmt.Errorf("audio: position %v is before the stream's, %v: %w", pos, p.reach, ErrRequest)
 	}
-	if pos < p.pos {
-		return nil, fmt.Errorf("audio: position %v is before the stream's, %v: %w", pos, p.pos, ErrRequest)
-	}
-	p.pos = pos
+	p.pos, p.reach = pos, pos
 	return p.fix(0, false), nil
 }
 
 // End ends the stream at duration, its length, which promises that every silence of the stream
 // has been given, and returns the windows left, in order, the last cut at the end, CutEnd. After
-// End, the planner takes nothing more. A duration of zero or less, or before the position, or an
-// End after End, is an error wrapping ErrRequest.
+// End, the planner takes nothing more. A duration of zero or less, or before the position, a
+// silence open and not yet given closed, or an End after End, is an error wrapping ErrRequest.
 func (p *Planner) End(duration time.Duration) ([]Window, error) {
 	switch {
 	case p.ended:
 		return nil, fmt.Errorf("audio: the stream's end after its end: %w", ErrRequest)
 	case duration <= 0:
 		return nil, fmt.Errorf("audio: duration %v isn't positive: %w", duration, ErrRequest)
-	case duration < p.pos:
-		return nil, fmt.Errorf("audio: duration %v is before the stream's position, %v: %w", duration, p.pos, ErrRequest)
+	case p.open:
+		return nil, fmt.Errorf("audio: the stream's end with the silence from %v open: %w", p.pos, ErrRequest)
+	case duration < p.reach:
+		return nil, fmt.Errorf("audio: duration %v is before the stream's position, %v: %w", duration, p.reach, ErrRequest)
 	}
-	p.pos = duration
+	p.pos, p.reach = duration, duration
 	return p.fix(duration, true), nil
 }
 
 // fix returns the windows the position fixes, from the window not yet fixed on: while the stream
 // has passed the window's limit, or, once ended at duration, until the window that reaches it.
 // A window that doesn't reach the end ends where PlanWindows says; a silence past duration, which
-// the planner doesn't clip, begins past every limit fix reads, so it ends no window.
+// the planner doesn't clip, begins past every limit fix reads, so it ends no window. An open
+// silence is a silence to the stream's position, past every limit fix reads: taken up to a limit,
+// it is the closed silence taken up to it.
 func (p *Planner) fix(duration time.Duration, ended bool) []Window {
 	var out []Window
 	for !p.ended {
@@ -238,7 +291,7 @@ func (p *Planner) fix(duration time.Duration, ended bool) []Window {
 			p.ended, p.silences = true, nil
 			break
 		}
-		if !ended && p.pos <= limit {
+		if !ended && p.reach <= limit {
 			break
 		}
 		// The window's own audio begins after its leading seam, if it has one, and must reach
@@ -248,7 +301,13 @@ func (p *Planner) fix(duration time.Duration, ended bool) []Window {
 			own += p.overlap
 		}
 		w := Window{Span: Span{p.start, limit}, Cut: CutLimit}
-		if end, ok := latestMiddle(p.silences, p.start, limit, own+p.overlap); ok {
+		end, ok := latestMiddle(p.silences, p.start, limit, own+p.overlap)
+		if p.open {
+			if e, o := latestMiddle([]Span{{p.pos, p.reach}}, p.start, limit, own+p.overlap); o && (!ok || e > end) {
+				end, ok = e, true
+			}
+		}
+		if ok {
 			w = Window{Span: Span{p.start, end}, Cut: CutSilence}
 		}
 		out = append(out, w)

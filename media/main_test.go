@@ -43,6 +43,9 @@ const (
 	// when it has a video output: it reports each on stderr as the metadata filter does, and then
 	// writes its PNG, each before the PCM from its time on.
 	framesEnv = "MEDIA_TEST_FRAMES"
+	// gatesEnv, when set, is a JSON array of standinGates: the stand-in ffmpeg writes its PCM up
+	// to each gate's byte and then waits for the gate's file to exist before it writes on.
+	gatesEnv = "MEDIA_TEST_GATES"
 	// noPNGEnv, when set, makes the stand-in report its frames and write no PNG for them.
 	noPNGEnv = "MEDIA_TEST_NO_PNG"
 	// failEnv, when set, makes the stand-in ffmpeg, once it has written its output, write its
@@ -89,6 +92,17 @@ type run struct {
 	Args    []string `json:"args"`
 	Stdin   string   `json:"stdin,omitempty"`
 }
+
+// standinGate is a point in the stand-in ffmpeg's PCM it waits at: once it has written At bytes,
+// it writes no more until a file exists at Path, and fails if none does within gateWait.
+type standinGate struct {
+	At   int    `json:"at"`
+	Path string `json:"path"`
+}
+
+// gateWait is how long the stand-in ffmpeg waits at a gate before it fails: long enough for any
+// window the PCM written has fixed to reach the test, under the race detector.
+const gateWait = 20 * time.Second
 
 // standin is the stand-in named name, ffmpeg, ffprobe, or docker.
 func standin(name string, args []string) int {
@@ -147,17 +161,23 @@ func standin(name string, args []string) int {
 }
 
 // standinRun is the stand-in ffmpeg's run: the PCM of pcmEnv's WAV to stdout, when its arguments
-// have an audio output, half a second at a time; and the frames of framesEnv, when they have a
-// video output, its last argument the image2 pattern, each reported and written before the PCM
-// from its time on.
+// have an audio output, half a second at a time, waiting at gatesEnv's gates; and the frames of
+// framesEnv, when they have a video output, its last argument the image2 pattern, each reported
+// and written before the PCM from its time on.
 func standinRun(args []string) error {
 	var pcm []byte
+	var gates []standinGate
 	if slices.Contains(args, "pipe:1") {
 		data, err := os.ReadFile(os.Getenv(pcmEnv))
 		if err != nil {
 			return err
 		}
 		pcm = data[44:]
+		if v := os.Getenv(gatesEnv); v != "" {
+			if err := json.Unmarshal([]byte(v), &gates); err != nil {
+				return err
+			}
+		}
 	}
 	var frames []standinFrame
 	pattern := ""
@@ -178,12 +198,36 @@ func standinRun(args []string) error {
 			next++
 		}
 		if at < len(pcm) {
-			if _, err := os.Stdout.Write(pcm[at:min(at+chunk, len(pcm))]); err != nil {
+			var err error
+			if gates, err = writeGated(pcm, at, min(at+chunk, len(pcm)), gates); err != nil {
 				return err
 			}
 		}
 	}
 	return nil
+}
+
+// writeGated writes pcm's bytes from at to end to stdout, waiting at each of the gates, in order,
+// whose byte is in that range, and returns the gates left.
+func writeGated(pcm []byte, at, end int, gates []standinGate) ([]standinGate, error) {
+	for len(gates) > 0 && gates[0].At <= end {
+		g := gates[0]
+		if _, err := os.Stdout.Write(pcm[at:g.At]); err != nil {
+			return nil, err
+		}
+		at = g.At
+		for deadline := time.Now().Add(gateWait); ; time.Sleep(5 * time.Millisecond) {
+			if _, err := os.Stat(g.Path); err == nil {
+				break
+			}
+			if time.Now().After(deadline) {
+				return nil, fmt.Errorf("the gate at byte %d, %s, was never opened", g.At, g.Path)
+			}
+		}
+		gates = gates[1:]
+	}
+	_, err := os.Stdout.Write(pcm[at:end])
+	return gates, err
 }
 
 // standinFrameOut reports frame i, f, on stderr as the metadata filter does, after settb, and

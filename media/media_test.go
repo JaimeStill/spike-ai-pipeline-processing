@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"math"
 	"os"
 	"path/filepath"
@@ -175,7 +176,12 @@ func expectedThresholds(t *testing.T, req audio.Request) ([]audio.Window, [][]by
 	if err != nil {
 		t.Fatal(err)
 	}
-	pcm := data[44:]
+	return expectedOf(t, data[44:], req)
+}
+
+// expectedOf is expectedThresholds for the PCM pcm.
+func expectedOf(t *testing.T, pcm []byte, req audio.Request) ([]audio.Window, [][]byte, []float64) {
+	t.Helper()
 	tr, err := audio.NewTracker(req)
 	if err != nil {
 		t.Fatal(err)
@@ -456,6 +462,71 @@ func TestEventsLimitThreshold(t *testing.T) {
 	if first, last := events[0].Window, events[len(events)-1].Window; first.Cut != audio.CutLimit || last.Cut != audio.CutEnd || first.Threshold == last.Threshold {
 		t.Errorf("first window cut at the %s under %v dB, last at the %s under %v dB; want the limit and the end, the gain step between",
 			first.Cut, first.Threshold, last.Cut, last.Threshold)
+	}
+}
+
+// TestEventsOpenSilence streams 25 s of the gain fixture's speech, 70 s of digital silence, and
+// 20 s more of its speech, the stand-in waiting, just past the limit of each window whose limit is
+// inside the silence, for the test to have that window: so each is yielded with the PCM that
+// carries the stream past its limit, not when the silence ends, which the stand-in would never
+// reach. The first is cut at the silence's middle up to its limit, under the threshold it opened
+// at, and the next two, which start inside it, at their limits; the windows are the plan's.
+func TestEventsOpenSilence(t *testing.T) {
+	s := standinStreamer(t)
+	setStandin(t, probeAudio, nil)
+	data, err := os.ReadFile(gainWAV)
+	if err != nil {
+		t.Fatal(err)
+	}
+	speech := data[44:]
+	at := func(d time.Duration) int { return 2 * int(audio.Sample(d)) }
+	pcm := slices.Concat(speech[:at(25*time.Second)], make([]byte, at(70*time.Second)), speech[at(25*time.Second):at(45*time.Second)])
+	wav := filepath.Join(t.TempDir(), "open.wav")
+	if err := os.WriteFile(wav, audio.WAV(pcm), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv(pcmEnv, wav)
+	wantWindows, wavs, wantThresholds := expectedOf(t, pcm, audio.Request{})
+	gateDir := t.TempDir()
+	var gates []standinGate
+	open := map[int]string{}
+	for i, w := range wantWindows {
+		if limit := w.Start + audio.WindowLimit; w.Cut != audio.CutEnd && limit > 25*time.Second && limit < 95*time.Second {
+			// The frame that carries the stream past the limit, and no byte more.
+			path := filepath.Join(gateDir, fmt.Sprint(i))
+			gates = append(gates, standinGate{At: (int(limit/audio.FrameLength) + 1) * frameBytes, Path: path})
+			open[i] = path
+		}
+	}
+	if len(gates) != 3 || wantWindows[0].Cut != audio.CutSilence || wantWindows[1].Cut != audio.CutLimit || wantWindows[2].Cut != audio.CutLimit {
+		t.Fatalf("windows %v; want the first cut at the silence and the next two at their limits inside it", wantWindows)
+	}
+	b, err := json.Marshal(gates)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv(gatesEnv, string(b))
+	var ws []media.Event
+	for e, err := range s.Events(t.Context(), media.Request{Source: media.Source{File: source(t)}, Dir: t.TempDir()}) {
+		if err != nil {
+			t.Fatalf("after %d windows: %v", len(ws), err)
+		}
+		if path, ok := open[len(ws)]; ok {
+			if err := os.WriteFile(path, nil, 0o600); err != nil {
+				t.Fatal(err)
+			}
+		}
+		ws = append(ws, e)
+	}
+	if len(ws) != len(wantWindows) {
+		t.Fatalf("%d windows, want %d", len(ws), len(wantWindows))
+	}
+	for i, e := range ws {
+		w := e.Window
+		if w.Span != wantWindows[i].Span || w.Cut != wantWindows[i].Cut || w.Threshold != wantThresholds[i] || w.SHA256 != sum(wavs[i]) {
+			t.Errorf("window %d: %v %s under %v dB; want %v %s under %v dB, the planned samples", i, w.Span, w.Cut, w.Threshold,
+				wantWindows[i].Span, wantWindows[i].Cut, wantThresholds[i])
+		}
 	}
 }
 

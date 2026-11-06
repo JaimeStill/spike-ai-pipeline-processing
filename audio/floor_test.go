@@ -197,7 +197,8 @@ func speechLike() []tone {
 // TestTrackerSilences runs the tracker over a speech-like signal broken by pauses at its floor, at
 // its defaults and at a fixed threshold: a pause of the minimum is a silence, to the frame, and
 // one a frame shorter isn't; one open at the stream's end ends at its last sample, a part frame's
-// included; and each reports the threshold in force when it opened.
+// included; and each reports the threshold in force when it opened. The silence open at the end is
+// reported open once it is the minimum long, to the frames decided, and not before.
 func TestTrackerSilences(t *testing.T) {
 	var tones []tone
 	tones = append(tones, speechLike()...)
@@ -242,12 +243,28 @@ func TestTrackerSilences(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tr.Feed(pcm)
+	// The silence open at the end begins at 6.74 s, frame 674.
+	open := 674 * frameBytes
+	tr.Feed(pcm[:open+29*frameBytes])
+	if s, ok := tr.Open(); ok {
+		t.Errorf("a run of 290 ms open: %v, want none", s)
+	}
+	tr.Feed(pcm[open+29*frameBytes : open+30*frameBytes])
+	if s, ok := tr.Open(); !ok || s.Span != (audio.Span{Start: 6740 * time.Millisecond, End: 7040 * time.Millisecond}) || s.Threshold != -51.05 {
+		t.Errorf("a run of 300 ms open: %v at %v dB, %v; want 6.74 s to 7.04 s at -51.05 dB", s.Span, s.Threshold, ok)
+	}
+	tr.Feed(pcm[open+30*frameBytes:])
 	// The open run's start: the stream is settled up to the silence it may yet be.
 	if got, want := tr.Position(), 6740*time.Millisecond; got != want {
 		t.Errorf("position before the end %v, want %v", got, want)
 	}
+	if s, ok := tr.Open(); !ok || s.Span != (audio.Span{Start: 6740 * time.Millisecond, End: 7240 * time.Millisecond}) {
+		t.Errorf("open before the end: %v, %v; want 6.74 s to 7.24 s, the whole frames", s.Span, ok)
+	}
 	tr.End()
+	if s, ok := tr.Open(); ok {
+		t.Errorf("open after the end: %v", s)
+	}
 	if got, want := tr.Position(), 7245*time.Millisecond; got != want || tr.Duration() != want {
 		t.Errorf("position %v and duration %v after the end, want %v", got, tr.Duration(), want)
 	}
@@ -365,11 +382,27 @@ func TestNewTrackerRefuses(t *testing.T) {
 	}
 }
 
-// streamPlan plans pcm as a stream, the incremental path: a Tracker of req fed it in chunks of
-// chunk bytes, its silences given to a Planner of req as they close, the Planner advanced to the
-// Tracker's Position after each chunk, and ended at duration, the source's. It returns the
-// windows in the order the Planner returned them.
-func streamPlan(t *testing.T, pcm []byte, req audio.Request, chunk int, duration time.Duration) []audio.Window {
+// frameBytes is the bytes of the tracker's frame of PCM.
+const frameBytes = 2 * audio.SampleRate * int(audio.FrameLength) / int(time.Second)
+
+// live is a stream planned as it arrives: the windows in the order the Planner returned them, the
+// silences the tracker found, and, for each window, the stream's whole frames fed before the chunk
+// it was returned after, and after it; for one End returned, all of them, and the stream's
+// duration.
+type live struct {
+	windows  []audio.Window
+	silences []audio.Span
+	before   []time.Duration
+	after    []time.Duration
+}
+
+// livePlan plans pcm as a stream, the incremental path: a Tracker of req fed it in chunks, each of
+// next(rest) bytes with rest the bytes left, its silences given to a Planner of req as they close,
+// and after each chunk the Planner given the tracker's open silence, once it has one, or advanced
+// to its Position, each taken no further than duration, the source's, at which it is ended. Each
+// open silence the tracker reports is checked against the silence it closes into: the same start,
+// and an end as late or later.
+func livePlan(t *testing.T, pcm []byte, req audio.Request, next func(rest int) int, duration time.Duration) live {
 	t.Helper()
 	tr, err := audio.NewTracker(audio.Request{
 		MinSilence: req.MinSilence, Threshold: req.Threshold,
@@ -382,28 +415,63 @@ func streamPlan(t *testing.T, pcm []byte, req audio.Request, chunk int, duration
 	if err != nil {
 		t.Fatal(err)
 	}
+	var out live
+	var open audio.Silence
 	give := func(silences []audio.Silence) {
 		for _, s := range silences {
+			if open.End > 0 {
+				if s.Start != open.Start || s.End < open.End || s.Threshold != open.Threshold {
+					t.Fatalf("silence %v at %v dB closed from the one open, %v at %v dB", s.Span, s.Threshold, open.Span, open.Threshold)
+				}
+				open = audio.Silence{}
+			}
+			out.silences = append(out.silences, s.Span)
 			if err := p.Silence(s.Span); err != nil {
 				t.Fatal(err)
 			}
 		}
 	}
-	var out []audio.Window
-	for len(pcm) > 0 {
-		n := min(chunk, len(pcm))
-		give(tr.Feed(pcm[:n]))
-		pcm = pcm[n:]
-		ws, err := p.Advance(min(tr.Position(), duration))
+	fed := 0
+	for fed < len(pcm) {
+		n := min(next(len(pcm)-fed), len(pcm)-fed)
+		before := audio.FrameLength * time.Duration(fed/frameBytes)
+		give(tr.Feed(pcm[fed : fed+n]))
+		fed += n
+		var ws []audio.Window
+		if s, ok := tr.Open(); ok && min(s.End, duration) > s.Start {
+			if open.End > 0 && s.Start != open.Start {
+				t.Fatalf("open silence %v, the one open before %v and not closed", s.Span, open.Span)
+			}
+			open = s
+			ws, err = p.Open(audio.Span{Start: s.Start, End: min(s.End, duration)})
+		} else {
+			ws, err = p.Advance(min(tr.Position(), duration))
+		}
 		if err != nil {
 			t.Fatal(err)
 		}
-		out = append(out, ws...)
+		for range ws {
+			out.before = append(out.before, before)
+			out.after = append(out.after, audio.FrameLength*time.Duration(fed/frameBytes))
+		}
+		out.windows = append(out.windows, ws...)
 	}
 	give(tr.End())
 	ws, err := p.End(duration)
 	if err != nil {
 		t.Fatal(err)
 	}
-	return append(out, ws...)
+	for range ws {
+		out.before = append(out.before, audio.FrameLength*time.Duration(fed/frameBytes))
+		out.after = append(out.after, duration)
+	}
+	out.windows = append(out.windows, ws...)
+	return out
+}
+
+// streamPlan plans pcm as a stream, livePlan's incremental path, in chunks of chunk bytes, and
+// returns the windows in the order the Planner returned them.
+func streamPlan(t *testing.T, pcm []byte, req audio.Request, chunk int, duration time.Duration) []audio.Window {
+	t.Helper()
+	return livePlan(t, pcm, req, func(int) int { return chunk }, duration).windows
 }

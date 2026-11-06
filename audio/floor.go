@@ -231,7 +231,8 @@ func (t *Tracker) Duration() time.Duration {
 // Position returns how far the stream is settled: every silence that begins before it has been
 // returned. It is the start of the open run of silent frames, which may yet be a silence, or the
 // end of the frames decided, whichever is earlier; after End, the stream's Duration. An
-// incremental Planner's Advance takes it.
+// incremental Planner's Advance takes it, unless Open reports a silence, which the Planner's Open
+// takes in its place.
 func (t *Tracker) Position() time.Duration {
 	if t.ended {
 		return t.Duration()
@@ -240,6 +241,23 @@ func (t *Tracker) Position() time.Duration {
 		return frameTime(t.run)
 	}
 	return frameTime(t.decided)
+}
+
+// Open returns the silence open now, ok true, once the open run of silent frames is MinSilence long:
+// from its first frame to the end of the frames decided, with the threshold in force at its first
+// frame. It is a silence however it ends, since it can only grow, and Feed or End returns it once it
+// closes, its End then as late or later. A run shorter than MinSilence may yet end too short to be
+// one, so it isn't reported; nor is any after End. Position stays at the run's start until it
+// closes; the decided frames reach Open's End.
+func (t *Tracker) Open() (Silence, bool) {
+	if t.ended || t.run < 0 {
+		return Silence{}, false
+	}
+	s := Span{frameTime(t.run), frameTime(t.decided)}
+	if s.Duration() < t.settings.minSilence {
+		return Silence{}, false
+	}
+	return Silence{Span: s, Threshold: float64(t.runThreshold) / 100}, true
 }
 
 // Threshold returns the threshold in force now, in dB relative to full scale: the request's fixed

@@ -339,9 +339,9 @@ func randomPositions(r *rand.Rand, duration time.Duration, n int) []time.Duratio
 
 // TestPlannerMatchesPlanWindows plans sources of random durations, silences, and overlaps, from
 // a fixed seed, as streams advanced in random steps, or to each window's limit and just past it:
-// the windows a Planner returns, as each is
-// fixed, are PlanWindows' windows exactly, and each is returned as soon as the stream passes its
-// limit.
+// the windows a Planner returns, as each is fixed, are PlanWindows' windows exactly, and each is
+// returned as soon as the stream passes its limit. One silence in eight is longer than a window,
+// 30 to 75 s, so it crosses one limit or more.
 func TestPlannerMatchesPlanWindows(t *testing.T) {
 	r := rand.New(rand.NewPCG(5, 6))
 	for range 2000 {
@@ -349,7 +349,11 @@ func TestPlannerMatchesPlanWindows(t *testing.T) {
 		var silences []audio.Span
 		for range r.IntN(40) {
 			start := time.Duration(r.Int64N(int64(duration))) - time.Second
-			silences = append(silences, audio.Span{Start: start, End: start + time.Duration(r.Int64N(int64(3*time.Second)))})
+			length := time.Duration(r.Int64N(int64(3 * time.Second)))
+			if r.IntN(8) == 0 {
+				length = audio.WindowLimit + time.Duration(r.Int64N(int64(45*time.Second)))
+			}
+			silences = append(silences, audio.Span{Start: start, End: start + length})
 		}
 		req := audio.Request{Overlap: time.Duration(r.Int64N(int64(audio.WindowLimit / 2)))}
 		want, err := audio.PlanWindows(duration, silences, req)
@@ -489,5 +493,69 @@ func TestPlannerRefuses(t *testing.T) {
 		if err := call(); !errors.Is(err, audio.ErrRequest) {
 			t.Errorf("%s: %v, want ErrRequest", name, err)
 		}
+	}
+}
+
+// TestPlannerOpen plans a stream through a silence open across two limits: each window whose limit
+// the open silence passes is returned then, the first ending at the silence's middle up to its
+// limit and the next, which starts inside it, at its limit; the silence, closed, ends no later
+// window; and the windows are PlanWindows'. While it is open, an Advance, an End, a silence inside
+// it or ending before its position, or another open silence, is refused, and so is an empty one.
+func TestPlannerOpen(t *testing.T) {
+	p, err := audio.NewPlanner(audio.Request{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []audio.Window
+	step := func(ws []audio.Window, err error) {
+		t.Helper()
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, ws...)
+	}
+	if err := p.Silence(span(10, 11)); err != nil {
+		t.Fatal(err)
+	}
+	step(p.Open(span(25, 29)))
+	if len(got) != 0 {
+		t.Fatalf("open short of the first limit: windows %v", got)
+	}
+	step(p.Open(span(25, 31)))
+	if want := []audio.Window{win(0, 27.5, audio.CutSilence)}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("open past the first limit: windows %v, want %v", got, want)
+	}
+	step(p.Open(span(25, 60)))
+	if want := []audio.Window{win(0, 27.5, audio.CutSilence), win(25.5, 55.5, audio.CutLimit)}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("open past the second limit: windows %v, want %v", got, want)
+	}
+	for name, call := range map[string]func() error{
+		"an advance":                       func() error { _, err := p.Advance(61 * time.Second); return err },
+		"an end":                           func() error { _, err := p.End(61 * time.Second); return err },
+		"a silence inside it":              func() error { return p.Silence(span(26, 27)) },
+		"it, closed before its position":   func() error { return p.Silence(span(25, 59)) },
+		"another open silence":             func() error { _, err := p.Open(span(26, 61)); return err },
+		"it, open short of its position":   func() error { _, err := p.Open(span(25, 59)); return err },
+		"an open silence before its start": func() error { _, err := p.Open(span(24, 61)); return err },
+		"an empty open silence":            func() error { _, err := p.Open(span(25, 25)); return err },
+	} {
+		if err := call(); !errors.Is(err, audio.ErrRequest) {
+			t.Errorf("open from 25 s to 60 s, %s: %v, want ErrRequest", name, err)
+		}
+	}
+	if err := p.Silence(span(25, 70)); err != nil {
+		t.Fatalf("the open silence, closed: %v", err)
+	}
+	step(p.Advance(80 * time.Second))
+	step(p.End(90 * time.Second))
+	want, err := audio.PlanWindows(90*time.Second, []audio.Span{span(10, 11), span(25, 70)}, audio.Request{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(got, want.Windows) {
+		t.Errorf("windows %v, want PlanWindows' %v", got, want.Windows)
+	}
+	if _, err := p.Open(span(91, 92)); !errors.Is(err, audio.ErrRequest) {
+		t.Errorf("an open silence after the end: %v, want ErrRequest", err)
 	}
 }
