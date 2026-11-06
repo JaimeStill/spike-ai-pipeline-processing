@@ -11,11 +11,12 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
-// TestImageCapabilities checks that FFmpegImage's ffmpeg has what media will ask of it: the
-// filters scdet, select, and showinfo, listed and run together over a lavfi test source; the
-// protocols srt, rtmp, http, https, and udp for input and output; and HLS, which FFmpeg reads and
-// writes as a format, its demuxer and muxer, not as a protocol. It records whether the image has
-// the x11grab device and requires nothing of it.
+// TestImageCapabilities checks that FFmpegImage's ffmpeg has what media asks of it: the filters
+// scdet, select, and showinfo, listed and run together over a lavfi test source, and the filters
+// of media's run, settb, metadata, scale, format, and aresample beside select, listed and the
+// frames' chain run as media runs it; the protocols srt, rtmp, http, https, and udp for input and
+// output; and HLS, which FFmpeg reads and writes as a format, its demuxer and muxer, not as a
+// protocol. It records whether the image has the x11grab device and requires nothing of it.
 func TestImageCapabilities(t *testing.T) {
 	ffmpeg, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: audio.FFmpegImage}, audio.FFmpegSpec())
 	if err != nil {
@@ -40,7 +41,7 @@ func TestImageCapabilities(t *testing.T) {
 				have[f[1]] = true
 			}
 		}
-		for _, name := range []string{"scdet", "select", "showinfo"} {
+		for _, name := range []string{"scdet", "select", "showinfo", "settb", "metadata", "scale", "format", "aresample"} {
 			if !have[name] {
 				t.Errorf("the image's ffmpeg has no %s filter", name)
 			}
@@ -60,6 +61,25 @@ func TestImageCapabilities(t *testing.T) {
 		}
 		if n := strings.Count(stderr.String(), " pts_time:"); n != 10 {
 			t.Errorf("showinfo logged %d frames, want 10", n)
+		}
+		// The same ten frames through media's chain of frame filters, scaled to fit 80 pixels:
+		// metadata reports each frame select passes.
+		stderr.Reset()
+		err = ffmpeg.Run(t.Context(), tool.Invocation{
+			Args: []string{
+				"-nostdin", "-hide_banner", "-f", "lavfi", "-i", "testsrc=duration=1:rate=10:size=160x120",
+				"-vf", "select='gte(scene,0)',settb=AVTB,metadata=mode=print:key=lavfi.scene_score," +
+					"scale=w='min(iw,80)':h='min(ih,80)':force_original_aspect_ratio=decrease:" +
+					"flags=bicubic+accurate_rnd+full_chroma_int+bitexact,format=rgb24",
+				"-f", "null", "-",
+			},
+			Stderr: &stderr,
+		})
+		if err != nil {
+			t.Fatalf("%v: %s", err, stderr.String())
+		}
+		if n := strings.Count(stderr.String(), "lavfi.scene_score="); n != 10 {
+			t.Errorf("metadata reported %d frames, want 10", n)
 		}
 	})
 
