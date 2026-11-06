@@ -277,6 +277,57 @@ func TestTrackerWarming(t *testing.T) {
 	}
 }
 
+// TestTrackerThreshold feeds the gain-step variant a frame at a time: after the first second, the
+// threshold in force after each frame is the one it was decided against, so each silence's is the
+// one read after its first frame; the threshold moves with the gain step; after End it is the one
+// read after the last frame; and a fixed threshold is always the request's.
+func TestTrackerThreshold(t *testing.T) {
+	pcm := samplesOf(t, "speech-gain.wav")
+	tr, err := audio.NewTracker(audio.Request{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	const frameBytes = 2 * audio.SampleRate * int(audio.FrameLength) / int(time.Second)
+	var thresholds []float64
+	var silences []audio.Silence
+	for at := 0; at < len(pcm); at += frameBytes {
+		silences = append(silences, tr.Feed(pcm[at:min(at+frameBytes, len(pcm))])...)
+		thresholds = append(thresholds, tr.Threshold())
+	}
+	silences = append(silences, tr.End()...)
+	if got := tr.Threshold(); got != thresholds[len(thresholds)-1] {
+		t.Errorf("after End: %v dB, want the last frame's %v dB", got, thresholds[len(thresholds)-1])
+	}
+	if len(silences) == 0 {
+		t.Fatal("no silences")
+	}
+	for _, s := range silences {
+		first := int(s.Start / audio.FrameLength)
+		if first < 100 {
+			continue
+		}
+		if s.Threshold != thresholds[first] {
+			t.Errorf("silence %v: %v dB, but %v dB in force after its first frame", s.Span, s.Threshold, thresholds[first])
+		}
+	}
+	lo, hi := math.Inf(1), math.Inf(-1)
+	for _, v := range thresholds[100:] {
+		lo, hi = min(lo, v), max(hi, v)
+	}
+	if hi-lo < 6 {
+		t.Errorf("the threshold ranged %v to %v dB over a 12 dB gain step", lo, hi)
+	}
+	fixed, err := audio.NewTracker(audio.Request{Threshold: -42.5})
+	if err != nil {
+		t.Fatal(err)
+	}
+	before := fixed.Threshold()
+	fixed.Feed(pcm[:audio.SampleRate])
+	if after := fixed.Threshold(); before != -42.5 || after != -42.5 {
+		t.Errorf("fixed threshold %v and %v dB, want -42.5", before, after)
+	}
+}
+
 func TestNewTrackerRefuses(t *testing.T) {
 	for name, req := range map[string]audio.Request{
 		"negative minimum":               {MinSilence: -time.Second},

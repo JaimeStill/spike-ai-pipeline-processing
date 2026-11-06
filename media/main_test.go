@@ -3,11 +3,14 @@
 package media_test
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
 	"image/png"
+	"io"
 	"os"
 	"path/filepath"
 	"slices"
@@ -48,6 +51,11 @@ const (
 	// holdEnv, when set, is how many milliseconds the stand-in ffmpeg sleeps once it has written
 	// its output, before it exits.
 	holdEnv = "MEDIA_TEST_HOLD"
+	// missingEnv, when set to a or V, makes the stand-in ffmpeg refuse its map of that type, as
+	// ffmpeg does a reader's or a URL's whose source lacks the stream, and exit 1 before any output.
+	missingEnv = "MEDIA_TEST_MISSING"
+	// dockerServerEnv is the version the stand-in docker's daemon reports.
+	dockerServerEnv = "MEDIA_TEST_DOCKER_SERVER"
 )
 
 // standinFrame is a frame the stand-in ffmpeg takes: its time, in milliseconds, its scene score,
@@ -74,14 +82,19 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// run is one stand-in run, as the log records it.
+// run is one stand-in run, as the log records it: its program and arguments, and, for an ffmpeg
+// run whose input is pipe:0, the SHA-256 of what it read from its stdin.
 type run struct {
 	Program string   `json:"program"`
 	Args    []string `json:"args"`
+	Stdin   string   `json:"stdin,omitempty"`
 }
 
-// standin is the stand-in named name, ffmpeg or ffprobe.
+// standin is the stand-in named name, ffmpeg, ffprobe, or docker.
 func standin(name string, args []string) int {
+	if name == "docker" {
+		return dockerStandin(args)
+	}
 	if name != "ffmpeg" && name != "ffprobe" {
 		fmt.Fprintf(os.Stderr, "stand-in: no tool named %s\n", name)
 		return 2
@@ -90,13 +103,30 @@ func standin(name string, args []string) int {
 		fmt.Printf("%s version n%s Copyright (c) 2000-2026 the FFmpeg developers\n", name, os.Getenv(versionEnv))
 		return 0
 	}
-	if err := logRun(run{Program: name, Args: args}); err != nil {
+	r := run{Program: name, Args: args}
+	if name == "ffmpeg" && slices.Contains(args, "pipe:0") {
+		in, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 2
+		}
+		sum := sha256.Sum256(in)
+		r.Stdin = hex.EncodeToString(sum[:])
+	}
+	if err := logRun(r); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
 	}
 	if name == "ffprobe" {
 		fmt.Print(os.Getenv(probeEnv))
 		return 0
+	}
+	if m := os.Getenv(missingEnv); m != "" {
+		fmt.Fprintln(os.Stderr, "Stream map '' matches no streams.")
+		fmt.Fprintln(os.Stderr, "To ignore this, add a trailing '?' to the map.")
+		fmt.Fprintf(os.Stderr, "Failed to set value '0:%s:0' for option 'map': Invalid argument\n", m)
+		fmt.Fprintln(os.Stderr, "Error parsing options for output file pipe:1.")
+		return 1
 	}
 	if err := standinRun(args); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -187,6 +217,48 @@ func standinFrameOut(pattern string, i int, f standinFrame) error {
 	return os.Rename(path+".tmp", path)
 }
 
+// dockerStandin is the stand-in docker CLI: version prints dockerServerEnv's version; image
+// inspect finds every image present; stop and rm do nothing; and run logs its arguments as a run
+// of docker's and runs the stand-in its --entrypoint names on the arguments after the image, in
+// this process, its stdin the CLI's.
+func dockerStandin(args []string) int {
+	if len(args) == 0 {
+		return 2
+	}
+	switch args[0] {
+	case "version":
+		fmt.Println(os.Getenv(dockerServerEnv))
+		return 0
+	case "image":
+		fmt.Println("sha256:" + strings.Repeat("0", 64))
+		return 0
+	case "stop", "rm":
+		return 0
+	case "run":
+	default:
+		fmt.Fprintf(os.Stderr, "docker: unknown command %q\n", args[0])
+		return 2
+	}
+	entrypoint, i := "", 1
+	for ; i < len(args) && strings.HasPrefix(args[i], "--"); i++ {
+		if v, ok := strings.CutPrefix(args[i], "--entrypoint="); ok {
+			entrypoint = v
+		}
+	}
+	if i == len(args) {
+		fmt.Fprintln(os.Stderr, "docker: run: no image")
+		return 125
+	}
+	rest := args[i+1:]
+	if len(rest) != 1 || rest[0] != "-version" {
+		if err := logRun(run{Program: "docker", Args: args}); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 2
+		}
+	}
+	return standin(entrypoint, rest)
+}
+
 // logRun appends r to the log logEnv names.
 func logRun(r run) error {
 	f, err := os.OpenFile(os.Getenv(logEnv), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
@@ -200,8 +272,9 @@ func logRun(r run) error {
 	return f.Close()
 }
 
-// installStandins links the stand-ins as ffmpeg and ffprobe in a directory of their own, makes it
-// the whole PATH, points the log at a file of the test's, and sets the stand-ins' version.
+// installStandins links the stand-ins as ffmpeg, ffprobe, and docker in a directory of their own,
+// makes it the whole PATH, points the log at a file of the test's, and sets the stand-ins'
+// version and the stand-in docker daemon's.
 func installStandins(t *testing.T, version string) {
 	t.Helper()
 	exe, err := os.Executable()
@@ -209,7 +282,7 @@ func installStandins(t *testing.T, version string) {
 		t.Fatal(err)
 	}
 	dir := t.TempDir()
-	for _, name := range []string{"ffmpeg", "ffprobe"} {
+	for _, name := range []string{"ffmpeg", "ffprobe", "docker"} {
 		if err := os.Symlink(exe, filepath.Join(dir, name)); err != nil {
 			t.Fatal(err)
 		}
@@ -217,6 +290,7 @@ func installStandins(t *testing.T, version string) {
 	t.Setenv("PATH", dir)
 	t.Setenv(logEnv, filepath.Join(t.TempDir(), "runs.log"))
 	t.Setenv(versionEnv, version)
+	t.Setenv(dockerServerEnv, "29.0.1")
 }
 
 // runs returns the runs the log records, in order.
@@ -254,6 +328,27 @@ func standinConfig(t *testing.T) media.Config {
 		return tl
 	}
 	return media.Config{FFmpeg: build(audio.FFmpegSpec()), FFprobe: build(audio.FFprobeSpec())}
+}
+
+// containerStreamer builds a Streamer over the stand-ins through the container runner, the
+// stand-in docker running them, its ffmpeg's image joining network, none when empty; the
+// stand-ins must be installed.
+func containerStreamer(t *testing.T, network string) *media.Streamer {
+	t.Helper()
+	build := func(spec tool.Spec) *tool.Tool {
+		spec.Minimum = "1"
+		spec.KillAfter = time.Second
+		tl, err := tool.NewContainer(t.Context(), "", tool.Image{Ref: audio.FFmpegImage, Network: network}, spec)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tl
+	}
+	s, err := media.NewStreamer(media.Config{FFmpeg: build(audio.FFmpegSpec()), FFprobe: build(audio.FFprobeSpec())})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return s
 }
 
 // standinStreamer installs the stand-ins at 9.0.2 and builds a Streamer over them.

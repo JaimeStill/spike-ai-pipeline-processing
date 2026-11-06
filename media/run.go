@@ -29,10 +29,13 @@ import (
 // as it is complete. The stream is lazy: nothing runs, not even the request's validation, until it
 // is ranged over.
 //
-// Ranging over it validates req, an invalid one an error wrapping ErrRequest. It probes the file
-// through ffprobe for its first audio stream and first video stream, an attached picture not
-// counted, and refuses one with neither, with ErrNoMedia, before ffmpeg runs. Then one ffmpeg run
-// reads the file, at real time when req.Source.Paced says, and writes:
+// Ranging over it validates req, an invalid one an error wrapping ErrRequest, as is a URL source
+// when ffmpeg runs in a container whose image names no network. For a file source, it probes the
+// file through ffprobe for its first audio stream and first video stream, an attached picture not
+// counted, and refuses one with neither, or without one req.Source.Tracks requires, with
+// ErrNoMedia, before ffmpeg runs; a reader's or a URL's run takes the streams Tracks names, by
+// type, unprobed. Then one ffmpeg run reads the source, allowed only its protocols, a file at real
+// time when req.Source.Paced says, and writes:
 //
 //   - its audio stream, resampled to 16 kHz, audio.SampleRate, downmixed to mono, as 16-bit PCM on
 //     its stdout, as audio's tracker decodes it. A Tracker of req's settings is fed the PCM as it
@@ -44,8 +47,8 @@ import (
 //   - the frames of its video stream that select takes: the first, each whose scene score is
 //     past req.SceneThreshold, and each req.MaxGap or more after the last taken. Each is scaled to
 //     fit req.MaxSide, when set, converted to RGB, and written as PNG into a hidden directory the
-//     run makes in the file's directory, the run's working directory, through the image2 muxer's
-//     atomic writing, so a PNG is whole once it has its name.
+//     run makes, in the file's directory or, for a reader or a URL, in the media directory,
+//     through the image2 muxer's atomic writing, so a PNG is whole once it has its name.
 //   - each taken frame's time and scene score to its stderr, through the metadata filter, which
 //     the stream reads as they come. A frame's reason is ReasonFirst for the first; ReasonScene
 //     for one whose score is past the threshold; and ReasonInterval for the others, taken for the
@@ -58,7 +61,8 @@ import (
 // and renamed to its SHA-256 name just before it is yielded, so the media directory holds only
 // whole files, and only the ones the stream yielded.
 //
-// A refused request or a failed probe yields one error with a zero Event, and the stream ends.
+// A refused request or a failed probe yields one error with a zero Event, and the stream ends, as
+// does a reader or a URL that lacks a stream the run takes, which ffmpeg refuses as it opens it.
 // When ctx ends, ffmpeg is stopped, through either runner, and the stream yields ctx's error once,
 // with a zero Event, and ends. Breaking out of the range stops the run, and the loop returns once
 // it has ended. A run that fails, or a window or frame the stream can't write, ends the stream
@@ -71,11 +75,19 @@ func (s *Streamer) Events(ctx context.Context, req Request) iter.Seq2[Event, err
 			yield(Event{}, err)
 			return
 		}
+		if err := s.checkNetwork(c); err != nil {
+			yield(Event{}, err)
+			return
+		}
 		if err := ctx.Err(); err != nil {
 			yield(Event{}, err)
 			return
 		}
-		st, err := s.probe(ctx, c.path)
+		if c.path == "" {
+			s.run(ctx, c, unprobed(c.tracks), yield)
+			return
+		}
+		st, err := s.probe(ctx, c.path, c.tracks)
 		if err != nil {
 			if cerr := ctx.Err(); cerr != nil {
 				err = cerr
@@ -87,38 +99,57 @@ func (s *Streamer) Events(ctx context.Context, req Request) iter.Seq2[Event, err
 	}
 }
 
+// checkNetwork refuses a URL source when ffmpeg runs in a container that joins no network, which
+// --network=none would leave unable to reach it, with an error wrapping ErrRequest. A URL run
+// through the exec runner, or a file's or a reader's through either, needs no network.
+func (s *Streamer) checkNetwork(c checked) error {
+	if c.url == "" {
+		return nil
+	}
+	if image, ok := s.ffmpeg.Image(); ok && (image.Network == "" || image.Network == "none") {
+		return fmt.Errorf("media: a URL source through the container runner needs a docker network, and the ffmpeg tool's image names none: %w", ErrRequest)
+	}
+	return nil
+}
+
 // framePattern is the name the image2 muxer gives each frame in the run's directory, numbered from
 // 0 in the order the frames are taken.
 const framePattern = "frame-%08d.png"
 
-// args returns ffmpeg's arguments for a run over the file of c with the streams st, writing its
-// frames into scratch: one input, read at real time when paced, and an output for each stream
-// st has, the audio's PCM to stdout and the video's frames to PNG files.
+// args returns ffmpeg's arguments for a run over the source of c with the streams st, writing its
+// frames into scratch: one input, a file read at real time when paced, allowed only its own
+// protocols, and an output for each stream st takes, the audio's PCM to stdout and the video's
+// frames to PNG files.
 func args(c checked, st streams, scratch string) []string {
 	a := []string{"-nostdin", "-hide_banner", "-nostats", "-loglevel", "info"}
 	// A decoder's frame threads hold back its output by a frame a thread: measured on the
 	// fixture, at real time, 3.3 s of FLAC and about 1 s of video. The audio decodes in one
-	// thread, which is cheap; a paced source's video decodes in slice threads, which add no
-	// delay, and an unpaced one's keeps frame threads, for throughput. Threads change no output.
+	// thread, which is cheap; a live source's video, a paced file's, a reader's, or a URL's,
+	// decodes in slice threads, which add no delay, and an unpaced file's keeps frame threads,
+	// for throughput. Threads change no output.
 	a = append(a, "-threads:a", "1")
 	if c.paced {
-		a = append(a, "-readrate", "1", "-thread_type:v", "slice")
+		a = append(a, "-readrate", "1")
+	}
+	if c.live() {
+		a = append(a, "-thread_type:v", "slice")
 	}
 	// Bit-exact decoding, so the same source gives the same samples and pixels whatever the
-	// build's CPU paths, through either runner.
-	a = append(a, "-flags:a", "+bitexact", "-flags:v", "+bitexact", "-i", c.path)
-	if st.audio >= 0 {
+	// build's CPU paths, through either runner. The input may open only its own protocols, and
+	// those it is carried over: a file only files, a reader only its pipe, and a URL its scheme's.
+	a = append(a, "-flags:a", "+bitexact", "-flags:v", "+bitexact", "-protocol_whitelist", c.protocols, "-i", c.input())
+	if st.audio != "" {
 		// audio's tracker decodes with these arguments, which audio's windows share.
 		a = append(a,
-			"-map", "0:"+strconv.Itoa(st.audio),
+			"-map", st.audio,
 			"-af", fmt.Sprintf("aresample=%d", audio.SampleRate),
 			"-ac", "1", "-ar", strconv.Itoa(audio.SampleRate), "-c:a", "pcm_s16le",
 			"-flags:a", "+bitexact", "-fflags", "+bitexact", "-f", "s16le", "pipe:1",
 		)
 	}
-	if st.video >= 0 {
+	if st.video != "" {
 		a = append(a,
-			"-map", "0:"+strconv.Itoa(st.video),
+			"-map", st.video,
 			"-vf", videoFilter(c),
 			// One encoder thread: with frame threads, the PNG encoder holds a frame until the
 			// frames after it fill its threads, which a paced source's next scene may be minutes
@@ -164,8 +195,17 @@ type item struct {
 // goroutine waits for each frame's PNG and writes it into the media directory. Each hands its
 // items to one channel, which the stream reads; a writer that waits on it holds ffmpeg back, so a
 // slow consumer paces the run.
+//
+// A file's run works in the file's directory, which the container runner mounts, and makes its
+// directory of frames there, since ffmpeg reads the file by its path and the runner mounts one
+// directory. A reader's or a URL's has no directory of its own: its directory of frames, made in
+// the media directory, is its working directory, and the only one the container runner mounts.
 func (s *Streamer) run(ctx context.Context, c checked, st streams, yield func(Event, error) bool) {
-	scratch, err := os.MkdirTemp(filepath.Dir(c.path), ".media-*")
+	parent := c.dir
+	if c.path != "" {
+		parent = filepath.Dir(c.path)
+	}
+	scratch, err := os.MkdirTemp(parent, ".media-*")
 	if err != nil {
 		yield(Event{}, fmt.Errorf("media: the run's directory of frames: %w", err))
 		return
@@ -175,7 +215,7 @@ func (s *Streamer) run(ctx context.Context, c checked, st streams, yield func(Ev
 	items := make(chan item)
 	r := &runner{work: work, cancel: cancel, items: items, dir: c.dir}
 	var aw *audioWriter
-	if st.audio >= 0 {
+	if st.audio != "" {
 		// The request was checked: neither refuses it.
 		planner, _ := audio.NewPlanner(c.audio)
 		tracker, _ := audio.NewTracker(c.audio)
@@ -183,7 +223,7 @@ func (s *Streamer) run(ctx context.Context, c checked, st streams, yield func(Ev
 	}
 	fw := &frameWatcher{r: r, scratch: scratch, scene: c.scene, gap: c.gap, wake: make(chan struct{}, 1), ended: make(chan struct{})}
 	var wg sync.WaitGroup
-	if st.video >= 0 {
+	if st.video != "" {
 		wg.Go(fw.watch)
 	} else {
 		// No video, no frames to watch for.
@@ -191,25 +231,36 @@ func (s *Streamer) run(ctx context.Context, c checked, st streams, yield func(Ev
 	}
 	go func() {
 		defer close(items)
-		err := s.ffmpeg.Run(work, tool.Invocation{
-			Args:   args(c, st, scratch),
-			Dir:    filepath.Dir(c.path),
-			Stdout: aw.writer(),
-			Stderr: fw.stderr(),
-		})
+		dir := scratch
+		if c.path != "" {
+			dir = filepath.Dir(c.path)
+		}
+		inv := tool.Invocation{Args: args(c, st, scratch), Dir: dir, Stdout: aw.writer(), Stderr: fw.stderr()}
+		if c.reader != nil {
+			inv.Stdin = c.reader
+		}
+		err := s.ffmpeg.Run(work, inv)
 		fw.lines.flush()
 		if err == nil && fw.lines.err != nil {
 			err = fmt.Errorf("its report of a frame: %w", fw.lines.err)
 		}
-		if err != nil {
+		switch {
+		case err != nil && fw.missing != "":
+			r.note(fmt.Errorf("media: ffmpeg reading %s: the source has no %s stream: %w", c.name(), fw.missing, ErrNoMedia))
+		case err != nil:
+			// ffmpeg's refusal of a protocol the run doesn't allow, such as a playlist's segment's,
+			// comes lines before its last, which says only that the input failed.
+			if refused := fw.refused; refused != "" {
+				err = fmt.Errorf("%w: %s", err, refused)
+			}
 			if last := fw.lines.last; last != "" {
 				err = fmt.Errorf("%w: %s", err, last)
 			}
-			r.fail(fmt.Errorf("media: ffmpeg reading %s: %w", c.path, err))
-		} else if aw != nil {
+			r.note(fmt.Errorf("media: ffmpeg reading %s: %w", c.name(), err))
+		case aw != nil:
 			aw.end()
 		}
-		if st.video >= 0 {
+		if st.video != "" {
 			fw.end(err == nil)
 		}
 		wg.Wait()
@@ -277,12 +328,18 @@ func (r *runner) send(it item) bool {
 
 // fail records the run's first failure and ends the run, stopping ffmpeg.
 func (r *runner) fail(err error) {
+	r.note(err)
+	r.cancel()
+}
+
+// note records the run's first failure once ffmpeg has exited, without ending the run, so the
+// frames whose PNG is whole are still handed to the stream before its error.
+func (r *runner) note(err error) {
 	r.mu.Lock()
 	if r.failure == nil {
 		r.failure = err
 	}
 	r.mu.Unlock()
-	r.cancel()
 }
 
 // err returns the run's first failure.
@@ -338,6 +395,13 @@ func removeTemp(path string) {
 	}
 }
 
+// frameSamples is the samples in the tracker's frame, audio.FrameLength at audio.SampleRate, and
+// frameBytes their bytes.
+const (
+	frameSamples = int64(audio.SampleRate) * int64(audio.FrameLength) / int64(time.Second)
+	frameBytes   = 2 * frameSamples
+)
+
 // arrival is when the stream's bytes up to end, counted from its start, arrived.
 type arrival struct {
 	end int64
@@ -362,6 +426,10 @@ type audioWriter struct {
 	base     int64
 	received int64
 	arrivals []arrival
+	// thresholds holds the threshold in force after each whole frame from the frame base is in
+	// on, the one the tracker decided it against: a window cut at the limit names its last
+	// frame's.
+	thresholds []float64
 	// silences are the silences found that begin at the start of the window not yet fixed or later.
 	silences []audio.Silence
 	index    int
@@ -382,13 +450,22 @@ func (w *audioWriter) Write(p []byte) (int, error) {
 		return len(p), nil
 	}
 	w.pcm = append(w.pcm, p...)
-	w.received += int64(len(p))
-	w.arrivals = append(w.arrivals, arrival{end: w.received, at: time.Now()})
-	found := w.tracker.Feed(p)
-	w.silences = append(w.silences, found...)
-	if err := w.give(found); err != nil {
-		w.stop(err)
-		return len(p), nil
+	w.arrivals = append(w.arrivals, arrival{end: w.received + int64(len(p)), at: time.Now()})
+	// The tracker is fed a frame at a time, so the threshold read after each whole frame is the
+	// one it decided that frame against.
+	for rest := p; len(rest) > 0; {
+		n := int(min(int64(len(rest)), frameBytes-w.received%frameBytes))
+		found := w.tracker.Feed(rest[:n])
+		w.received += int64(n)
+		rest = rest[n:]
+		if w.received%frameBytes == 0 {
+			w.thresholds = append(w.thresholds, w.tracker.Threshold())
+		}
+		w.silences = append(w.silences, found...)
+		if err := w.give(found); err != nil {
+			w.stop(err)
+			return len(p), nil
+		}
 	}
 	windows, err := w.planner.Advance(w.tracker.Position())
 	if err != nil {
@@ -479,14 +556,24 @@ func (w *audioWriter) cut(windows []audio.Window) {
 }
 
 // cutThreshold returns the threshold win was cut under: the fixed threshold; or, with a rolling
-// one, the threshold of the silence whose middle, taken up to the window's limit as the planner
-// takes it, is the window's end; or zero for a window no silence ended.
+// one, for a window cut at a silence, the threshold of the silence whose middle, taken up to the
+// window's limit as the planner takes it, is the window's end; for one cut at the end, the
+// tracker's last, which End decided the last frame against; and for one cut at the limit, the
+// one its last sample's frame was decided against.
 func (w *audioWriter) cutThreshold(win audio.Window) float64 {
-	if w.fixed {
+	switch {
+	case w.fixed:
 		return w.threshold
-	}
-	if win.Cut != audio.CutSilence {
-		return 0
+	case win.Cut == audio.CutEnd:
+		return w.tracker.Threshold()
+	case win.Cut == audio.CutLimit:
+		// The planner fixes a window at its limit only once the tracker has decided past it, so
+		// its last sample's frame is whole.
+		frame := (audio.Sample(win.End)-1)/frameSamples - w.base/frameSamples
+		if frame >= 0 && frame < int64(len(w.thresholds)) {
+			return w.thresholds[frame]
+		}
+		return w.tracker.Threshold()
 	}
 	limit := win.Start + audio.WindowLimit
 	for _, s := range slices.Backward(w.silences) {
@@ -510,10 +597,13 @@ func (w *audioWriter) arrivedBy(n int64) time.Time {
 	return w.arrivals[len(w.arrivals)-1].at
 }
 
-// drop forgets the PCM, arrivals, and silences before start, the next window's.
+// drop forgets the PCM, arrivals, silences, and thresholds before start, the next window's.
 func (w *audioWriter) drop(start time.Duration) {
 	first := audio.Sample(start)
 	w.pcm = append(w.pcm[:0], w.pcm[2*(first-w.base):]...)
+	if n := min(first/frameSamples-w.base/frameSamples, int64(len(w.thresholds))); n > 0 {
+		w.thresholds = append(w.thresholds[:0], w.thresholds[n:]...)
+	}
 	w.base = first
 	i := 0
 	for i < len(w.arrivals) && w.arrivals[i].end <= 2*first {
@@ -540,6 +630,12 @@ type announced struct {
 var (
 	frameReport = regexp.MustCompile(`^\[Parsed_metadata_\d+ @ [^\]]*\] frame:\s*\d+\s+pts:\s*(-?\d+)\s`)
 	sceneScore  = regexp.MustCompile(`^\[Parsed_metadata_\d+ @ [^\]]*\] lavfi\.scene_score=(\S+)$`)
+	// missingStream matches ffmpeg's refusal of a reader's or a URL's map, by type, that matches
+	// no stream of the source: "Stream map '' matches no streams." comes first, its map left
+	// blank by ffmpeg 9.0.2, and then this line, which names it.
+	missingStream = regexp.MustCompile(`^Failed to set value '0:([aV]):0' for option 'map'`)
+	// refusedProtocol matches ffmpeg's refusal of a protocol its -protocol_whitelist doesn't hold.
+	refusedProtocol = regexp.MustCompile(`Protocol '[^']*' not on whitelist '[^']*'`)
 )
 
 // frameWatcher reads ffmpeg's stderr for the frames it takes, and waits for each one's PNG in the
@@ -553,10 +649,15 @@ type frameWatcher struct {
 	lines   lineWriter
 
 	// pts is the pts of the frame whose score line is next, -1 when none; count the frames
-	// announced, and previous the last one's time. They are the stderr goroutine's alone.
+	// announced, and previous the last one's time; missing the type of a stream the run takes
+	// that ffmpeg found the source lacks, audio or video, empty when none; and refused ffmpeg's
+	// first refusal of a protocol the run doesn't allow, empty when none. They are the stderr
+	// goroutine's alone until ffmpeg has exited.
 	pts      int64
 	count    int
 	previous time.Duration
+	missing  string
+	refused  string
 
 	mu      sync.Mutex
 	pending []announced
@@ -572,8 +673,17 @@ func (f *frameWatcher) stderr() *lineWriter {
 	return &f.lines
 }
 
-// line reads one line of ffmpeg's stderr: a frame's pts, or its score, which announces it.
+// line reads one line of ffmpeg's stderr: a frame's pts, or its score, which announces it; its
+// refusal of a stream the run maps that the source lacks; or its refusal of a protocol.
 func (f *frameWatcher) line(s string) error {
+	if m := missingStream.FindStringSubmatch(s); m != nil {
+		f.missing = map[string]string{"a": "audio", "V": "video"}[m[1]]
+		return nil
+	}
+	if m := refusedProtocol.FindString(s); m != "" && f.refused == "" {
+		f.refused = m
+		return nil
+	}
 	if m := frameReport.FindStringSubmatch(s); m != nil {
 		pts, err := strconv.ParseInt(m[1], 10, 64)
 		if err != nil {

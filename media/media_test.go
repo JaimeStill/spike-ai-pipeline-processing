@@ -158,6 +158,19 @@ func checkNoScratch(t *testing.T, dir string) {
 // samples, at req's settings, and returns them with each one's WAV.
 func expectedWindows(t *testing.T, req audio.Request) ([]audio.Window, [][]byte) {
 	t.Helper()
+	windows, wavs, _ := expectedThresholds(t, req)
+	return windows, wavs
+}
+
+// frameBytes is the bytes of the tracker's frame of PCM.
+const frameBytes = 2 * audio.SampleRate * int(audio.FrameLength) / int(time.Second)
+
+// expectedThresholds is expectedWindows, and the threshold each window was cut under, as the
+// tracker, fed a frame at a time, gives them: the fixed threshold; for a window cut at a silence,
+// the one that silence, taken up to the window's limit, opened under; for one cut at the limit,
+// the one in force after its last sample's frame; and for the last, the one in force at the end.
+func expectedThresholds(t *testing.T, req audio.Request) ([]audio.Window, [][]byte, []float64) {
+	t.Helper()
 	data, err := os.ReadFile(gainWAV)
 	if err != nil {
 		t.Fatal(err)
@@ -167,8 +180,15 @@ func expectedWindows(t *testing.T, req audio.Request) ([]audio.Window, [][]byte)
 	if err != nil {
 		t.Fatal(err)
 	}
+	var silences []audio.Silence
+	var after []float64
+	for at := 0; at < len(pcm); at += frameBytes {
+		silences = append(silences, tr.Feed(pcm[at:min(at+frameBytes, len(pcm))])...)
+		after = append(after, tr.Threshold())
+	}
+	silences = append(silences, tr.End()...)
 	var spans []audio.Span
-	for _, s := range append(tr.Feed(pcm), tr.End()...) {
+	for _, s := range silences {
 		spans = append(spans, s.Span)
 	}
 	plan, err := audio.PlanWindows(tr.Duration(), spans, req)
@@ -176,10 +196,24 @@ func expectedWindows(t *testing.T, req audio.Request) ([]audio.Window, [][]byte)
 		t.Fatal(err)
 	}
 	var wavs [][]byte
+	var thresholds []float64
 	for _, w := range plan.Windows {
 		wavs = append(wavs, audio.WAV(pcm[2*audio.Sample(w.Start):2*audio.Sample(w.End)]))
+		threshold := tr.Threshold()
+		switch w.Cut {
+		case audio.CutLimit:
+			threshold = after[(audio.Sample(w.End)-1)*2/int64(frameBytes)]
+		case audio.CutSilence:
+			for _, s := range silences {
+				end := min(s.End, w.Start+audio.WindowLimit)
+				if s.Start >= w.Start && s.Start+(end-s.Start)/2 == w.End {
+					threshold = s.Threshold
+				}
+			}
+		}
+		thresholds = append(thresholds, threshold)
 	}
-	return plan.Windows, wavs
+	return plan.Windows, wavs, thresholds
 }
 
 // TestNewStreamer refuses a missing tool and one older than 9.0.
@@ -212,6 +246,26 @@ func TestEventsRefused(t *testing.T) {
 	for name, change := range map[string]func(*media.Request){
 		"no source":            func(r *media.Request) { r.Source = media.Source{} },
 		"paced without a file": func(r *media.Request) { r.Source = media.Source{Paced: true} },
+		"paced reader":         func(r *media.Request) { r.Source = media.Source{Reader: strings.NewReader("x"), Paced: true} },
+		"paced URL":            func(r *media.Request) { r.Source = media.Source{URL: "srt://127.0.0.1:9000", Paced: true} },
+		"file and reader":      func(r *media.Request) { r.Source.Reader = strings.NewReader("x") },
+		"file and URL":         func(r *media.Request) { r.Source.URL = "udp://127.0.0.1:9000" },
+		"reader and URL": func(r *media.Request) {
+			r.Source = media.Source{Reader: strings.NewReader("x"), URL: "udp://127.0.0.1:9000"}
+		},
+		"tracks below":         func(r *media.Request) { r.Source.Tracks = -1 },
+		"tracks above":         func(r *media.Request) { r.Source.Tracks = media.TracksVideo + 1 },
+		"rtsp":                 func(r *media.Request) { r.Source = media.Source{URL: "rtsp://127.0.0.1:8554/live"} },
+		"RTSP":                 func(r *media.Request) { r.Source = media.Source{URL: "RTSP://127.0.0.1:8554/live"} },
+		"rtsps":                func(r *media.Request) { r.Source = media.Source{URL: "rtsps://127.0.0.1:8322/live"} },
+		"file URL":             func(r *media.Request) { r.Source = media.Source{URL: "file:///etc/passwd"} },
+		"rtmps":                func(r *media.Request) { r.Source = media.Source{URL: "rtmps://127.0.0.1/live/s"} },
+		"tcp":                  func(r *media.Request) { r.Source = media.Source{URL: "tcp://127.0.0.1:9000"} },
+		"crypto":               func(r *media.Request) { r.Source = media.Source{URL: "crypto+http://127.0.0.1/s.ts"} },
+		"no scheme":            func(r *media.Request) { r.Source = media.Source{URL: "127.0.0.1:9000"} },
+		"no host":              func(r *media.Request) { r.Source = media.Source{URL: "http:///live.m3u8"} },
+		"opaque":               func(r *media.Request) { r.Source = media.Source{URL: "udp:127.0.0.1:9000"} },
+		"unparsable":           func(r *media.Request) { r.Source = media.Source{URL: "http://[::1"} },
 		"no media directory":   func(r *media.Request) { r.Dir = "" },
 		"missing directory":    func(r *media.Request) { r.Dir = filepath.Join(dir, "missing") },
 		"directory is a file":  func(r *media.Request) { r.Dir = file },
@@ -274,7 +328,7 @@ func TestEventsNoMedia(t *testing.T) {
 func TestEventsStandin(t *testing.T) {
 	s := standinStreamer(t)
 	setStandin(t, probeBoth, sceneFrames)
-	wantWindows, wavs := expectedWindows(t, audio.Request{})
+	wantWindows, wavs, wantThresholds := expectedThresholds(t, audio.Request{})
 	for _, paced := range []bool{false, true} {
 		t.Run(map[bool]string{false: "unpaced", true: "paced"}[paced], func(t *testing.T) {
 			path := source(t)
@@ -332,11 +386,8 @@ func TestEventsStandin(t *testing.T) {
 				if w.SeamBefore != before || w.SeamAfter != after {
 					t.Errorf("window %d's seams %v and %v, want %v and %v", i, w.SeamBefore, w.SeamAfter, before, after)
 				}
-				switch {
-				case w.Cut == audio.CutSilence && (w.Threshold >= 0 || w.Threshold < -120):
-					t.Errorf("window %d, cut at a silence, names threshold %v dB", i, w.Threshold)
-				case w.Cut != audio.CutSilence && w.Threshold != 0:
-					t.Errorf("window %d, cut at the %s, names threshold %v dB, want 0", i, w.Cut, w.Threshold)
+				if w.Threshold != wantThresholds[i] || w.Threshold >= 0 || w.Threshold < -120 {
+					t.Errorf("window %d, cut at the %s, names threshold %v dB, want %v dB", i, w.Cut, w.Threshold, wantThresholds[i])
 				}
 				if e.Arrived.IsZero() || (i > 0 && e.Arrived.Before(ws[i-1].Arrived)) {
 					t.Errorf("window %d arrived at %v, before window %d", i, e.Arrived, i-1)
@@ -350,7 +401,7 @@ func TestEventsStandin(t *testing.T) {
 			}
 			args := strings.Join(r[1].Args, " ")
 			for _, want := range []string{
-				"-i " + path,
+				"-protocol_whitelist file -i " + path,
 				"-map 0:1 -af aresample=16000 -ac 1 -ar 16000 -c:a pcm_s16le",
 				"-f s16le pipe:1",
 				"-map 0:0 -vf select='eq(n,0)+gt(scene,0.2)+gte(t-prev_selected_t,10)',settb=AVTB,metadata=mode=print:key=lavfi.scene_score,",
@@ -381,6 +432,30 @@ func TestEventsFixedThreshold(t *testing.T) {
 		if e.Window == nil || e.Window.Span != wantWindows[i].Span || e.Window.Threshold != -45 {
 			t.Errorf("event %d: %+v, want window %v at -45 dB", i, e.Window, wantWindows[i].Span)
 		}
+	}
+}
+
+// TestEventsLimitThreshold streams the gain fixture's audio with no silence long enough to end a
+// window: each window cut at the limit names the rolling threshold its last sample's frame was
+// decided against, and the last the one in force at the end, which the gain step moves.
+func TestEventsLimitThreshold(t *testing.T) {
+	s := standinStreamer(t)
+	setStandin(t, probeAudio, nil)
+	const minSilence = 20 * time.Second
+	wantWindows, _, wantThresholds := expectedThresholds(t, audio.Request{MinSilence: minSilence})
+	events := collect(t, s.Events(t.Context(), media.Request{Source: media.Source{File: source(t)}, Dir: t.TempDir(), MinSilence: minSilence}))
+	if len(events) != len(wantWindows) || len(events) < 3 {
+		t.Fatalf("%d events, want %d windows, at least 3", len(events), len(wantWindows))
+	}
+	for i, e := range events {
+		w := e.Window
+		if w == nil || w.Span != wantWindows[i].Span || w.Threshold != wantThresholds[i] || w.Threshold >= 0 {
+			t.Errorf("event %d: %+v, want window %v cut at the %s under %v dB", i, w, wantWindows[i].Span, wantWindows[i].Cut, wantThresholds[i])
+		}
+	}
+	if first, last := events[0].Window, events[len(events)-1].Window; first.Cut != audio.CutLimit || last.Cut != audio.CutEnd || first.Threshold == last.Threshold {
+		t.Errorf("first window cut at the %s under %v dB, last at the %s under %v dB; want the limit and the end, the gain step between",
+			first.Cut, first.Threshold, last.Cut, last.Threshold)
 	}
 }
 

@@ -58,6 +58,7 @@
 //   - [Image] is a container tool's image, pinned by digest, and its relaxations of the lockdown.
 //   - [Tool.Name] returns the program's name, or the script's.
 //   - [Tool.Version] returns the version found at construction.
+//   - [Tool.Image] returns a container tool's Image, its Network included.
 //   - [Tool.Run] runs the program once under the caller's context.
 //   - [ExitError] reports a program that exited nonzero: its name, exit code, and stderr tail.
 //   - [VersionError] reports a tool its constructor refused over its version.

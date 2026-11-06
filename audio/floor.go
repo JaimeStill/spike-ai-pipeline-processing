@@ -242,6 +242,20 @@ func (t *Tracker) Position() time.Duration {
 	return frameTime(t.decided)
 }
 
+// Threshold returns the threshold in force now, in dB relative to full scale: the request's fixed
+// Threshold, or the rolling one, the Percentile of the energy of the frames in the FloorWindow up
+// to the newest plus the Margin. Once the first second has passed, it is the threshold the newest
+// whole frame was decided against, so a caller that feeds the stream a frame at a time reads each
+// frame's; before then it is the threshold the warming frames would be decided against were the
+// stream to end now, which End decides them against. After End, it is the threshold the last
+// frame was decided against. Before any frame, the rolling threshold is -120 dB plus the Margin.
+func (t *Tracker) Threshold() float64 {
+	if t.settings.fixed {
+		return float64(t.settings.threshold) / 100
+	}
+	return float64(t.threshold()) / 100
+}
+
 // frameTime is the stream time frame i starts at.
 func frameTime(i int) time.Duration { return time.Duration(i) * FrameLength }
 
