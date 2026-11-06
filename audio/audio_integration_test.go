@@ -11,24 +11,9 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
 )
 
-// speechUtterances are the durations of the fixture's utterances, LibriSpeech dev-clean
-// 2277-149896-0000 to 0003, in milliseconds, read twice; speechGap is the digital silence after
-// each but the last.
-var (
-	speechUtterances = []time.Duration{6590, 7145, 4835, 2840, 6590, 7145, 4835, 2840}
-	speechGap        = time.Second
-)
-
 // speechGaps returns the fixture's inserted gaps, in order, and its duration.
 func speechGaps() (gaps []audio.Span, duration time.Duration) {
-	for i, d := range speechUtterances {
-		duration += d * time.Millisecond
-		if i < len(speechUtterances)-1 {
-			gaps = append(gaps, audio.Span{Start: duration, End: duration + speechGap})
-			duration += speechGap
-		}
-	}
-	return gaps, duration
+	return speechLayout(speechUtterances, 1)
 }
 
 // TestSpeech probes the speech fixture through both runners, detects its silences, and plans its

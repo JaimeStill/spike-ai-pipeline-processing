@@ -86,6 +86,16 @@ run = "scripts/fixtures-onenote.sh"
 description = "Rebuild audio's speech fixture from ~/docs' LibriSpeech utterances; checks sources and outputs by SHA-256"
 run = "scripts/fixtures-audio.sh"
 
+# The streams fixtures in audio/testdata, rebuilt from audio's committed speech fixture through the
+# host's ffmpeg: an audio-and-video fixture of the speech beside a generated test pattern with known
+# scene cuts, and two level-change variants of the speech, a gain step and added noise, with their
+# truth. Each source and output is checked against the testdata README's SHA-256, and the cuts and
+# fixed-threshold silences against the truth. The check never runs it, and reads the committed
+# fixtures.
+[tasks."fixtures:streams"]
+description = "Rebuild the streams fixtures from audio's speech fixture; checks sources and outputs by SHA-256"
+run = "scripts/fixtures-streams.sh"
+
 # The email package's built .msg, rebuilt by mail's fixtures generator at its tag from an .eml
 # source that attaches this repository's own office fixtures. It needs network access and installs
 # .NET through mise; the check never runs it, and reads the committed .msg and its MANIFEST.
