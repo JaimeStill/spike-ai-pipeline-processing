@@ -8,17 +8,18 @@ Go builds only what the layer must own. Mature system tools do the specialized w
 tool contract this layer defines in its `tool` package, as herald's processing layer did: an exec
 runner for binaries and scripts, and a container runner for pinned images. The tools the layer's
 adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
-correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
-office documents, LibreOffice in a container for legacy office formats only,
+correction, ffmpeg and ffprobe for audio, and planned for video, spike-ai-pipeline-office's Open
+XML CLI for office documents, LibreOffice in a container for legacy office formats only,
 spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages, and
 spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages.
 
 Its packages, each below in turn: `tool`, the contract every program runs behind; `route`, which
 names the stage content goes to by its signature; `inspect`, which inspects every part before its
 stage; `dispatch`, which walks an input and every part found in it to the stages, with the
-format packages' adapters, an index, and a pool; and the format packages, `picture`, `document`,
-`office`, `email`, and `onenote`, each pre-inference preparation of its formats. `internal/cli`
-holds the CLI contract the format packages share.
+format packages' adapters, an index, and a pool; the format packages, `picture`, `document`,
+`office`, `email`, and `onenote`, each pre-inference preparation of its formats; and `audio`, which
+cuts speech into windows a model's audio input takes whole and joins their transcripts.
+`internal/cli` holds the CLI contract the format packages share.
 
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
@@ -132,7 +133,7 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
 that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, archives other
-than ZIP, audio, video, or text yet.
+than ZIP, video, or text yet.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -240,13 +241,17 @@ names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeSta
 Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF, EMF, WMF, or SVG to
 PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
 mail's records, each message's attachments found as parts, then its record, then its Markdown,
-an embedded message mail gives no file for prepared inline in its attachment's place; and
+an embedded message mail gives no file for prepared inline in its attachment's place;
 `OneNoteStage`, onenote's records, each page's record then its Markdown, and each of its media
-found as a part. A found part's `Where` names its place, such as `message 2097220, attachment 1`
-or `page {...}, page ink`, and it is dispatched again, so a PDF attached to a message reaches the
-document stage and a page's ink becomes a PNG. Kinds no adapter reads yet, ODF, RTF,
-WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet. An encrypted OOXML package, which
-office refuses, is encrypted.
+found as a part; and `AudioStage`, an audio part's plan as a record, then each of its windows in
+plan order as an audio output, a 16 kHz mono WAV whose Meta carries its index, span, cut, and
+seams, for a layer above to transcribe and join with `audio.Join`. A found part's `Where` names
+its place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is
+dispatched again, so a PDF attached to a message reaches the document stage and a page's ink
+becomes a PNG. Kinds no adapter reads yet, ODF, RTF, WordPerfect, xlsb, HEIC, WebP, AVIF, and
+video, are no processor yet, as is audio when the caller has no ffmpeg and registers no audio
+stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with no
+audio stream fails, its error wrapping `audio.ErrNoAudio`.
 
 `ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry at a
 time: each file entry is written into the part's directory under its content's SHA-256 and found as
@@ -290,6 +295,13 @@ notes, err := dispatch.NewOneNoteStage(dispatch.OneNoteConfig{Reader: nr, Versio
 if err != nil {
 	return err
 }
+// The audio stage's Splitter runs ffmpeg and ffprobe, and cuts Concurrency windows at once.
+speech, err := dispatch.NewAudioStage(dispatch.AudioConfig{
+	Splitter: sp, Version: dispatch.Versions(ff, fp), Concurrency: 4,
+})
+if err != nil {
+	return err
+}
 // The zip stage enforces the bomb rule as written under the dispatcher's inspect.Options.
 archives, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: opts})
 if err != nil {
@@ -299,7 +311,7 @@ d, err := dispatch.New(dispatch.Config{
 	Stages: dispatch.Stages{
 		route.Document: docs, route.Office: offices, route.VisionConverted: pictures,
 		route.Vision: dispatch.NewVisionStage(), route.Nested: mail, route.OneNote: notes,
-		route.Archive: archives,
+		route.Archive: archives, route.Audio: speech,
 	},
 	Index: dispatch.NewMemoryIndex(), Dir: work, Inspect: opts,
 })
@@ -483,7 +495,7 @@ Given a LibreOffice Tool, `Convert` converts it to that OOXML format through sof
 then runs office on the result; without one it is refused with `ErrNoLibreOffice` before anything
 runs. `picture.LibreOfficeSpec` declares soffice, minimum `picture.LibreOfficeMinimum`, 24.2, and
 `picture.LibreOfficeImage` is the default image a caller may replace:
-gotenberg/gotenberg:8.39.0-libreoffice, LibreOffice 26.8.1.1, pinned by digest, which
+gotenberg/gotenberg:9.0.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest, which
 `mise run currency` scans. soffice runs in it under
 the container runner's full lockdown, with its user profile inside the mounted working directory.
 
@@ -643,6 +655,68 @@ for rec, err := range s.Records() {
 }
 ```
 
+`audio` prepares speech for a model's audio input, on Linux, the standard library, and `tool`: it
+cuts a source into windows short enough for the model to take whole, each ending in a silence so
+no cut splits a word, and joins the transcripts a layer above gets for them. A `Splitter`, built by
+`NewSplitter` over a `Config` of an ffmpeg and an ffprobe Tool, both required, which `FFmpegSpec`
+and `FFprobeSpec` declare, minimum `FFmpegMinimum`, 9.0, and the container runner runs in
+`FFmpegImage`, works in three steps:
+
+- `Splitter.Detect` probes the source through ffprobe, refusing one with no audio stream with
+  `ErrNoAudio` before ffmpeg runs, and finds the stream's silences through ffmpeg's volumedetect
+  and silencedetect: by default those at least 0.3 s long and 15 dB below the mean volume, which
+  a `Request` may change or replace with a fixed threshold.
+- `Splitter.Plan` plans the windows from them, as the pure `PlanWindows` does: each at most
+  `WindowLimit`, 30 s, overlap included, each but the last ending at the middle of the latest
+  silence its 30 s allow, or at the limit when they allow none. The next window starts
+  `Request.Overlap`, 2 s by default, before it, and the range the two share is their seam. The
+  same source and request give the same plan.
+- `Splitter.Windows` cuts a plan's windows, a lazy `iter.Seq2[WindowFile, error]` in plan order,
+  `WindowsRequest.Concurrency` ffmpeg runs at once, each a 16 kHz mono 16-bit WAV named by its
+  SHA-256 in the request's media directory. Both runners write the same bytes.
+
+`Join` merges the windows' transcripts, in plan order, into one `Transcript`. At each seam it
+slides the later window's first words over the earlier window's last ones, as Hugging Face
+transformers' best-offset merge does, compares them lowercased with punctuation dropped, and
+splices the two at the middle of the best alignment that matches at least 2 words. A seam that
+matches fewer is concatenated whole. Each `Seam` reports whether it matched and where it is.
+
+```go
+ff, err := tool.NewExec(ctx, audio.FFmpegSpec())
+if err != nil {
+	return err
+}
+fp, err := tool.NewExec(ctx, audio.FFprobeSpec())
+if err != nil {
+	return err
+}
+sp, err := audio.NewSplitter(audio.Config{FFmpeg: ff, FFprobe: fp})
+if err != nil {
+	return err
+}
+plan, err := sp.Plan(ctx, audio.Request{Path: "meeting.mp3"})
+if err != nil {
+	return err
+}
+texts := make([]string, len(plan.Windows))
+req := audio.WindowsRequest{Path: "meeting.mp3", Dir: dir, Concurrency: 4}
+for w, err := range sp.Windows(ctx, req, plan) {
+	if err != nil {
+		return err
+	}
+	texts[w.Index] = transcribe(w.Path) // the layer above's model call
+}
+t, err := audio.Join(texts, audio.JoinRequest{})
+```
+
+[docs/findings/audio.md](docs/findings/audio.md) records Gemma 4 E4B's transcription of four long
+recordings, up to a 4.4 h audiobook, windowed and joined, against one unsplit request over each
+one's first 10 minutes. Windowed was 2.6 to 3.4 times faster. Its word error rate was the same or
+slightly better on read speech and an accented call, and worse on a 4-speaker meeting (0.298
+against 0.258) and an 8-speaker call (0.069 against 0.053). Seams carried more edits than the rest
+of a transcript, most of the excess at unmatched seams, and a gpt-oss-120b pass over the words at
+each seam made every run worse. The run results it cites are in `docs/findings/audio-results/`.
+
 Every format package follows one adapter convention, so a dispatcher, and the next format, meet
 the same shape:
 
@@ -679,7 +753,11 @@ directory and `Page.Media` the route per part; `document` streams pages, `PageIm
 CLI's lines, its renderer built by `NewGhostscript` over one Tool rather than a Config, and gs's
 failures are the Tool's `*tool.ExitError`, gs having no exit contract; `picture` is a converter, not
 a reader: one picture in, one PNG out, its Tools both optional, a picture that needs a missing one
-refused; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which run
+refused; `audio` is a splitter, not a reader: its `Request` names no media directory, since
+planning writes nothing, and only `Splitter.Windows`'s `WindowsRequest` names one, its `Dir`; the
+source is read in place rather than spooled; ffmpeg's failures are the Tool's `*tool.ExitError`,
+ffmpeg having no exit contract; and a window names no route, since a speech model is its one
+stage; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which run
 before a part's stage rather than as one.
 
 Known limits:
@@ -735,6 +813,11 @@ Known limits:
   file and takes the first occurrence's route and reason, whatever its own name says.
 - The file index may prepare content twice around a stale claim's takeover: a claimant slower
   than `FileOptions.Stale` is taken over, and both prepare it.
+- `audio` plans and cuts a source's first audio stream as one stream; an M4B's chapters are
+  ignored.
+- `audio.Join` can't tell a model's own words from speech: in the audio finding, E4B answered a
+  window a few seconds long with its instruction in 2 of 3 runs, and the join kept those words in
+  order. A guard against it belongs to the layer that transcribes.
 
 The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
 under the race detector, and lint, the integration, bakeoff, and findings tags included. `mise run
@@ -768,10 +851,15 @@ generator builds; a run keeps its results only in the directory `EMAIL_FINDINGS_
 measures `dispatch` and `onenote` the same way: the tier's routes, inspection over ~/docs, the page
 ink to vision, the large sections, and the dispatcher over the scale store `ONENOTE_SCALE_STORE`
 names, resumed and pooled; a run keeps its results only in the directory `ONENOTE_FINDINGS_RESULTS`
-names ([docs/findings/onenote.md](docs/findings/onenote.md), "Rerunning").
+names ([docs/findings/onenote.md](docs/findings/onenote.md), "Rerunning"). `mise run findings-audio`
+measures `audio` on ~/docs' long sources, each checked against the corpus manifest: windowed and
+joined through the speech harness, an unsplit pass over each one's first 10 minutes, and a
+gpt-oss-120b seam pass, scored by normalized WER and seam edits; a run keeps its results only in
+the directory `AUDIO_FINDINGS_RESULTS` names
+([docs/findings/audio.md](docs/findings/audio.md), "Rerunning").
 
-The tests' vision harness, the bake-offs, the staged flow, and the findings tier are test code,
-not released.
+The tests' vision and speech harnesses, the bake-offs, the staged flow, and the findings tier are
+test code, not released.
 
 Host prerequisites: gs 10.0 or later on PATH for `document`; ImageMagick's magick 7.1 or later on
 PATH for `picture`, its conversions and its corrections, and so for `document`'s corrections; and
@@ -780,17 +868,19 @@ docker, server 20.10 or later, for the container runner. For `office`: spike-ai-
 the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the metafile
 trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a read, which
 mise pins, at 0.3.0, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
-0.1.0 or later, which mise pins from its GitHub release for the tests. The renderer bake-off also
-runs poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to regenerate the
-fixtures in `document/testdata`, and .NET, which mise installs, only to rebuild `email/testdata`'s
-built .msg, as their READMEs say.
+0.1.0 or later, which mise pins from its GitHub release for the tests. For `audio`: ffmpeg and
+ffprobe 9.0 or later on PATH, or docker, which runs them in `audio.FFmpegImage`. The renderer
+bake-off also runs poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to
+regenerate the fixtures in `document/testdata`, and .NET, which mise installs, only to rebuild
+`email/testdata`'s built .msg, as their READMEs say.
 
-The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision harness the
-integration and bake-off tiers run on; no released package imports it, and `internal/visiontest`,
-the router client and response helpers the vision tests share, builds under the integration and
-findings tags alone. `internal/goldentest`, the golden sums, and `internal/textscore`, the
-character and word error rates the bake-offs and the ink finding score by, are test helpers too,
-built untagged. It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question,
-evidence, and answer are in the root repository's README.
+The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision and speech
+harnesses the integration, bake-off, and findings tiers run on; no released package imports it.
+`internal/visiontest`, the router client and response helpers the vision tests share, and
+`internal/audiotest`, the speech harness, build under the integration and findings tags alone.
+`internal/goldentest`, the golden sums, and `internal/textscore`, the character and word error
+rates the bake-offs and the ink and audio findings score by, are test helpers too, built untagged.
+It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer are
+in the root repository's README.
 
 Apache-2.0.

@@ -4,3 +4,6 @@ email/testdata/mail/** -text
 # The copy of onenote's fixtures and expectations is pinned by SHA-256, byte for byte, so git
 # never converts it.
 onenote/testdata/onenote/** -text
+# The audio speech fixture and its transcript are pinned by SHA-256, byte for byte, so git never
+# converts them.
+audio/testdata/speech.* -text

@@ -6,6 +6,78 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.7.0] - 2026-11-05
+
+### Added
+
+- The `audio` package plans the windows a speech source is cut into for a model's audio input.
+  It runs FFmpeg's ffmpeg and ffprobe, which `audio.FFmpegSpec` and `audio.FFprobeSpec` declare,
+  minimum 9.0, `FFmpegMinimum`, on the host or in the default image `audio.FFmpegImage`,
+  linuxserver/ffmpeg:9.0.2-cli-ls88, pinned by digest. `NewSplitter` builds a `Splitter` over a
+  `Config` of both Tools, refusing a missing or outdated one. `Splitter.Probe` reads a source's
+  duration and first audio stream, a `Source`, and refuses a source with none with `ErrNoAudio`
+  before ffmpeg runs. `Splitter.Detect` finds the source's silences, a `Detection`, through
+  volumedetect and silencedetect: those at least `DefaultMinSilence`, 0.3 s, long and
+  `DefaultBelow`, 15 dB, under the mean volume, or under a fixed threshold a `Request` gives.
+  `PlanWindows`, a pure function of a duration, its silences, and a `Request`'s overlap, plans
+  windows of at most `WindowLimit`, 30 s. Each ends at the middle of the latest silence its range
+  allows, or at the limit, and the next starts `DefaultOverlap`, 2 s, before it; the plan lists the
+  seams they share. `Splitter.Plan` runs Detect and then PlanWindows. An invalid request is
+  refused with `ErrRequest` before anything runs. A ~50 s LibriSpeech speech fixture and its
+  transcript, CC BY 4.0, are in `audio/testdata`, rebuilt by `mise run fixtures:audio`.
+- `audio.Splitter.Windows` cuts a plan's windows, a lazy `iter.Seq2[WindowFile, error]` in plan
+  order, as a `WindowsRequest` says: the source, the media directory `Dir`, and `Concurrency`, the
+  ffmpeg runs in flight, zero meaning 1. ffmpeg resamples and downmixes the stream `Probe` found to
+  16 kHz, `SampleRate`, mono 16-bit PCM, and each window, trimmed to its span's samples to within
+  one, is written as WAV with the canonical 44-byte header, the bytes of ffmpeg's own `-bitexact`
+  WAV, and named by its SHA-256. The exec and container runners write the same bytes. A
+  `WindowFile` carries the window's index, the plan's count, its `Window`, path, SHA-256, and
+  samples. A loop that stops early or a context that ends stops the runs in flight, and the media
+  directory keeps only the windows yielded. A plan of another source, its duration not the
+  source's, is refused with `ErrRequest`.
+- `audio.Join` merges the windows' transcripts, one string for each in plan order, into one
+  `Transcript`, as a `JoinRequest` says; its `Words` are as the windows gave them, and `Text`
+  joins them with spaces. Each seam is merged by Hugging Face transformers' best-offset merge,
+  `_find_longest_common_sequence`, over words compared lowercased with their punctuation dropped:
+  the offset that scores best, on matches over offset plus a small tie-break, and matches at least
+  2 words is spliced at the middle of the overlap it aligns. The search reaches `SeamWords` words
+  into each window, `DefaultSeamWords`, 16, by default, so a repeat beyond the overlap is never the
+  splice; a seam matching fewer than 2 words, as one beside an empty transcript does, is
+  concatenated whole. Each `Seam` reports whether it matched, the words matched and aligned, and
+  its position in the words. A `SeamWords` of 1, or below 0, is refused with `ErrRequest`.
+- `dispatch.AudioStage`, for `route.Audio`, a WAV, FLAC, MP3, Ogg, or M4A, prepares speech for a
+  layer above to transcribe, running no model. `NewAudioStage` builds it over an `AudioConfig`:
+  the caller's `audio.Splitter`, its tools' `Version`, the `audio.Request` whose overlap and
+  silence settings every plan is made under, and the windows' `Concurrency`. It yields the part's
+  plan first, a record named `plan`, an `AudioPlan` of the source's stream, its silences, and its
+  `AudioWindow`s and seams, each an `AudioSpan` in seconds. Then it yields each window in plan
+  order, a new `AudioOutput`, `window N`, a 16 kHz mono WAV named by its SHA-256, its Meta its
+  index, the plan's count, its span, cut, samples, and the seams it shares with its neighbours. A
+  failed window fails the part once the others are yielded, and a source with no audio stream
+  fails with `audio.ErrNoAudio`. The stage's identity hashes the overlap and detection settings,
+  defaults applied, but not the concurrency. A caller with no ffmpeg registers no audio stage, so
+  its audio has no processor yet, as video has none. The integration tier dispatches its fixtures
+  through the stage too, so the tool package's WAV and onenote's embedded MP3 are now prepared.
+- The audio finding, `docs/findings/audio.md`, from one run of `mise run findings-audio` recorded
+  in `docs/findings/audio-results/`: four long sources in ~/docs (AMI ES2002a, Earnings-21 4330115,
+  Earnings-22 4479944, a 4.4 h LibriVox M4B), each windowed whole and its first 10 minutes both
+  windowed and unsplit, 3 greedy runs each on Gemma 4 E4B, with a gpt-oss-120b seam pass. Windowed
+  is 2.6 to 3.4 times faster than unsplit. It is as accurate or slightly better on read speech and
+  the accented call, and worse on the meeting and the 8-speaker call. The seam pass made every run
+  worse.
+
+### Changed
+
+- `textscore.Align` (internal) holds every b-th row of its table, b about the square root of the
+  truth's length, and recomputes each block on its traceback: the same alignment as before, in
+  memory that grows as the square root of one length times the other, so a 4.4 h audiobook's
+  transcript scores in 73 MB. `textscore.BestPrefix` finds the prefix of a truth nearest a
+  transcript of its beginning.
+- The default LibreOffice image, `picture.LibreOfficeImage`, moves to
+  gotenberg/gotenberg:9.0.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest. soffice runs in
+  it headless as before, through the container runner's lockdown, with no change of path,
+  arguments, or filters. Its metafile renders differ from 26.8.1.1's by less than a pixel.
+
 ## [v0.6.0] - 2026-11-05
 
 ### Breaking changes
@@ -480,7 +552,8 @@ Every move is without an alias: a caller on v0.5.0 renames as listed.
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.7.0...HEAD
+[v0.7.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.7.0
 [v0.6.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.6.0
 [v0.5.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.5.0
 [v0.4.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.4.0

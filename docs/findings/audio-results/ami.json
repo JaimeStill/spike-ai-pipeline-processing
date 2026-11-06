@@ -1,0 +1,2579 @@
+{
+  "source": {
+    "name": "ami",
+    "title": "AMI ES2002a, Mix-Headset (21.2 min, 4 speakers, a meeting)",
+    "audio": "audio/long/ami-es2002a-mix-headset.wav",
+    "sha256": "9c76866990fcc8b84006dc32d273ad99df439090b748ebe72103bb78c3216ee7",
+    "bytes": 40724524,
+    "license": "CC-BY-4.0",
+    "source_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/ES2002a/audio/ES2002a.Mix-Headset.wav",
+    "redistributable": true,
+    "seconds": 1272.64,
+    "truth_note": "AMI's manual word-level transcription of each speaker, ordered by its segments' starts, so a segment's words stay together; overlapping speech is ordered by segment, which no single-stream transcript can match exactly",
+    "truth_words": 2455
+  },
+  "model": "ggml-org/gemma-4-E4B-it-GGUF:Q8_0",
+  "pass_model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+  "concurrency": 4,
+  "started": "2026-11-05T23:42:33.337286662Z",
+  "excerpt": {
+    "seconds": 600,
+    "method": "by time: every truth word whose middle is before 600 s",
+    "truth_words": 1129,
+    "prefixes": {
+      "run 1 unsplit": 1119,
+      "run 1 windowed": 1118,
+      "run 2 unsplit": 1119,
+      "run 2 windowed": 1119,
+      "run 3 unsplit": 1119,
+      "run 3 windowed": 1119
+    },
+    "spread": 1
+  },
+  "runs": [
+    {
+      "run": 1,
+      "unsplit": {
+        "wall": 37407344971,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 1498,
+          "TotalTokens": 16526
+        },
+        "words": 1143,
+        "wer": {
+          "edits": 293,
+          "length": 1129,
+          "rate": 0.2595217006200177
+        },
+        "transcript": "um like thought I've produced the PowerPoint for it. I think it's already on actually. Uh God, are they making work. Maybe the input. Uh Sorry. I you have to put it in the back, but Yeah, it's got it. Okay, right. Kind of. Bit doing something. Yes. Okay. Right. Um well, this is the kickoff meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all, just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? And you all arrived on time. Um we're to design a new remote control. Um as you can see it's supposed to be original, trendy and user-friendly. Um so that's kind of our our brief. So um and so there are three different stages to the design. I'm not really sure what what you guys have already received. Um in your emails, what did you get? Um I just got the project announcement, but what the project is, designing a remote control. Yeah, that's that's what everybody got. Okay. Yeah. Um so we're going to have like individual work and then a meeting about it and repeat that process three times. Um and at this point we get to try out the whiteboard over there. Um So uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, my favorite animal is like a beagle. Uh characteristics of it, is that right? Yeah. Uh right. Well, basically, um high priority for any animal for me is that they be willing to take a lot of physical affection from their family. And yeah, that they have a lot of personality and be fit and in robust good health. So this is blue. Beagle. My family's beagle. Right. Lovely. Now, my favorite animal would be a monkey. Cuz I'm a small, cute and very and when it's plan it becomes real, I'm going to be up there with them. Right. You can take as long over this as you like because we haven't got an awful lot to discuss. All we do, we do. Don't feel like you're in a rush anyway. Okay. Thanks it for the whole lot more about beagles. Okay, to what have to get you? I don't know. Mine I'm going to have to think on the spot, now. Impressionist. Can't draw. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the reason is cuz I'm allergic to most animals. Allergic to animals for, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. They're quite harmless and mild and interesting. Okay. Guys, still didn't know and I'm going to rush at it. Um Superb sketch, by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um That doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um He's a mixture of uh of various things. Um and what did I like about him? Um That's just to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um and he's quite quite wee as well, so you know, he can doesn't take up too much space. Um And uh and he does a funny thing where he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is, I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in the living room. It's an after dinner dog thing. Yeah. Probably when he was little, he got lots of attention for doing it and yeah, he's ever been conditioned. Maybe. And um where did you find this just on here? Okay. Um what do we do next? Um Okay, uh when I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro. Um and we're aiming to make 50 million euro. Um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros, so 50% of the selling price. Um can we just go over that again? Sure. Uh so basically 12. All right, yeah. Okay. So cost like production cost is altogether 1250, but selling price is is that wholesale or retail? Like on the shelf? Um I don't know. I imagine that's a good curve. Our sale. Our sale. I imagine it probably is our sale actually because it's probably up to the the retailer to uh sell it for whatever price they want. Um All right. But I I don't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on UI design at all? Yes. I think it will. Um All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as uh characters, um different keypad styles and symbols. Yeah. But for a remote control, do you think that will be as busy as depends on how complicated the remote controller is. It doesn't make sense from maybe the design point of view because if you have more complicated characters like European languages, then you need more buttons. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So What just like in terms of like the characteristics?"
+      },
+      "excerpt_windowed": {
+        "windows": 24,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 23
+        },
+        "plan_time": 183841201,
+        "wall": 11409680709,
+        "total": 11593521910,
+        "mean_latency": 1825743808,
+        "max_in_flight": 4,
+        "input_tokens": 16829,
+        "output_tokens": 1517,
+        "wer": {
+          "edits": 335,
+          "length": 1129,
+          "rate": 0.2967227635075288
+        },
+        "seams": {
+          "seams": 23,
+          "matched": 12,
+          "unmatched": 11,
+          "edits": 117,
+          "per_seam": [
+            10,
+            4,
+            1,
+            4,
+            0,
+            0,
+            18,
+            18,
+            4,
+            6,
+            4,
+            25,
+            7,
+            1,
+            1,
+            1,
+            0,
+            2,
+            1,
+            2,
+            2,
+            3,
+            3
+          ],
+          "distribution": {
+            "0": 3,
+            "1": 5,
+            "10": 1,
+            "18": 2,
+            "2": 3,
+            "25": 1,
+            "3": 2,
+            "4": 4,
+            "6": 1,
+            "7": 1
+          },
+          "unmatched_edits": 39,
+          "controls": 20,
+          "control_edits": 55
+        },
+        "transcript": "um like thought she brought the produced the powerpoint for it I think it's already on actually uh god how are they making work maybe the input uh sorry i you have to I put it in the back but yeah, it's got right. Okay, right. Kind of. Bit doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? I I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So it's David, Andrew and Craig, isn't it? hey guys nice I arrived on time um we're situated to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project which is designing the remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Oh, good. Very good. All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my grandpa almost be a monkey because I'm a small cute and furry and when plan it becomes real I'm going to be up there with them right something to gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Thanks for telling the whole lot more about beagles. Okay, too. We might have to get you up again then. I don't know. Mine just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals for, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. Very homeless and mild and interesting. Okay. Guys, still didn't know what I'm going to write about. Um Superb sketch, by the way. Tails is bigger, I think. I was going to choose a dog as well, but I'll just draw a different kind of dog. Yeah. My favorite animal is my own dog at home. Um Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh or kind is it um he's a mixture of uh a various things um and what did i like about him um that's just to suggest that his tail wags um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh and he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his hardest dinner. And um he just all of a sudden is up and start chasing his tail. He's around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's ever been conditioned. Maybe. And um where did you find this just down here? don't hear. Okay. Um what do we do next? Um Okay, uh we're now need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this one on international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question i wholesale i imagine it probably is our sale actually because it's probably up to the the um the retailer to sell it for whatever price they want um Um. All right. But I I don't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on howy designer at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages, then you need more balance yeah yeah yeah yeah okay and then and then the other thing international is on the topic of price i'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different so what just like in terms of like the"
+      },
+      "full": {
+        "windows": 50,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 49
+        },
+        "plan_time": 253499236,
+        "wall": 25120052068,
+        "total": 25373551304,
+        "mean_latency": 1951675294,
+        "max_in_flight": 4,
+        "input_tokens": 35679,
+        "output_tokens": 3406,
+        "wer": {
+          "edits": 755,
+          "length": 2455,
+          "rate": 0.3075356415478615
+        },
+        "seams": {
+          "seams": 49,
+          "matched": 30,
+          "unmatched": 19,
+          "edits": 203,
+          "per_seam": [
+            10,
+            4,
+            1,
+            3,
+            0,
+            0,
+            18,
+            18,
+            4,
+            3,
+            4,
+            3,
+            6,
+            1,
+            0,
+            1,
+            0,
+            2,
+            1,
+            2,
+            2,
+            3,
+            4,
+            14,
+            1,
+            1,
+            2,
+            2,
+            4,
+            0,
+            5,
+            2,
+            1,
+            1,
+            2,
+            2,
+            2,
+            5,
+            2,
+            2,
+            0,
+            5,
+            5,
+            10,
+            8,
+            10,
+            10,
+            7,
+            10
+          ],
+          "distribution": {
+            "0": 6,
+            "1": 8,
+            "10": 5,
+            "14": 1,
+            "18": 2,
+            "2": 11,
+            "3": 4,
+            "4": 5,
+            "5": 4,
+            "6": 1,
+            "7": 1,
+            "8": 1
+          },
+          "unmatched_edits": 81,
+          "controls": 46,
+          "control_edits": 171
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 48,
+          "changed": 29,
+          "unchanged": 19,
+          "failed": 0,
+          "wall": 56047441450,
+          "wer": {
+            "edits": 761,
+            "length": 2455,
+            "rate": 0.309979633401222
+          },
+          "seams": {
+            "seams": 49,
+            "matched": 30,
+            "unmatched": 19,
+            "edits": 222,
+            "per_seam": [
+              10,
+              4,
+              1,
+              2,
+              0,
+              1,
+              21,
+              19,
+              3,
+              3,
+              4,
+              3,
+              6,
+              1,
+              0,
+              1,
+              1,
+              2,
+              2,
+              2,
+              2,
+              2,
+              7,
+              14,
+              1,
+              2,
+              6,
+              2,
+              4,
+              0,
+              5,
+              3,
+              2,
+              2,
+              3,
+              2,
+              2,
+              5,
+              3,
+              1,
+              0,
+              6,
+              6,
+              10,
+              8,
+              10,
+              10,
+              8,
+              10
+            ],
+            "distribution": {
+              "0": 4,
+              "1": 7,
+              "10": 5,
+              "14": 1,
+              "19": 1,
+              "2": 12,
+              "21": 1,
+              "3": 6,
+              "4": 3,
+              "5": 2,
+              "6": 4,
+              "7": 1,
+              "8": 2
+            },
+            "unmatched_edits": 80,
+            "controls": 45,
+            "control_edits": 162
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 29,
+              "to": 39,
+              "status": "changed",
+              "latency": 6214705474,
+              "output_tokens": 138,
+              "before": "I you have to think. I put it in the",
+              "after": "you have to think. I put it in the"
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 50,
+              "to": 60,
+              "status": "unchanged",
+              "latency": 3136305392,
+              "output_tokens": 71,
+              "before": "Bits doing something. Yes. Okay. Right. Um well this is",
+              "after": "Bits doing something. Yes. Okay. Right. Um well this is"
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 102,
+              "to": 112,
+              "status": "unchanged",
+              "latency": 3709609465,
+              "output_tokens": 84,
+              "before": "Laura and I'm the project manager. Great. Do you want",
+              "after": "Laura and I'm the project manager. Great. Do you want"
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 164,
+              "to": 174,
+              "status": "changed",
+              "latency": 6800063946,
+              "output_tokens": 150,
+              "before": "Andrew and Craig, isn't it? gets rush and you arrived",
+              "after": "Andrew and Craig, isn't it? You arrived"
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 228,
+              "to": 238,
+              "status": "unchanged",
+              "latency": 2803468148,
+              "output_tokens": 59,
+              "before": "what you guys have already received um in your emails",
+              "after": "what you guys have already received um in your emails"
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 292,
+              "to": 302,
+              "status": "changed",
+              "latency": 6530142138,
+              "output_tokens": 141,
+              "before": "we get try out the whiteboard over there. Um so",
+              "after": "we try out the whiteboard over there. Um so"
+            },
+            {
+              "seams": [
+                6,
+                7
+              ],
+              "from": 327,
+              "to": 343,
+              "status": "changed",
+              "latency": 13355230383,
+              "output_tokens": 291,
+              "before": "All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically",
+              "after": "All right. So This one here, right? Mhm. Okay. yeah uh well basically"
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 371,
+              "to": 381,
+              "status": "changed",
+              "latency": 3442974200,
+              "output_tokens": 74,
+              "before": "a lot of personality and and be fat and in",
+              "after": "a lot of personality and be fat and in"
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 398,
+              "to": 408,
+              "status": "changed",
+              "latency": 4682183110,
+              "output_tokens": 101,
+              "before": "mum would be a monkey because um the small cute",
+              "after": "mum would be a monkey because the small cute"
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 425,
+              "to": 435,
+              "status": "unchanged",
+              "latency": 3529279490,
+              "output_tokens": 75,
+              "before": "them right just the gear You can take as long",
+              "after": "them right just the gear You can take as long"
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 497,
+              "to": 507,
+              "status": "unchanged",
+              "latency": 3611107601,
+              "output_tokens": 77,
+              "before": "spot now. Impressionist. Time draw. Got you. Is that a",
+              "after": "spot now. Impressionist. Time draw. Got you. Is that a"
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 562,
+              "to": 572,
+              "status": "unchanged",
+              "latency": 3563455651,
+              "output_tokens": 76,
+              "before": "and go eat everything inside. the insight. Maybe harmless and",
+              "after": "and go eat everything inside. the insight. Maybe harmless and"
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 622,
+              "to": 632,
+              "status": "changed",
+              "latency": 3312772776,
+              "output_tokens": 69,
+              "before": "own dog at home. Um Um that doesn't really look",
+              "after": "own dog at home. Um that doesn't really look"
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 658,
+              "to": 668,
+              "status": "changed",
+              "latency": 6489068082,
+              "output_tokens": 138,
+              "before": "I see a rooster. Uh What kind is it? Um",
+              "after": "I see a rooster. What kind is it?"
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 707,
+              "to": 717,
+              "status": "changed",
+              "latency": 4022977682,
+              "output_tokens": 87,
+              "before": "kind of affectionate and um um uh and it's quite",
+              "after": "kind of affectionate and um uh and it's quite"
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 729,
+              "to": 739,
+              "status": "changed",
+              "latency": 3433725946,
+              "output_tokens": 72,
+              "before": "too much space um and uh and he does a",
+              "after": "too much space um and uh he does a"
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 827,
+              "to": 837,
+              "status": "unchanged",
+              "latency": 4059780728,
+              "output_tokens": 86,
+              "before": "you find this just down here. Okay. Um what do",
+              "after": "you find this just down here. Okay. Um what do"
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 872,
+              "to": 882,
+              "status": "changed",
+              "latency": 4911154080,
+              "output_tokens": 105,
+              "before": "we're aiming to make 50 million euro um so we're",
+              "after": "we're aiming to make 50 million euro so we're"
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 924,
+              "to": 934,
+              "status": "unchanged",
+              "latency": 4932840408,
+              "output_tokens": 106,
+              "before": "all right yeah okay so cost like production cost is",
+              "after": "all right yeah okay so cost like production cost is"
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 984,
+              "to": 994,
+              "status": "changed",
+              "latency": 4849675024,
+              "output_tokens": 104,
+              "before": "whatever price they want um Um. All right. But I",
+              "after": "whatever price they want um. All right. But I"
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1049,
+              "to": 1059,
+              "status": "changed",
+              "latency": 5635109022,
+              "output_tokens": 120,
+              "before": "yeah. Frequencies or something. Yeah. Okay. As well as um",
+              "after": "yeah. Frequencies or something. Okay. As well as um"
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1108,
+              "to": 1118,
+              "status": "changed",
+              "latency": 5000795381,
+              "output_tokens": 106,
+              "before": "languages then you need more movable. Yeah. Yeah. Yeah. Yeah.",
+              "after": "languages then you need more movable. Yeah."
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1173,
+              "to": 1183,
+              "status": "unchanged",
+              "latency": 3228598004,
+              "output_tokens": 69,
+              "before": "things or just like basic product positioning a 25 euro",
+              "after": "things or just like basic product positioning a 25 euro"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1216,
+              "to": 1226,
+              "status": "changed",
+              "latency": 4757998355,
+              "output_tokens": 102,
+              "before": "writing all this down um Right away I'm making some",
+              "after": "writing all this down Right away I'm making some"
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1229,
+              "to": 1239,
+              "status": "changed",
+              "latency": 3670129574,
+              "output_tokens": 77,
+              "before": "about what what information were given here thinking okay trendy",
+              "after": "about what information were given here thinking okay trendy"
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1302,
+              "to": 1312,
+              "status": "changed",
+              "latency": 6278708714,
+              "output_tokens": 136,
+              "before": "isn't it or no is it as much as that",
+              "after": "isn't it or no as much as that"
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1363,
+              "to": 1373,
+              "status": "unchanged",
+              "latency": 4338102263,
+              "output_tokens": 94,
+              "before": "just scoot on ahead here Okay. Um will does anybody",
+              "after": "just scoot on ahead here Okay. Um will does anybody"
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 1415,
+              "to": 1425,
+              "status": "changed",
+              "latency": 5008495829,
+              "output_tokens": 109,
+              "before": "would get you. No. Mhm. The here interesting thing about",
+              "after": "would get you. No. Mhm. The interesting thing about"
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 1453,
+              "to": 1463,
+              "status": "unchanged",
+              "latency": 3878504917,
+              "output_tokens": 81,
+              "before": "in their purchasing habits. It's just like getting shoelaces with",
+              "after": "in their purchasing habits. It's just like getting shoelaces with"
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 1536,
+              "to": 1546,
+              "status": "unchanged",
+              "latency": 3703886789,
+              "output_tokens": 77,
+              "before": "they really want a better one or something my parents",
+              "after": "they really want a better one or something my parents"
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 1617,
+              "to": 1627,
+              "status": "changed",
+              "latency": 3312731651,
+              "output_tokens": 68,
+              "before": "that you know your your satellite and your regular telly",
+              "after": "that you know your satellite and your regular telly"
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 1693,
+              "to": 1703,
+              "status": "changed",
+              "latency": 4338783947,
+              "output_tokens": 90,
+              "before": "such as the lighting in your house or um or",
+              "after": "such as the lighting in your house or um"
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 1785,
+              "to": 1795,
+              "status": "changed",
+              "latency": 4712671898,
+              "output_tokens": 100,
+              "before": "of ironic that that then there in there um you",
+              "after": "of ironic that then there in there um you"
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 1835,
+              "to": 1845,
+              "status": "changed",
+              "latency": 7510017679,
+              "output_tokens": 160,
+              "before": "if there's nothing else okay Um so anything else anybody",
+              "after": "if there's nothing else so anything else anybody"
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 1922,
+              "to": 1932,
+              "status": "unchanged",
+              "latency": 5102639387,
+              "output_tokens": 109,
+              "before": "make a really high pitched noise they beep yeah they're",
+              "after": "make a really high pitched noise they beep yeah they're"
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 2003,
+              "to": 2013,
+              "status": "unchanged",
+              "latency": 2838638212,
+              "output_tokens": 60,
+              "before": "it's still kind of i don't know like a massive",
+              "after": "it's still kind of i don't know like a massive"
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2071,
+              "to": 2081,
+              "status": "unchanged",
+              "latency": 3949587161,
+              "output_tokens": 84,
+              "before": "i'm not having you know these days as every things",
+              "after": "i'm not having you know these days as every things"
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2141,
+              "to": 2151,
+              "status": "changed",
+              "latency": 5021003662,
+              "output_tokens": 108,
+              "before": "the industrial designer you're going to be working on you",
+              "after": "the industrial designer you're going to be working on"
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2214,
+              "to": 2224,
+              "status": "changed",
+              "latency": 4109449067,
+              "output_tokens": 87,
+              "before": "instructions email to you i guess. Okay. Um. Okay. Yeah,",
+              "after": "instructions email to you i guess. Okay. Um. Yeah,"
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2253,
+              "to": 2263,
+              "status": "unchanged",
+              "latency": 4004501181,
+              "output_tokens": 85,
+              "before": "I thought I would, so Before we wrap up just",
+              "after": "I thought I would, so Before we wrap up just"
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2315,
+              "to": 2325,
+              "status": "changed",
+              "latency": 4084611481,
+              "output_tokens": 87,
+              "before": "of like a a design commitment to television features. Okay,",
+              "after": "of like a design commitment to television features. Okay"
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2387,
+              "to": 2397,
+              "status": "changed",
+              "latency": 7224188958,
+              "output_tokens": 155,
+              "before": "yeah. Yeah, that's the main actor. Okay. Right? Okay. Well,",
+              "after": "yeah. That's the main actor. Okay. Right? Well,"
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2426,
+              "to": 2436,
+              "status": "unchanged",
+              "latency": 4477732840,
+              "output_tokens": 97,
+              "before": "you turn this thing off? let function and oh there",
+              "after": "you turn this thing off? let function and oh there"
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2462,
+              "to": 2472,
+              "status": "changed",
+              "latency": 4810711269,
+              "output_tokens": 103,
+              "before": "function and f f uh-huh Mhm. Oh, there it is.",
+              "after": "function and f uh-huh Mhm. Oh, there it is."
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 2489,
+              "to": 2499,
+              "status": "unchanged",
+              "latency": 3610319575,
+              "output_tokens": 78,
+              "before": "don't know if I got like you guys go back",
+              "after": "don't know if I got like you guys go back"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 2519,
+              "to": 2529,
+              "status": "unchanged",
+              "latency": 2889598608,
+              "output_tokens": 62,
+              "before": "like and I'm fucking myself I'll take the big project",
+              "after": "like and I'm fucking myself I'll take the big project"
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 2549,
+              "to": 2559,
+              "status": "changed",
+              "latency": 3306159999,
+              "output_tokens": 86,
+              "before": "Yeah. All the night. Uh I've uh computer design altering",
+              "after": "Yeah. All the night. Uh I've computer design altering"
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 2590,
+              "to": 2600,
+              "status": "changed",
+              "latency": 2925774871,
+              "output_tokens": 88,
+              "before": "don't know. I mean I really no hi it's the",
+              "after": "don't know. I mean I really it's the"
+            }
+          ],
+          "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. you have to think. I put it in the back but yeah, it's got right. Okay, right. Can it all. Bits doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? You arrived on time um we need a switch to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project it's uh designing a remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. yeah uh well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my wife's mum would be a monkey because the small cute and furry and when plan it becomes real you know i'm going to be up there with them right just the gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Actually, told you a whole lot more about beagles. Okay, to we might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot now. Impressionist. Time draw. Got you. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. the insight. Maybe harmless and mild and interesting. Okay. Guys still didn't know what I'm going to write about. Um superb sketch by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. What kind is it? he's a mixture of uh a various things. Um and what did I like about him? Um that's wish to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's ever been conditioned. Maybe. And um where did you find this just down here. Okay. Um what do we do next? Um Okay. Uh we're now I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question wholesale wholesale i imagine it probably is wholesale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want um. All right. But I I didn't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on how he designed it at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movable. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the well the country like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down Right away I'm making some kind of assumptions about what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no as much as that 16 17 18p yeah it say so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here Okay. Um will does anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually, that would be useful, Lou, wouldn't it? If you knew like what your money would get you. No. Mhm. The interesting thing about discussing um production of a remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah so so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something my parents want to I bought them one remote controls because they got fed up of having like four or five different remote controls for each device right right so from him it was just how many devices does it control right so in function one of the priorities might be to combine as many uses right so do you think that should be like a main design aim of our remote controller that you know your satellite and your regular telly and your VCR and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're going from being just like little sort of scribble boards to cameras, MP3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or um even a you know notes about um what you want to watch like you might put in there oh I want to watch such and such and look that's a good idea so extra functionalities yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that then there in there um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if there's nothing else so anything else anybody wants to add about what they don't like about remote controllers they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it. It's usually quite small or when you worry right, it's down the couch or on the table. Yeah. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep yeah they're i mean is that something we'd want to include you think i don't know sure okay maybe i remember when the first remote control my my family had was on a cable actually the cable between in the tv and big like buttons that sort of like like on a blender or something my goodness and um you know when i think about what they are now it's better but actually it's still kind of i don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable okay it could be it could be the it could be that functionally that doesn't make it any better but that just the appeal of i'm not having you know these days as every things in people's homes are becoming more and more like chic you know um nicer materials and okay might be okay be worth exploring right well um so just to wrap up the next meeting's going to be in 30 minutes so that's about um about 10 to 12 by my watch um so in between now and then um as the industrial designer you're going to be working on know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um. Yeah, so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message a lot seniors and I thought I would, so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a design commitment to television features. Okay well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. Yes, there's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um, yeah. That's the main actor. Okay. Right? Well, that's that's the end of the meeting then. Um Thank you all for coming. Great that we thought they wanted us today, isn't it? Um Right. Great. How do you turn this thing off? let function and oh there we go so i think if you can just leave it on maybe and then um okay this is turned itself off try try pushing the function and f uh-huh Mhm. Oh, there it is. It's just. Oh, thank goodness. Okay. Right. It's all very high tech, I must say. I I don't know if I got like you guys go back to your um for your instructions what to do with fragging getting me video the cathedral kind of it feels like and I'm fucking myself I'll take the big project next semester. This is quite big shit. Ah. What courses are you taking? Um well I'm talking about the USP. Yeah. All the night. Uh I've computer design altering systems um idea next semester. Oh, next semester. Um computer security um could it architecture um sorry. I don't know. Sorry. It is in infrastructure. No. And I go? I I don't know. I mean I really it's the face to go where i was you up it just sounds just i i was i wasn't expecting the"
+        },
+        "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. I you have to think. I put it in the back but yeah, it's got right. Okay, right. Can it all. Bits doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? gets rush and you arrived on time um we need a switch to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project it's uh designing a remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my wife's mum would be a monkey because um the small cute and furry and when plan it becomes real you know i'm going to be up there with them right just the gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Actually, told you a whole lot more about beagles. Okay, to we might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot now. Impressionist. Time draw. Got you. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. the insight. Maybe harmless and mild and interesting. Okay. Guys still didn't know what I'm going to write about. Um superb sketch by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um he's a mixture of uh a various things. Um and what did I like about him? Um that's wish to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh and he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's ever been conditioned. Maybe. And um where did you find this just down here. Okay. Um what do we do next? Um Okay. Uh we're now I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question wholesale wholesale i imagine it probably is wholesale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want um Um. All right. But I I didn't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on how he designed it at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movable. Yeah. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the well the country like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down um Right away I'm making some kind of assumptions about what what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no is it as much as that 16 17 18p yeah it say so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here Okay. Um will does anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually, that would be useful, Lou, wouldn't it? If you knew like what your money would get you. No. Mhm. The here interesting thing about discussing um production of a remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah so so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something my parents want to I bought them one remote controls because they got fed up of having like four or five different remote controls for each device right right so from him it was just how many devices does it control right so in function one of the priorities might be to combine as many uses right so do you think that should be like a main design aim of our remote controller that you know your your satellite and your regular telly and your VCR and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're going from being just like little sort of scribble boards to cameras, MP3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or um or even a you know notes about um what you want to watch like you might put in there oh I want to watch such and such and look that's a good idea so extra functionalities yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that that then there in there um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if there's nothing else okay Um so anything else anybody wants to add about what they don't like about remote controllers they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it. It's usually quite small or when you worry right, it's down the couch or on the table. Yeah. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep yeah they're i mean is that something we'd want to include you think i don't know sure okay maybe i remember when the first remote control my my family had was on a cable actually the cable between in the tv and big like buttons that sort of like like on a blender or something my goodness and um you know when i think about what they are now it's better but actually it's still kind of i don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable okay it could be it could be the it could be that functionally that doesn't make it any better but that just the appeal of i'm not having you know these days as every things in people's homes are becoming more and more like chic you know um nicer materials and okay might be okay be worth exploring right well um so just to wrap up the next meeting's going to be in 30 minutes so that's about um about 10 to 12 by my watch um so in between now and then um as the industrial designer you're going to be working on you know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um. Okay. Yeah, so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message a lot seniors and I thought I would, so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a a design commitment to television features. Okay, well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. Yes, there's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um, yeah. Yeah, that's the main actor. Okay. Right? Okay. Well, that's that's the end of the meeting then. Um Thank you all for coming. Great that we thought they wanted us today, isn't it? Um Right. Great. How do you turn this thing off? let function and oh there we go so i think if you can just leave it on maybe and then um okay this is turned itself off try try pushing the function and f f uh-huh Mhm. Oh, there it is. It's just. Oh, thank goodness. Okay. Right. It's all very high tech, I must say. I I don't know if I got like you guys go back to your um for your instructions what to do with fragging getting me video the cathedral kind of it feels like and I'm fucking myself I'll take the big project next semester. This is quite big shit. Ah. What courses are you taking? Um well I'm talking about the USP. Yeah. All the night. Uh I've uh computer design altering systems um idea next semester. Oh, next semester. Um computer security um could it architecture um sorry. I don't know. Sorry. It is in infrastructure. No. And I go? I I don't know. I mean I really no hi it's the face to go where i was you up it just sounds just i i was i wasn't expecting the"
+      }
+    },
+    {
+      "run": 2,
+      "unsplit": {
+        "wall": 37460923961,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 1495,
+          "TotalTokens": 16523
+        },
+        "words": 1140,
+        "wer": {
+          "edits": 294,
+          "length": 1129,
+          "rate": 0.2604074402125775
+        },
+        "transcript": "um like thought I've produced the PowerPoint for it. I think it's already on actually. Uh God, are they making work. Maybe the input. Uh Sorry. I you have to put it in the back, but Yeah, it's got it. Okay, right. Kind of. Bit doing something. Yes. Okay. Right. Um well, this is the kickoff meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all, just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? And you all arrived on time. Um we're to design a new remote control. Um as you can see it's supposed to be original, trendy and user-friendly. Um so that's kind of our our brief. So um and so there are three different stages to the design. I'm not really sure what what you guys have already received. Um in your emails, what did you get? Um I just got the project announcement, but what the project is, designing a remote control. Yeah, that's that's what everybody got. Okay. Yeah. Um so we're going to have like individual work and then a meeting about it and repeat that process three times. Um and at this point we get to try out the whiteboard over there. Um So uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, my favorite animal is like a beagle. Uh characteristics of it, is that right? Yeah. Uh right. Well, basically, um high priority for any animal for me is that they be willing to take a lot of physical affection from their family. And yeah, that they have a lot of personality and be fit and in robust good health. So this is blue. Beagle. My family's beagle. Right. Lovely. Now, my favorite animal would be a monkey. Cuz I'm a small, cute and very and when it's plan it becomes real, I'm going to be up there with them. Right. You can take as long over this as you like because we haven't got an awful lot to discuss. All we do, we do. Don't feel like you're in a rush anyway. Okay. Thanks it for the whole lot more about beagles. Okay, to what have to get you? I don't know. Mine I'm going to have to think on the spot, now. Impressionist. Can't draw. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the reason is cuz I'm allergic to most animals. Allergic to animals for, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. They're quite harmless and mild and interesting. Okay. Guys, still didn't know and I'm going to rush at it. Um Superb sketch, by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um That doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um He's a mixture of uh various things. Um and what did I like about him? Um That's just to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um and he's quite quite wee as well, so you know, he can doesn't take up too much space. Um And uh and he does a funny thing where he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is, I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in the living room. It's an after dinner dog thing. Yeah. Probably when he was little, he got lots of attention for doing it and yeah, he's ever been conditioned. Maybe. And um where did you find this just on here? Okay. Um what do we do next? Um Okay, uh when I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro. Um and we're aiming to make 50 million euro. Um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros, so 50% of the selling price. Um can we discuss over that again? Sure. Uh so basically 12. All right, yeah. Okay. So cost like production cost is altogether 1250, but selling price is is that wholesale or retail? Like on the shelf? Um I don't know. I imagine that's a good curve. Our sale. Our sale. I imagine it probably is our sale actually because it's probably up to the the retailer to uh sell it for whatever price they want. Um All right. But I I don't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on UI design at all? Yes. I think it will. Um All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as uh characters, um different keypad styles and symbols. Yeah. But for a remote control, do you think that will be as business depends on how complicated the remote controller is. It doesn't make sense from maybe the design point of view because if you have more complicated characters like European languages, then you need more buttons. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So What just like in terms of like the characteristics?"
+      },
+      "excerpt_windowed": {
+        "windows": 24,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 23
+        },
+        "plan_time": 183345628,
+        "wall": 11246157188,
+        "total": 11429502816,
+        "mean_latency": 1798587730,
+        "max_in_flight": 4,
+        "input_tokens": 16829,
+        "output_tokens": 1528,
+        "wer": {
+          "edits": 339,
+          "length": 1129,
+          "rate": 0.30026572187776795
+        },
+        "seams": {
+          "seams": 23,
+          "matched": 11,
+          "unmatched": 12,
+          "edits": 118,
+          "per_seam": [
+            10,
+            4,
+            1,
+            4,
+            0,
+            0,
+            18,
+            18,
+            4,
+            5,
+            4,
+            25,
+            7,
+            1,
+            1,
+            1,
+            0,
+            2,
+            1,
+            2,
+            2,
+            3,
+            5
+          ],
+          "distribution": {
+            "0": 3,
+            "1": 5,
+            "10": 1,
+            "18": 2,
+            "2": 3,
+            "25": 1,
+            "3": 1,
+            "4": 4,
+            "5": 2,
+            "7": 1
+          },
+          "unmatched_edits": 43,
+          "controls": 20,
+          "control_edits": 55
+        },
+        "transcript": "um like thought she brought the produced the powerpoint for it I think it's already on actually uh god how are they making work maybe the input uh sorry i you have to I put it in the back but yeah, it's got right. Okay, right. Kind of. Bit doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? I I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So it's David, Andrew and Craig, isn't it? hey guys nice I arrived on time um we're situated to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project which is designing the remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Oh, good. Very good. All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my wife probably won't be a monkey because I'm a small cute and furry and when plan it becomes real I'm going to be up there with them right something to gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Thanks for telling the whole lot more about beagles. Okay, too. We might have to get you up again then. I don't know. Mine just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals for, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. Very homeless and mild and interesting. Okay. Guys, still didn't know what I'm going to write about. Um Superb sketch, by the way. Tails is bigger, I think. I was going to choose a dog as well, but I'll just draw a different kind of dog. Yeah. My favorite animal is my own dog at home. Um Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh or kind is it um he's a mixture of uh a various things um and what did i like about him um that's just to suggest that his tail wags um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh and he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his hardest dinner. And um he just all of a sudden is up and start chasing his tail. He's around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's probably been conditioned. Maybe. And um where did you find this just down here? don't hear. Okay. Um what do we do next? Um Okay, uh we're now need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this one on international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question i wholesale i imagine it probably is our sale actually because it's probably up to the the um the retailer to sell it for whatever price they want um Um. All right. But I I don't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on howy designer at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages, then you need more buttons. Yeah. is a new mobile balance. Yeah. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the characteristics"
+      },
+      "full": {
+        "windows": 50,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 49
+        },
+        "plan_time": 252807116,
+        "wall": 25208970345,
+        "total": 25461777461,
+        "mean_latency": 1953769097,
+        "max_in_flight": 4,
+        "input_tokens": 35679,
+        "output_tokens": 3414,
+        "wer": {
+          "edits": 755,
+          "length": 2455,
+          "rate": 0.3075356415478615
+        },
+        "seams": {
+          "seams": 49,
+          "matched": 30,
+          "unmatched": 19,
+          "edits": 203,
+          "per_seam": [
+            10,
+            4,
+            1,
+            3,
+            0,
+            0,
+            18,
+            18,
+            4,
+            3,
+            4,
+            3,
+            6,
+            1,
+            0,
+            1,
+            0,
+            2,
+            1,
+            2,
+            2,
+            3,
+            4,
+            14,
+            1,
+            1,
+            2,
+            2,
+            4,
+            0,
+            5,
+            2,
+            1,
+            1,
+            2,
+            2,
+            2,
+            5,
+            2,
+            2,
+            0,
+            5,
+            5,
+            10,
+            8,
+            10,
+            10,
+            7,
+            10
+          ],
+          "distribution": {
+            "0": 6,
+            "1": 8,
+            "10": 5,
+            "14": 1,
+            "18": 2,
+            "2": 11,
+            "3": 4,
+            "4": 5,
+            "5": 4,
+            "6": 1,
+            "7": 1,
+            "8": 1
+          },
+          "unmatched_edits": 81,
+          "controls": 46,
+          "control_edits": 171
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 48,
+          "changed": 27,
+          "unchanged": 21,
+          "failed": 0,
+          "wall": 52222021272,
+          "wer": {
+            "edits": 760,
+            "length": 2455,
+            "rate": 0.3095723014256619
+          },
+          "seams": {
+            "seams": 49,
+            "matched": 30,
+            "unmatched": 19,
+            "edits": 225,
+            "per_seam": [
+              10,
+              4,
+              1,
+              3,
+              0,
+              0,
+              22,
+              20,
+              3,
+              3,
+              4,
+              3,
+              6,
+              1,
+              0,
+              1,
+              1,
+              2,
+              2,
+              2,
+              2,
+              2,
+              7,
+              14,
+              1,
+              2,
+              6,
+              2,
+              4,
+              0,
+              5,
+              3,
+              3,
+              3,
+              2,
+              2,
+              2,
+              5,
+              3,
+              1,
+              0,
+              6,
+              6,
+              10,
+              8,
+              10,
+              10,
+              8,
+              10
+            ],
+            "distribution": {
+              "0": 5,
+              "1": 6,
+              "10": 5,
+              "14": 1,
+              "2": 10,
+              "20": 1,
+              "22": 1,
+              "3": 8,
+              "4": 3,
+              "5": 2,
+              "6": 4,
+              "7": 1,
+              "8": 2
+            },
+            "unmatched_edits": 81,
+            "controls": 45,
+            "control_edits": 162
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 29,
+              "to": 39,
+              "status": "changed",
+              "latency": 5613991982,
+              "output_tokens": 126,
+              "before": "I you have to think. I put it in the",
+              "after": "You have to think. I put it in the"
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 50,
+              "to": 60,
+              "status": "unchanged",
+              "latency": 3100124491,
+              "output_tokens": 70,
+              "before": "Bits doing something. Yes. Okay. Right. Um well this is",
+              "after": "Bits doing something. Yes. Okay. Right. Um well this is"
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 102,
+              "to": 112,
+              "status": "unchanged",
+              "latency": 2535026462,
+              "output_tokens": 58,
+              "before": "Laura and I'm the project manager. Great. Do you want",
+              "after": "Laura and I'm the project manager. Great. Do you want"
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 164,
+              "to": 174,
+              "status": "unchanged",
+              "latency": 5072730410,
+              "output_tokens": 115,
+              "before": "Andrew and Craig, isn't it? gets rush and you arrived",
+              "after": "Andrew and Craig, isn't it? gets rush and you arrived"
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 228,
+              "to": 238,
+              "status": "unchanged",
+              "latency": 2708836184,
+              "output_tokens": 57,
+              "before": "what you guys have already received um in your emails",
+              "after": "what you guys have already received um in your emails"
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 292,
+              "to": 302,
+              "status": "unchanged",
+              "latency": 3858299023,
+              "output_tokens": 83,
+              "before": "we get try out the whiteboard over there. Um so",
+              "after": "we get try out the whiteboard over there. Um so"
+            },
+            {
+              "seams": [
+                6,
+                7
+              ],
+              "from": 327,
+              "to": 343,
+              "status": "changed",
+              "latency": 7707016994,
+              "output_tokens": 169,
+              "before": "All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically",
+              "after": "All right. So This one here, Mhm. Okay, yeah uh well basically"
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 371,
+              "to": 381,
+              "status": "changed",
+              "latency": 3414698639,
+              "output_tokens": 74,
+              "before": "a lot of personality and and be fat and in",
+              "after": "a lot of personality and be fat and in"
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 398,
+              "to": 408,
+              "status": "changed",
+              "latency": 4239574830,
+              "output_tokens": 94,
+              "before": "mum would be a monkey because um the small cute",
+              "after": "mum would be a monkey because the small cute"
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 425,
+              "to": 435,
+              "status": "unchanged",
+              "latency": 3890409342,
+              "output_tokens": 85,
+              "before": "them right just the gear You can take as long",
+              "after": "them right just the gear You can take as long"
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 497,
+              "to": 507,
+              "status": "unchanged",
+              "latency": 3643454466,
+              "output_tokens": 79,
+              "before": "spot now. Impressionist. Time draw. Got you. Is that a",
+              "after": "spot now. Impressionist. Time draw. Got you. Is that a"
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 562,
+              "to": 572,
+              "status": "unchanged",
+              "latency": 4732039649,
+              "output_tokens": 104,
+              "before": "and go eat everything inside. the insight. Maybe harmless and",
+              "after": "and go eat everything inside. the insight. Maybe harmless and"
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 622,
+              "to": 632,
+              "status": "changed",
+              "latency": 3702031421,
+              "output_tokens": 81,
+              "before": "own dog at home. Um Um that doesn't really look",
+              "after": "own dog at home. Um that doesn't really look"
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 658,
+              "to": 668,
+              "status": "changed",
+              "latency": 3931343371,
+              "output_tokens": 86,
+              "before": "I see a rooster. Uh What kind is it? Um",
+              "after": "I see a rooster. What kind is it?"
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 707,
+              "to": 717,
+              "status": "changed",
+              "latency": 4310684373,
+              "output_tokens": 95,
+              "before": "kind of affectionate and um um uh and it's quite",
+              "after": "kind of affectionate and um uh and it's quite"
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 729,
+              "to": 739,
+              "status": "changed",
+              "latency": 3846296035,
+              "output_tokens": 82,
+              "before": "too much space um and uh and he does a",
+              "after": "too much space um and he does a"
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 827,
+              "to": 837,
+              "status": "unchanged",
+              "latency": 3077381488,
+              "output_tokens": 65,
+              "before": "you find this just down here. Okay. Um what do",
+              "after": "you find this just down here. Okay. Um what do"
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 872,
+              "to": 882,
+              "status": "changed",
+              "latency": 4674635380,
+              "output_tokens": 102,
+              "before": "we're aiming to make 50 million euro um so we're",
+              "after": "we're aiming to make 50 million euro so we're"
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 924,
+              "to": 934,
+              "status": "unchanged",
+              "latency": 5047721645,
+              "output_tokens": 111,
+              "before": "all right yeah okay so cost like production cost is",
+              "after": "all right yeah okay so cost like production cost is"
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 984,
+              "to": 994,
+              "status": "changed",
+              "latency": 4553821184,
+              "output_tokens": 101,
+              "before": "whatever price they want um Um. All right. But I",
+              "after": "whatever price they want um. All right. But I"
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1049,
+              "to": 1059,
+              "status": "changed",
+              "latency": 4271742557,
+              "output_tokens": 93,
+              "before": "yeah. Frequencies or something. Yeah. Okay. As well as um",
+              "after": "yeah. Frequencies or something. Okay. As well as um"
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1108,
+              "to": 1118,
+              "status": "changed",
+              "latency": 3517814425,
+              "output_tokens": 76,
+              "before": "languages then you need more movable. Yeah. Yeah. Yeah. Yeah.",
+              "after": "languages then you need more movable. Yeah."
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1173,
+              "to": 1183,
+              "status": "unchanged",
+              "latency": 2988617779,
+              "output_tokens": 63,
+              "before": "things or just like basic product positioning a 25 euro",
+              "after": "things or just like basic product positioning a 25 euro"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1216,
+              "to": 1226,
+              "status": "unchanged",
+              "latency": 3385404209,
+              "output_tokens": 71,
+              "before": "writing all this down um Right away I'm making some",
+              "after": "writing all this down um Right away I'm making some"
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1229,
+              "to": 1239,
+              "status": "changed",
+              "latency": 3637621102,
+              "output_tokens": 78,
+              "before": "about what what information were given here thinking okay trendy",
+              "after": "about what information were given here thinking okay trendy"
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1302,
+              "to": 1312,
+              "status": "changed",
+              "latency": 7576207131,
+              "output_tokens": 169,
+              "before": "isn't it or no is it as much as that",
+              "after": "isn't it or no as much as that"
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1363,
+              "to": 1373,
+              "status": "unchanged",
+              "latency": 4418959599,
+              "output_tokens": 99,
+              "before": "just scoot on ahead here Okay. Um will does anybody",
+              "after": "just scoot on ahead here Okay. Um will does anybody"
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 1415,
+              "to": 1425,
+              "status": "changed",
+              "latency": 5119839556,
+              "output_tokens": 115,
+              "before": "would get you. No. Mhm. The here interesting thing about",
+              "after": "would get you. The interesting thing about"
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 1453,
+              "to": 1463,
+              "status": "unchanged",
+              "latency": 3275102044,
+              "output_tokens": 75,
+              "before": "in their purchasing habits. It's just like getting shoelaces with",
+              "after": "in their purchasing habits. It's just like getting shoelaces with"
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 1536,
+              "to": 1546,
+              "status": "unchanged",
+              "latency": 3874176168,
+              "output_tokens": 83,
+              "before": "they really want a better one or something my parents",
+              "after": "they really want a better one or something my parents"
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 1615,
+              "to": 1625,
+              "status": "changed",
+              "latency": 3183779738,
+              "output_tokens": 68,
+              "before": "that you know your your satellite and your regular telly",
+              "after": "that you know your satellite and your regular telly"
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 1691,
+              "to": 1701,
+              "status": "changed",
+              "latency": 3654640402,
+              "output_tokens": 78,
+              "before": "such as the lighting in your house or um or",
+              "after": "such as the lighting in your house or"
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 1783,
+              "to": 1793,
+              "status": "changed",
+              "latency": 4832140370,
+              "output_tokens": 107,
+              "before": "of ironic that that then there in there um you",
+              "after": "of ironic that then there in um you"
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 1833,
+              "to": 1843,
+              "status": "unchanged",
+              "latency": 4852528558,
+              "output_tokens": 106,
+              "before": "if there's nothing else okay Um so anything else anybody",
+              "after": "if there's nothing else okay Um so anything else anybody"
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 1918,
+              "to": 1928,
+              "status": "unchanged",
+              "latency": 6944362704,
+              "output_tokens": 154,
+              "before": "make a really high pitched noise they beep. Yeah. They're",
+              "after": "make a really high pitched noise they beep. Yeah. They're"
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 1999,
+              "to": 2009,
+              "status": "unchanged",
+              "latency": 2728236640,
+              "output_tokens": 60,
+              "before": "it's still kind of I don't know like a massive",
+              "after": "it's still kind of I don't know like a massive"
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2067,
+              "to": 2077,
+              "status": "unchanged",
+              "latency": 3177686845,
+              "output_tokens": 68,
+              "before": "i'm not having you know these days as every things",
+              "after": "i'm not having you know these days as every things"
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2137,
+              "to": 2147,
+              "status": "changed",
+              "latency": 4668599892,
+              "output_tokens": 102,
+              "before": "the industrial designer you're going to be working on you",
+              "after": "the industrial designer you're going to be working on"
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2210,
+              "to": 2220,
+              "status": "changed",
+              "latency": 4862952505,
+              "output_tokens": 106,
+              "before": "instructions email to you i guess. Okay. Um Okay. Yeah,",
+              "after": "instructions email to you i guess. Okay. Um Yeah"
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2249,
+              "to": 2259,
+              "status": "unchanged",
+              "latency": 3129930074,
+              "output_tokens": 65,
+              "before": "I thought I would, so Before we wrap up just",
+              "after": "I thought I would, so Before we wrap up just"
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2311,
+              "to": 2321,
+              "status": "changed",
+              "latency": 3434045915,
+              "output_tokens": 72,
+              "before": "of like a a design commitment to television features. Okay,",
+              "after": "of like a design commitment to television features. Okay,"
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2383,
+              "to": 2393,
+              "status": "changed",
+              "latency": 6495329738,
+              "output_tokens": 143,
+              "before": "yeah. Yeah, that's the main actor. Okay. Right? Okay. Well,",
+              "after": "yeah. That's the main actor. Okay. Right? Well,"
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2422,
+              "to": 2432,
+              "status": "unchanged",
+              "latency": 4830761680,
+              "output_tokens": 107,
+              "before": "you turn this thing off? let function and oh there",
+              "after": "you turn this thing off? let function and oh there"
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2458,
+              "to": 2468,
+              "status": "changed",
+              "latency": 5644275143,
+              "output_tokens": 125,
+              "before": "function and f f uh-huh Mhm. Oh, there it is.",
+              "after": "function and f uh-huh Mhm. Oh, there it is."
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 2485,
+              "to": 2495,
+              "status": "changed",
+              "latency": 6194848391,
+              "output_tokens": 138,
+              "before": "don't know if I got like you guys go back",
+              "after": "don't know if I got you guys go back"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 2514,
+              "to": 2524,
+              "status": "changed",
+              "latency": 4445910825,
+              "output_tokens": 109,
+              "before": "like and I'm fucking myself I'll take the big project",
+              "after": "like I'm fucking myself I'll take the big project"
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 2544,
+              "to": 2554,
+              "status": "changed",
+              "latency": 3516374056,
+              "output_tokens": 89,
+              "before": "Yeah. All the night. Uh I've uh computer design altering",
+              "after": "Yeah. All the night. Uh I've computer design altering"
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 2585,
+              "to": 2595,
+              "status": "changed",
+              "latency": 3435606124,
+              "output_tokens": 103,
+              "before": "don't know. I mean I really no hi it's the",
+              "after": "don't know. I mean I really it's the"
+            }
+          ],
+          "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. You have to think. I put it in the back but yeah, it's got right. Okay, right. Can it all. Bits doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? gets rush and you arrived on time um we need a switch to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project it's uh designing a remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, Mhm. Okay, yeah uh well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my wife's mum would be a monkey because the small cute and furry and when plan it becomes real you know i'm going to be up there with them right just the gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Actually, told you a whole lot more about beagles. Okay, to we might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot now. Impressionist. Time draw. Got you. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. the insight. Maybe harmless and mild and interesting. Okay. Guys still didn't know what I'm going to write about. Um superb sketch by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. What kind is it? he's a mixture of uh a various things. Um and what did I like about him? Um that's wish to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's ever been conditioned. Maybe. And um where did you find this just down here. Okay. Um what do we do next? Um Okay. Uh we're now I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question wholesale wholesale i imagine it probably is wholesale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want um. All right. But I I didn't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on how he designed it at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movable. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the well the country like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down um Right away I'm making some kind of assumptions about what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no as much as that 16 17 18p yeah it say so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here Okay. Um will does anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually, that would be useful, Lou, wouldn't it? If you knew like what your money would get you. The interesting thing about discussing um production of a remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah so so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something my parents when I bought them remote controls because they got fed up with having like four or five different remote controls for each room right right so from him it was just how many devices does it control right so in function one of the priorities might be to combine as many uses right so do you think that should be like a main design aim of our remote controller that you know your satellite and your regular telly and your vcr and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're going from being just like little sort of scribble boards to cameras, mp3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or even a you know notes about um what you want to watch like you might put in there oh I want to watch such and such and look that's a good idea so extra functionalities yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that then there in um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if there's nothing else okay Um so anything else anybody wants to add about what they don't like about remote controllers they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it. It's usually quite small or when you're lying right on the couch or on the table. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep. Yeah. They're I mean is that something we'd want to include, you think? I don't know. Sure. Okay, maybe. I remember when the first remote control my my family had was on a cable. Actually, the cable between in the TV and big like buttons that sort of like like on a blender or something. My goodness. And um, you know, when I think about what they are now, it's better, but actually it's still kind of I don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable okay it could be it could be the it could be that functionally that doesn't make it any better but that just the appeal of i'm not having you know these days as every things in people's homes are becoming more and more like chic you know um nicer materials and okay might be okay be worth exploring right well um so just to wrap up the next meeting's going to be in 30 minutes so that's about um about 10 to 12 by my watch um so in between now and then um as the industrial designer you're going to be working on know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um Yeah so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message a lot seniors and I thought I would, so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a design commitment to television features. Okay, well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. Yes, there's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um, yeah. That's the main actor. Okay. Right? Well, that's that's the end of the meeting then. Um Thank you all for coming. Great that we thought they wanted us today, isn't it? Um Right. Great. How do you turn this thing off? let function and oh there we go so i think if you can just leave it on maybe and then um okay this is turned itself off try try pushing the function and f uh-huh Mhm. Oh, there it is. It's just. Oh, thank goodness. Okay. Right. It's all very high tech, I must say. I I don't know if I got you guys go back to your um for your instructions what to do fragging getting me video the cathedral kind of it feels like I'm fucking myself I'll take the big project next semester. This is quite big shit. Ah. What courses are you taking? Um well I'm talking about the USP. Yeah. All the night. Uh I've computer design altering systems um idea next semester. Oh, next semester. Um computer security um could it architecture um sorry. I don't know. Sorry. It is in infrastructure. No. And I go. I I don't know. I mean I really it's the face to go where i was you up it just sounds just i i was i wasn't expecting the"
+        },
+        "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. I you have to think. I put it in the back but yeah, it's got right. Okay, right. Can it all. Bits doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? gets rush and you arrived on time um we need a switch to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project it's uh designing a remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my wife's mum would be a monkey because um the small cute and furry and when plan it becomes real you know i'm going to be up there with them right just the gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Actually, told you a whole lot more about beagles. Okay, to we might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot now. Impressionist. Time draw. Got you. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. the insight. Maybe harmless and mild and interesting. Okay. Guys still didn't know what I'm going to write about. Um superb sketch by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um he's a mixture of uh a various things. Um and what did I like about him? Um that's wish to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh and he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's ever been conditioned. Maybe. And um where did you find this just down here. Okay. Um what do we do next? Um Okay. Uh we're now I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question wholesale wholesale i imagine it probably is wholesale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want um Um. All right. But I I didn't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on how he designed it at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movable. Yeah. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the well the country like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down um Right away I'm making some kind of assumptions about what what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no is it as much as that 16 17 18p yeah it say so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here Okay. Um will does anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually, that would be useful, Lou, wouldn't it? If you knew like what your money would get you. No. Mhm. The here interesting thing about discussing um production of a remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah so so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something my parents when I bought them remote controls because they got fed up with having like four or five different remote controls for each room right right so from him it was just how many devices does it control right so in function one of the priorities might be to combine as many uses right so do you think that should be like a main design aim of our remote controller that you know your your satellite and your regular telly and your vcr and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're going from being just like little sort of scribble boards to cameras, mp3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or um or even a you know notes about um what you want to watch like you might put in there oh I want to watch such and such and look that's a good idea so extra functionalities yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that that then there in there um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if there's nothing else okay Um so anything else anybody wants to add about what they don't like about remote controllers they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it. It's usually quite small or when you're lying right on the couch or on the table. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep. Yeah. They're I mean is that something we'd want to include, you think? I don't know. Sure. Okay, maybe. I remember when the first remote control my my family had was on a cable. Actually, the cable between in the TV and big like buttons that sort of like like on a blender or something. My goodness. And um, you know, when I think about what they are now, it's better, but actually it's still kind of I don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable okay it could be it could be the it could be that functionally that doesn't make it any better but that just the appeal of i'm not having you know these days as every things in people's homes are becoming more and more like chic you know um nicer materials and okay might be okay be worth exploring right well um so just to wrap up the next meeting's going to be in 30 minutes so that's about um about 10 to 12 by my watch um so in between now and then um as the industrial designer you're going to be working on you know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um Okay. Yeah, so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message a lot seniors and I thought I would, so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a a design commitment to television features. Okay, well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. Yes, there's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um, yeah. Yeah, that's the main actor. Okay. Right? Okay. Well, that's that's the end of the meeting then. Um Thank you all for coming. Great that we thought they wanted us today, isn't it? Um Right. Great. How do you turn this thing off? let function and oh there we go so i think if you can just leave it on maybe and then um okay this is turned itself off try try pushing the function and f f uh-huh Mhm. Oh, there it is. It's just. Oh, thank goodness. Okay. Right. It's all very high tech, I must say. I I don't know if I got like you guys go back to your um for your instructions what to do fragging getting me video the cathedral kind of it feels like and I'm fucking myself I'll take the big project next semester. This is quite big shit. Ah. What courses are you taking? Um well I'm talking about the USP. Yeah. All the night. Uh I've uh computer design altering systems um idea next semester. Oh, next semester. Um computer security um could it architecture um sorry. I don't know. Sorry. It is in infrastructure. No. And I go. I I don't know. I mean I really no hi it's the face to go where i was you up it just sounds just i i was i wasn't expecting the"
+      }
+    },
+    {
+      "run": 3,
+      "unsplit": {
+        "wall": 37873778046,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 1500,
+          "TotalTokens": 16528
+        },
+        "words": 1145,
+        "wer": {
+          "edits": 288,
+          "length": 1129,
+          "rate": 0.2550930026572188
+        },
+        "transcript": "um like thought I've produced the PowerPoint for it. I think it's already on actually. Uh God, are they making work. Maybe the input. Uh Sorry. I you have to put it in the back, but Yeah, it's got it. Okay, right. Kind of. Doing something. Yes. Okay. Right. Um well, this is the kickoff meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all, just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? And you all arrived on time. Um we're to design a new remote control. Um as you can see it's supposed to be original, trendy and user-friendly. Um so that's kind of our our brief. So um and so there are three different stages to the design. I'm not really sure what what you guys have already received. Um in your emails, what did you get? Um I just got the project announcement, but what the project is, designing a remote control. Yeah, that's that's what everybody got. Okay. Yeah. Um so we're going to have like individual work and then a meeting about it and repeat that process three times. Um and at this point we get to try out the whiteboard over there. Um So uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, my favorite animal is like a beagle. Uh characteristics of it, is that right? Yeah. Uh right. Well, basically, um high priority for any animal for me is that they be willing to take a lot of physical affection from their family. And yeah, that they have a lot of personality and be fit and in robust good health. So this is blue. Beagle. My family's beagle. Right. Lovely. Now, my favorite animal would be a monkey. Cuz I'm a small, cute and very and when it's plan it becomes real, I'm going to be up there with them. Right. You can take as long over this as you like because we haven't got an awful lot to discuss. All we do, we do. Don't feel like you're in a rush anyway. Okay. Thanks it for the whole lot more about beagles. Okay, to what have to get you. I don't know, mine is I'm going to have to think on the spot, now. Impressionist. Can't draw. Is that a whale? Yeah. Um Oh my. I don't know, it's just the first animal I can think of to top of my head. Um Yes, the reason is cuz I'm allergic to most animals. Allergic to animals for, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. They're quite harmless and mild and interesting. Okay. Guys, still didn't know and I'm going to rush at it. Um Superb sketch, by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um That doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um He's a mixture of uh of various things. Um and what did I like about him? Um That's just to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um and he's quite quite wee as well, so you know, he can doesn't take up too much space. Um And uh and he does a funny thing where he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is, I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in the living room. It's an after dinner dog thing. Yeah. Probably when he was little, he got lots of attention for doing it and yeah, he's ever been conditioned. Maybe. And um where did you find this just on here? Okay. Um what do we do next? Um Okay, uh when I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro. Um and we're aiming to make 50 million euro. Um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros, so 50% of the selling price. Um can we just go over that again? Sure. Uh so basically 12. All right, yeah. Okay. So cost like production cost is altogether 1250, but selling price is is that wholesale or retail? Like on the shelf? Um I don't know. I imagine that's a good question. Our sale. Our sale. I imagine it probably is our sale actually because it's probably up to the the retailer to uh sell it for whatever price they want. Um All right. But I I don't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on how you design it at all? Yes. I think it will. Um All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as uh characters, um different uh keypad styles and symbols. Yeah. But for a remote control, do you think that will be as business depends on how complicated the remote controller is. It doesn't make sense from maybe the design point of view because if you have more complicated characters like European languages, then you need more buttons. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So What just like in terms of like the characteristics?"
+      },
+      "excerpt_windowed": {
+        "windows": 24,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 23
+        },
+        "plan_time": 177306948,
+        "wall": 11312126924,
+        "total": 11489433872,
+        "mean_latency": 1814784873,
+        "max_in_flight": 4,
+        "input_tokens": 16829,
+        "output_tokens": 1521,
+        "wer": {
+          "edits": 335,
+          "length": 1129,
+          "rate": 0.2967227635075288
+        },
+        "seams": {
+          "seams": 23,
+          "matched": 12,
+          "unmatched": 11,
+          "edits": 117,
+          "per_seam": [
+            10,
+            4,
+            1,
+            4,
+            0,
+            0,
+            18,
+            18,
+            4,
+            6,
+            4,
+            25,
+            7,
+            1,
+            1,
+            1,
+            0,
+            2,
+            1,
+            2,
+            2,
+            3,
+            3
+          ],
+          "distribution": {
+            "0": 3,
+            "1": 5,
+            "10": 1,
+            "18": 2,
+            "2": 3,
+            "25": 1,
+            "3": 2,
+            "4": 4,
+            "6": 1,
+            "7": 1
+          },
+          "unmatched_edits": 39,
+          "controls": 20,
+          "control_edits": 55
+        },
+        "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. I you have to think. I put it in the back but yeah, it's got right. Okay, right. Kind of. Bit doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? I I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So it's David, Andrew and Craig, isn't it? hey guys nice I arrived on time um we're situated to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project which is designing the remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Oh, good. Very good. All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my grandpa almost be a monkey because I'm a small cute and furry and when plan it becomes real I'm going to be up there with them right something to gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Thanks for telling the whole lot more about beagles. Okay, too. We might have to get you up again then. I don't know. Mine just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals for, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. Very homeless and mild and interesting. Okay. Guys, still didn't know what I'm going to write about. Um Superb sketch, by the way. Tails is bigger, I think. I was going to choose a dog as well, but I'll just draw a different kind of dog. Yeah. My favorite animal is my own dog at home. Um Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh or kind is it um he's a mixture of uh a various things um and what did i like about him um that's just to suggest that his tail wags um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh and he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his hardest dinner. And um he just all of a sudden is up and start chasing his tail. He's around the living room. An after dinner dog then. Yeah. Probably when he was little he got lots of attention for doing it and he's probably been conditioned. Maybe. And um where did you find this just down here? don't hear. Okay. Um what do we do next? Um Okay. Uh we now need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this one on international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question i wholesale i imagine it probably is our sale actually because it's probably up to the the um the retailer to sell it for whatever price they want um Um. All right. But I I don't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on howy designer at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages, then you need more balance yeah yeah yeah yeah okay and then and then the other thing international is on the topic of price i'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different so what just like in terms of like the characteristics"
+      },
+      "full": {
+        "windows": 50,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 49
+        },
+        "plan_time": 258908780,
+        "wall": 24888476612,
+        "total": 25147385392,
+        "mean_latency": 1921267661,
+        "max_in_flight": 4,
+        "input_tokens": 35679,
+        "output_tokens": 3404,
+        "wer": {
+          "edits": 758,
+          "length": 2455,
+          "rate": 0.30875763747454177
+        },
+        "seams": {
+          "seams": 49,
+          "matched": 30,
+          "unmatched": 19,
+          "edits": 203,
+          "per_seam": [
+            10,
+            4,
+            1,
+            3,
+            0,
+            0,
+            18,
+            18,
+            4,
+            3,
+            4,
+            3,
+            6,
+            1,
+            0,
+            1,
+            0,
+            2,
+            1,
+            2,
+            2,
+            3,
+            4,
+            14,
+            1,
+            1,
+            2,
+            2,
+            4,
+            0,
+            5,
+            2,
+            1,
+            1,
+            2,
+            2,
+            2,
+            5,
+            2,
+            2,
+            0,
+            5,
+            5,
+            10,
+            8,
+            10,
+            10,
+            7,
+            10
+          ],
+          "distribution": {
+            "0": 6,
+            "1": 8,
+            "10": 5,
+            "14": 1,
+            "18": 2,
+            "2": 11,
+            "3": 4,
+            "4": 5,
+            "5": 4,
+            "6": 1,
+            "7": 1,
+            "8": 1
+          },
+          "unmatched_edits": 81,
+          "controls": 46,
+          "control_edits": 170
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 48,
+          "changed": 28,
+          "unchanged": 20,
+          "failed": 0,
+          "wall": 55685751986,
+          "wer": {
+            "edits": 768,
+            "length": 2455,
+            "rate": 0.3128309572301426
+          },
+          "seams": {
+            "seams": 49,
+            "matched": 30,
+            "unmatched": 19,
+            "edits": 227,
+            "per_seam": [
+              10,
+              4,
+              1,
+              2,
+              0,
+              0,
+              22,
+              20,
+              3,
+              3,
+              4,
+              3,
+              6,
+              1,
+              0,
+              1,
+              1,
+              2,
+              3,
+              4,
+              2,
+              2,
+              7,
+              14,
+              1,
+              2,
+              6,
+              3,
+              4,
+              0,
+              5,
+              3,
+              2,
+              2,
+              3,
+              2,
+              2,
+              5,
+              3,
+              1,
+              0,
+              6,
+              6,
+              10,
+              8,
+              10,
+              10,
+              8,
+              10
+            ],
+            "distribution": {
+              "0": 5,
+              "1": 6,
+              "10": 5,
+              "14": 1,
+              "2": 9,
+              "20": 1,
+              "22": 1,
+              "3": 8,
+              "4": 4,
+              "5": 2,
+              "6": 4,
+              "7": 1,
+              "8": 2
+            },
+            "unmatched_edits": 80,
+            "controls": 45,
+            "control_edits": 163
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 29,
+              "to": 39,
+              "status": "changed",
+              "latency": 9406227281,
+              "output_tokens": 216,
+              "before": "I you have to think. I put it in the",
+              "after": "I you have to think. put it in the"
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 50,
+              "to": 60,
+              "status": "unchanged",
+              "latency": 4002960801,
+              "output_tokens": 93,
+              "before": "Bits doing something. Yes. Okay. Right. Um well this is",
+              "after": "Bits doing something. Yes. Okay. Right. Um well this is"
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 102,
+              "to": 112,
+              "status": "unchanged",
+              "latency": 2600483588,
+              "output_tokens": 61,
+              "before": "Laura and I'm the project manager. Great. Do you want",
+              "after": "Laura and I'm the project manager. Great. Do you want"
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 164,
+              "to": 174,
+              "status": "changed",
+              "latency": 4158777275,
+              "output_tokens": 97,
+              "before": "Andrew and Craig, isn't it? gets rush and you arrived",
+              "after": "Andrew and Craig, isn't it? rush and you arrived"
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 228,
+              "to": 238,
+              "status": "unchanged",
+              "latency": 4713871420,
+              "output_tokens": 105,
+              "before": "what you guys have already received um in your emails",
+              "after": "what you guys have already received um in your emails"
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 292,
+              "to": 302,
+              "status": "unchanged",
+              "latency": 4215281480,
+              "output_tokens": 93,
+              "before": "we get try out the whiteboard over there. Um so",
+              "after": "we get try out the whiteboard over there. Um so"
+            },
+            {
+              "seams": [
+                6,
+                7
+              ],
+              "from": 327,
+              "to": 343,
+              "status": "changed",
+              "latency": 11999280560,
+              "output_tokens": 270,
+              "before": "All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically",
+              "after": "All right So This one here Mhm Okay yeah uh well basically"
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 371,
+              "to": 381,
+              "status": "changed",
+              "latency": 3036704467,
+              "output_tokens": 65,
+              "before": "a lot of personality and and be fat and in",
+              "after": "a lot of personality and be fat and in"
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 398,
+              "to": 408,
+              "status": "changed",
+              "latency": 5200682097,
+              "output_tokens": 115,
+              "before": "mum would be a monkey because um the small cute",
+              "after": "mum would be a monkey because the small cute"
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 425,
+              "to": 435,
+              "status": "unchanged",
+              "latency": 3394091820,
+              "output_tokens": 75,
+              "before": "them right just the gear You can take as long",
+              "after": "them right just the gear You can take as long"
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 497,
+              "to": 507,
+              "status": "unchanged",
+              "latency": 4364344681,
+              "output_tokens": 96,
+              "before": "spot now. Impressionist. Time draw. Got you. Is that a",
+              "after": "spot now. Impressionist. Time draw. Got you. Is that a"
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 562,
+              "to": 572,
+              "status": "unchanged",
+              "latency": 3273735394,
+              "output_tokens": 70,
+              "before": "and go eat everything inside. the insight. Maybe harmless and",
+              "after": "and go eat everything inside. the insight. Maybe harmless and"
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 622,
+              "to": 632,
+              "status": "changed",
+              "latency": 3985887675,
+              "output_tokens": 86,
+              "before": "own dog at home. Um Um that doesn't really look",
+              "after": "own dog at home. Um that doesn't really look"
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 658,
+              "to": 668,
+              "status": "changed",
+              "latency": 4669514063,
+              "output_tokens": 103,
+              "before": "I see a rooster. Uh What kind is it? Um",
+              "after": "I see a rooster. What kind is it?"
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 707,
+              "to": 717,
+              "status": "changed",
+              "latency": 3986117733,
+              "output_tokens": 86,
+              "before": "kind of affectionate and um um uh and it's quite",
+              "after": "kind of affectionate and um uh and it's quite"
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 729,
+              "to": 739,
+              "status": "changed",
+              "latency": 3380750091,
+              "output_tokens": 73,
+              "before": "too much space um and uh and he does a",
+              "after": "too much space um and uh he does a"
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 827,
+              "to": 837,
+              "status": "unchanged",
+              "latency": 2931426580,
+              "output_tokens": 62,
+              "before": "you find this just down here. Okay. Um what do",
+              "after": "you find this just down here. Okay. Um what do"
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 872,
+              "to": 882,
+              "status": "changed",
+              "latency": 5828958043,
+              "output_tokens": 130,
+              "before": "we're aiming to make 50 million euro um so we're",
+              "after": "we're aiming to make 50 million euro so"
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 924,
+              "to": 934,
+              "status": "changed",
+              "latency": 7445711490,
+              "output_tokens": 166,
+              "before": "all right yeah okay so cost like production cost is",
+              "after": "all right yeah okay so like production cost is"
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 984,
+              "to": 994,
+              "status": "changed",
+              "latency": 4080743202,
+              "output_tokens": 92,
+              "before": "whatever price they want um Um. All right. But I",
+              "after": "whatever price they want um. All right. But I"
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1049,
+              "to": 1059,
+              "status": "changed",
+              "latency": 5357771518,
+              "output_tokens": 121,
+              "before": "yeah. Frequencies or something. Yeah. Okay. As well as um",
+              "after": "yeah. Frequencies or something. Okay. As well as um"
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1108,
+              "to": 1118,
+              "status": "changed",
+              "latency": 4046481663,
+              "output_tokens": 87,
+              "before": "languages then you need more movable. Yeah. Yeah. Yeah. Yeah.",
+              "after": "languages then you need more movable. Yeah."
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1173,
+              "to": 1183,
+              "status": "unchanged",
+              "latency": 3450458962,
+              "output_tokens": 73,
+              "before": "things or just like basic product positioning a 25 euro",
+              "after": "things or just like basic product positioning a 25 euro"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1216,
+              "to": 1226,
+              "status": "unchanged",
+              "latency": 3449308503,
+              "output_tokens": 73,
+              "before": "writing all this down um Right away I'm making some",
+              "after": "writing all this down um Right away I'm making some"
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1229,
+              "to": 1239,
+              "status": "changed",
+              "latency": 3919831644,
+              "output_tokens": 85,
+              "before": "about what what information were given here thinking okay trendy",
+              "after": "about what information were given here thinking okay trendy"
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1302,
+              "to": 1312,
+              "status": "changed",
+              "latency": 4968677643,
+              "output_tokens": 110,
+              "before": "isn't it or no is it as much as that",
+              "after": "isn't it or no as much as that"
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1363,
+              "to": 1373,
+              "status": "changed",
+              "latency": 6413598006,
+              "output_tokens": 141,
+              "before": "just scoot on ahead here Okay. Um will does anybody",
+              "after": "just scoot on ahead here Okay. will anybody"
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 1415,
+              "to": 1425,
+              "status": "changed",
+              "latency": 4499289464,
+              "output_tokens": 100,
+              "before": "would get you. No. Mhm. The here interesting thing about",
+              "after": "would get you. No. Mhm. The interesting thing about"
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 1453,
+              "to": 1463,
+              "status": "unchanged",
+              "latency": 3946548140,
+              "output_tokens": 86,
+              "before": "in their purchasing habits. It's just like getting shoelaces with",
+              "after": "in their purchasing habits. It's just like getting shoelaces with"
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 1536,
+              "to": 1546,
+              "status": "unchanged",
+              "latency": 2607410526,
+              "output_tokens": 53,
+              "before": "they really want a better one or something my parents",
+              "after": "they really want a better one or something my parents"
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 1617,
+              "to": 1627,
+              "status": "changed",
+              "latency": 3235827147,
+              "output_tokens": 68,
+              "before": "that you know your your satellite and your regular telly",
+              "after": "that you know your satellite and your regular telly"
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 1693,
+              "to": 1703,
+              "status": "changed",
+              "latency": 5478774209,
+              "output_tokens": 121,
+              "before": "such as the lighting in your house or um or",
+              "after": "such as the lighting in your house or um"
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 1785,
+              "to": 1795,
+              "status": "changed",
+              "latency": 4475034785,
+              "output_tokens": 100,
+              "before": "of ironic that that then there in there um you",
+              "after": "of ironic that then there in there um you"
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 1835,
+              "to": 1845,
+              "status": "changed",
+              "latency": 8235217327,
+              "output_tokens": 185,
+              "before": "if there's nothing else okay Um so anything else anybody",
+              "after": "if there's nothing else okay Um so anything anybody"
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 1920,
+              "to": 1930,
+              "status": "unchanged",
+              "latency": 5285793635,
+              "output_tokens": 119,
+              "before": "make a really high pitched noise they beep yeah they're",
+              "after": "make a really high pitched noise they beep yeah they're"
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 2001,
+              "to": 2011,
+              "status": "unchanged",
+              "latency": 2889057461,
+              "output_tokens": 61,
+              "before": "it's still kind of i don't know like a massive",
+              "after": "it's still kind of i don't know like a massive"
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2069,
+              "to": 2079,
+              "status": "unchanged",
+              "latency": 5402835802,
+              "output_tokens": 120,
+              "before": "i'm not having you know these days as every things",
+              "after": "i'm not having you know these days as every things"
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2139,
+              "to": 2149,
+              "status": "changed",
+              "latency": 3603764291,
+              "output_tokens": 79,
+              "before": "the industrial designer you're going to be working on you",
+              "after": "the industrial designer you're going to be working on"
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2212,
+              "to": 2222,
+              "status": "changed",
+              "latency": 5255586083,
+              "output_tokens": 116,
+              "before": "instructions email to you i guess. Okay. Um. Okay. Yeah,",
+              "after": "instructions email to you i guess. Okay. Um. Yeah,"
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2251,
+              "to": 2261,
+              "status": "unchanged",
+              "latency": 2714290941,
+              "output_tokens": 58,
+              "before": "I thought I would, so Before we wrap up just",
+              "after": "I thought I would, so Before we wrap up just"
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2313,
+              "to": 2323,
+              "status": "changed",
+              "latency": 4010128772,
+              "output_tokens": 87,
+              "before": "of like a a design commitment to television features. Okay,",
+              "after": "of like a design commitment to television features. Okay"
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2384,
+              "to": 2394,
+              "status": "changed",
+              "latency": 8538178882,
+              "output_tokens": 189,
+              "before": "Um, yeah. That's the main actor. Okay. Right? Okay. Well,",
+              "after": "Um, yeah. That's the main actor. Okay. Right? Well."
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2423,
+              "to": 2433,
+              "status": "unchanged",
+              "latency": 3556147449,
+              "output_tokens": 77,
+              "before": "you turn this thing off? let function and oh there",
+              "after": "you turn this thing off? let function and oh there"
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2459,
+              "to": 2469,
+              "status": "changed",
+              "latency": 4599646731,
+              "output_tokens": 101,
+              "before": "function and f f uh-huh Mhm. Oh, there it is.",
+              "after": "function and f uh-huh Mhm. Oh, there it is."
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 2486,
+              "to": 2496,
+              "status": "unchanged",
+              "latency": 3471239025,
+              "output_tokens": 74,
+              "before": "don't know if I got like you guys go back",
+              "after": "don't know if I got like you guys go back"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 2515,
+              "to": 2525,
+              "status": "unchanged",
+              "latency": 3762909504,
+              "output_tokens": 81,
+              "before": "like and I'm fucking myself I'll take the big project",
+              "after": "like and I'm fucking myself I'll take the big project"
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 2545,
+              "to": 2555,
+              "status": "changed",
+              "latency": 3072826615,
+              "output_tokens": 84,
+              "before": "Yeah. All the night. Uh I've uh computer design altering",
+              "after": "Yeah. All the night. I've computer design altering"
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 2588,
+              "to": 2598,
+              "status": "unchanged",
+              "latency": 2471661623,
+              "output_tokens": 82,
+              "before": "don't know. I mean I really no hi it's the",
+              "after": "don't know. I mean I really no hi it's the"
+            }
+          ],
+          "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. I you have to think. put it in the back but yeah, it's got right. Okay, right. Can it all. Bits doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? rush and you arrived on time um we need a switch to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project it's uh designing a remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right So This one here Mhm Okay yeah uh well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my wife's mum would be a monkey because the small cute and furry and when plan it becomes real you know i'm going to be up there with them right just the gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Actually, told you a whole lot more about beagles. Okay, to we might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot now. Impressionist. Time draw. Got you. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. the insight. Maybe harmless and mild and interesting. Okay. Guy still didn't know what I'm going to write about. Um superb sketch by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. What kind is it? he's a mixture of uh a various things. Um and what did I like about him? Um that's wish to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's ever been conditioned. Maybe. And um where did you find this just down here. Okay. Um what do we do next? Um Okay. Uh we're now I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro so going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question wholesale wholesale i imagine it probably is wholesale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want um. All right. But I I didn't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on how he designed it at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movable. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the well the country like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down um Right away I'm making some kind of assumptions about what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no as much as that 16 17 18p yeah it say so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here Okay. will anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually, that would be useful, Lou, wouldn't it? If you knew like what your money would get you. No. Mhm. The interesting thing about discussing um production of a remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah so so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something my parents want to I bought them one remote controls because they got fed up of having like four or five different remote controls for each device right right so from him it was just how many devices does it control right so in function one of the priorities might be to combine as many uses right so do you think that should be like a main design him of our remote controller that you know your satellite and your regular telly and your VCR and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're going from being just like little sort of scribble boards to cameras, MP3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or um even a you know notes about um what you want to watch like you might put in there oh I want to watch such and such and look that's a good idea so extra functionalities yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that then there in there um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if there's nothing else okay Um so anything anybody wants to add about what they don't like about remote controllers they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it. It's usually quite small or when you're lying right on the couch or on the table. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep yeah they're i mean is that something we'd want to include you think i don't know sure okay maybe i remember when the first remote control my my family had was on a cable actually the cable between in the tv and big like buttons that sort of like like on a blender or something my goodness and um you know when i think about what they are now it's better but actually it's still kind of i don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable okay it could be it could be the it could be that functionally that doesn't make it any better but that just the appeal of i'm not having you know these days as every things in people's homes are becoming more and more like chic you know um nicer materials and okay might be okay be worth exploring right well um so just to wrap up the next meeting's going to be in 30 minutes so that's about um about 10 to 12 by my watch um so in between now and then um as the industrial designer you're going to be working on know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um. Yeah, so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message a lot seniors and I thought I would, so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a design commitment to television features. Okay well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. Yes, there's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um, yeah. That's the main actor. Okay. Right? Well. that's that's the end of the meeting then. Um Thank you all for coming. Great that we thought they wanted us today, isn't it? Um Right. Great. How do you turn this thing off? let function and oh there we go so i think if you can just leave it on maybe and then um okay this is turned itself off try try pushing the function and f uh-huh Mhm. Oh, there it is. It's just. Oh, thank goodness. Okay. Right. It's all very high tech, I must say. I I don't know if I got like you guys go back to your um for your instructions what to do fragging getting me video the cathedral kind of it feels like and I'm fucking myself I'll take the big project next semester. This is quite big shit. Ah. What courses are you taking? Um well I'm talking about the USP. Yeah. All the night. I've computer design altering systems um idea next semester. Oh, next semester. Um computer security um could it architecture um sorry. I don't know. Sorry. Do you do anything? No, I don't. And I go? I I don't know. I mean I really no hi it's the face to go where i was you up it just sounds just i i was i wasn't expecting the"
+        },
+        "transcript": "um like thought she brought the produced the powerpoint for it. I think it's already on actually. Uh God, how are they making work? Maybe the input. Uh Sorry. I you have to think. I put it in the back but yeah, it's got right. Okay, right. Can it all. Bits doing something. Yes. Okay. Right. Um well this is the kick off meeting for our our project. And um this is just what we're going to be doing over the next 25 minutes. Um so first of all just to kind of make sure that we all know each other. I'm Laura and I'm the project manager. Great. Do you want to introduce yourself again? Hi, I'm David and I'm supposed to be an industrial designer. Okay. And I'm Andrew and I'm a marketing expert. I'm Craig and I'm user interface. Great. Okay. Um so we're designing a new remote control and um oh, I have to record who's here actually. So David, Andrew and Craig, isn't it? gets rush and you arrived on time um we need a switch to design a new remote control um as you can see it's supposed to be original trendy and user friendly um so that's kind of our our brief so why um and so there are three different stages to the design and I'm not really sure what what you guys have already received um in your emails what did you get um i just got the project announcement about the project it's uh designing a remote control yeah that's that's that what everybody got okay um so we're going to have like individual work and then a meeting about it and repeat that process three times um and at this point we get try out the whiteboard over there. Um so uh you get to draw your favorite animal and sum up your favorite characteristics of it. So who would like to go first? Very good. All right. So This one here, right? Mhm. Okay. All right, yeah uh right well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family and yeah that they have a lot of personality and and be fat and in robust good health so this is blue blue beagle my family's beagle right lovely no my wife's mum would be a monkey because um the small cute and furry and when plan it becomes real you know i'm going to be up there with them right just the gear You can take as long over this as you like because we haven't got an awful lot to discuss. Or call we do. We do. Don't feel like you're in a rush anyway. Okay. Actually, told you a whole lot more about beagles. Okay, to we might have to get you up again then. I don't know. Mine is I'm going to have to think on the spot now. Impressionist. Time draw. Got you. Is that a whale? Yeah. Um Oh my. I don't know. It's just the first animal I can think of to top of my head. Um Yes, the big reason is cuz I'm allergic to most animals. Allergic to animals, so um fish was a natural choice. Um yeah, and I kind of like whales. They come in and go eat everything inside. the insight. Maybe harmless and mild and interesting. Okay. Guy still didn't know what I'm going to write about. Um superb sketch by the way. Tails a bit big, I think. I was going to choose a dog as well, but I'll just do a different kind of dog. Yeah. My favorite animal is my own dog at home. Um Um that doesn't really look like him actually. He looks more like a pig actually. Oh well. I see a dog in there. There. Oh, that's very good of you. Now I see a rooster. Uh What kind is it? Um he's a mixture of uh a various things. Um and what did I like about him? Um that's wish to suggest that his tail wags. Um he's very friendly and cheery and always pleased to see you and very kind of affectionate and um um uh and it's quite quite wee as well so you know it can doesn't take up too much space um and uh and he does a funny thing when he chases his tail as well. This is quite amusing. Is he aware that this is his own tail he's chasing? It is. I think it is. He only does it after his dinner. And um he just all of a sudden is get up and start chasing his tail in around the living room. It's an after dinner dog thing. Yeah. Probably when he was little he got lots of attention for doing it and he's ever been conditioned. Maybe. And um where did you find this just down here. Okay. Um what do we do next? Um Okay. Uh we're now I need to discuss the project finance. Um So according to the brief, um we're going to be selling this remote control for 25 euro um and we're aiming to make 50 million euro um so we're going to be selling this on an international scale and uh we don't want it to cost any more than uh 1250 euros so 50% of the selling price um can we just go over that again sure uh so basically 12 all right yeah okay so cost like production cost is all together 1250 but selling price is is that wholesale or retail like on the shelf um i don't know i imagine that's a good question wholesale wholesale i imagine it probably is wholesale actually because it's probably up to the the um the retailer to uh sell it for whatever price they want um Um. All right. But I I didn't know. I mean, do you think the fact that it's going to be sold internationally will have a bearing on how he designed it at all? Yes. I think it will. Um. All right away, I'm wondering if there's um like with DVD players if there are zones. Oh yeah, regions and stuff, yeah. Frequencies or something. Yeah. Okay. As well as um characters, um different keypad styles and symbols. Yeah. For a remote control, do you think that would be I suppose it depends on how complicated our remote control is. It does make sense from maybe the design point of view because if you have more complicated characters like European languages then you need more movable. Yeah. Yeah. Yeah. Yeah. Okay. And then and then the other thing international is on the topic of price. I'm thinking the price might might appeal to a certain market in one region whereas in another it'll be different. So what just like in terms like the well the country like how much money people have to spend on things or just like basic product positioning a 25 euro remote control might be a big hit in london might not be such a big hit in greece who knows oh my god yeah marketing good marketing thoughts oh gosh i should be writing all this down um Right away I'm making some kind of assumptions about what what information were given here thinking okay trendy probably means something other than just basic something other than just standard um so i'm wondering right away is selling 25 euros is that sort of the is this going to be like the premium product yeah yeah like how much does you know a remote control cost uh the 25 euro i mean that's um that's about like 18 pounds or something isn't it or no is it as much as that 16 17 18p yeah it say so yeah um i don't know i've never bought a remote control so i don't know no how how good a remote control that would get you um but yeah i suppose it has to look kind of cool gimmicky um right okay let me just scoot on ahead here Okay. Um will does anybody have anything to add to uh to the finance issue at all? Do we have any other background information on like how that compares to other No, actually, that would be useful, Lou, wouldn't it? If you knew like what your money would get you. No. Mhm. The here interesting thing about discussing um production of a remote control for me is that as you point out I just don't think remote control is being something something people consciously assess in their purchasing habits. It's just like getting shoelaces with shoes or something. Just five minutes to end of meeting. Oh, okay. We're a bit behind. Do you know what I mean like yeah so so like how do you I I mean one one way look at it would be well the people producing television sets maybe they have to buy remote controls or another way is maybe people who have TV sets are really fed up with their remote control and they really want a better one or something my parents want to I bought them one remote controls because they got fed up of having like four or five different remote controls for each device right right so from him it was just how many devices does it control right so in function one of the priorities might be to combine as many uses right so do you think that should be like a main design him of our remote controller that you know your your satellite and your regular telly and your VCR and everything. We like um maybe what we could use as a sort of like a example of a successful other piece of technology is palm palm pilots. They're going from being just like little sort of scribble boards to cameras, MP3 players, telephones, everything, agenda. So like I wonder if we might add something new to the to the remote control market such as the lighting in your house or um or even a you know notes about um what you want to watch like you might put in there oh I want to watch such and such and look that's a good idea so extra functionalities yeah like personally for me at home I've I've combined the um the audio video of my television set and my DVD player and my CD player so they all work actually function together but I have different remote controls for each of them so it's sort of ironic that that then there in there um you know the sound and everything it's just one system but each one's got its own little part um okay uh i'd we're going to have to wrap up pretty quickly in the next couple of minutes um i'll just check if there's nothing else okay Um so anything else anybody wants to add about what they don't like about remote controllers they've used, what they would really like to be part of this new one at all. You keep losing them. You keep losing them. Okay. Finding them is a pain, you know. Mm. Mean it. It's usually quite small or when you're lying right on the couch or on the table. Yeah. You get those ones where you can if you like whistle or make a really high pitched noise they beep yeah they're i mean is that something we'd want to include you think i don't know sure okay maybe i remember when the first remote control my my family had was on a cable actually the cable between in the tv and big like buttons that sort of like like on a blender or something my goodness and um you know when i think about what they are now it's better but actually it's still kind of i don't know like a massive junky thing on the table maybe we could think about how could be more you know streamlined maybe like a touchscreen or something something like that yeah or whatever would be technologically reasonable okay it could be it could be the it could be that functionally that doesn't make it any better but that just the appeal of i'm not having you know these days as every things in people's homes are becoming more and more like chic you know um nicer materials and okay might be okay be worth exploring right well um so just to wrap up the next meeting's going to be in 30 minutes so that's about um about 10 to 12 by my watch um so in between now and then um as the industrial designer you're going to be working on you know that's a working design of it so you know what you're doing there um for user interface technical functions i guess that's you know like what we've been talking about what it'll actually do um and a marketing executive you'll be just thinking about what it actually what you know what requirements it has to has to fulfill and you'll all get instructions email to you i guess. Okay. Um. Okay. Yeah, so it's the functional design stage is next, I guess. And uh and that's the end of the meeting. So I got that little message a lot seniors and I thought I would, so Before we wrap up just to make sure we're on the same page here. Um do we were given sort of an example of a coffee machine or something right? Well um are we right now on the assumption that our television remote control may have features which go beyond the television or are we keeping sort of like a a design commitment to television features. Okay, well, just very quickly cuz we're supposed to finish now. Um, I guess that's up to us. I mean, you probably want some kind of unique selling point of it. Okay. So, um, you know, a factor would be production cost. Okay. Yes, there's a cap there for um Okay. Depends on how much you can cram into that price. Okay. Um, yeah. That's the main actor. Okay. Right? Okay. Well, that's that's the end of the meeting then. Um Thank you all for coming. Great that we thought they wanted us today, isn't it? Um Right. Great. How do you turn this thing off? let function and oh there we go so i think if you can just leave it on maybe and then um okay this is turned itself off try try pushing the function and f f uh-huh Mhm. Oh, there it is. It's just. Oh, thank goodness. Okay. Right. It's all very high tech, I must say. I I don't know if I got like you guys go back to your um for your instructions what to do fragging getting me video the cathedral kind of it feels like and I'm fucking myself I'll take the big project next semester. This is quite big shit. Ah. What courses are you taking? Um well I'm talking about the USP. Yeah. All the night. Uh I've uh computer design altering systems um idea next semester. Oh, next semester. Um computer security um could it architecture um sorry. I don't know. Sorry. Do you do anything? No, I don't. And I go? I I don't know. I mean I really no hi it's the face to go where i was you up it just sounds just i i was i wasn't expecting the"
+      }
+    }
+  ]
+}

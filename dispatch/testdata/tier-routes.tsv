@@ -193,8 +193,7 @@ onenote/testdata/onenote/fixtures/interop/SUT/Open Notebook.onetoc2	page *, outl
 # handwriting_recognition holds the same page, 5eaf76b1, so the same picture, seen, but its ink
 # is that page's 62 ink containers, where New Section 1's is one: another SVG, prepared. New
 # Section Group's second section holds a page's image container, dummy_1.png, vision's, and an
-# embedded MP3, audio, which no stage takes yet; its notebook sees the picture and has no stage
-# for the MP3 again.
+# embedded MP3, audio, its plan and windows prepared through ffmpeg; its notebook sees both.
 onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	-	*	onenote	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page *, *	*.jpg	vision	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/New Section 1.one	page *, page ink	*.svg	vision-converted	prepared
@@ -205,10 +204,10 @@ onenote/testdata/onenote/fixtures/onenote-rs/handwriting_recognition.one	page *,
 onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 1.one	-	*	onenote	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	-	*	onenote	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page *, image container *	dummy_1.png	vision	prepared
-onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page *, outline *	ff-16b-2c-44100hz.mp3	audio	no processor yet
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/New Section 2.one	page *, outline *	ff-16b-2c-44100hz.mp3	audio	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	-	*	onenote	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page *, image container *	dummy_1.png	vision	seen
-onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page *, outline *	ff-16b-2c-44100hz.mp3	audio	no processor yet
+onenote/testdata/onenote/fixtures/onenote-rs/New Section Group/Open Notebook.onetoc2	page *, outline *	ff-16b-2c-44100hz.mp3	audio	seen
 onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/OneNote_DeletedPages.one	-	*	onenote	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/OneNote_RecycleBin/Open Notebook.onetoc2	-	*	onenote	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 1 2.one	-	*	onenote	prepared
@@ -239,5 +238,5 @@ inspect/testdata/script.svg	-	*	vision-converted	prepared
 inspect/testdata/symlink.zip	-	*	archive	quarantined
 inspect/testdata/traversal.zip	-	*	archive	quarantined
 
-# tool: a WAV, audio, which no stage takes yet.
-tool/testdata/tone.wav	-	*	audio	no processor yet
+# tool: a WAV, audio, its plan and windows prepared through ffmpeg.
+tool/testdata/tone.wav	-	*	audio	prepared

@@ -1,0 +1,4089 @@
+{
+  "source": {
+    "name": "earnings21",
+    "title": "Earnings-21 4330115 (41.0 min, 8 speakers, an earnings call, MP3)",
+    "audio": "audio/long/earnings21-4330115.mp3",
+    "sha256": "b8bcedbb29f9a04aaac25ff8c611b549cca2a0ab7635f76aee26eb0dfe5b9677",
+    "bytes": 9836786,
+    "license": "CC-BY-SA-4.0 (transcripts); audio terms per README",
+    "source_url": "https://raw.githubusercontent.com/revdotcom/speech-datasets/c05ab6fd8b4b627d123c922a22a39e993dd37635/earnings21/media/4330115.mp3",
+    "redistributable": false,
+    "seconds": 2458.904,
+    "truth_note": "Rev's verbatim reference transcript, tokens in order without times; numbers as written (\"2020\"), which the normalization doesn't verbalize",
+    "truth_words": 6519
+  },
+  "model": "ggml-org/gemma-4-E4B-it-GGUF:Q8_0",
+  "pass_model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+  "concurrency": 4,
+  "started": "2026-11-05T23:49:01.432060464Z",
+  "excerpt": {
+    "seconds": 600,
+    "method": "derived: the truth's first 1574 normalized words, the median of the 6 prefixes textscore.BestPrefix finds nearest each excerpt transcript, unsplit and windowed",
+    "truth_words": 1574,
+    "prefixes": {
+      "run 1 unsplit": 1574,
+      "run 1 windowed": 1574,
+      "run 2 unsplit": 1574,
+      "run 2 windowed": 1574,
+      "run 3 unsplit": 1574,
+      "run 3 windowed": 1574
+    },
+    "spread": 0
+  },
+  "runs": [
+    {
+      "run": 1,
+      "unsplit": {
+        "wall": 51264087931,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 1931,
+          "TotalTokens": 16959
+        },
+        "words": 1545,
+        "wer": {
+          "edits": 84,
+          "length": 1574,
+          "rate": 0.053367217280813214
+        }
+      },
+      "excerpt_windowed": {
+        "windows": 24,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 23
+        },
+        "plan_time": 175827432,
+        "wall": 18963395711,
+        "total": 19139223143,
+        "mean_latency": 3078818979,
+        "max_in_flight": 4,
+        "input_tokens": 16827,
+        "output_tokens": 2040,
+        "wer": {
+          "edits": 108,
+          "length": 1574,
+          "rate": 0.06861499364675985
+        },
+        "seams": {
+          "seams": 23,
+          "matched": 23,
+          "unmatched": 0,
+          "edits": 26,
+          "per_seam": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "distribution": {
+            "0": 14,
+            "1": 7,
+            "16": 1,
+            "3": 1
+          },
+          "unmatched_edits": 0,
+          "controls": 22,
+          "control_edits": 9
+        }
+      },
+      "full": {
+        "windows": 96,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 95
+        },
+        "plan_time": 1324267874,
+        "wall": 76038797810,
+        "total": 77363065684,
+        "mean_latency": 3128386367,
+        "max_in_flight": 4,
+        "input_tokens": 68941,
+        "output_tokens": 8372,
+        "wer": {
+          "edits": 568,
+          "length": 6519,
+          "rate": 0.08712992790305261
+        },
+        "seams": {
+          "seams": 95,
+          "matched": 87,
+          "unmatched": 8,
+          "edits": 138,
+          "per_seam": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            6,
+            1,
+            0,
+            0,
+            2,
+            0,
+            1,
+            7,
+            2,
+            5,
+            3,
+            2,
+            0,
+            14,
+            1,
+            1,
+            1,
+            3,
+            2,
+            2,
+            1,
+            1,
+            0,
+            4,
+            0,
+            2,
+            0,
+            0,
+            0,
+            2,
+            6,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            2,
+            1,
+            1,
+            0,
+            2,
+            1,
+            2,
+            7,
+            3,
+            1,
+            0,
+            4,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0
+          ],
+          "distribution": {
+            "0": 41,
+            "1": 27,
+            "14": 1,
+            "16": 1,
+            "2": 13,
+            "3": 4,
+            "4": 3,
+            "5": 1,
+            "6": 2,
+            "7": 2
+          },
+          "unmatched_edits": 32,
+          "controls": 94,
+          "control_edits": 53
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 95,
+          "changed": 25,
+          "unchanged": 70,
+          "failed": 0,
+          "wall": 86936710119,
+          "wer": {
+            "edits": 576,
+            "length": 6519,
+            "rate": 0.0883571099861942
+          },
+          "seams": {
+            "seams": 95,
+            "matched": 87,
+            "unmatched": 8,
+            "edits": 150,
+            "per_seam": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              3,
+              0,
+              1,
+              0,
+              17,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              0,
+              1,
+              0,
+              0,
+              4,
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1,
+              1,
+              0,
+              1,
+              1,
+              0,
+              1,
+              0,
+              5,
+              1,
+              0,
+              0,
+              2,
+              0,
+              1,
+              6,
+              2,
+              5,
+              3,
+              2,
+              0,
+              14,
+              1,
+              1,
+              1,
+              4,
+              2,
+              2,
+              1,
+              1,
+              0,
+              7,
+              0,
+              2,
+              1,
+              0,
+              0,
+              4,
+              3,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              2,
+              2,
+              1,
+              0,
+              2,
+              1,
+              2,
+              7,
+              3,
+              1,
+              2,
+              4,
+              1,
+              1,
+              1,
+              2,
+              0,
+              0,
+              5,
+              0
+            ],
+            "distribution": {
+              "0": 35,
+              "1": 32,
+              "14": 1,
+              "17": 1,
+              "2": 12,
+              "3": 4,
+              "4": 4,
+              "5": 3,
+              "6": 1,
+              "7": 2
+            },
+            "unmatched_edits": 25,
+            "controls": 94,
+            "control_edits": 54
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 71,
+              "to": 81,
+              "status": "unchanged",
+              "latency": 2915459706,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 134,
+              "to": 144,
+              "status": "unchanged",
+              "latency": 2837972482,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 202,
+              "to": 212,
+              "status": "unchanged",
+              "latency": 2450653031,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 249,
+              "to": 259,
+              "status": "unchanged",
+              "latency": 2485048259,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 317,
+              "to": 327,
+              "status": "unchanged",
+              "latency": 3168449784,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 399,
+              "to": 409,
+              "status": "unchanged",
+              "latency": 2799358237,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                6
+              ],
+              "from": 480,
+              "to": 490,
+              "status": "unchanged",
+              "latency": 3181227854,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                7
+              ],
+              "from": 546,
+              "to": 556,
+              "status": "unchanged",
+              "latency": 2668775261,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 610,
+              "to": 620,
+              "status": "unchanged",
+              "latency": 3182224666,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 679,
+              "to": 689,
+              "status": "unchanged",
+              "latency": 3418441746,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 744,
+              "to": 754,
+              "status": "unchanged",
+              "latency": 2574593832,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 805,
+              "to": 815,
+              "status": "changed",
+              "latency": 4660382520,
+              "output_tokens": 103,
+              "before": "maintained our position as a and execute our strategies and",
+              "after": "maintained our position as a and execute our strategies"
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 876,
+              "to": 886,
+              "status": "unchanged",
+              "latency": 2802747646,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 949,
+              "to": 959,
+              "status": "unchanged",
+              "latency": 3126066987,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 999,
+              "to": 1009,
+              "status": "changed",
+              "latency": 2757169596,
+              "output_tokens": 57,
+              "before": "million for the third quarter of this fiscal year. The",
+              "after": "million for the third quarter of this fiscal year."
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 1054,
+              "to": 1064,
+              "status": "unchanged",
+              "latency": 3097953535,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 1113,
+              "to": 1123,
+              "status": "unchanged",
+              "latency": 3213877261,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 1176,
+              "to": 1186,
+              "status": "unchanged",
+              "latency": 2854824528,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 1247,
+              "to": 1257,
+              "status": "changed",
+              "latency": 5792373742,
+              "output_tokens": 125,
+              "before": "represents a US income tax on foreign earnings. Importantly, income",
+              "after": "represents a US income tax on foreign earnings. Importantly,"
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 1308,
+              "to": 1318,
+              "status": "unchanged",
+              "latency": 3022605009,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 1380,
+              "to": 1390,
+              "status": "unchanged",
+              "latency": 2958838712,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1424,
+              "to": 1434,
+              "status": "unchanged",
+              "latency": 3606268005,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1483,
+              "to": 1493,
+              "status": "unchanged",
+              "latency": 3250680709,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1555,
+              "to": 1565,
+              "status": "changed",
+              "latency": 5423361093,
+              "output_tokens": 115,
+              "before": "a look at our at our business segments for the",
+              "after": "a look at our business segments for the"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1626,
+              "to": 1636,
+              "status": "unchanged",
+              "latency": 3373178993,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1691,
+              "to": 1701,
+              "status": "unchanged",
+              "latency": 3581518032,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1757,
+              "to": 1767,
+              "status": "unchanged",
+              "latency": 4695286335,
+              "output_tokens": 98
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1815,
+              "to": 1825,
+              "status": "unchanged",
+              "latency": 2965976096,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 1874,
+              "to": 1884,
+              "status": "unchanged",
+              "latency": 2866535168,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 1946,
+              "to": 1956,
+              "status": "unchanged",
+              "latency": 3233188152,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 2016,
+              "to": 2026,
+              "status": "unchanged",
+              "latency": 3346383225,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 2080,
+              "to": 2090,
+              "status": "unchanged",
+              "latency": 3089969484,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 2149,
+              "to": 2159,
+              "status": "unchanged",
+              "latency": 3125818914,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 2232,
+              "to": 2242,
+              "status": "unchanged",
+              "latency": 3716056945,
+              "output_tokens": 79
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 2302,
+              "to": 2312,
+              "status": "unchanged",
+              "latency": 3089962844,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 2360,
+              "to": 2370,
+              "status": "unchanged",
+              "latency": 3049131970,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 2420,
+              "to": 2430,
+              "status": "unchanged",
+              "latency": 3390145974,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2491,
+              "to": 2501,
+              "status": "unchanged",
+              "latency": 3063140322,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2567,
+              "to": 2577,
+              "status": "changed",
+              "latency": 9037154644,
+              "output_tokens": 197,
+              "before": "being marketed as Redot Imagine. acquired is re.imagine colp hum",
+              "after": "being marketed as Redot Imagine. acquired is colp hum"
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2640,
+              "to": 2650,
+              "status": "unchanged",
+              "latency": 3458828146,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2718,
+              "to": 2728,
+              "status": "unchanged",
+              "latency": 2757299383,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2797,
+              "to": 2807,
+              "status": "unchanged",
+              "latency": 4329796794,
+              "output_tokens": 95
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2871,
+              "to": 2881,
+              "status": "unchanged",
+              "latency": 2994685991,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2933,
+              "to": 2943,
+              "status": "unchanged",
+              "latency": 2753596540,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2994,
+              "to": 3004,
+              "status": "unchanged",
+              "latency": 3611666585,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 3066,
+              "to": 3076,
+              "status": "changed",
+              "latency": 4934049614,
+              "output_tokens": 103,
+              "before": "highly durable, stain-resistant, lismark fabrics the smart smart fabrics can",
+              "after": "highly durable, stain-resistant, lismark fabrics the smart fabrics can"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 3129,
+              "to": 3139,
+              "status": "unchanged",
+              "latency": 3039927544,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 3199,
+              "to": 3209,
+              "status": "unchanged",
+              "latency": 4557106833,
+              "output_tokens": 94
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 3266,
+              "to": 3276,
+              "status": "unchanged",
+              "latency": 2883674110,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                49
+              ],
+              "from": 3336,
+              "to": 3346,
+              "status": "unchanged",
+              "latency": 3000823233,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                50
+              ],
+              "from": 3401,
+              "to": 3411,
+              "status": "unchanged",
+              "latency": 3217891836,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                51
+              ],
+              "from": 3454,
+              "to": 3464,
+              "status": "unchanged",
+              "latency": 3265637140,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                52
+              ],
+              "from": 3517,
+              "to": 3527,
+              "status": "unchanged",
+              "latency": 2821232543,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                53
+              ],
+              "from": 3593,
+              "to": 3603,
+              "status": "unchanged",
+              "latency": 3254771593,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                54
+              ],
+              "from": 3648,
+              "to": 3658,
+              "status": "unchanged",
+              "latency": 3454777226,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                55
+              ],
+              "from": 3723,
+              "to": 3733,
+              "status": "changed",
+              "latency": 4633430241,
+              "output_tokens": 96,
+              "before": "results. With that, we will now take your questions. Thank",
+              "after": "results. With that, we will now take your questions."
+            },
+            {
+              "seams": [
+                56
+              ],
+              "from": 3791,
+              "to": 3801,
+              "status": "unchanged",
+              "latency": 3118171477,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                57
+              ],
+              "from": 3851,
+              "to": 3861,
+              "status": "unchanged",
+              "latency": 2813859412,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                58
+              ],
+              "from": 3929,
+              "to": 3939,
+              "status": "unchanged",
+              "latency": 3012172341,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                59
+              ],
+              "from": 3990,
+              "to": 4000,
+              "status": "unchanged",
+              "latency": 2781751607,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                60
+              ],
+              "from": 4053,
+              "to": 4063,
+              "status": "unchanged",
+              "latency": 3266002616,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                61
+              ],
+              "from": 4138,
+              "to": 4148,
+              "status": "changed",
+              "latency": 4732954246,
+              "output_tokens": 98,
+              "before": "uh import of beds into the US today. Yes, sir",
+              "after": "import of beds into the US today. Yes, sir"
+            },
+            {
+              "seams": [
+                62
+              ],
+              "from": 4202,
+              "to": 4212,
+              "status": "unchanged",
+              "latency": 5516670520,
+              "output_tokens": 116
+            },
+            {
+              "seams": [
+                63
+              ],
+              "from": 4275,
+              "to": 4285,
+              "status": "unchanged",
+              "latency": 2790819449,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                64
+              ],
+              "from": 4347,
+              "to": 4357,
+              "status": "changed",
+              "latency": 5770763789,
+              "output_tokens": 123,
+              "before": "us more money than we might have expected. So we've",
+              "after": "more money than we might have expected. So we've"
+            },
+            {
+              "seams": [
+                65
+              ],
+              "from": 4431,
+              "to": 4441,
+              "status": "unchanged",
+              "latency": 3098886049,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                66
+              ],
+              "from": 4510,
+              "to": 4520,
+              "status": "unchanged",
+              "latency": 3423270860,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                67
+              ],
+              "from": 4597,
+              "to": 4607,
+              "status": "changed",
+              "latency": 3862353964,
+              "output_tokens": 82,
+              "before": "star two. Again, star one to ask question. We'll take",
+              "after": "two. Again, one to ask question. We'll take"
+            },
+            {
+              "seams": [
+                68
+              ],
+              "from": 4647,
+              "to": 4657,
+              "status": "changed",
+              "latency": 7545798275,
+              "output_tokens": 164,
+              "before": "there's some there's less competition. least competition. Yes sir. Well,",
+              "after": "there's some less competition. Yes sir. Well,"
+            },
+            {
+              "seams": [
+                69
+              ],
+              "from": 4721,
+              "to": 4731,
+              "status": "unchanged",
+              "latency": 3210436300,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                70
+              ],
+              "from": 4783,
+              "to": 4793,
+              "status": "changed",
+              "latency": 4671272795,
+              "output_tokens": 100,
+              "before": "with fake reviews which we have found um instances of",
+              "after": "with fake reviews which we have found instances of"
+            },
+            {
+              "seams": [
+                71
+              ],
+              "from": 4870,
+              "to": 4880,
+              "status": "changed",
+              "latency": 6975279450,
+              "output_tokens": 149,
+              "before": "fabricated and falsified reviews primarily. years primarily. Okay, thanks. And",
+              "after": "fabricated and falsified reviews primarily. Okay, thanks. And"
+            },
+            {
+              "seams": [
+                72
+              ],
+              "from": 4939,
+              "to": 4949,
+              "status": "unchanged",
+              "latency": 4181990069,
+              "output_tokens": 89
+            },
+            {
+              "seams": [
+                73
+              ],
+              "from": 5023,
+              "to": 5033,
+              "status": "changed",
+              "latency": 3572352508,
+              "output_tokens": 75,
+              "before": "and and prioritize projects as they come along. Okay, thanks.",
+              "after": "and prioritize projects as they come along. Okay, thanks."
+            },
+            {
+              "seams": [
+                74
+              ],
+              "from": 5081,
+              "to": 5091,
+              "status": "unchanged",
+              "latency": 2908024082,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                75
+              ],
+              "from": 5153,
+              "to": 5163,
+              "status": "unchanged",
+              "latency": 2936994350,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                76
+              ],
+              "from": 5226,
+              "to": 5236,
+              "status": "changed",
+              "latency": 4404652955,
+              "output_tokens": 92,
+              "before": "questions, Marco, and uh expansions in vietnam and and haiti",
+              "after": "questions, Marco, and uh expansions in vietnam and haiti"
+            },
+            {
+              "seams": [
+                77
+              ],
+              "from": 5295,
+              "to": 5305,
+              "status": "changed",
+              "latency": 4484190121,
+              "output_tokens": 94,
+              "before": "a prototyping and quick rollout an emergency recovery platform that",
+              "after": "a prototyping and quick rollout emergency recovery platform that"
+            },
+            {
+              "seams": [
+                78
+              ],
+              "from": 5349,
+              "to": 5359,
+              "status": "unchanged",
+              "latency": 2908902952,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                79
+              ],
+              "from": 5422,
+              "to": 5432,
+              "status": "unchanged",
+              "latency": 3390082728,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                80
+              ],
+              "from": 5499,
+              "to": 5509,
+              "status": "unchanged",
+              "latency": 3746081931,
+              "output_tokens": 78
+            },
+            {
+              "seams": [
+                81
+              ],
+              "from": 5584,
+              "to": 5594,
+              "status": "unchanged",
+              "latency": 3678255846,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                82
+              ],
+              "from": 5650,
+              "to": 5660,
+              "status": "changed",
+              "latency": 3478197858,
+              "output_tokens": 72,
+              "before": "what and alec alec can comment on the impact but",
+              "after": "what and alec can comment on the impact but"
+            },
+            {
+              "seams": [
+                83
+              ],
+              "from": 5720,
+              "to": 5730,
+              "status": "changed",
+              "latency": 4614829098,
+              "output_tokens": 99,
+              "before": "components and lead times have gotten no longer. So we've",
+              "after": "components and lead times have gotten longer. So we've"
+            },
+            {
+              "seams": [
+                84
+              ],
+              "from": 5799,
+              "to": 5809,
+              "status": "unchanged",
+              "latency": 3108303588,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                85
+              ],
+              "from": 5874,
+              "to": 5884,
+              "status": "changed",
+              "latency": 4473535603,
+              "output_tokens": 95,
+              "before": "didn't material didn't materialize but now with this new focus",
+              "after": "didn't materialize but now with this new focus"
+            },
+            {
+              "seams": [
+                86
+              ],
+              "from": 5954,
+              "to": 5964,
+              "status": "changed",
+              "latency": 3796882586,
+              "output_tokens": 82,
+              "before": "a next step move and one that's uh that were",
+              "after": "a next step move and one that's that were"
+            },
+            {
+              "seams": [
+                87
+              ],
+              "from": 6020,
+              "to": 6030,
+              "status": "changed",
+              "latency": 3732870181,
+              "output_tokens": 79,
+              "before": "you or look like are are we talking um additional",
+              "after": "you or look like are we talking um additional"
+            },
+            {
+              "seams": [
+                88
+              ],
+              "from": 6079,
+              "to": 6089,
+              "status": "changed",
+              "latency": 5366338455,
+              "output_tokens": 117,
+              "before": "in yeah it's it's uh it it's forecasting in this",
+              "after": "in yeah it's uh it forecasting in this"
+            },
+            {
+              "seams": [
+                89
+              ],
+              "from": 6140,
+              "to": 6150,
+              "status": "changed",
+              "latency": 3557429310,
+              "output_tokens": 77,
+              "before": "so we've got that that news there but uh you",
+              "after": "so we've got that news there but uh you"
+            },
+            {
+              "seams": [
+                90
+              ],
+              "from": 6205,
+              "to": 6215,
+              "status": "changed",
+              "latency": 3916944500,
+              "output_tokens": 85,
+              "before": "our in our flexible platforms but uh it's just a",
+              "after": "in flexible platforms but uh it's just a"
+            },
+            {
+              "seams": [
+                91
+              ],
+              "from": 6282,
+              "to": 6292,
+              "status": "unchanged",
+              "latency": 3233643010,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                92
+              ],
+              "from": 6351,
+              "to": 6361,
+              "status": "unchanged",
+              "latency": 2407406669,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                93
+              ],
+              "from": 6416,
+              "to": 6426,
+              "status": "changed",
+              "latency": 3275852027,
+              "output_tokens": 107,
+              "before": "this this um delays coming from it. I have thanks",
+              "after": "this um delays coming from it. I have thanks"
+            },
+            {
+              "seams": [
+                94
+              ],
+              "from": 6489,
+              "to": 6499,
+              "status": "unchanged",
+              "latency": 2613752516,
+              "output_tokens": 73
+            }
+          ]
+        }
+      }
+    },
+    {
+      "run": 2,
+      "unsplit": {
+        "wall": 47260058821,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 1931,
+          "TotalTokens": 16959
+        },
+        "words": 1545,
+        "wer": {
+          "edits": 84,
+          "length": 1574,
+          "rate": 0.053367217280813214
+        }
+      },
+      "excerpt_windowed": {
+        "windows": 24,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 23
+        },
+        "plan_time": 172254141,
+        "wall": 14457760247,
+        "total": 14630014388,
+        "mean_latency": 2332846558,
+        "max_in_flight": 4,
+        "input_tokens": 16827,
+        "output_tokens": 2041,
+        "wer": {
+          "edits": 108,
+          "length": 1574,
+          "rate": 0.06861499364675985
+        },
+        "seams": {
+          "seams": 23,
+          "matched": 23,
+          "unmatched": 0,
+          "edits": 26,
+          "per_seam": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "distribution": {
+            "0": 14,
+            "1": 7,
+            "16": 1,
+            "3": 1
+          },
+          "unmatched_edits": 0,
+          "controls": 22,
+          "control_edits": 9
+        }
+      },
+      "full": {
+        "windows": 96,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 95
+        },
+        "plan_time": 1340467220,
+        "wall": 60452871773,
+        "total": 61793338993,
+        "mean_latency": 2479084465,
+        "max_in_flight": 4,
+        "input_tokens": 68941,
+        "output_tokens": 8379,
+        "wer": {
+          "edits": 569,
+          "length": 6519,
+          "rate": 0.08728332566344531
+        },
+        "seams": {
+          "seams": 95,
+          "matched": 87,
+          "unmatched": 8,
+          "edits": 138,
+          "per_seam": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            6,
+            1,
+            0,
+            0,
+            1,
+            0,
+            1,
+            7,
+            2,
+            5,
+            3,
+            2,
+            0,
+            14,
+            1,
+            1,
+            1,
+            3,
+            2,
+            2,
+            1,
+            1,
+            0,
+            4,
+            0,
+            2,
+            0,
+            0,
+            0,
+            2,
+            6,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            2,
+            1,
+            1,
+            0,
+            2,
+            1,
+            2,
+            7,
+            3,
+            1,
+            0,
+            4,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0
+          ],
+          "distribution": {
+            "0": 41,
+            "1": 27,
+            "14": 1,
+            "16": 1,
+            "2": 13,
+            "3": 4,
+            "4": 3,
+            "5": 1,
+            "6": 2,
+            "7": 2
+          },
+          "unmatched_edits": 32,
+          "controls": 94,
+          "control_edits": 53
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 95,
+          "changed": 25,
+          "unchanged": 70,
+          "failed": 0,
+          "wall": 90032146525,
+          "wer": {
+            "edits": 577,
+            "length": 6519,
+            "rate": 0.0885105077465869
+          },
+          "seams": {
+            "seams": 95,
+            "matched": 87,
+            "unmatched": 8,
+            "edits": 148,
+            "per_seam": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              3,
+              0,
+              1,
+              1,
+              17,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0,
+              1,
+              3,
+              0,
+              4,
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              2,
+              1,
+              0,
+              1,
+              1,
+              0,
+              1,
+              0,
+              5,
+              1,
+              0,
+              0,
+              1,
+              0,
+              1,
+              6,
+              2,
+              5,
+              3,
+              2,
+              0,
+              14,
+              1,
+              1,
+              1,
+              3,
+              2,
+              2,
+              1,
+              1,
+              0,
+              7,
+              0,
+              2,
+              1,
+              0,
+              0,
+              2,
+              1,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              2,
+              2,
+              1,
+              0,
+              3,
+              1,
+              2,
+              7,
+              3,
+              1,
+              2,
+              4,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              5,
+              0
+            ],
+            "distribution": {
+              "0": 34,
+              "1": 34,
+              "14": 1,
+              "17": 1,
+              "2": 11,
+              "3": 6,
+              "4": 2,
+              "5": 3,
+              "6": 1,
+              "7": 2
+            },
+            "unmatched_edits": 23,
+            "controls": 94,
+            "control_edits": 55
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 71,
+              "to": 81,
+              "status": "unchanged",
+              "latency": 2505824466,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 134,
+              "to": 144,
+              "status": "unchanged",
+              "latency": 2505861571,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 202,
+              "to": 212,
+              "status": "unchanged",
+              "latency": 2781186185,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 249,
+              "to": 259,
+              "status": "unchanged",
+              "latency": 3071479705,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 317,
+              "to": 327,
+              "status": "unchanged",
+              "latency": 3221399565,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 399,
+              "to": 409,
+              "status": "unchanged",
+              "latency": 2744186527,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                6
+              ],
+              "from": 480,
+              "to": 490,
+              "status": "unchanged",
+              "latency": 3221373215,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                7
+              ],
+              "from": 546,
+              "to": 556,
+              "status": "unchanged",
+              "latency": 2655729733,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 610,
+              "to": 620,
+              "status": "unchanged",
+              "latency": 3171224264,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 679,
+              "to": 689,
+              "status": "unchanged",
+              "latency": 4040463366,
+              "output_tokens": 88
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 744,
+              "to": 754,
+              "status": "changed",
+              "latency": 9119285222,
+              "output_tokens": 200,
+              "before": "that are fostering collaboration and product development and allow us",
+              "after": "that are fostering collaboration and product development allow us"
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 805,
+              "to": 815,
+              "status": "changed",
+              "latency": 7911654816,
+              "output_tokens": 176,
+              "before": "maintained our position as a and execute our strategies and",
+              "after": "maintained our position as a and execute our strategies"
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 875,
+              "to": 885,
+              "status": "unchanged",
+              "latency": 2877677581,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 949,
+              "to": 959,
+              "status": "unchanged",
+              "latency": 2893451785,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 999,
+              "to": 1009,
+              "status": "unchanged",
+              "latency": 2843252908,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 1054,
+              "to": 1064,
+              "status": "unchanged",
+              "latency": 2773199507,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 1113,
+              "to": 1123,
+              "status": "unchanged",
+              "latency": 3786590505,
+              "output_tokens": 78
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 1176,
+              "to": 1186,
+              "status": "unchanged",
+              "latency": 2721037317,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 1247,
+              "to": 1257,
+              "status": "changed",
+              "latency": 5788770956,
+              "output_tokens": 122,
+              "before": "represents a US income tax on foreign earnings. Importantly, income",
+              "after": "represents a US income tax on foreign earnings. Importantly,"
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 1308,
+              "to": 1318,
+              "status": "unchanged",
+              "latency": 2897435303,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 1380,
+              "to": 1390,
+              "status": "unchanged",
+              "latency": 3148615115,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1424,
+              "to": 1434,
+              "status": "changed",
+              "latency": 5811405489,
+              "output_tokens": 123,
+              "before": "the proposed regulations are finalized and effective. If the proposed",
+              "after": "the proposed regulations are finalized and effective. If"
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1483,
+              "to": 1493,
+              "status": "unchanged",
+              "latency": 3099556478,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1555,
+              "to": 1565,
+              "status": "changed",
+              "latency": 4472062304,
+              "output_tokens": 93,
+              "before": "a look at our at our business segments for the",
+              "after": "a look at our business segments for the"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1626,
+              "to": 1636,
+              "status": "unchanged",
+              "latency": 3113648119,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1691,
+              "to": 1701,
+              "status": "unchanged",
+              "latency": 3554619020,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1757,
+              "to": 1767,
+              "status": "unchanged",
+              "latency": 4776218382,
+              "output_tokens": 98
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1815,
+              "to": 1825,
+              "status": "unchanged",
+              "latency": 2878992849,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 1874,
+              "to": 1884,
+              "status": "unchanged",
+              "latency": 3036815076,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 1946,
+              "to": 1956,
+              "status": "unchanged",
+              "latency": 3064992259,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 2016,
+              "to": 2026,
+              "status": "unchanged",
+              "latency": 3400220331,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 2080,
+              "to": 2090,
+              "status": "unchanged",
+              "latency": 2968059248,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 2150,
+              "to": 2160,
+              "status": "unchanged",
+              "latency": 4582335864,
+              "output_tokens": 96
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 2233,
+              "to": 2243,
+              "status": "unchanged",
+              "latency": 3113412839,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 2303,
+              "to": 2313,
+              "status": "unchanged",
+              "latency": 3175019883,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 2361,
+              "to": 2371,
+              "status": "unchanged",
+              "latency": 3001774450,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 2421,
+              "to": 2431,
+              "status": "unchanged",
+              "latency": 3433647311,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2492,
+              "to": 2502,
+              "status": "unchanged",
+              "latency": 3067958411,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2568,
+              "to": 2578,
+              "status": "changed",
+              "latency": 6549945590,
+              "output_tokens": 141,
+              "before": "being marketed as Redot Imagine. acquired is re.imagine colp hum",
+              "after": "being marketed as Redot Imagine. acquired is colp hum"
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2641,
+              "to": 2651,
+              "status": "unchanged",
+              "latency": 4353647911,
+              "output_tokens": 93
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2719,
+              "to": 2729,
+              "status": "unchanged",
+              "latency": 2643253013,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2798,
+              "to": 2808,
+              "status": "unchanged",
+              "latency": 4469733139,
+              "output_tokens": 95
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2873,
+              "to": 2883,
+              "status": "unchanged",
+              "latency": 2729266775,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2934,
+              "to": 2944,
+              "status": "unchanged",
+              "latency": 3513643376,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2995,
+              "to": 3005,
+              "status": "unchanged",
+              "latency": 3208334247,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 3067,
+              "to": 3077,
+              "status": "changed",
+              "latency": 4832115513,
+              "output_tokens": 103,
+              "before": "highly durable, stain-resistant, lismark fabrics the smart smart fabrics can",
+              "after": "highly durable, stain-resistant, lismark fabrics the smart fabrics can"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 3130,
+              "to": 3140,
+              "status": "unchanged",
+              "latency": 3073101357,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 3200,
+              "to": 3210,
+              "status": "unchanged",
+              "latency": 5330564022,
+              "output_tokens": 115
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 3267,
+              "to": 3277,
+              "status": "unchanged",
+              "latency": 3193567262,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                49
+              ],
+              "from": 3337,
+              "to": 3347,
+              "status": "unchanged",
+              "latency": 2839990873,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                50
+              ],
+              "from": 3402,
+              "to": 3412,
+              "status": "unchanged",
+              "latency": 3149398535,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                51
+              ],
+              "from": 3455,
+              "to": 3465,
+              "status": "unchanged",
+              "latency": 3380302527,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                52
+              ],
+              "from": 3518,
+              "to": 3528,
+              "status": "unchanged",
+              "latency": 2987386174,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                53
+              ],
+              "from": 3594,
+              "to": 3604,
+              "status": "unchanged",
+              "latency": 3096273521,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                54
+              ],
+              "from": 3649,
+              "to": 3659,
+              "status": "unchanged",
+              "latency": 3440563833,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                55
+              ],
+              "from": 3724,
+              "to": 3734,
+              "status": "unchanged",
+              "latency": 4649513068,
+              "output_tokens": 97
+            },
+            {
+              "seams": [
+                56
+              ],
+              "from": 3792,
+              "to": 3802,
+              "status": "unchanged",
+              "latency": 3334612547,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                57
+              ],
+              "from": 3852,
+              "to": 3862,
+              "status": "unchanged",
+              "latency": 2687469862,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                58
+              ],
+              "from": 3930,
+              "to": 3940,
+              "status": "unchanged",
+              "latency": 2864683729,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                59
+              ],
+              "from": 3990,
+              "to": 4000,
+              "status": "unchanged",
+              "latency": 2825617905,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                60
+              ],
+              "from": 4054,
+              "to": 4064,
+              "status": "unchanged",
+              "latency": 3424551710,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                61
+              ],
+              "from": 4139,
+              "to": 4149,
+              "status": "changed",
+              "latency": 4656776096,
+              "output_tokens": 98,
+              "before": "uh import of beds into the US today. Yes, sir",
+              "after": "import of beds into the US today. Yes, sir"
+            },
+            {
+              "seams": [
+                62
+              ],
+              "from": 4203,
+              "to": 4213,
+              "status": "unchanged",
+              "latency": 4832288944,
+              "output_tokens": 102
+            },
+            {
+              "seams": [
+                63
+              ],
+              "from": 4276,
+              "to": 4286,
+              "status": "unchanged",
+              "latency": 2832794447,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                64
+              ],
+              "from": 4348,
+              "to": 4358,
+              "status": "changed",
+              "latency": 4349133457,
+              "output_tokens": 92,
+              "before": "us more money than we might have expected. So we've",
+              "after": "more money than we might have expected. So we've"
+            },
+            {
+              "seams": [
+                65
+              ],
+              "from": 4432,
+              "to": 4442,
+              "status": "unchanged",
+              "latency": 2973852759,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                66
+              ],
+              "from": 4511,
+              "to": 4521,
+              "status": "unchanged",
+              "latency": 3660230005,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                67
+              ],
+              "from": 4598,
+              "to": 4608,
+              "status": "unchanged",
+              "latency": 3346889199,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                68
+              ],
+              "from": 4648,
+              "to": 4658,
+              "status": "changed",
+              "latency": 6250572158,
+              "output_tokens": 136,
+              "before": "there's some there's less competition. least competition. Yes sir. Well,",
+              "after": "there's less competition. Yes sir. Well,"
+            },
+            {
+              "seams": [
+                69
+              ],
+              "from": 4722,
+              "to": 4732,
+              "status": "unchanged",
+              "latency": 3145061137,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                70
+              ],
+              "from": 4784,
+              "to": 4794,
+              "status": "changed",
+              "latency": 4751521210,
+              "output_tokens": 104,
+              "before": "with fake reviews which we have found um instances of",
+              "after": "with fake reviews which we have found instances of"
+            },
+            {
+              "seams": [
+                71
+              ],
+              "from": 4871,
+              "to": 4881,
+              "status": "changed",
+              "latency": 5669932677,
+              "output_tokens": 125,
+              "before": "fabricated and falsified reviews primarily. years primarily. Okay, thanks. And",
+              "after": "fabricated and falsified reviews primarily. years. Okay, thanks. And"
+            },
+            {
+              "seams": [
+                72
+              ],
+              "from": 4940,
+              "to": 4950,
+              "status": "unchanged",
+              "latency": 3444107439,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                73
+              ],
+              "from": 5024,
+              "to": 5034,
+              "status": "changed",
+              "latency": 3572754349,
+              "output_tokens": 76,
+              "before": "and and prioritize projects as they come along. Okay, thanks.",
+              "after": "and prioritize projects as they come along. Okay, thanks."
+            },
+            {
+              "seams": [
+                74
+              ],
+              "from": 5082,
+              "to": 5092,
+              "status": "unchanged",
+              "latency": 2831232034,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                75
+              ],
+              "from": 5154,
+              "to": 5164,
+              "status": "unchanged",
+              "latency": 2912946595,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                76
+              ],
+              "from": 5227,
+              "to": 5237,
+              "status": "changed",
+              "latency": 4119257468,
+              "output_tokens": 88,
+              "before": "questions, Marco, and uh expansions in vietnam and and haiti",
+              "after": "questions, Marco, and uh expansions in vietnam and haiti"
+            },
+            {
+              "seams": [
+                77
+              ],
+              "from": 5296,
+              "to": 5306,
+              "status": "changed",
+              "latency": 6442907606,
+              "output_tokens": 139,
+              "before": "a prototyping and quick rollout an emergency recovery platform that",
+              "after": "a prototyping and quick rollout emergency recovery platform that"
+            },
+            {
+              "seams": [
+                78
+              ],
+              "from": 5350,
+              "to": 5360,
+              "status": "unchanged",
+              "latency": 3094063780,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                79
+              ],
+              "from": 5423,
+              "to": 5433,
+              "status": "changed",
+              "latency": 5171445217,
+              "output_tokens": 113,
+              "before": "bring fabric from anywhere in the world today um and",
+              "after": "bring fabric from anywhere in the world today and"
+            },
+            {
+              "seams": [
+                80
+              ],
+              "from": 5500,
+              "to": 5510,
+              "status": "unchanged",
+              "latency": 4119268478,
+              "output_tokens": 87
+            },
+            {
+              "seams": [
+                81
+              ],
+              "from": 5585,
+              "to": 5595,
+              "status": "unchanged",
+              "latency": 4536946370,
+              "output_tokens": 97
+            },
+            {
+              "seams": [
+                82
+              ],
+              "from": 5651,
+              "to": 5661,
+              "status": "changed",
+              "latency": 3529261225,
+              "output_tokens": 73,
+              "before": "what and alec alec can comment on the impact but",
+              "after": "what and alec can comment on the impact but"
+            },
+            {
+              "seams": [
+                83
+              ],
+              "from": 5721,
+              "to": 5731,
+              "status": "changed",
+              "latency": 4001397885,
+              "output_tokens": 84,
+              "before": "components and lead times have gotten no longer. So we've",
+              "after": "components and lead times have gotten longer. So we've"
+            },
+            {
+              "seams": [
+                84
+              ],
+              "from": 5800,
+              "to": 5810,
+              "status": "unchanged",
+              "latency": 2605141590,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                85
+              ],
+              "from": 5875,
+              "to": 5885,
+              "status": "changed",
+              "latency": 4186422559,
+              "output_tokens": 91,
+              "before": "didn't material didn't materialize but now with this new focus",
+              "after": "didn't materialize but now with this new focus"
+            },
+            {
+              "seams": [
+                86
+              ],
+              "from": 5955,
+              "to": 5965,
+              "status": "changed",
+              "latency": 5260638332,
+              "output_tokens": 115,
+              "before": "a next step move and one that's uh that were",
+              "after": "a next step move and one that's that were"
+            },
+            {
+              "seams": [
+                87
+              ],
+              "from": 6021,
+              "to": 6031,
+              "status": "changed",
+              "latency": 3673994031,
+              "output_tokens": 80,
+              "before": "you or look like are are we talking um additional",
+              "after": "you or look like are we talking um additional"
+            },
+            {
+              "seams": [
+                88
+              ],
+              "from": 6080,
+              "to": 6090,
+              "status": "changed",
+              "latency": 7027930221,
+              "output_tokens": 156,
+              "before": "in yeah it's it's uh it it's forecasting in this",
+              "after": "in yeah it's uh it forecasting in this"
+            },
+            {
+              "seams": [
+                89
+              ],
+              "from": 6141,
+              "to": 6151,
+              "status": "changed",
+              "latency": 4277257565,
+              "output_tokens": 94,
+              "before": "so we've got that that news there but uh you",
+              "after": "so we've got that news there but uh you"
+            },
+            {
+              "seams": [
+                90
+              ],
+              "from": 6206,
+              "to": 6216,
+              "status": "changed",
+              "latency": 3696997819,
+              "output_tokens": 81,
+              "before": "our in our flexible platforms but uh it's just a",
+              "after": "our in flexible platforms but uh it's just a"
+            },
+            {
+              "seams": [
+                91
+              ],
+              "from": 6283,
+              "to": 6293,
+              "status": "unchanged",
+              "latency": 2925316025,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                92
+              ],
+              "from": 6352,
+              "to": 6362,
+              "status": "unchanged",
+              "latency": 2691014078,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                93
+              ],
+              "from": 6417,
+              "to": 6427,
+              "status": "changed",
+              "latency": 3353172668,
+              "output_tokens": 107,
+              "before": "this this um delays coming from it. I have thanks",
+              "after": "this um delays coming from it. I have thanks"
+            },
+            {
+              "seams": [
+                94
+              ],
+              "from": 6490,
+              "to": 6500,
+              "status": "unchanged",
+              "latency": 2220727037,
+              "output_tokens": 61
+            }
+          ]
+        }
+      }
+    },
+    {
+      "run": 3,
+      "unsplit": {
+        "wall": 51891403170,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 1931,
+          "TotalTokens": 16959
+        },
+        "words": 1545,
+        "wer": {
+          "edits": 84,
+          "length": 1574,
+          "rate": 0.053367217280813214
+        }
+      },
+      "excerpt_windowed": {
+        "windows": 24,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 23
+        },
+        "plan_time": 171035849,
+        "wall": 15037615285,
+        "total": 15208651134,
+        "mean_latency": 2432549328,
+        "max_in_flight": 4,
+        "input_tokens": 16827,
+        "output_tokens": 2041,
+        "wer": {
+          "edits": 108,
+          "length": 1574,
+          "rate": 0.06861499364675985
+        },
+        "seams": {
+          "seams": 23,
+          "matched": 23,
+          "unmatched": 0,
+          "edits": 26,
+          "per_seam": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "distribution": {
+            "0": 14,
+            "1": 7,
+            "16": 1,
+            "3": 1
+          },
+          "unmatched_edits": 0,
+          "controls": 22,
+          "control_edits": 9
+        }
+      },
+      "full": {
+        "windows": 96,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 95
+        },
+        "plan_time": 1284190229,
+        "wall": 60175403221,
+        "total": 61459593450,
+        "mean_latency": 2466564064,
+        "max_in_flight": 4,
+        "input_tokens": 68941,
+        "output_tokens": 8377,
+        "wer": {
+          "edits": 570,
+          "length": 6519,
+          "rate": 0.08743672342383801
+        },
+        "seams": {
+          "seams": 95,
+          "matched": 87,
+          "unmatched": 8,
+          "edits": 139,
+          "per_seam": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            3,
+            0,
+            1,
+            0,
+            16,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            6,
+            1,
+            0,
+            0,
+            2,
+            0,
+            1,
+            7,
+            2,
+            5,
+            3,
+            2,
+            0,
+            14,
+            1,
+            1,
+            1,
+            3,
+            2,
+            2,
+            1,
+            1,
+            0,
+            4,
+            0,
+            2,
+            0,
+            0,
+            0,
+            2,
+            6,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            2,
+            1,
+            1,
+            0,
+            2,
+            1,
+            2,
+            7,
+            3,
+            1,
+            0,
+            4,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0
+          ],
+          "distribution": {
+            "0": 41,
+            "1": 26,
+            "14": 1,
+            "16": 1,
+            "2": 14,
+            "3": 4,
+            "4": 3,
+            "5": 1,
+            "6": 2,
+            "7": 2
+          },
+          "unmatched_edits": 32,
+          "controls": 94,
+          "control_edits": 53
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 95,
+          "changed": 30,
+          "unchanged": 65,
+          "failed": 0,
+          "wall": 88981857334,
+          "wer": {
+            "edits": 579,
+            "length": 6519,
+            "rate": 0.08881730326737229
+          },
+          "seams": {
+            "seams": 95,
+            "matched": 87,
+            "unmatched": 8,
+            "edits": 154,
+            "per_seam": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              3,
+              0,
+              1,
+              1,
+              17,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              1,
+              3,
+              0,
+              4,
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              2,
+              1,
+              0,
+              1,
+              1,
+              0,
+              1,
+              0,
+              5,
+              1,
+              0,
+              0,
+              2,
+              0,
+              1,
+              6,
+              2,
+              5,
+              3,
+              2,
+              0,
+              14,
+              1,
+              1,
+              1,
+              4,
+              2,
+              2,
+              2,
+              1,
+              0,
+              7,
+              1,
+              2,
+              1,
+              0,
+              0,
+              2,
+              3,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              2,
+              2,
+              1,
+              0,
+              3,
+              1,
+              2,
+              7,
+              3,
+              1,
+              2,
+              5,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              5,
+              0
+            ],
+            "distribution": {
+              "0": 34,
+              "1": 31,
+              "14": 1,
+              "17": 1,
+              "2": 13,
+              "3": 6,
+              "4": 2,
+              "5": 4,
+              "6": 1,
+              "7": 2
+            },
+            "unmatched_edits": 25,
+            "controls": 94,
+            "control_edits": 53
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 71,
+              "to": 81,
+              "status": "unchanged",
+              "latency": 2542339035,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 134,
+              "to": 144,
+              "status": "unchanged",
+              "latency": 2609740251,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 202,
+              "to": 212,
+              "status": "unchanged",
+              "latency": 2542348833,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 249,
+              "to": 259,
+              "status": "unchanged",
+              "latency": 3164893451,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 317,
+              "to": 327,
+              "status": "unchanged",
+              "latency": 3178803609,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 399,
+              "to": 409,
+              "status": "unchanged",
+              "latency": 2672238267,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                6
+              ],
+              "from": 480,
+              "to": 490,
+              "status": "unchanged",
+              "latency": 3075939884,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                7
+              ],
+              "from": 546,
+              "to": 556,
+              "status": "unchanged",
+              "latency": 2876529571,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 610,
+              "to": 620,
+              "status": "unchanged",
+              "latency": 2642983307,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 679,
+              "to": 689,
+              "status": "unchanged",
+              "latency": 4303208556,
+              "output_tokens": 93
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 744,
+              "to": 754,
+              "status": "changed",
+              "latency": 5481241396,
+              "output_tokens": 117,
+              "before": "that are fostering collaboration and product development and allow us",
+              "after": "that are fostering collaboration and product development allow us"
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 805,
+              "to": 815,
+              "status": "changed",
+              "latency": 4795336045,
+              "output_tokens": 106,
+              "before": "maintained our position as a and execute our strategies and",
+              "after": "maintained our position as a and execute our strategies"
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 875,
+              "to": 885,
+              "status": "unchanged",
+              "latency": 3014124298,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 949,
+              "to": 959,
+              "status": "unchanged",
+              "latency": 2674397003,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 999,
+              "to": 1009,
+              "status": "unchanged",
+              "latency": 3124379046,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 1054,
+              "to": 1064,
+              "status": "unchanged",
+              "latency": 2842507101,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 1113,
+              "to": 1123,
+              "status": "changed",
+              "latency": 5495589329,
+              "output_tokens": 120,
+              "before": "charges and restructuring related credits i just noted it the",
+              "after": "charges and restructuring related credits i just noted"
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 1176,
+              "to": 1186,
+              "status": "unchanged",
+              "latency": 2660688494,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 1247,
+              "to": 1257,
+              "status": "unchanged",
+              "latency": 3388291481,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 1308,
+              "to": 1318,
+              "status": "unchanged",
+              "latency": 2771424247,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 1380,
+              "to": 1390,
+              "status": "unchanged",
+              "latency": 2871608043,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1424,
+              "to": 1434,
+              "status": "changed",
+              "latency": 3712946467,
+              "output_tokens": 78,
+              "before": "the proposed regulations are finalized and effective. If the proposed",
+              "after": "the proposed regulations are finalized and effective. If"
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1483,
+              "to": 1493,
+              "status": "unchanged",
+              "latency": 3081927353,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1555,
+              "to": 1565,
+              "status": "changed",
+              "latency": 4614500925,
+              "output_tokens": 99,
+              "before": "a look at our at our business segments for the",
+              "after": "a look at our business segments for the"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1626,
+              "to": 1636,
+              "status": "unchanged",
+              "latency": 3355629025,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1691,
+              "to": 1701,
+              "status": "unchanged",
+              "latency": 3597098019,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1757,
+              "to": 1767,
+              "status": "unchanged",
+              "latency": 2822028338,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1815,
+              "to": 1825,
+              "status": "unchanged",
+              "latency": 3023702402,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 1874,
+              "to": 1884,
+              "status": "unchanged",
+              "latency": 3097392098,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 1946,
+              "to": 1956,
+              "status": "unchanged",
+              "latency": 3131540168,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 2016,
+              "to": 2026,
+              "status": "unchanged",
+              "latency": 3321408615,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 2080,
+              "to": 2090,
+              "status": "unchanged",
+              "latency": 3165708125,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 2150,
+              "to": 2160,
+              "status": "unchanged",
+              "latency": 3090277405,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 2233,
+              "to": 2243,
+              "status": "unchanged",
+              "latency": 2903241098,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 2303,
+              "to": 2313,
+              "status": "unchanged",
+              "latency": 3013570675,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 2361,
+              "to": 2371,
+              "status": "unchanged",
+              "latency": 3395847111,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 2421,
+              "to": 2431,
+              "status": "unchanged",
+              "latency": 3269334221,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2492,
+              "to": 2502,
+              "status": "unchanged",
+              "latency": 2882587279,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2568,
+              "to": 2578,
+              "status": "changed",
+              "latency": 11037635401,
+              "output_tokens": 243,
+              "before": "being marketed as Redot Imagine. acquired is re.imagine colp hum",
+              "after": "being marketed as Redot Imagine. acquired is colp hum"
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2641,
+              "to": 2651,
+              "status": "changed",
+              "latency": 5738226760,
+              "output_tokens": 125,
+              "before": "fabrics segment, is now president of the division. Having worked",
+              "after": "fabrics segment is now president of the division. Having worked"
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2719,
+              "to": 2729,
+              "status": "unchanged",
+              "latency": 2791546907,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2798,
+              "to": 2808,
+              "status": "unchanged",
+              "latency": 3579213627,
+              "output_tokens": 78
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2872,
+              "to": 2882,
+              "status": "unchanged",
+              "latency": 3143634442,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2934,
+              "to": 2944,
+              "status": "unchanged",
+              "latency": 3234966308,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2995,
+              "to": 3005,
+              "status": "unchanged",
+              "latency": 3486748737,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 3067,
+              "to": 3077,
+              "status": "changed",
+              "latency": 4677794805,
+              "output_tokens": 100,
+              "before": "highly durable, stain-resistant, lismark fabrics the smart smart fabrics can",
+              "after": "highly durable, stain-resistant, lismark fabrics the smart fabrics can"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 3130,
+              "to": 3140,
+              "status": "unchanged",
+              "latency": 2988933038,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 3200,
+              "to": 3210,
+              "status": "unchanged",
+              "latency": 5850216018,
+              "output_tokens": 125
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 3268,
+              "to": 3278,
+              "status": "unchanged",
+              "latency": 2892786694,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                49
+              ],
+              "from": 3338,
+              "to": 3348,
+              "status": "unchanged",
+              "latency": 3201542813,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                50
+              ],
+              "from": 3403,
+              "to": 3413,
+              "status": "unchanged",
+              "latency": 3258037938,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                51
+              ],
+              "from": 3456,
+              "to": 3466,
+              "status": "unchanged",
+              "latency": 3584588804,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                52
+              ],
+              "from": 3519,
+              "to": 3529,
+              "status": "unchanged",
+              "latency": 3574207620,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                53
+              ],
+              "from": 3595,
+              "to": 3605,
+              "status": "unchanged",
+              "latency": 2852744957,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                54
+              ],
+              "from": 3650,
+              "to": 3660,
+              "status": "unchanged",
+              "latency": 3453031243,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                55
+              ],
+              "from": 3725,
+              "to": 3735,
+              "status": "changed",
+              "latency": 3462928048,
+              "output_tokens": 71,
+              "before": "results. With that, we will now take your questions. Thank",
+              "after": "results. With that, we will now take your questions."
+            },
+            {
+              "seams": [
+                56
+              ],
+              "from": 3793,
+              "to": 3803,
+              "status": "unchanged",
+              "latency": 3217234133,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                57
+              ],
+              "from": 3853,
+              "to": 3863,
+              "status": "unchanged",
+              "latency": 2803205324,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                58
+              ],
+              "from": 3931,
+              "to": 3941,
+              "status": "changed",
+              "latency": 4534889223,
+              "output_tokens": 95,
+              "before": "a pretty significant disruption over the last year of section",
+              "after": "a pretty significant disruption over the last year"
+            },
+            {
+              "seams": [
+                59
+              ],
+              "from": 3991,
+              "to": 4001,
+              "status": "unchanged",
+              "latency": 2604621322,
+              "output_tokens": 54
+            },
+            {
+              "seams": [
+                60
+              ],
+              "from": 4055,
+              "to": 4065,
+              "status": "unchanged",
+              "latency": 2747504908,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                61
+              ],
+              "from": 4140,
+              "to": 4150,
+              "status": "changed",
+              "latency": 4611603054,
+              "output_tokens": 98,
+              "before": "uh import of beds into the US today. Yes, sir",
+              "after": "import of beds into the US today. Yes, sir"
+            },
+            {
+              "seams": [
+                62
+              ],
+              "from": 4204,
+              "to": 4214,
+              "status": "changed",
+              "latency": 4188546975,
+              "output_tokens": 88,
+              "before": "potentially more um advantageous in certain cases. Okay, and then",
+              "after": "potentially more advantageous in certain cases. Okay, and then"
+            },
+            {
+              "seams": [
+                63
+              ],
+              "from": 4277,
+              "to": 4287,
+              "status": "unchanged",
+              "latency": 2775797458,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                64
+              ],
+              "from": 4349,
+              "to": 4359,
+              "status": "changed",
+              "latency": 5851750925,
+              "output_tokens": 127,
+              "before": "us more money than we might have expected. So we've",
+              "after": "more money than we might have expected. So we've"
+            },
+            {
+              "seams": [
+                65
+              ],
+              "from": 4433,
+              "to": 4443,
+              "status": "unchanged",
+              "latency": 2799883561,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                66
+              ],
+              "from": 4512,
+              "to": 4522,
+              "status": "changed",
+              "latency": 5526117588,
+              "output_tokens": 120,
+              "before": "direct distribution and that is working. Um sometimes it's never",
+              "after": "direct distribution and that is working. sometimes it's never"
+            },
+            {
+              "seams": [
+                67
+              ],
+              "from": 4599,
+              "to": 4609,
+              "status": "unchanged",
+              "latency": 3896304543,
+              "output_tokens": 85
+            },
+            {
+              "seams": [
+                68
+              ],
+              "from": 4649,
+              "to": 4659,
+              "status": "changed",
+              "latency": 5773464528,
+              "output_tokens": 126,
+              "before": "there's some there's less competition. least competition. Yes sir. Well,",
+              "after": "there's some less competition. Yes sir. Well"
+            },
+            {
+              "seams": [
+                69
+              ],
+              "from": 4723,
+              "to": 4733,
+              "status": "unchanged",
+              "latency": 3194350343,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                70
+              ],
+              "from": 4785,
+              "to": 4795,
+              "status": "unchanged",
+              "latency": 4348764644,
+              "output_tokens": 93
+            },
+            {
+              "seams": [
+                71
+              ],
+              "from": 4872,
+              "to": 4882,
+              "status": "changed",
+              "latency": 6833386376,
+              "output_tokens": 148,
+              "before": "fabricated and falsified reviews primarily. years primarily. Okay, thanks. And",
+              "after": "fabricated and falsified reviews primarily. years. Okay, thanks. And"
+            },
+            {
+              "seams": [
+                72
+              ],
+              "from": 4941,
+              "to": 4951,
+              "status": "unchanged",
+              "latency": 3344173681,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                73
+              ],
+              "from": 5025,
+              "to": 5035,
+              "status": "changed",
+              "latency": 3524410953,
+              "output_tokens": 76,
+              "before": "and and prioritize projects as they come along. Okay, thanks.",
+              "after": "and prioritize projects as they come along. Okay, thanks."
+            },
+            {
+              "seams": [
+                74
+              ],
+              "from": 5083,
+              "to": 5093,
+              "status": "unchanged",
+              "latency": 2759751449,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                75
+              ],
+              "from": 5155,
+              "to": 5165,
+              "status": "unchanged",
+              "latency": 2852023380,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                76
+              ],
+              "from": 5228,
+              "to": 5238,
+              "status": "changed",
+              "latency": 4207091926,
+              "output_tokens": 89,
+              "before": "questions, Marco, and uh expansions in vietnam and and haiti",
+              "after": "questions, Marco, and uh expansions in vietnam and haiti"
+            },
+            {
+              "seams": [
+                77
+              ],
+              "from": 5297,
+              "to": 5307,
+              "status": "changed",
+              "latency": 5014063208,
+              "output_tokens": 108,
+              "before": "a prototyping and quick rollout an emergency recovery platform that",
+              "after": "a prototyping and quick rollout emergency recovery platform that"
+            },
+            {
+              "seams": [
+                78
+              ],
+              "from": 5351,
+              "to": 5361,
+              "status": "unchanged",
+              "latency": 2752750609,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                79
+              ],
+              "from": 5424,
+              "to": 5434,
+              "status": "changed",
+              "latency": 4827760565,
+              "output_tokens": 105,
+              "before": "bring fabric from anywhere in the world today um and",
+              "after": "bring fabric from anywhere in the world today and"
+            },
+            {
+              "seams": [
+                80
+              ],
+              "from": 5501,
+              "to": 5511,
+              "status": "unchanged",
+              "latency": 3139113428,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                81
+              ],
+              "from": 5586,
+              "to": 5596,
+              "status": "unchanged",
+              "latency": 3632449734,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                82
+              ],
+              "from": 5652,
+              "to": 5662,
+              "status": "changed",
+              "latency": 3931510392,
+              "output_tokens": 84,
+              "before": "what and alec alec can comment on the impact but",
+              "after": "what and alec can comment on the impact but"
+            },
+            {
+              "seams": [
+                83
+              ],
+              "from": 5722,
+              "to": 5732,
+              "status": "changed",
+              "latency": 4414182092,
+              "output_tokens": 94,
+              "before": "components and lead times have gotten no longer. So we've",
+              "after": "components and lead times have gotten longer. So we've"
+            },
+            {
+              "seams": [
+                84
+              ],
+              "from": 5801,
+              "to": 5811,
+              "status": "unchanged",
+              "latency": 2679520700,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                85
+              ],
+              "from": 5876,
+              "to": 5886,
+              "status": "changed",
+              "latency": 4279762712,
+              "output_tokens": 93,
+              "before": "didn't material didn't materialize but now with this new focus",
+              "after": "didn't materialize but now with this new focus"
+            },
+            {
+              "seams": [
+                86
+              ],
+              "from": 5956,
+              "to": 5966,
+              "status": "changed",
+              "latency": 4563566169,
+              "output_tokens": 91,
+              "before": "a next step move and one that's uh that were",
+              "after": "a next step move and one that's uh were"
+            },
+            {
+              "seams": [
+                87
+              ],
+              "from": 6022,
+              "to": 6032,
+              "status": "changed",
+              "latency": 3908055298,
+              "output_tokens": 82,
+              "before": "you or look like are are we talking um additional",
+              "after": "you or look like are we talking um additional"
+            },
+            {
+              "seams": [
+                88
+              ],
+              "from": 6081,
+              "to": 6091,
+              "status": "changed",
+              "latency": 5163895998,
+              "output_tokens": 103,
+              "before": "in yeah it's it's uh it it's forecasting in this",
+              "after": "in yeah it's uh it forecasting in this"
+            },
+            {
+              "seams": [
+                89
+              ],
+              "from": 6142,
+              "to": 6152,
+              "status": "changed",
+              "latency": 4977362292,
+              "output_tokens": 94,
+              "before": "so we've got that that news there but uh you",
+              "after": "so we've got that news there but uh you"
+            },
+            {
+              "seams": [
+                90
+              ],
+              "from": 6207,
+              "to": 6217,
+              "status": "changed",
+              "latency": 4589346873,
+              "output_tokens": 87,
+              "before": "our in our flexible platforms but uh it's just a",
+              "after": "in our flexible platforms but uh it's just a"
+            },
+            {
+              "seams": [
+                91
+              ],
+              "from": 6284,
+              "to": 6294,
+              "status": "unchanged",
+              "latency": 3883694377,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                92
+              ],
+              "from": 6353,
+              "to": 6363,
+              "status": "changed",
+              "latency": 3839788928,
+              "output_tokens": 88,
+              "before": "been very positive. Uh we've experienced minimal delays and disruptions",
+              "after": "been very positive. we've experienced minimal delays and disruptions"
+            },
+            {
+              "seams": [
+                93
+              ],
+              "from": 6418,
+              "to": 6428,
+              "status": "changed",
+              "latency": 3809275301,
+              "output_tokens": 126,
+              "before": "this this um delays coming from it. I have thanks",
+              "after": "this um delays coming from it. I have thanks"
+            },
+            {
+              "seams": [
+                94
+              ],
+              "from": 6491,
+              "to": 6501,
+              "status": "unchanged",
+              "latency": 2278852764,
+              "output_tokens": 65
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

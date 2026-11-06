@@ -1,0 +1,6500 @@
+{
+  "source": {
+    "name": "earnings22",
+    "title": "Earnings-22 4479944 (64.9 min, an earnings call in accented English, MP3 at 44.1 kHz)",
+    "audio": "audio/long/earnings22-4479944.mp3",
+    "sha256": "a2ca9b63ba333d47d8e1c9ea1f7dabf956932034db21980b266344c634640065",
+    "bytes": 15570129,
+    "license": "CC-BY-SA-4.0 (transcripts); audio terms per README",
+    "source_url": "https://media.githubusercontent.com/media/revdotcom/speech-datasets/c05ab6fd8b4b627d123c922a22a39e993dd37635/earnings22/media/4479944.mp3",
+    "redistributable": false,
+    "seconds": 3892.53225,
+    "truth_note": "Rev's verbatim reference transcript, tokens in order without times; numbers as written. Rev's force-aligned copy, its tokens verbalized and with times, checks where the excerpt ends",
+    "truth_words": 10742
+  },
+  "model": "ggml-org/gemma-4-E4B-it-GGUF:Q8_0",
+  "pass_model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+  "concurrency": 4,
+  "started": "2026-11-06T00:00:11.673570085Z",
+  "excerpt": {
+    "seconds": 600,
+    "method": "derived: the truth's first 1588 normalized words, the median of the 6 prefixes textscore.BestPrefix finds nearest each excerpt transcript, unsplit and windowed",
+    "truth_words": 1588,
+    "prefixes": {
+      "run 1 unsplit": 1588,
+      "run 1 windowed": 1588,
+      "run 2 unsplit": 1588,
+      "run 2 windowed": 1588,
+      "run 3 unsplit": 1588,
+      "run 3 windowed": 1588
+    },
+    "spread": 0,
+    "cross_check": {
+      "method": "Rev's force-aligned tokens before the first timed at 600 s or later (1740 of 11177 tokens), mapped to the reference's normalized words through one alignment",
+      "words": 1588
+    }
+  },
+  "runs": [
+    {
+      "run": 1,
+      "unsplit": {
+        "wall": 56931970543,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 2136,
+          "TotalTokens": 17164
+        },
+        "words": 1551,
+        "wer": {
+          "edits": 160,
+          "length": 1588,
+          "rate": 0.10075566750629723
+        }
+      },
+      "excerpt_windowed": {
+        "windows": 23,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 22
+        },
+        "plan_time": 168049741,
+        "wall": 19555971549,
+        "total": 19724021290,
+        "mean_latency": 3243580555,
+        "max_in_flight": 4,
+        "input_tokens": 16749,
+        "output_tokens": 2094,
+        "wer": {
+          "edits": 161,
+          "length": 1588,
+          "rate": 0.10138539042821158
+        },
+        "seams": {
+          "seams": 22,
+          "matched": 21,
+          "unmatched": 1,
+          "edits": 22,
+          "per_seam": [
+            1,
+            0,
+            2,
+            2,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            2,
+            2,
+            3,
+            2,
+            0,
+            1,
+            2,
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          "distribution": {
+            "0": 8,
+            "1": 7,
+            "2": 6,
+            "3": 1
+          },
+          "unmatched_edits": 2,
+          "controls": 21,
+          "control_edits": 20
+        }
+      },
+      "full": {
+        "windows": 156,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "limit": 2,
+          "silence": 153
+        },
+        "plan_time": 3559969987,
+        "wall": 125111339234,
+        "total": 128671309221,
+        "mean_latency": 3181888139,
+        "max_in_flight": 4,
+        "input_tokens": 109470,
+        "output_tokens": 13727,
+        "wer": {
+          "edits": 1514,
+          "length": 10742,
+          "rate": 0.1409420964438652
+        },
+        "seams": {
+          "seams": 155,
+          "matched": 141,
+          "unmatched": 14,
+          "edits": 260,
+          "per_seam": [
+            1,
+            0,
+            0,
+            2,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            2,
+            1,
+            2,
+            0,
+            1,
+            6,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            5,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            3,
+            0,
+            1,
+            0,
+            0,
+            1,
+            4,
+            2,
+            18,
+            1,
+            2,
+            3,
+            0,
+            2,
+            4,
+            2,
+            3,
+            2,
+            3,
+            1,
+            1,
+            0,
+            1,
+            0,
+            3,
+            15,
+            0,
+            0,
+            0,
+            0,
+            2,
+            3,
+            2,
+            5,
+            0,
+            2,
+            1,
+            0,
+            2,
+            3,
+            1,
+            1,
+            1,
+            2,
+            5,
+            4,
+            0,
+            2,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            2,
+            0,
+            0,
+            6,
+            0,
+            4,
+            1,
+            2,
+            0,
+            0,
+            0,
+            0,
+            5,
+            4,
+            2,
+            1,
+            1,
+            3,
+            3,
+            3,
+            0,
+            2,
+            2,
+            2,
+            8,
+            0,
+            1,
+            0,
+            4,
+            1,
+            1,
+            7,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            4,
+            1,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            5,
+            0,
+            0,
+            2,
+            2,
+            4,
+            6,
+            0,
+            7,
+            2,
+            0,
+            1,
+            0,
+            3,
+            5,
+            2,
+            1,
+            1,
+            0
+          ],
+          "distribution": {
+            "0": 60,
+            "1": 35,
+            "15": 1,
+            "18": 1,
+            "2": 25,
+            "3": 12,
+            "4": 9,
+            "5": 6,
+            "6": 3,
+            "7": 2,
+            "8": 1
+          },
+          "unmatched_edits": 62,
+          "controls": 154,
+          "control_edits": 203
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 155,
+          "changed": 63,
+          "unchanged": 90,
+          "failed": 2,
+          "failures": [
+            "words beyond removals",
+            "words beyond removals"
+          ],
+          "wall": 172665352534,
+          "wer": {
+            "edits": 1528,
+            "length": 10742,
+            "rate": 0.14224539191956806
+          },
+          "seams": {
+            "seams": 155,
+            "matched": 141,
+            "unmatched": 14,
+            "edits": 282,
+            "per_seam": [
+              1,
+              0,
+              0,
+              2,
+              2,
+              1,
+              0,
+              0,
+              0,
+              1,
+              2,
+              1,
+              3,
+              0,
+              1,
+              3,
+              0,
+              0,
+              1,
+              1,
+              4,
+              0,
+              0,
+              4,
+              2,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1,
+              3,
+              1,
+              1,
+              0,
+              0,
+              1,
+              4,
+              2,
+              18,
+              1,
+              2,
+              5,
+              0,
+              1,
+              4,
+              2,
+              3,
+              2,
+              1,
+              2,
+              1,
+              0,
+              1,
+              4,
+              3,
+              15,
+              0,
+              0,
+              0,
+              0,
+              2,
+              4,
+              1,
+              5,
+              0,
+              1,
+              0,
+              0,
+              2,
+              3,
+              1,
+              2,
+              2,
+              2,
+              5,
+              4,
+              0,
+              3,
+              3,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              6,
+              0,
+              3,
+              1,
+              4,
+              0,
+              1,
+              1,
+              1,
+              5,
+              4,
+              2,
+              1,
+              4,
+              0,
+              3,
+              2,
+              1,
+              4,
+              2,
+              1,
+              8,
+              0,
+              1,
+              0,
+              3,
+              1,
+              0,
+              7,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              2,
+              1,
+              4,
+              2,
+              5,
+              0,
+              0,
+              1,
+              1,
+              0,
+              1,
+              1,
+              1,
+              5,
+              0,
+              0,
+              2,
+              2,
+              8,
+              5,
+              0,
+              5,
+              1,
+              1,
+              2,
+              0,
+              3,
+              5,
+              2,
+              1,
+              1,
+              0
+            ],
+            "distribution": {
+              "0": 48,
+              "1": 45,
+              "15": 1,
+              "18": 1,
+              "2": 23,
+              "3": 12,
+              "4": 12,
+              "5": 9,
+              "6": 1,
+              "7": 1,
+              "8": 2
+            },
+            "unmatched_edits": 60,
+            "controls": 154,
+            "control_edits": 204
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 56,
+              "to": 66,
+              "status": "unchanged",
+              "latency": 3135467966,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 128,
+              "to": 138,
+              "status": "unchanged",
+              "latency": 2868521738,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 204,
+              "to": 214,
+              "status": "unchanged",
+              "latency": 3362781933,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 279,
+              "to": 289,
+              "status": "unchanged",
+              "latency": 6121801710,
+              "output_tokens": 135
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 347,
+              "to": 357,
+              "status": "changed",
+              "latency": 5425395247,
+              "output_tokens": 114,
+              "before": "171 branches year to date is nine months period to",
+              "after": "171 branches year to date is nine months period"
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 421,
+              "to": 431,
+              "status": "unchanged",
+              "latency": 2760479276,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                6
+              ],
+              "from": 499,
+              "to": 509,
+              "status": "changed",
+              "latency": 3272004187,
+              "output_tokens": 68,
+              "before": "offering we have taken multiple steps to ensure ensure robust",
+              "after": "offering we have taken multiple steps to ensure robust"
+            },
+            {
+              "seams": [
+                7
+              ],
+              "from": 567,
+              "to": 577,
+              "status": "unchanged",
+              "latency": 4326221392,
+              "output_tokens": 91
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 633,
+              "to": 643,
+              "status": "unchanged",
+              "latency": 3020386642,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 707,
+              "to": 717,
+              "status": "unchanged",
+              "latency": 3622699237,
+              "output_tokens": 78
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 781,
+              "to": 791,
+              "status": "unchanged",
+              "latency": 3342815455,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 855,
+              "to": 865,
+              "status": "unchanged",
+              "latency": 2788553144,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 929,
+              "to": 939,
+              "status": "changed",
+              "latency": 7291145077,
+              "output_tokens": 164,
+              "before": "one plus 1 lakh plus active distribution points we have",
+              "after": "one plus 1 lakh active distribution points we have"
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 997,
+              "to": 1007,
+              "status": "unchanged",
+              "latency": 9160397088,
+              "output_tokens": 206
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 1062,
+              "to": 1072,
+              "status": "unchanged",
+              "latency": 5144712305,
+              "output_tokens": 118
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 1138,
+              "to": 1148,
+              "status": "changed",
+              "latency": 5256426778,
+              "output_tokens": 120,
+              "before": "picked up observed pick up observed during q2 continued the",
+              "after": "picked up observed during q2 continued the"
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 1209,
+              "to": 1219,
+              "status": "unchanged",
+              "latency": 3122138392,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 1288,
+              "to": 1298,
+              "status": "unchanged",
+              "latency": 3550100280,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 1355,
+              "to": 1365,
+              "status": "changed",
+              "latency": 4951071470,
+              "output_tokens": 107,
+              "before": "year and up 10.6% versus prior quarter. Fees and commission",
+              "after": "year up 10.6% versus prior quarter. Fees and commission"
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 1427,
+              "to": 1437,
+              "status": "changed",
+              "latency": 4651244313,
+              "output_tokens": 97,
+              "before": "fees on card loan products, cash advances over limit fees",
+              "after": "fees on card loan products, cash advances over limit"
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 1496,
+              "to": 1506,
+              "status": "unchanged",
+              "latency": 2846264337,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1565,
+              "to": 1575,
+              "status": "unchanged",
+              "latency": 2838361390,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1619,
+              "to": 1629,
+              "status": "unchanged",
+              "latency": 3360300948,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1695,
+              "to": 1705,
+              "status": "changed",
+              "latency": 3563962724,
+              "output_tokens": 75,
+              "before": "moving on to asset quality at quality gnp ratio was",
+              "after": "moving on to asset quality at gnp ratio was"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1754,
+              "to": 1764,
+              "status": "unchanged",
+              "latency": 2978645050,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1809,
+              "to": 1819,
+              "status": "unchanged",
+              "latency": 3398711700,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1878,
+              "to": 1888,
+              "status": "unchanged",
+              "latency": 3216025442,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1950,
+              "to": 1960,
+              "status": "changed",
+              "latency": 7583000901,
+              "output_tokens": 164,
+              "before": "amongst other things illustrates the overall portfolio quality the restructuring",
+              "after": "amongst other things illustrates the overall portfolio quality restructuring"
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 2019,
+              "to": 2029,
+              "status": "unchanged",
+              "latency": 3353758964,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 2091,
+              "to": 2101,
+              "status": "unchanged",
+              "latency": 3521806399,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 2151,
+              "to": 2161,
+              "status": "unchanged",
+              "latency": 2984360191,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 2199,
+              "to": 2209,
+              "status": "unchanged",
+              "latency": 2982412390,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 2265,
+              "to": 2275,
+              "status": "changed",
+              "latency": 4193309271,
+              "output_tokens": 90,
+              "before": "of the cases looking at through another lens floating contingent",
+              "after": "of the cases looking through another lens floating contingent"
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 2334,
+              "to": 2344,
+              "status": "unchanged",
+              "latency": 4995242313,
+              "output_tokens": 107
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 2405,
+              "to": 2415,
+              "status": "unchanged",
+              "latency": 3248877875,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 2462,
+              "to": 2472,
+              "status": "unchanged",
+              "latency": 8530967008,
+              "output_tokens": 188
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 2511,
+              "to": 2521,
+              "status": "unchanged",
+              "latency": 11140700487,
+              "output_tokens": 246
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2567,
+              "to": 2577,
+              "status": "unchanged",
+              "latency": 3812614538,
+              "output_tokens": 83
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2627,
+              "to": 2637,
+              "status": "unchanged",
+              "latency": 3381440047,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2684,
+              "to": 2694,
+              "status": "unchanged",
+              "latency": 3963462799,
+              "output_tokens": 84
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2732,
+              "to": 2742,
+              "status": "unchanged",
+              "latency": 3118705725,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2800,
+              "to": 2810,
+              "status": "changed",
+              "latency": 12798255206,
+              "output_tokens": 281,
+              "before": "to the cost of funds of 5.9%. total capital adequacy",
+              "after": "to the cost of funds of 5.9% total capital adequacy"
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2859,
+              "to": 2869,
+              "status": "changed",
+              "latency": 4837522825,
+              "output_tokens": 104,
+              "before": "words on hsl again on india's space hsl stsc securities",
+              "after": "words on hsl again india's space stsc securities"
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2921,
+              "to": 2931,
+              "status": "unchanged",
+              "latency": 2775796350,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2996,
+              "to": 3006,
+              "status": "changed",
+              "latency": 4077624206,
+              "output_tokens": 87,
+              "before": "the next few weeks to see if there it turns",
+              "after": "the next few weeks to see if it turns"
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 3075,
+              "to": 3085,
+              "status": "changed",
+              "latency": 8706872388,
+              "output_tokens": 190,
+              "before": "by rupees 19.4 to 414.3 2414.3 without thank you very",
+              "after": "by rupees 19.4 to 414.3 without thank you very"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 3137,
+              "to": 3147,
+              "status": "unchanged",
+              "latency": 3404038404,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 3165,
+              "to": 3175,
+              "status": "unchanged",
+              "latency": 4277821883,
+              "output_tokens": 94
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 3204,
+              "to": 3214,
+              "status": "unchanged",
+              "latency": 3139278350,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                49
+              ],
+              "from": 3271,
+              "to": 3281,
+              "status": "changed",
+              "latency": 3301795857,
+              "output_tokens": 69,
+              "before": "right yeah i moved i moved my chair but that's",
+              "after": "right yeah i moved my chair but that's"
+            },
+            {
+              "seams": [
+                50
+              ],
+              "from": 3328,
+              "to": 3338,
+              "status": "changed",
+              "latency": 5434136238,
+              "output_tokens": 118,
+              "before": "have shown very highly rated carpets right so we come",
+              "after": "have shown very highly rated carpets so we come"
+            },
+            {
+              "seams": [
+                51
+              ],
+              "from": 3400,
+              "to": 3410,
+              "status": "unchanged",
+              "latency": 2980965718,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                52
+              ],
+              "from": 3491,
+              "to": 3501,
+              "status": "unchanged",
+              "latency": 2891750782,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                53
+              ],
+              "from": 3554,
+              "to": 3564,
+              "status": "unchanged",
+              "latency": 3264322135,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                54
+              ],
+              "from": 3619,
+              "to": 3629,
+              "status": "changed",
+              "latency": 4443738121,
+              "output_tokens": 96,
+              "before": "it calls for experimenting a few things it calls for",
+              "after": "it calls for experimenting a few things"
+            },
+            {
+              "seams": [
+                55
+              ],
+              "from": 3696,
+              "to": 3706,
+              "status": "unchanged",
+              "latency": 2870222463,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                56
+              ],
+              "from": 3761,
+              "to": 3771,
+              "status": "unchanged",
+              "latency": 3616736461,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                57
+              ],
+              "from": 3816,
+              "to": 3826,
+              "status": "unchanged",
+              "latency": 3020823586,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                58
+              ],
+              "from": 3885,
+              "to": 3895,
+              "status": "unchanged",
+              "latency": 3521624958,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                59
+              ],
+              "from": 3971,
+              "to": 3981,
+              "status": "unchanged",
+              "latency": 5334184239,
+              "output_tokens": 114
+            },
+            {
+              "seams": [
+                60
+              ],
+              "from": 4044,
+              "to": 4054,
+              "status": "unchanged",
+              "latency": 3108172063,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                61
+              ],
+              "from": 4148,
+              "to": 4158,
+              "status": "unchanged",
+              "latency": 2795789271,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                62
+              ],
+              "from": 4221,
+              "to": 4231,
+              "status": "changed",
+              "latency": 8434065703,
+              "output_tokens": 185,
+              "before": "a good the yield that the ticket on that but",
+              "after": "a good the yield that ticket on but"
+            },
+            {
+              "seams": [
+                63
+              ],
+              "from": 4315,
+              "to": 4325,
+              "status": "changed",
+              "latency": 4075013240,
+              "output_tokens": 87,
+              "before": "to get in into those revolver type right so that's",
+              "after": "to get into those revolver type right so that's"
+            },
+            {
+              "seams": [
+                64
+              ],
+              "from": 4400,
+              "to": 4410,
+              "status": "unchanged",
+              "latency": 3119567152,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                65
+              ],
+              "from": 4464,
+              "to": 4474,
+              "status": "unchanged",
+              "latency": 3483673959,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                66
+              ],
+              "from": 4559,
+              "to": 4569,
+              "status": "changed",
+              "latency": 3295646069,
+              "output_tokens": 68,
+              "before": "fees point of view thanks thanks but how in your",
+              "after": "fees point of view thanks but how in your"
+            },
+            {
+              "seams": [
+                67
+              ],
+              "from": 4603,
+              "to": 4613,
+              "status": "changed",
+              "latency": 6060472171,
+              "output_tokens": 130,
+              "before": "on get on with that could be two three four",
+              "after": "get on with that could be two three four"
+            },
+            {
+              "seams": [
+                68
+              ],
+              "from": 4672,
+              "to": 4682,
+              "status": "failed",
+              "reason": "words beyond removals",
+              "latency": 4706088848,
+              "output_tokens": 102,
+              "before": "about the ppop it is very similar right whether as",
+              "after": "about the pop it is very similar right whether as"
+            },
+            {
+              "seams": [
+                69
+              ],
+              "from": 4747,
+              "to": 4757,
+              "status": "unchanged",
+              "latency": 2602503691,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                70
+              ],
+              "from": 4823,
+              "to": 4833,
+              "status": "changed",
+              "latency": 4037797130,
+              "output_tokens": 86,
+              "before": "reconcile both these numbers okay okay you you seeing what",
+              "after": "reconcile both these numbers okay you seeing what"
+            },
+            {
+              "seams": [
+                71
+              ],
+              "from": 4880,
+              "to": 4890,
+              "status": "unchanged",
+              "latency": 3111181678,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                72
+              ],
+              "from": 4964,
+              "to": 4974,
+              "status": "changed",
+              "latency": 4514630637,
+              "output_tokens": 96,
+              "before": "you raised right the 25000 what was there is what",
+              "after": "you raised right the 25000 what was there is"
+            },
+            {
+              "seams": [
+                73
+              ],
+              "from": 5041,
+              "to": 5051,
+              "status": "changed",
+              "latency": 7474921421,
+              "output_tokens": 162,
+              "before": "september we reported 18000 crores right last september and currently",
+              "after": "september we reported 18000 crores right last and currently"
+            },
+            {
+              "seams": [
+                74
+              ],
+              "from": 5104,
+              "to": 5114,
+              "status": "unchanged",
+              "latency": 3000343676,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                75
+              ],
+              "from": 5181,
+              "to": 5191,
+              "status": "changed",
+              "latency": 5181466917,
+              "output_tokens": 112,
+              "before": "18000 and now it's 17500 17500 okay so shini just",
+              "after": "18000 and now it's 17500 okay so shini just"
+            },
+            {
+              "seams": [
+                76
+              ],
+              "from": 5252,
+              "to": 5262,
+              "status": "unchanged",
+              "latency": 4615044378,
+              "output_tokens": 97
+            },
+            {
+              "seams": [
+                77
+              ],
+              "from": 5318,
+              "to": 5328,
+              "status": "unchanged",
+              "latency": 3229173740,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                78
+              ],
+              "from": 5378,
+              "to": 5388,
+              "status": "changed",
+              "latency": 3989579148,
+              "output_tokens": 83,
+              "before": "is reflecting 18000 crores or something in the notes 18000",
+              "after": "is reflecting 18000 crores or something in the notes"
+            },
+            {
+              "seams": [
+                79
+              ],
+              "from": 5445,
+              "to": 5455,
+              "status": "changed",
+              "latency": 5419587366,
+              "output_tokens": 114,
+              "before": "mentioning that that is correct that is correct okay the",
+              "after": "mentioning that is correct okay the"
+            },
+            {
+              "seams": [
+                80
+              ],
+              "from": 5524,
+              "to": 5534,
+              "status": "changed",
+              "latency": 3039888971,
+              "output_tokens": 65,
+              "before": "20 basis points of that particular quarter or or over",
+              "after": "20 basis points of that particular quarter or over"
+            },
+            {
+              "seams": [
+                81
+              ],
+              "from": 5612,
+              "to": 5622,
+              "status": "unchanged",
+              "latency": 3063392503,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                82
+              ],
+              "from": 5663,
+              "to": 5673,
+              "status": "unchanged",
+              "latency": 3120583350,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                83
+              ],
+              "from": 5735,
+              "to": 5745,
+              "status": "unchanged",
+              "latency": 3717418921,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                84
+              ],
+              "from": 5807,
+              "to": 5817,
+              "status": "unchanged",
+              "latency": 3893991351,
+              "output_tokens": 81
+            },
+            {
+              "seams": [
+                85
+              ],
+              "from": 5870,
+              "to": 5880,
+              "status": "changed",
+              "latency": 4974288433,
+              "output_tokens": 105,
+              "before": "we had a multiple x multiple of the system credit",
+              "after": "we had a multiple of the system credit"
+            },
+            {
+              "seams": [
+                86
+              ],
+              "from": 5945,
+              "to": 5955,
+              "status": "unchanged",
+              "latency": 2903371710,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                87
+              ],
+              "from": 5985,
+              "to": 5995,
+              "status": "unchanged",
+              "latency": 3318309932,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                88
+              ],
+              "from": 6078,
+              "to": 6088,
+              "status": "changed",
+              "latency": 7768676542,
+              "output_tokens": 170,
+              "before": "and and crisp as possible said an and crisper possible",
+              "after": "and crisp as possible said an and crisper possible"
+            },
+            {
+              "seams": [
+                89
+              ],
+              "from": 6157,
+              "to": 6167,
+              "status": "unchanged",
+              "latency": 2678367792,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                90
+              ],
+              "from": 6236,
+              "to": 6246,
+              "status": "changed",
+              "latency": 5528802149,
+              "output_tokens": 120,
+              "before": "of growth that's that's what have handled at that time",
+              "after": "of growth that's what have handled at that time"
+            },
+            {
+              "seams": [
+                91
+              ],
+              "from": 6320,
+              "to": 6330,
+              "status": "unchanged",
+              "latency": 3147685123,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                92
+              ],
+              "from": 6387,
+              "to": 6397,
+              "status": "changed",
+              "latency": 6292656089,
+              "output_tokens": 137,
+              "before": "what year on year we see in the whole set",
+              "after": "what year we see in the whole set"
+            },
+            {
+              "seams": [
+                93
+              ],
+              "from": 6460,
+              "to": 6470,
+              "status": "unchanged",
+              "latency": 2961995793,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                94
+              ],
+              "from": 6539,
+              "to": 6549,
+              "status": "changed",
+              "latency": 5684485574,
+              "output_tokens": 122,
+              "before": "and we will continue to capture market share and again",
+              "after": "and we will continue to capture market share again"
+            },
+            {
+              "seams": [
+                95
+              ],
+              "from": 6568,
+              "to": 6578,
+              "status": "changed",
+              "latency": 6612199700,
+              "output_tokens": 143,
+              "before": "product spectrums customer spectrum thank you the next question is",
+              "after": "product spectrums customer thank you the next question is"
+            },
+            {
+              "seams": [
+                96
+              ],
+              "from": 6617,
+              "to": 6627,
+              "status": "changed",
+              "latency": 3122977011,
+              "output_tokens": 67,
+              "before": "new restructuring that we did in this quarter no no",
+              "after": "new restructuring that we did in this quarter no"
+            },
+            {
+              "seams": [
+                97
+              ],
+              "from": 6700,
+              "to": 6710,
+              "status": "changed",
+              "latency": 5015091767,
+              "output_tokens": 108,
+              "before": "it is at 17500 1.37 100 1.37 understood thank you",
+              "after": "it is at 17500 1.37 100 understood thank you"
+            },
+            {
+              "seams": [
+                98
+              ],
+              "from": 6784,
+              "to": 6794,
+              "status": "unchanged",
+              "latency": 6013717499,
+              "output_tokens": 130
+            },
+            {
+              "seams": [
+                99
+              ],
+              "from": 6848,
+              "to": 6858,
+              "status": "changed",
+              "latency": 5522938338,
+              "output_tokens": 119,
+              "before": "all i can point to is to historical to say",
+              "after": "all i can point to is historical to say"
+            },
+            {
+              "seams": [
+                100
+              ],
+              "from": 6894,
+              "to": 6904,
+              "status": "changed",
+              "latency": 3157078321,
+              "output_tokens": 68,
+              "before": "the the contingent provisions about 95 basis points but yes",
+              "after": "the contingent provisions about 95 basis points but yes"
+            },
+            {
+              "seams": [
+                101
+              ],
+              "from": 6971,
+              "to": 6981,
+              "status": "changed",
+              "latency": 5575429636,
+              "output_tokens": 122,
+              "before": "booked across various segments right across various segments they they",
+              "after": "booked across various segments right they"
+            },
+            {
+              "seams": [
+                102
+              ],
+              "from": 7037,
+              "to": 7047,
+              "status": "changed",
+              "latency": 4347985744,
+              "output_tokens": 92,
+              "before": "existing to existing to bank personal loan or or call",
+              "after": "existing to bank personal loan or call"
+            },
+            {
+              "seams": [
+                103
+              ],
+              "from": 7087,
+              "to": 7097,
+              "status": "unchanged",
+              "latency": 3294608106,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                104
+              ],
+              "from": 7177,
+              "to": 7187,
+              "status": "changed",
+              "latency": 3778115738,
+              "output_tokens": 80,
+              "before": "you look at june june 19 also when we initiated",
+              "after": "you look at june 19 also when we initiated"
+            },
+            {
+              "seams": [
+                105
+              ],
+              "from": 7258,
+              "to": 7268,
+              "status": "changed",
+              "latency": 8487794296,
+              "output_tokens": 187,
+              "before": "the balance sheet much more resilient for any shocks uncertainty",
+              "after": "the balance sheet much more resilient for any uncertainty"
+            },
+            {
+              "seams": [
+                106
+              ],
+              "from": 7334,
+              "to": 7344,
+              "status": "changed",
+              "latency": 5282637382,
+              "output_tokens": 117,
+              "before": "in a quarter and evaluate but it sheen just two",
+              "after": "in a quarter and evaluate just two"
+            },
+            {
+              "seams": [
+                107
+              ],
+              "from": 7414,
+              "to": 7424,
+              "status": "unchanged",
+              "latency": 4666957479,
+              "output_tokens": 104
+            },
+            {
+              "seams": [
+                108
+              ],
+              "from": 7493,
+              "to": 7503,
+              "status": "changed",
+              "latency": 4447152998,
+              "output_tokens": 98,
+              "before": "and the spend is quite quite picked up 24% or",
+              "after": "and the spend is quite picked up 24% or"
+            },
+            {
+              "seams": [
+                109
+              ],
+              "from": 7599,
+              "to": 7609,
+              "status": "unchanged",
+              "latency": 13253682770,
+              "output_tokens": 290
+            },
+            {
+              "seams": [
+                110
+              ],
+              "from": 7651,
+              "to": 7661,
+              "status": "unchanged",
+              "latency": 3653697811,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                111
+              ],
+              "from": 7728,
+              "to": 7738,
+              "status": "unchanged",
+              "latency": 5428593792,
+              "output_tokens": 119
+            },
+            {
+              "seams": [
+                112
+              ],
+              "from": 7788,
+              "to": 7798,
+              "status": "unchanged",
+              "latency": 4127415276,
+              "output_tokens": 88
+            },
+            {
+              "seams": [
+                113
+              ],
+              "from": 7867,
+              "to": 7877,
+              "status": "changed",
+              "latency": 6562461588,
+              "output_tokens": 144,
+              "before": "irrespective of whatever for it for the last question on",
+              "after": "irrespective of whatever for it the last question on"
+            },
+            {
+              "seams": [
+                114
+              ],
+              "from": 7944,
+              "to": 7954,
+              "status": "unchanged",
+              "latency": 2875301977,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                115
+              ],
+              "from": 8027,
+              "to": 8037,
+              "status": "changed",
+              "latency": 3774781110,
+              "output_tokens": 81,
+              "before": "at things in three different kind of of activity call",
+              "after": "at things in three different kind of activity call"
+            },
+            {
+              "seams": [
+                116
+              ],
+              "from": 8094,
+              "to": 8104,
+              "status": "unchanged",
+              "latency": 2988479696,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                117
+              ],
+              "from": 8179,
+              "to": 8189,
+              "status": "unchanged",
+              "latency": 5714392701,
+              "output_tokens": 121
+            },
+            {
+              "seams": [
+                118
+              ],
+              "from": 8252,
+              "to": 8262,
+              "status": "unchanged",
+              "latency": 3170994425,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                119
+              ],
+              "from": 8310,
+              "to": 8320,
+              "status": "unchanged",
+              "latency": 3332891429,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                120
+              ],
+              "from": 8396,
+              "to": 8406,
+              "status": "changed",
+              "latency": 12012840177,
+              "output_tokens": 269,
+              "before": "executing on that aspect of it right now on the",
+              "after": "executing that aspect of it right now on the"
+            },
+            {
+              "seams": [
+                121
+              ],
+              "from": 8467,
+              "to": 8477,
+              "status": "unchanged",
+              "latency": 2764591746,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                122
+              ],
+              "from": 8552,
+              "to": 8562,
+              "status": "changed",
+              "latency": 6702346749,
+              "output_tokens": 150,
+              "before": "certain things in relationship management for example in the relationship",
+              "after": "certain things in relationship management for example the relationship"
+            },
+            {
+              "seams": [
+                123
+              ],
+              "from": 8618,
+              "to": 8628,
+              "status": "changed",
+              "latency": 3468078161,
+              "output_tokens": 77,
+              "before": "that come we have for 20 million customers we have",
+              "after": "that come we have for 20 million customers"
+            },
+            {
+              "seams": [
+                124
+              ],
+              "from": 8706,
+              "to": 8716,
+              "status": "unchanged",
+              "latency": 2815708267,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                125
+              ],
+              "from": 8775,
+              "to": 8785,
+              "status": "unchanged",
+              "latency": 5042086611,
+              "output_tokens": 112
+            },
+            {
+              "seams": [
+                126
+              ],
+              "from": 8857,
+              "to": 8867,
+              "status": "changed",
+              "latency": 5643714729,
+              "output_tokens": 126,
+              "before": "growth shouldn't idly this growth be better thanks sir okay",
+              "after": "growth shouldn't idly this be better thanks sir okay"
+            },
+            {
+              "seams": [
+                127
+              ],
+              "from": 8924,
+              "to": 8934,
+              "status": "changed",
+              "latency": 5375759170,
+              "output_tokens": 119,
+              "before": "4.45 right for 4.4 4.5 percent that's the band at",
+              "after": "4.45 percent that's the band at"
+            },
+            {
+              "seams": [
+                128
+              ],
+              "from": 9009,
+              "to": 9019,
+              "status": "unchanged",
+              "latency": 2780992175,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                129
+              ],
+              "from": 9088,
+              "to": 9098,
+              "status": "unchanged",
+              "latency": 2594706185,
+              "output_tokens": 54
+            },
+            {
+              "seams": [
+                130
+              ],
+              "from": 9178,
+              "to": 9188,
+              "status": "changed",
+              "latency": 3427246383,
+              "output_tokens": 72,
+              "before": "also depends on the segment in which we operate in",
+              "after": "also depends on the segment in which we operate"
+            },
+            {
+              "seams": [
+                131
+              ],
+              "from": 9253,
+              "to": 9263,
+              "status": "changed",
+              "latency": 5502391253,
+              "output_tokens": 119,
+              "before": "our high yield products are targeted to right category a",
+              "after": "our high yield products are targeted to right category"
+            },
+            {
+              "seams": [
+                132
+              ],
+              "from": 9325,
+              "to": 9335,
+              "status": "unchanged",
+              "latency": 3454196613,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                133
+              ],
+              "from": 9380,
+              "to": 9390,
+              "status": "changed",
+              "latency": 6592701347,
+              "output_tokens": 145,
+              "before": "focused and continuing to focus on that also so at",
+              "after": "focused and continuing to focus on that so at"
+            },
+            {
+              "seams": [
+                134
+              ],
+              "from": 9473,
+              "to": 9483,
+              "status": "changed",
+              "latency": 3863453741,
+              "output_tokens": 85,
+              "before": "rate slightly under a third right now right about 31",
+              "after": "rate slightly under a third right now about 31"
+            },
+            {
+              "seams": [
+                135
+              ],
+              "from": 9558,
+              "to": 9568,
+              "status": "changed",
+              "latency": 7046499240,
+              "output_tokens": 156,
+              "before": "it single digit but very low it was so it",
+              "after": "it single digit but very low it was so"
+            },
+            {
+              "seams": [
+                136
+              ],
+              "from": 9662,
+              "to": 9672,
+              "status": "unchanged",
+              "latency": 4343275469,
+              "output_tokens": 94
+            },
+            {
+              "seams": [
+                137
+              ],
+              "from": 9745,
+              "to": 9755,
+              "status": "unchanged",
+              "latency": 2687543761,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                138
+              ],
+              "from": 9813,
+              "to": 9823,
+              "status": "unchanged",
+              "latency": 3610679523,
+              "output_tokens": 78
+            },
+            {
+              "seams": [
+                139
+              ],
+              "from": 9901,
+              "to": 9911,
+              "status": "unchanged",
+              "latency": 2650546577,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                140
+              ],
+              "from": 9963,
+              "to": 9973,
+              "status": "failed",
+              "reason": "words beyond removals",
+              "latency": 4538615417,
+              "output_tokens": 100,
+              "before": "or ppop is making kind of a lending growth rate",
+              "after": "or pop is making kind of a lending growth rate"
+            },
+            {
+              "seams": [
+                141
+              ],
+              "from": 10043,
+              "to": 10053,
+              "status": "changed",
+              "latency": 6474583459,
+              "output_tokens": 145,
+              "before": "to come got thank you shalini thank you thank you",
+              "after": "to come got thank you shalini"
+            },
+            {
+              "seams": [
+                142
+              ],
+              "from": 10068,
+              "to": 10078,
+              "status": "changed",
+              "latency": 6041570747,
+              "output_tokens": 137,
+              "before": "macquarie please go over here sorry please cover here yeah",
+              "after": "macquarie please go over here sorry cover here yeah"
+            },
+            {
+              "seams": [
+                143
+              ],
+              "from": 10158,
+              "to": 10168,
+              "status": "unchanged",
+              "latency": 2510871971,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                144
+              ],
+              "from": 10255,
+              "to": 10265,
+              "status": "changed",
+              "latency": 4254269795,
+              "output_tokens": 92,
+              "before": "yeah okay no thank you thank you suresh and that's",
+              "after": "yeah okay no thank you suresh and that's"
+            },
+            {
+              "seams": [
+                145
+              ],
+              "from": 10339,
+              "to": 10349,
+              "status": "changed",
+              "latency": 2974499100,
+              "output_tokens": 65,
+              "before": "is something from from our recent experience that is not",
+              "after": "is something from our recent experience that is not"
+            },
+            {
+              "seams": [
+                146
+              ],
+              "from": 10405,
+              "to": 10415,
+              "status": "changed",
+              "latency": 3352808355,
+              "output_tokens": 72,
+              "before": "means if it is an internal customer that means we",
+              "after": "means if it is an internal customer that we"
+            },
+            {
+              "seams": [
+                147
+              ],
+              "from": 10458,
+              "to": 10468,
+              "status": "changed",
+              "latency": 3502089280,
+              "output_tokens": 74,
+              "before": "such is fully neutral but we still very very vehemently",
+              "after": "such is fully neutral but we still very vehemently"
+            },
+            {
+              "seams": [
+                148
+              ],
+              "from": 10497,
+              "to": 10507,
+              "status": "unchanged",
+              "latency": 3092918906,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                149
+              ],
+              "from": 10571,
+              "to": 10581,
+              "status": "changed",
+              "latency": 6240780279,
+              "output_tokens": 138,
+              "before": "to the interchange it is a being health study if",
+              "after": "to the interchange it is a health study if"
+            },
+            {
+              "seams": [
+                150
+              ],
+              "from": 10648,
+              "to": 10658,
+              "status": "changed",
+              "latency": 6264744485,
+              "output_tokens": 157,
+              "before": "cashback points that are cashback costs which is there costs",
+              "after": "cashback points that are costs which is there"
+            },
+            {
+              "seams": [
+                151
+              ],
+              "from": 10736,
+              "to": 10746,
+              "status": "unchanged",
+              "latency": 3054058215,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                152
+              ],
+              "from": 10811,
+              "to": 10821,
+              "status": "unchanged",
+              "latency": 2910146748,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                153
+              ],
+              "from": 10879,
+              "to": 10889,
+              "status": "unchanged",
+              "latency": 3336610117,
+              "output_tokens": 98
+            },
+            {
+              "seams": [
+                154
+              ],
+              "from": 10952,
+              "to": 10962,
+              "status": "unchanged",
+              "latency": 2912879753,
+              "output_tokens": 79
+            }
+          ]
+        }
+      }
+    },
+    {
+      "run": 2,
+      "unsplit": {
+        "wall": 56057323589,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 2133,
+          "TotalTokens": 17161
+        },
+        "words": 1553,
+        "wer": {
+          "edits": 160,
+          "length": 1588,
+          "rate": 0.10075566750629723
+        }
+      },
+      "excerpt_windowed": {
+        "windows": 23,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 22
+        },
+        "plan_time": 176783321,
+        "wall": 19317817944,
+        "total": 19494601265,
+        "mean_latency": 3203701026,
+        "max_in_flight": 4,
+        "input_tokens": 16749,
+        "output_tokens": 2095,
+        "wer": {
+          "edits": 162,
+          "length": 1588,
+          "rate": 0.10201511335012595
+        },
+        "seams": {
+          "seams": 22,
+          "matched": 21,
+          "unmatched": 1,
+          "edits": 22,
+          "per_seam": [
+            1,
+            0,
+            2,
+            2,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            2,
+            2,
+            3,
+            2,
+            0,
+            1,
+            2,
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          "distribution": {
+            "0": 8,
+            "1": 7,
+            "2": 6,
+            "3": 1
+          },
+          "unmatched_edits": 2,
+          "controls": 21,
+          "control_edits": 21
+        }
+      },
+      "full": {
+        "windows": 156,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "limit": 2,
+          "silence": 153
+        },
+        "plan_time": 3573611079,
+        "wall": 123644030830,
+        "total": 127217641909,
+        "mean_latency": 3144177428,
+        "max_in_flight": 4,
+        "input_tokens": 109470,
+        "output_tokens": 13713,
+        "wer": {
+          "edits": 1518,
+          "length": 10742,
+          "rate": 0.1413144665797803
+        },
+        "seams": {
+          "seams": 155,
+          "matched": 140,
+          "unmatched": 15,
+          "edits": 267,
+          "per_seam": [
+            1,
+            0,
+            2,
+            2,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            2,
+            1,
+            2,
+            0,
+            1,
+            6,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            5,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            3,
+            0,
+            1,
+            0,
+            0,
+            1,
+            4,
+            2,
+            18,
+            1,
+            2,
+            3,
+            0,
+            2,
+            4,
+            2,
+            3,
+            2,
+            3,
+            1,
+            1,
+            0,
+            1,
+            0,
+            8,
+            15,
+            0,
+            0,
+            0,
+            0,
+            2,
+            3,
+            2,
+            5,
+            1,
+            2,
+            1,
+            0,
+            2,
+            3,
+            1,
+            1,
+            1,
+            2,
+            5,
+            4,
+            0,
+            2,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            2,
+            0,
+            0,
+            6,
+            0,
+            4,
+            1,
+            2,
+            0,
+            0,
+            0,
+            0,
+            5,
+            4,
+            2,
+            1,
+            1,
+            3,
+            3,
+            3,
+            0,
+            2,
+            2,
+            2,
+            8,
+            0,
+            1,
+            0,
+            4,
+            1,
+            1,
+            7,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            4,
+            1,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            5,
+            0,
+            0,
+            2,
+            2,
+            4,
+            5,
+            0,
+            7,
+            2,
+            0,
+            1,
+            0,
+            3,
+            5,
+            2,
+            1,
+            1,
+            0
+          ],
+          "distribution": {
+            "0": 58,
+            "1": 36,
+            "15": 1,
+            "18": 1,
+            "2": 26,
+            "3": 11,
+            "4": 9,
+            "5": 7,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "unmatched_edits": 69,
+          "controls": 154,
+          "control_edits": 199
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 155,
+          "changed": 67,
+          "unchanged": 88,
+          "failed": 0,
+          "wall": 170419212656,
+          "wer": {
+            "edits": 1538,
+            "length": 10742,
+            "rate": 0.1431763172593558
+          },
+          "seams": {
+            "seams": 155,
+            "matched": 140,
+            "unmatched": 15,
+            "edits": 299,
+            "per_seam": [
+              1,
+              0,
+              2,
+              2,
+              2,
+              1,
+              0,
+              0,
+              0,
+              1,
+              2,
+              1,
+              2,
+              0,
+              1,
+              3,
+              0,
+              0,
+              0,
+              1,
+              4,
+              0,
+              0,
+              4,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              3,
+              1,
+              1,
+              0,
+              0,
+              1,
+              4,
+              2,
+              18,
+              1,
+              2,
+              5,
+              0,
+              2,
+              4,
+              2,
+              3,
+              2,
+              1,
+              1,
+              1,
+              1,
+              1,
+              4,
+              8,
+              15,
+              0,
+              0,
+              0,
+              0,
+              2,
+              4,
+              1,
+              5,
+              1,
+              1,
+              1,
+              1,
+              2,
+              3,
+              1,
+              2,
+              2,
+              2,
+              5,
+              5,
+              0,
+              3,
+              3,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              6,
+              0,
+              3,
+              1,
+              4,
+              0,
+              1,
+              1,
+              1,
+              5,
+              4,
+              2,
+              1,
+              4,
+              0,
+              4,
+              2,
+              1,
+              2,
+              2,
+              1,
+              8,
+              0,
+              1,
+              0,
+              3,
+              1,
+              0,
+              7,
+              2,
+              0,
+              0,
+              1,
+              1,
+              1,
+              2,
+              1,
+              6,
+              2,
+              5,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1,
+              3,
+              1,
+              6,
+              0,
+              0,
+              2,
+              3,
+              8,
+              6,
+              0,
+              5,
+              1,
+              1,
+              2,
+              0,
+              3,
+              5,
+              2,
+              1,
+              3,
+              0
+            ],
+            "distribution": {
+              "0": 46,
+              "1": 43,
+              "15": 1,
+              "18": 1,
+              "2": 26,
+              "3": 12,
+              "4": 10,
+              "5": 8,
+              "6": 4,
+              "7": 1,
+              "8": 3
+            },
+            "unmatched_edits": 67,
+            "controls": 153,
+            "control_edits": 200
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 56,
+              "to": 66,
+              "status": "unchanged",
+              "latency": 2607463208,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 128,
+              "to": 138,
+              "status": "unchanged",
+              "latency": 2685569174,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 204,
+              "to": 214,
+              "status": "unchanged",
+              "latency": 3053898828,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 280,
+              "to": 290,
+              "status": "unchanged",
+              "latency": 4835737201,
+              "output_tokens": 109
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 348,
+              "to": 358,
+              "status": "changed",
+              "latency": 3962762469,
+              "output_tokens": 82,
+              "before": "171 branches year to date is nine months period to",
+              "after": "171 branches year to date is nine months period"
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 422,
+              "to": 432,
+              "status": "unchanged",
+              "latency": 2891037682,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                6
+              ],
+              "from": 500,
+              "to": 510,
+              "status": "changed",
+              "latency": 3192832757,
+              "output_tokens": 68,
+              "before": "offering we have taken multiple steps to ensure ensure robust",
+              "after": "offering we have taken multiple steps to ensure robust"
+            },
+            {
+              "seams": [
+                7
+              ],
+              "from": 568,
+              "to": 578,
+              "status": "unchanged",
+              "latency": 4337335368,
+              "output_tokens": 91
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 634,
+              "to": 644,
+              "status": "unchanged",
+              "latency": 3014370268,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 708,
+              "to": 718,
+              "status": "unchanged",
+              "latency": 5695243555,
+              "output_tokens": 121
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 782,
+              "to": 792,
+              "status": "unchanged",
+              "latency": 3145322333,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 856,
+              "to": 866,
+              "status": "unchanged",
+              "latency": 2897180712,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 930,
+              "to": 940,
+              "status": "unchanged",
+              "latency": 5412692288,
+              "output_tokens": 116
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 998,
+              "to": 1008,
+              "status": "unchanged",
+              "latency": 3612708211,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 1063,
+              "to": 1073,
+              "status": "unchanged",
+              "latency": 4231436844,
+              "output_tokens": 90
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 1139,
+              "to": 1149,
+              "status": "changed",
+              "latency": 6714776258,
+              "output_tokens": 146,
+              "before": "picked up observed pick up observed during q2 continued the",
+              "after": "picked up observed during q2 continued the"
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 1210,
+              "to": 1220,
+              "status": "unchanged",
+              "latency": 3009193736,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 1289,
+              "to": 1299,
+              "status": "unchanged",
+              "latency": 3467845895,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 1356,
+              "to": 1366,
+              "status": "unchanged",
+              "latency": 3310279274,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 1428,
+              "to": 1438,
+              "status": "changed",
+              "latency": 15239851730,
+              "output_tokens": 335,
+              "before": "fees on card loan products, cash advances over limit fees",
+              "after": "fees on card loan products, cash advances over limit"
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 1496,
+              "to": 1506,
+              "status": "unchanged",
+              "latency": 3155877104,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1565,
+              "to": 1575,
+              "status": "unchanged",
+              "latency": 3097575010,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1619,
+              "to": 1629,
+              "status": "unchanged",
+              "latency": 3436653563,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1695,
+              "to": 1705,
+              "status": "changed",
+              "latency": 3490320508,
+              "output_tokens": 75,
+              "before": "moving on to asset quality at quality gnp ratio was",
+              "after": "moving on to asset quality at gnp ratio was"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1754,
+              "to": 1764,
+              "status": "unchanged",
+              "latency": 2981302981,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1809,
+              "to": 1819,
+              "status": "unchanged",
+              "latency": 2891904037,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1878,
+              "to": 1888,
+              "status": "unchanged",
+              "latency": 2970370395,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1950,
+              "to": 1960,
+              "status": "unchanged",
+              "latency": 4276515931,
+              "output_tokens": 90
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 2019,
+              "to": 2029,
+              "status": "unchanged",
+              "latency": 3278481423,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 2091,
+              "to": 2101,
+              "status": "unchanged",
+              "latency": 3248218329,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 2151,
+              "to": 2161,
+              "status": "unchanged",
+              "latency": 3025957899,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 2199,
+              "to": 2209,
+              "status": "unchanged",
+              "latency": 3468858874,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 2265,
+              "to": 2275,
+              "status": "changed",
+              "latency": 4867825705,
+              "output_tokens": 104,
+              "before": "of the cases looking at through another lens floating contingent",
+              "after": "of the cases looking through another lens floating contingent"
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 2334,
+              "to": 2344,
+              "status": "unchanged",
+              "latency": 5890743030,
+              "output_tokens": 126
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 2405,
+              "to": 2415,
+              "status": "unchanged",
+              "latency": 3257009488,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 2462,
+              "to": 2472,
+              "status": "unchanged",
+              "latency": 3598733562,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 2511,
+              "to": 2521,
+              "status": "unchanged",
+              "latency": 5427362760,
+              "output_tokens": 116
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2567,
+              "to": 2577,
+              "status": "unchanged",
+              "latency": 3724671681,
+              "output_tokens": 80
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2627,
+              "to": 2637,
+              "status": "unchanged",
+              "latency": 3467744198,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2684,
+              "to": 2694,
+              "status": "unchanged",
+              "latency": 3205941405,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2732,
+              "to": 2742,
+              "status": "unchanged",
+              "latency": 3178112174,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2800,
+              "to": 2810,
+              "status": "unchanged",
+              "latency": 7352858130,
+              "output_tokens": 159
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2859,
+              "to": 2869,
+              "status": "changed",
+              "latency": 5376629878,
+              "output_tokens": 117,
+              "before": "words on hsl again on india's space hsl stsc securities",
+              "after": "words on hsl again india's space stsc securities"
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2921,
+              "to": 2931,
+              "status": "unchanged",
+              "latency": 2675301040,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2996,
+              "to": 3006,
+              "status": "changed",
+              "latency": 4695269942,
+              "output_tokens": 101,
+              "before": "the next few weeks to see if there it turns",
+              "after": "the next few weeks to see if there turns"
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 3075,
+              "to": 3085,
+              "status": "changed",
+              "latency": 7592113755,
+              "output_tokens": 166,
+              "before": "by rupees 19.4 to 414.3 2414.3 without thank you very",
+              "after": "by rupees 19.4 to 414.3 without thank you very"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 3137,
+              "to": 3147,
+              "status": "unchanged",
+              "latency": 3373595904,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 3165,
+              "to": 3175,
+              "status": "unchanged",
+              "latency": 3314179606,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 3204,
+              "to": 3214,
+              "status": "unchanged",
+              "latency": 2864192895,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                49
+              ],
+              "from": 3271,
+              "to": 3281,
+              "status": "changed",
+              "latency": 3184884724,
+              "output_tokens": 67,
+              "before": "right yeah i moved i moved my chair but that's",
+              "after": "right yeah i moved my chair but that's"
+            },
+            {
+              "seams": [
+                50
+              ],
+              "from": 3327,
+              "to": 3337,
+              "status": "unchanged",
+              "latency": 6198831716,
+              "output_tokens": 133
+            },
+            {
+              "seams": [
+                51
+              ],
+              "from": 3399,
+              "to": 3409,
+              "status": "unchanged",
+              "latency": 2776389062,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                52
+              ],
+              "from": 3490,
+              "to": 3500,
+              "status": "changed",
+              "latency": 4643010031,
+              "output_tokens": 100,
+              "before": "can come from a credit cost point of view well",
+              "after": "can come from a credit cost point of view"
+            },
+            {
+              "seams": [
+                53
+              ],
+              "from": 3553,
+              "to": 3563,
+              "status": "unchanged",
+              "latency": 3029276204,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                54
+              ],
+              "from": 3618,
+              "to": 3628,
+              "status": "changed",
+              "latency": 3555478262,
+              "output_tokens": 75,
+              "before": "it calls for experimenting a few things it calls for",
+              "after": "it calls for experimenting a few things"
+            },
+            {
+              "seams": [
+                55
+              ],
+              "from": 3699,
+              "to": 3709,
+              "status": "unchanged",
+              "latency": 3864454401,
+              "output_tokens": 82
+            },
+            {
+              "seams": [
+                56
+              ],
+              "from": 3766,
+              "to": 3776,
+              "status": "unchanged",
+              "latency": 4641283232,
+              "output_tokens": 99
+            },
+            {
+              "seams": [
+                57
+              ],
+              "from": 3821,
+              "to": 3831,
+              "status": "unchanged",
+              "latency": 2924562283,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                58
+              ],
+              "from": 3890,
+              "to": 3900,
+              "status": "unchanged",
+              "latency": 4048223799,
+              "output_tokens": 86
+            },
+            {
+              "seams": [
+                59
+              ],
+              "from": 3976,
+              "to": 3986,
+              "status": "unchanged",
+              "latency": 4764036234,
+              "output_tokens": 100
+            },
+            {
+              "seams": [
+                60
+              ],
+              "from": 4049,
+              "to": 4059,
+              "status": "unchanged",
+              "latency": 3222275567,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                61
+              ],
+              "from": 4153,
+              "to": 4163,
+              "status": "unchanged",
+              "latency": 2962326403,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                62
+              ],
+              "from": 4226,
+              "to": 4236,
+              "status": "changed",
+              "latency": 10637481001,
+              "output_tokens": 237,
+              "before": "a good the yield that the ticket on that but",
+              "after": "a good the yield that ticket on but"
+            },
+            {
+              "seams": [
+                63
+              ],
+              "from": 4320,
+              "to": 4330,
+              "status": "changed",
+              "latency": 4657957715,
+              "output_tokens": 100,
+              "before": "to get in into those revolver type right so that's",
+              "after": "to get into those revolver type right so that's"
+            },
+            {
+              "seams": [
+                64
+              ],
+              "from": 4405,
+              "to": 4415,
+              "status": "unchanged",
+              "latency": 3395289348,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                65
+              ],
+              "from": 4469,
+              "to": 4479,
+              "status": "unchanged",
+              "latency": 2607162791,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                66
+              ],
+              "from": 4563,
+              "to": 4573,
+              "status": "changed",
+              "latency": 3071236277,
+              "output_tokens": 67,
+              "before": "fees point of view thanks thanks but how in your",
+              "after": "fees point of view thanks but how in your"
+            },
+            {
+              "seams": [
+                67
+              ],
+              "from": 4607,
+              "to": 4617,
+              "status": "changed",
+              "latency": 6454858558,
+              "output_tokens": 143,
+              "before": "on get on with that could be two three four",
+              "after": "on get with that could be two three four"
+            },
+            {
+              "seams": [
+                68
+              ],
+              "from": 4676,
+              "to": 4686,
+              "status": "changed",
+              "latency": 5643431344,
+              "output_tokens": 127,
+              "before": "about the ppop it is very similar right whether as",
+              "after": "about the it is very similar right whether as"
+            },
+            {
+              "seams": [
+                69
+              ],
+              "from": 4751,
+              "to": 4761,
+              "status": "unchanged",
+              "latency": 3243000169,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                70
+              ],
+              "from": 4827,
+              "to": 4837,
+              "status": "changed",
+              "latency": 4008981284,
+              "output_tokens": 88,
+              "before": "reconcile both these numbers okay okay you you seeing what",
+              "after": "reconcile both these numbers okay you seeing what"
+            },
+            {
+              "seams": [
+                71
+              ],
+              "from": 4884,
+              "to": 4894,
+              "status": "unchanged",
+              "latency": 3032671617,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                72
+              ],
+              "from": 4968,
+              "to": 4978,
+              "status": "changed",
+              "latency": 4669397832,
+              "output_tokens": 100,
+              "before": "you raised right the 25000 what was there is what",
+              "after": "you raised right the 25000 what was there is"
+            },
+            {
+              "seams": [
+                73
+              ],
+              "from": 5045,
+              "to": 5055,
+              "status": "changed",
+              "latency": 9349867300,
+              "output_tokens": 204,
+              "before": "september we reported 18000 crores right last september and currently",
+              "after": "september we reported 18000 crores right last and currently"
+            },
+            {
+              "seams": [
+                74
+              ],
+              "from": 5108,
+              "to": 5118,
+              "status": "unchanged",
+              "latency": 3724564832,
+              "output_tokens": 78
+            },
+            {
+              "seams": [
+                75
+              ],
+              "from": 5185,
+              "to": 5195,
+              "status": "changed",
+              "latency": 5462570012,
+              "output_tokens": 118,
+              "before": "18000 and now it's 17500 17500 okay so shini just",
+              "after": "18000 and now it's 17500 okay so shini just"
+            },
+            {
+              "seams": [
+                76
+              ],
+              "from": 5256,
+              "to": 5266,
+              "status": "changed",
+              "latency": 5012312267,
+              "output_tokens": 107,
+              "before": "per your disclosure in september was 18200 so the 2000",
+              "after": "per your disclosure in september 18200 so the 2000"
+            },
+            {
+              "seams": [
+                77
+              ],
+              "from": 5322,
+              "to": 5332,
+              "status": "unchanged",
+              "latency": 3800067270,
+              "output_tokens": 79
+            },
+            {
+              "seams": [
+                78
+              ],
+              "from": 5382,
+              "to": 5392,
+              "status": "changed",
+              "latency": 3963316470,
+              "output_tokens": 83,
+              "before": "is reflecting 18000 crores or something in the notes 18000",
+              "after": "is reflecting 18000 crores or something in the notes"
+            },
+            {
+              "seams": [
+                79
+              ],
+              "from": 5449,
+              "to": 5459,
+              "status": "changed",
+              "latency": 4730726036,
+              "output_tokens": 98,
+              "before": "mentioning that that is correct that is correct okay the",
+              "after": "mentioning that is correct okay the"
+            },
+            {
+              "seams": [
+                80
+              ],
+              "from": 5528,
+              "to": 5538,
+              "status": "changed",
+              "latency": 3130964691,
+              "output_tokens": 65,
+              "before": "20 basis points of that particular quarter or or over",
+              "after": "20 basis points of that particular quarter or over"
+            },
+            {
+              "seams": [
+                81
+              ],
+              "from": 5616,
+              "to": 5626,
+              "status": "unchanged",
+              "latency": 3246547267,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                82
+              ],
+              "from": 5667,
+              "to": 5677,
+              "status": "unchanged",
+              "latency": 3081340009,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                83
+              ],
+              "from": 5739,
+              "to": 5749,
+              "status": "unchanged",
+              "latency": 3531121024,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                84
+              ],
+              "from": 5811,
+              "to": 5821,
+              "status": "unchanged",
+              "latency": 3876412007,
+              "output_tokens": 80
+            },
+            {
+              "seams": [
+                85
+              ],
+              "from": 5874,
+              "to": 5884,
+              "status": "changed",
+              "latency": 4335112914,
+              "output_tokens": 91,
+              "before": "we had a multiple x multiple of the system credit",
+              "after": "we had a multiple of the system credit"
+            },
+            {
+              "seams": [
+                86
+              ],
+              "from": 5949,
+              "to": 5959,
+              "status": "unchanged",
+              "latency": 2965484435,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                87
+              ],
+              "from": 5989,
+              "to": 5999,
+              "status": "unchanged",
+              "latency": 3308435238,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                88
+              ],
+              "from": 6082,
+              "to": 6092,
+              "status": "changed",
+              "latency": 6360036091,
+              "output_tokens": 136,
+              "before": "and and crisp as possible said an and crisper possible",
+              "after": "and crisp as possible said an crisper possible"
+            },
+            {
+              "seams": [
+                89
+              ],
+              "from": 6161,
+              "to": 6171,
+              "status": "unchanged",
+              "latency": 2673132730,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                90
+              ],
+              "from": 6240,
+              "to": 6250,
+              "status": "changed",
+              "latency": 5194690069,
+              "output_tokens": 109,
+              "before": "of growth that's that's what have handled at that time",
+              "after": "of growth that's what have handled at that time"
+            },
+            {
+              "seams": [
+                91
+              ],
+              "from": 6324,
+              "to": 6334,
+              "status": "unchanged",
+              "latency": 3133628028,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                92
+              ],
+              "from": 6391,
+              "to": 6401,
+              "status": "changed",
+              "latency": 5058409173,
+              "output_tokens": 107,
+              "before": "what year on year we see in the whole set",
+              "after": "what year we see in the whole set"
+            },
+            {
+              "seams": [
+                93
+              ],
+              "from": 6464,
+              "to": 6474,
+              "status": "unchanged",
+              "latency": 2865637033,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                94
+              ],
+              "from": 6543,
+              "to": 6553,
+              "status": "changed",
+              "latency": 4510519904,
+              "output_tokens": 95,
+              "before": "and we will continue to capture market share and again",
+              "after": "and we will continue to capture market share again"
+            },
+            {
+              "seams": [
+                95
+              ],
+              "from": 6572,
+              "to": 6582,
+              "status": "changed",
+              "latency": 9405797517,
+              "output_tokens": 203,
+              "before": "product spectrums customer spectrum thank you the next question is",
+              "after": "product spectrums customer thank you the next question is"
+            },
+            {
+              "seams": [
+                96
+              ],
+              "from": 6621,
+              "to": 6631,
+              "status": "changed",
+              "latency": 3467625277,
+              "output_tokens": 72,
+              "before": "new restructuring that we did in this quarter no no",
+              "after": "new restructuring that we did in this quarter no"
+            },
+            {
+              "seams": [
+                97
+              ],
+              "from": 6704,
+              "to": 6714,
+              "status": "changed",
+              "latency": 4467471654,
+              "output_tokens": 95,
+              "before": "it is at 17500 1.37 500 1.37 understood thank you",
+              "after": "it is at 17500 1.37 500 understood thank you"
+            },
+            {
+              "seams": [
+                98
+              ],
+              "from": 6788,
+              "to": 6798,
+              "status": "changed",
+              "latency": 4891003454,
+              "output_tokens": 106,
+              "before": "to build up the pcr buffers compared shall be continue",
+              "after": "to build up the pcr buffers shall be continue"
+            },
+            {
+              "seams": [
+                99
+              ],
+              "from": 6852,
+              "to": 6862,
+              "status": "changed",
+              "latency": 3789121844,
+              "output_tokens": 82,
+              "before": "all i can point to is to historical to say",
+              "after": "all i can point to is historical to say"
+            },
+            {
+              "seams": [
+                100
+              ],
+              "from": 6898,
+              "to": 6908,
+              "status": "changed",
+              "latency": 3275065890,
+              "output_tokens": 68,
+              "before": "the the contingent provisions about 95 basis points but yes",
+              "after": "the contingent provisions about 95 basis points but yes"
+            },
+            {
+              "seams": [
+                101
+              ],
+              "from": 6975,
+              "to": 6985,
+              "status": "changed",
+              "latency": 3836595523,
+              "output_tokens": 81,
+              "before": "booked across various segments right across various segments they they",
+              "after": "booked across various segments right they"
+            },
+            {
+              "seams": [
+                102
+              ],
+              "from": 7041,
+              "to": 7051,
+              "status": "changed",
+              "latency": 4151502444,
+              "output_tokens": 87,
+              "before": "existing to existing to bank personal loan or or call",
+              "after": "existing to bank personal loan or call"
+            },
+            {
+              "seams": [
+                103
+              ],
+              "from": 7091,
+              "to": 7101,
+              "status": "changed",
+              "latency": 6811569886,
+              "output_tokens": 148,
+              "before": "the muster on the scoring models to get it so",
+              "after": "the muster on scoring models to get it so"
+            },
+            {
+              "seams": [
+                104
+              ],
+              "from": 7181,
+              "to": 7191,
+              "status": "changed",
+              "latency": 3400908755,
+              "output_tokens": 72,
+              "before": "you look at june june 19 also when we initiated",
+              "after": "you look at june 19 also when we initiated"
+            },
+            {
+              "seams": [
+                105
+              ],
+              "from": 7262,
+              "to": 7272,
+              "status": "changed",
+              "latency": 5429032680,
+              "output_tokens": 117,
+              "before": "the balance sheet much more resilient for any shocks uncertainty",
+              "after": "the balance sheet much more resilient for any shocks"
+            },
+            {
+              "seams": [
+                106
+              ],
+              "from": 7338,
+              "to": 7348,
+              "status": "changed",
+              "latency": 6179505166,
+              "output_tokens": 134,
+              "before": "in a quarter and evaluate but it sheen just two",
+              "after": "in a quarter and evaluate but it just two"
+            },
+            {
+              "seams": [
+                107
+              ],
+              "from": 7418,
+              "to": 7428,
+              "status": "unchanged",
+              "latency": 8908806980,
+              "output_tokens": 194
+            },
+            {
+              "seams": [
+                108
+              ],
+              "from": 7497,
+              "to": 7507,
+              "status": "changed",
+              "latency": 3650381209,
+              "output_tokens": 77,
+              "before": "and the spend is quite quite picked up 24% or",
+              "after": "and the spend is quite picked up 24% or"
+            },
+            {
+              "seams": [
+                109
+              ],
+              "from": 7603,
+              "to": 7613,
+              "status": "unchanged",
+              "latency": 3062568886,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                110
+              ],
+              "from": 7655,
+              "to": 7665,
+              "status": "unchanged",
+              "latency": 3014440121,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                111
+              ],
+              "from": 7732,
+              "to": 7742,
+              "status": "unchanged",
+              "latency": 3515572610,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                112
+              ],
+              "from": 7792,
+              "to": 7802,
+              "status": "unchanged",
+              "latency": 3238465277,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                113
+              ],
+              "from": 7871,
+              "to": 7881,
+              "status": "changed",
+              "latency": 11948697017,
+              "output_tokens": 259,
+              "before": "irrespective of whatever for it for the last question on",
+              "after": "irrespective of whatever for it the last question on"
+            },
+            {
+              "seams": [
+                114
+              ],
+              "from": 7947,
+              "to": 7957,
+              "status": "unchanged",
+              "latency": 3032109642,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                115
+              ],
+              "from": 8030,
+              "to": 8040,
+              "status": "changed",
+              "latency": 4116877967,
+              "output_tokens": 88,
+              "before": "at things in three different kind of of activity call",
+              "after": "at things in three different kind of activity call"
+            },
+            {
+              "seams": [
+                116
+              ],
+              "from": 8097,
+              "to": 8107,
+              "status": "unchanged",
+              "latency": 2812702308,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                117
+              ],
+              "from": 8182,
+              "to": 8192,
+              "status": "changed",
+              "latency": 6807964198,
+              "output_tokens": 148,
+              "before": "liability relationship that's the key ingredient that comes in based",
+              "after": "liability relationship that's the key ingredient that comes based"
+            },
+            {
+              "seams": [
+                118
+              ],
+              "from": 8255,
+              "to": 8265,
+              "status": "unchanged",
+              "latency": 2952754440,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                119
+              ],
+              "from": 8313,
+              "to": 8323,
+              "status": "unchanged",
+              "latency": 3098290855,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                120
+              ],
+              "from": 8399,
+              "to": 8409,
+              "status": "changed",
+              "latency": 13107680580,
+              "output_tokens": 287,
+              "before": "executing on that aspect of it right now on the",
+              "after": "executing that aspect of it right now on the"
+            },
+            {
+              "seams": [
+                121
+              ],
+              "from": 8470,
+              "to": 8480,
+              "status": "unchanged",
+              "latency": 3192152797,
+              "output_tokens": 68
+            },
+            {
+              "seams": [
+                122
+              ],
+              "from": 8555,
+              "to": 8565,
+              "status": "changed",
+              "latency": 6233884080,
+              "output_tokens": 136,
+              "before": "certain things in relationship management for example in the relationship",
+              "after": "certain things in relationship management for example the relationship"
+            },
+            {
+              "seams": [
+                123
+              ],
+              "from": 8621,
+              "to": 8631,
+              "status": "changed",
+              "latency": 5068017165,
+              "output_tokens": 109,
+              "before": "that come we have for 20 million customers we have",
+              "after": "that come we have for 20 million customers"
+            },
+            {
+              "seams": [
+                124
+              ],
+              "from": 8709,
+              "to": 8719,
+              "status": "unchanged",
+              "latency": 3022925614,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                125
+              ],
+              "from": 8778,
+              "to": 8788,
+              "status": "changed",
+              "latency": 4956620288,
+              "output_tokens": 107,
+              "before": "of dora from jb morgan please cobra hi good evening",
+              "after": "of dora from jb morgan cobra hi good evening"
+            },
+            {
+              "seams": [
+                126
+              ],
+              "from": 8860,
+              "to": 8870,
+              "status": "changed",
+              "latency": 7023971650,
+              "output_tokens": 151,
+              "before": "growth shouldn't idly this growth be better thanks sir okay",
+              "after": "growth shouldn't idly this be better thanks sir okay"
+            },
+            {
+              "seams": [
+                127
+              ],
+              "from": 8927,
+              "to": 8937,
+              "status": "changed",
+              "latency": 7276218601,
+              "output_tokens": 157,
+              "before": "4.45 right for 4.4 4.5 percent that's the band at",
+              "after": "4.45 percent that's the band at"
+            },
+            {
+              "seams": [
+                128
+              ],
+              "from": 9012,
+              "to": 9022,
+              "status": "unchanged",
+              "latency": 2895805030,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                129
+              ],
+              "from": 9091,
+              "to": 9101,
+              "status": "unchanged",
+              "latency": 2694518012,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                130
+              ],
+              "from": 9181,
+              "to": 9191,
+              "status": "changed",
+              "latency": 3257217417,
+              "output_tokens": 68,
+              "before": "also depends on the segment in which we operate in",
+              "after": "also depends on the segment in which we operate"
+            },
+            {
+              "seams": [
+                131
+              ],
+              "from": 9256,
+              "to": 9266,
+              "status": "unchanged",
+              "latency": 2947877391,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                132
+              ],
+              "from": 9328,
+              "to": 9338,
+              "status": "unchanged",
+              "latency": 3269905105,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                133
+              ],
+              "from": 9383,
+              "to": 9393,
+              "status": "changed",
+              "latency": 7937741450,
+              "output_tokens": 176,
+              "before": "focused and continuing to focus on that also so at",
+              "after": "focused and continuing to focus on that so at"
+            },
+            {
+              "seams": [
+                134
+              ],
+              "from": 9476,
+              "to": 9486,
+              "status": "changed",
+              "latency": 4910590532,
+              "output_tokens": 110,
+              "before": "rate slightly under a third right now right about 31",
+              "after": "rate slightly under a third now about 31"
+            },
+            {
+              "seams": [
+                135
+              ],
+              "from": 9561,
+              "to": 9571,
+              "status": "changed",
+              "latency": 5396319058,
+              "output_tokens": 120,
+              "before": "it single digit but very low it was so it",
+              "after": "it single digit but very low it was so"
+            },
+            {
+              "seams": [
+                136
+              ],
+              "from": 9665,
+              "to": 9675,
+              "status": "changed",
+              "latency": 6780627965,
+              "output_tokens": 150,
+              "before": "that can come and I'm bringing that the godishani so",
+              "after": "that can come and I'm bringing the godishani so"
+            },
+            {
+              "seams": [
+                137
+              ],
+              "from": 9748,
+              "to": 9758,
+              "status": "unchanged",
+              "latency": 2763324484,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                138
+              ],
+              "from": 9816,
+              "to": 9826,
+              "status": "unchanged",
+              "latency": 3894299511,
+              "output_tokens": 81
+            },
+            {
+              "seams": [
+                139
+              ],
+              "from": 9904,
+              "to": 9914,
+              "status": "unchanged",
+              "latency": 2773760783,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                140
+              ],
+              "from": 9966,
+              "to": 9976,
+              "status": "changed",
+              "latency": 6342819538,
+              "output_tokens": 135,
+              "before": "or ppop is making kind of a lending growth rate",
+              "after": "is making kind of a lending growth rate"
+            },
+            {
+              "seams": [
+                141
+              ],
+              "from": 10046,
+              "to": 10056,
+              "status": "changed",
+              "latency": 5160026988,
+              "output_tokens": 109,
+              "before": "to come got thank you shalini thank you thank you",
+              "after": "to come got thank you shalini"
+            },
+            {
+              "seams": [
+                142
+              ],
+              "from": 10070,
+              "to": 10080,
+              "status": "changed",
+              "latency": 3913537192,
+              "output_tokens": 84,
+              "before": "from macquarie please go over sorry please cover here yeah",
+              "after": "from macquarie go over sorry cover here yeah"
+            },
+            {
+              "seams": [
+                143
+              ],
+              "from": 10160,
+              "to": 10170,
+              "status": "unchanged",
+              "latency": 2558912538,
+              "output_tokens": 55
+            },
+            {
+              "seams": [
+                144
+              ],
+              "from": 10257,
+              "to": 10267,
+              "status": "changed",
+              "latency": 4463312201,
+              "output_tokens": 93,
+              "before": "yeah okay no thank you thank you suresh and that's",
+              "after": "yeah okay no thank you suresh and that's"
+            },
+            {
+              "seams": [
+                145
+              ],
+              "from": 10341,
+              "to": 10351,
+              "status": "changed",
+              "latency": 3089731838,
+              "output_tokens": 64,
+              "before": "is something from from our recent experience that is not",
+              "after": "is something from our recent experience that is not"
+            },
+            {
+              "seams": [
+                146
+              ],
+              "from": 10407,
+              "to": 10417,
+              "status": "changed",
+              "latency": 7192665239,
+              "output_tokens": 154,
+              "before": "means if it is an internal customer that means we",
+              "after": "if it is an internal customer that means we"
+            },
+            {
+              "seams": [
+                147
+              ],
+              "from": 10460,
+              "to": 10470,
+              "status": "changed",
+              "latency": 3959082934,
+              "output_tokens": 84,
+              "before": "such is fully neutral but we still very very vehemently",
+              "after": "such is fully neutral but we still very vehemently"
+            },
+            {
+              "seams": [
+                148
+              ],
+              "from": 10499,
+              "to": 10509,
+              "status": "unchanged",
+              "latency": 3623307814,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                149
+              ],
+              "from": 10573,
+              "to": 10583,
+              "status": "changed",
+              "latency": 5116332013,
+              "output_tokens": 109,
+              "before": "to the interchange it is a being health study if",
+              "after": "to the interchange it is a health study if"
+            },
+            {
+              "seams": [
+                150
+              ],
+              "from": 10651,
+              "to": 10661,
+              "status": "changed",
+              "latency": 6596902929,
+              "output_tokens": 148,
+              "before": "points that are cashback cost costs is there costs of",
+              "after": "points that are cashback cost is there costs of"
+            },
+            {
+              "seams": [
+                151
+              ],
+              "from": 10738,
+              "to": 10748,
+              "status": "unchanged",
+              "latency": 3362136264,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                152
+              ],
+              "from": 10814,
+              "to": 10824,
+              "status": "unchanged",
+              "latency": 3232828130,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                153
+              ],
+              "from": 10882,
+              "to": 10892,
+              "status": "changed",
+              "latency": 3792687192,
+              "output_tokens": 104,
+              "before": "conference over to mr vedyanathan for closing comments. Oh okay,",
+              "after": "conference over to mr vedyanathan for closing comments."
+            },
+            {
+              "seams": [
+                154
+              ],
+              "from": 10955,
+              "to": 10965,
+              "status": "unchanged",
+              "latency": 2534166432,
+              "output_tokens": 65
+            }
+          ]
+        }
+      }
+    },
+    {
+      "run": 3,
+      "unsplit": {
+        "wall": 56101343680,
+        "usage": {
+          "InputTokens": 15028,
+          "OutputTokens": 2135,
+          "TotalTokens": 17163
+        },
+        "words": 1550,
+        "wer": {
+          "edits": 160,
+          "length": 1588,
+          "rate": 0.10075566750629723
+        }
+      },
+      "excerpt_windowed": {
+        "windows": 23,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "silence": 22
+        },
+        "plan_time": 173594997,
+        "wall": 19369216465,
+        "total": 19542811462,
+        "mean_latency": 3215802853,
+        "max_in_flight": 4,
+        "input_tokens": 16749,
+        "output_tokens": 2096,
+        "wer": {
+          "edits": 160,
+          "length": 1588,
+          "rate": 0.10075566750629723
+        },
+        "seams": {
+          "seams": 22,
+          "matched": 21,
+          "unmatched": 1,
+          "edits": 21,
+          "per_seam": [
+            1,
+            0,
+            2,
+            2,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            2,
+            2,
+            2,
+            2,
+            0,
+            1,
+            2,
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          "distribution": {
+            "0": 8,
+            "1": 7,
+            "2": 7
+          },
+          "unmatched_edits": 2,
+          "controls": 21,
+          "control_edits": 21
+        }
+      },
+      "full": {
+        "windows": 156,
+        "failed": 0,
+        "cuts": {
+          "end": 1,
+          "limit": 2,
+          "silence": 153
+        },
+        "plan_time": 3520183547,
+        "wall": 124560016883,
+        "total": 128080200430,
+        "mean_latency": 3163964431,
+        "max_in_flight": 4,
+        "input_tokens": 109470,
+        "output_tokens": 13721,
+        "wer": {
+          "edits": 1536,
+          "length": 10742,
+          "rate": 0.14299013219139825
+        },
+        "seams": {
+          "seams": 155,
+          "matched": 141,
+          "unmatched": 14,
+          "edits": 286,
+          "per_seam": [
+            1,
+            0,
+            2,
+            2,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            2,
+            1,
+            2,
+            0,
+            1,
+            6,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            5,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            3,
+            0,
+            1,
+            0,
+            0,
+            1,
+            4,
+            2,
+            18,
+            1,
+            2,
+            3,
+            0,
+            2,
+            4,
+            2,
+            3,
+            2,
+            3,
+            1,
+            1,
+            0,
+            1,
+            0,
+            8,
+            15,
+            0,
+            0,
+            0,
+            0,
+            2,
+            3,
+            2,
+            5,
+            1,
+            2,
+            1,
+            0,
+            2,
+            3,
+            1,
+            1,
+            1,
+            2,
+            5,
+            4,
+            0,
+            2,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            2,
+            0,
+            0,
+            6,
+            0,
+            4,
+            1,
+            2,
+            0,
+            0,
+            0,
+            0,
+            24,
+            4,
+            2,
+            1,
+            1,
+            3,
+            3,
+            3,
+            0,
+            2,
+            2,
+            2,
+            8,
+            0,
+            1,
+            0,
+            4,
+            1,
+            1,
+            7,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            4,
+            1,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            5,
+            0,
+            0,
+            2,
+            2,
+            4,
+            5,
+            0,
+            7,
+            2,
+            0,
+            1,
+            0,
+            3,
+            5,
+            2,
+            1,
+            1,
+            0
+          ],
+          "distribution": {
+            "0": 58,
+            "1": 36,
+            "15": 1,
+            "18": 1,
+            "2": 26,
+            "24": 1,
+            "3": 11,
+            "4": 9,
+            "5": 6,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "unmatched_edits": 64,
+          "controls": 154,
+          "control_edits": 196
+        },
+        "pass": {
+          "model": "ggml-org/gpt-oss-120b-GGUF:MXFP4",
+          "requests": 155,
+          "changed": 62,
+          "unchanged": 92,
+          "failed": 1,
+          "failures": [
+            "words beyond removals"
+          ],
+          "wall": 168561065389,
+          "wer": {
+            "edits": 1550,
+            "length": 10742,
+            "rate": 0.1442934276671011
+          },
+          "seams": {
+            "seams": 155,
+            "matched": 141,
+            "unmatched": 14,
+            "edits": 312,
+            "per_seam": [
+              1,
+              0,
+              2,
+              2,
+              2,
+              1,
+              0,
+              0,
+              0,
+              1,
+              2,
+              1,
+              3,
+              0,
+              1,
+              3,
+              0,
+              1,
+              0,
+              0,
+              4,
+              0,
+              0,
+              3,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              3,
+              1,
+              1,
+              0,
+              0,
+              3,
+              4,
+              2,
+              18,
+              1,
+              3,
+              5,
+              0,
+              1,
+              4,
+              2,
+              3,
+              2,
+              1,
+              1,
+              1,
+              0,
+              1,
+              4,
+              8,
+              15,
+              0,
+              0,
+              0,
+              0,
+              2,
+              3,
+              1,
+              5,
+              1,
+              1,
+              1,
+              1,
+              2,
+              3,
+              1,
+              2,
+              1,
+              2,
+              5,
+              4,
+              0,
+              3,
+              3,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              6,
+              0,
+              3,
+              1,
+              4,
+              0,
+              1,
+              0,
+              1,
+              24,
+              4,
+              2,
+              1,
+              4,
+              0,
+              3,
+              2,
+              1,
+              2,
+              2,
+              1,
+              8,
+              0,
+              1,
+              0,
+              3,
+              1,
+              0,
+              7,
+              1,
+              0,
+              0,
+              1,
+              1,
+              1,
+              2,
+              1,
+              7,
+              2,
+              5,
+              0,
+              1,
+              1,
+              0,
+              0,
+              2,
+              1,
+              2,
+              6,
+              0,
+              0,
+              2,
+              3,
+              8,
+              4,
+              0,
+              5,
+              1,
+              1,
+              2,
+              0,
+              3,
+              5,
+              2,
+              1,
+              1,
+              1
+            ],
+            "distribution": {
+              "0": 46,
+              "1": 45,
+              "15": 1,
+              "18": 1,
+              "2": 23,
+              "24": 1,
+              "3": 16,
+              "4": 9,
+              "5": 6,
+              "6": 2,
+              "7": 2,
+              "8": 3
+            },
+            "unmatched_edits": 59,
+            "controls": 153,
+            "control_edits": 196
+          },
+          "spans": [
+            {
+              "seams": [
+                0
+              ],
+              "from": 56,
+              "to": 66,
+              "status": "unchanged",
+              "latency": 3148625847,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                1
+              ],
+              "from": 128,
+              "to": 138,
+              "status": "unchanged",
+              "latency": 2853471946,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                2
+              ],
+              "from": 204,
+              "to": 214,
+              "status": "unchanged",
+              "latency": 2694064868,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                3
+              ],
+              "from": 280,
+              "to": 290,
+              "status": "unchanged",
+              "latency": 4005551274,
+              "output_tokens": 87
+            },
+            {
+              "seams": [
+                4
+              ],
+              "from": 348,
+              "to": 358,
+              "status": "changed",
+              "latency": 4442118373,
+              "output_tokens": 91,
+              "before": "171 branches year to date is nine months period to",
+              "after": "171 branches year to date is nine months period"
+            },
+            {
+              "seams": [
+                5
+              ],
+              "from": 422,
+              "to": 432,
+              "status": "unchanged",
+              "latency": 2762318415,
+              "output_tokens": 56
+            },
+            {
+              "seams": [
+                6
+              ],
+              "from": 500,
+              "to": 510,
+              "status": "changed",
+              "latency": 3266772818,
+              "output_tokens": 68,
+              "before": "offering we have taken multiple steps to ensure ensure robust",
+              "after": "offering we have taken multiple steps to ensure robust"
+            },
+            {
+              "seams": [
+                7
+              ],
+              "from": 568,
+              "to": 578,
+              "status": "unchanged",
+              "latency": 4115690504,
+              "output_tokens": 86
+            },
+            {
+              "seams": [
+                8
+              ],
+              "from": 634,
+              "to": 644,
+              "status": "unchanged",
+              "latency": 3264221841,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                9
+              ],
+              "from": 708,
+              "to": 718,
+              "status": "unchanged",
+              "latency": 2927603254,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                10
+              ],
+              "from": 782,
+              "to": 792,
+              "status": "unchanged",
+              "latency": 3041473791,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                11
+              ],
+              "from": 856,
+              "to": 866,
+              "status": "unchanged",
+              "latency": 3157736121,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                12
+              ],
+              "from": 930,
+              "to": 940,
+              "status": "changed",
+              "latency": 5585149955,
+              "output_tokens": 120,
+              "before": "one plus 1 lakh plus active distribution points we have",
+              "after": "one plus 1 lakh active distribution points we have"
+            },
+            {
+              "seams": [
+                13
+              ],
+              "from": 998,
+              "to": 1008,
+              "status": "unchanged",
+              "latency": 3112870016,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                14
+              ],
+              "from": 1063,
+              "to": 1073,
+              "status": "unchanged",
+              "latency": 4369670253,
+              "output_tokens": 95
+            },
+            {
+              "seams": [
+                15
+              ],
+              "from": 1139,
+              "to": 1149,
+              "status": "changed",
+              "latency": 5017787156,
+              "output_tokens": 107,
+              "before": "picked up observed pick up observed during q2 continued the",
+              "after": "picked up observed during q2 continued the"
+            },
+            {
+              "seams": [
+                16
+              ],
+              "from": 1210,
+              "to": 1220,
+              "status": "unchanged",
+              "latency": 3094241289,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                17
+              ],
+              "from": 1289,
+              "to": 1299,
+              "status": "changed",
+              "latency": 4592139288,
+              "output_tokens": 96,
+              "before": "this is in the similar range of previous quarter net",
+              "after": "this is in similar range of previous quarter net"
+            },
+            {
+              "seams": [
+                18
+              ],
+              "from": 1356,
+              "to": 1366,
+              "status": "unchanged",
+              "latency": 3361306403,
+              "output_tokens": 69
+            },
+            {
+              "seams": [
+                19
+              ],
+              "from": 1428,
+              "to": 1438,
+              "status": "unchanged",
+              "latency": 17700899159,
+              "output_tokens": 386
+            },
+            {
+              "seams": [
+                20
+              ],
+              "from": 1496,
+              "to": 1506,
+              "status": "unchanged",
+              "latency": 2798674920,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                21
+              ],
+              "from": 1565,
+              "to": 1575,
+              "status": "unchanged",
+              "latency": 2837840912,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                22
+              ],
+              "from": 1619,
+              "to": 1629,
+              "status": "unchanged",
+              "latency": 3435818902,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                23
+              ],
+              "from": 1695,
+              "to": 1705,
+              "status": "changed",
+              "latency": 3815378580,
+              "output_tokens": 80,
+              "before": "moving on to asset quality at quality gnp ratio was",
+              "after": "moving on to asset quality gnp ratio was"
+            },
+            {
+              "seams": [
+                24
+              ],
+              "from": 1754,
+              "to": 1764,
+              "status": "unchanged",
+              "latency": 2970676103,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                25
+              ],
+              "from": 1809,
+              "to": 1819,
+              "status": "unchanged",
+              "latency": 3391716439,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                26
+              ],
+              "from": 1878,
+              "to": 1888,
+              "status": "unchanged",
+              "latency": 2889330680,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                27
+              ],
+              "from": 1950,
+              "to": 1960,
+              "status": "unchanged",
+              "latency": 4090684700,
+              "output_tokens": 90
+            },
+            {
+              "seams": [
+                28
+              ],
+              "from": 2019,
+              "to": 2029,
+              "status": "unchanged",
+              "latency": 3380214560,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                29
+              ],
+              "from": 2091,
+              "to": 2101,
+              "status": "unchanged",
+              "latency": 3617424706,
+              "output_tokens": 75
+            },
+            {
+              "seams": [
+                30
+              ],
+              "from": 2151,
+              "to": 2161,
+              "status": "unchanged",
+              "latency": 3136768036,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                31
+              ],
+              "from": 2199,
+              "to": 2209,
+              "status": "unchanged",
+              "latency": 3391903212,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                32
+              ],
+              "from": 2265,
+              "to": 2275,
+              "status": "changed",
+              "latency": 5305815221,
+              "output_tokens": 114,
+              "before": "of the cases looking at through another lens floating contingent",
+              "after": "of the cases looking through another lens floating contingent"
+            },
+            {
+              "seams": [
+                33
+              ],
+              "from": 2334,
+              "to": 2344,
+              "status": "unchanged",
+              "latency": 5000112294,
+              "output_tokens": 107
+            },
+            {
+              "seams": [
+                34
+              ],
+              "from": 2405,
+              "to": 2415,
+              "status": "unchanged",
+              "latency": 3659312574,
+              "output_tokens": 76
+            },
+            {
+              "seams": [
+                35
+              ],
+              "from": 2462,
+              "to": 2472,
+              "status": "unchanged",
+              "latency": 5087483301,
+              "output_tokens": 109
+            },
+            {
+              "seams": [
+                36
+              ],
+              "from": 2511,
+              "to": 2521,
+              "status": "changed",
+              "latency": 9320718958,
+              "output_tokens": 200,
+              "before": "term deposits in retail segment grew by 8.3%. Time deposits",
+              "after": "term deposits in retail segment grew by 8.3%. Time"
+            },
+            {
+              "seams": [
+                37
+              ],
+              "from": 2567,
+              "to": 2577,
+              "status": "unchanged",
+              "latency": 3848160125,
+              "output_tokens": 80
+            },
+            {
+              "seams": [
+                38
+              ],
+              "from": 2627,
+              "to": 2637,
+              "status": "unchanged",
+              "latency": 3385804682,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                39
+              ],
+              "from": 2684,
+              "to": 2694,
+              "status": "unchanged",
+              "latency": 3911667446,
+              "output_tokens": 83
+            },
+            {
+              "seams": [
+                40
+              ],
+              "from": 2732,
+              "to": 2742,
+              "status": "unchanged",
+              "latency": 3047880844,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                41
+              ],
+              "from": 2801,
+              "to": 2811,
+              "status": "changed",
+              "latency": 6050797090,
+              "output_tokens": 129,
+              "before": "to the cost of funds of 5.9%. total capital adequacy",
+              "after": "to the cost of funds 5.9% total capital adequacy"
+            },
+            {
+              "seams": [
+                42
+              ],
+              "from": 2860,
+              "to": 2870,
+              "status": "changed",
+              "latency": 4734582510,
+              "output_tokens": 99,
+              "before": "words on hsl again on hindi spaces hsl stsc securities",
+              "after": "words on hsl again hindi spaces stsc securities"
+            },
+            {
+              "seams": [
+                43
+              ],
+              "from": 2921,
+              "to": 2931,
+              "status": "unchanged",
+              "latency": 2928197239,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                44
+              ],
+              "from": 2996,
+              "to": 3006,
+              "status": "changed",
+              "latency": 8941528408,
+              "output_tokens": 195,
+              "before": "the next few weeks to see if there it turns",
+              "after": "the next few weeks to see if it turns"
+            },
+            {
+              "seams": [
+                45
+              ],
+              "from": 3075,
+              "to": 3085,
+              "status": "changed",
+              "latency": 8633786966,
+              "output_tokens": 186,
+              "before": "by rupees 19.4 to 414.3 2414.3 without thank you very",
+              "after": "by rupees 19.4 to 414.3 without thank you very"
+            },
+            {
+              "seams": [
+                46
+              ],
+              "from": 3137,
+              "to": 3147,
+              "status": "unchanged",
+              "latency": 3394787049,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                47
+              ],
+              "from": 3165,
+              "to": 3175,
+              "status": "unchanged",
+              "latency": 3613163789,
+              "output_tokens": 78
+            },
+            {
+              "seams": [
+                48
+              ],
+              "from": 3204,
+              "to": 3214,
+              "status": "unchanged",
+              "latency": 2925013098,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                49
+              ],
+              "from": 3271,
+              "to": 3281,
+              "status": "changed",
+              "latency": 3255453757,
+              "output_tokens": 69,
+              "before": "right yeah i moved i moved my chair but that's",
+              "after": "right yeah i moved my chair but that's"
+            },
+            {
+              "seams": [
+                50
+              ],
+              "from": 3327,
+              "to": 3337,
+              "status": "unchanged",
+              "latency": 3996723435,
+              "output_tokens": 83
+            },
+            {
+              "seams": [
+                51
+              ],
+              "from": 3399,
+              "to": 3409,
+              "status": "unchanged",
+              "latency": 2853452402,
+              "output_tokens": 59
+            },
+            {
+              "seams": [
+                52
+              ],
+              "from": 3490,
+              "to": 3500,
+              "status": "unchanged",
+              "latency": 3047316468,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                53
+              ],
+              "from": 3553,
+              "to": 3563,
+              "status": "unchanged",
+              "latency": 3366459784,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                54
+              ],
+              "from": 3618,
+              "to": 3628,
+              "status": "changed",
+              "latency": 4612630851,
+              "output_tokens": 97,
+              "before": "it calls for experimenting a few things it calls for",
+              "after": "it calls for experimenting a few things"
+            },
+            {
+              "seams": [
+                55
+              ],
+              "from": 3699,
+              "to": 3709,
+              "status": "unchanged",
+              "latency": 3476343938,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                56
+              ],
+              "from": 3766,
+              "to": 3776,
+              "status": "unchanged",
+              "latency": 3473190418,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                57
+              ],
+              "from": 3821,
+              "to": 3831,
+              "status": "unchanged",
+              "latency": 3048580071,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                58
+              ],
+              "from": 3890,
+              "to": 3900,
+              "status": "unchanged",
+              "latency": 4028891825,
+              "output_tokens": 86
+            },
+            {
+              "seams": [
+                59
+              ],
+              "from": 3976,
+              "to": 3986,
+              "status": "unchanged",
+              "latency": 4984557260,
+              "output_tokens": 107
+            },
+            {
+              "seams": [
+                60
+              ],
+              "from": 4049,
+              "to": 4059,
+              "status": "unchanged",
+              "latency": 3427612315,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                61
+              ],
+              "from": 4153,
+              "to": 4163,
+              "status": "unchanged",
+              "latency": 2860783667,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                62
+              ],
+              "from": 4226,
+              "to": 4236,
+              "status": "changed",
+              "latency": 8731414801,
+              "output_tokens": 191,
+              "before": "a good the yield that the ticket on that but",
+              "after": "a good yield that ticket on but"
+            },
+            {
+              "seams": [
+                63
+              ],
+              "from": 4320,
+              "to": 4330,
+              "status": "changed",
+              "latency": 4082818107,
+              "output_tokens": 87,
+              "before": "to get in into those revolver type right so that's",
+              "after": "to get into those revolver type right so that's"
+            },
+            {
+              "seams": [
+                64
+              ],
+              "from": 4405,
+              "to": 4415,
+              "status": "unchanged",
+              "latency": 3378480143,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                65
+              ],
+              "from": 4468,
+              "to": 4478,
+              "status": "unchanged",
+              "latency": 2959700348,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                66
+              ],
+              "from": 4562,
+              "to": 4572,
+              "status": "changed",
+              "latency": 4070471592,
+              "output_tokens": 88,
+              "before": "fees point of view thanks thank but how in your",
+              "after": "fees point of view thanks but how in your"
+            },
+            {
+              "seams": [
+                67
+              ],
+              "from": 4606,
+              "to": 4616,
+              "status": "changed",
+              "latency": 9067744311,
+              "output_tokens": 197,
+              "before": "on get on with that could be two three four",
+              "after": "on get with that could be two three four"
+            },
+            {
+              "seams": [
+                68
+              ],
+              "from": 4675,
+              "to": 4685,
+              "status": "changed",
+              "latency": 4938777781,
+              "output_tokens": 108,
+              "before": "about the ppop it is very similar right whether as",
+              "after": "about the it is very similar right whether as"
+            },
+            {
+              "seams": [
+                69
+              ],
+              "from": 4750,
+              "to": 4760,
+              "status": "unchanged",
+              "latency": 3454969624,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                70
+              ],
+              "from": 4826,
+              "to": 4836,
+              "status": "changed",
+              "latency": 3782867390,
+              "output_tokens": 80,
+              "before": "reconcile both these numbers okay okay you you seeing what",
+              "after": "reconcile both these numbers okay you seeing what"
+            },
+            {
+              "seams": [
+                71
+              ],
+              "from": 4883,
+              "to": 4893,
+              "status": "unchanged",
+              "latency": 3071563076,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                72
+              ],
+              "from": 4967,
+              "to": 4977,
+              "status": "changed",
+              "latency": 6580784091,
+              "output_tokens": 141,
+              "before": "you raised right the 25000 what was there is what",
+              "after": "you raised right the 25000 what was there is"
+            },
+            {
+              "seams": [
+                73
+              ],
+              "from": 5044,
+              "to": 5054,
+              "status": "unchanged",
+              "latency": 4640014683,
+              "output_tokens": 99
+            },
+            {
+              "seams": [
+                74
+              ],
+              "from": 5107,
+              "to": 5117,
+              "status": "unchanged",
+              "latency": 3054662130,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                75
+              ],
+              "from": 5184,
+              "to": 5194,
+              "status": "changed",
+              "latency": 5226422318,
+              "output_tokens": 112,
+              "before": "18000 and now it's 17500 17500 okay so shini just",
+              "after": "18000 and now it's 17500 okay so shini just"
+            },
+            {
+              "seams": [
+                76
+              ],
+              "from": 5255,
+              "to": 5265,
+              "status": "unchanged",
+              "latency": 4570978094,
+              "output_tokens": 97
+            },
+            {
+              "seams": [
+                77
+              ],
+              "from": 5321,
+              "to": 5331,
+              "status": "unchanged",
+              "latency": 3786574410,
+              "output_tokens": 79
+            },
+            {
+              "seams": [
+                78
+              ],
+              "from": 5381,
+              "to": 5391,
+              "status": "changed",
+              "latency": 3964092187,
+              "output_tokens": 83,
+              "before": "is reflecting 18000 crores or something in the notes 18000",
+              "after": "is reflecting 18000 crores or something in the notes"
+            },
+            {
+              "seams": [
+                79
+              ],
+              "from": 5448,
+              "to": 5458,
+              "status": "changed",
+              "latency": 4075166213,
+              "output_tokens": 86,
+              "before": "mentioning that that is correct that is correct okay uh",
+              "after": "mentioning that is correct okay uh"
+            },
+            {
+              "seams": [
+                80
+              ],
+              "from": 5528,
+              "to": 5538,
+              "status": "changed",
+              "latency": 3186780870,
+              "output_tokens": 65,
+              "before": "20 basis points of that particular quarter or or over",
+              "after": "20 basis points of that particular quarter or over"
+            },
+            {
+              "seams": [
+                81
+              ],
+              "from": 5616,
+              "to": 5626,
+              "status": "unchanged",
+              "latency": 3161464524,
+              "output_tokens": 64
+            },
+            {
+              "seams": [
+                82
+              ],
+              "from": 5667,
+              "to": 5677,
+              "status": "unchanged",
+              "latency": 3112036854,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                83
+              ],
+              "from": 5739,
+              "to": 5749,
+              "status": "unchanged",
+              "latency": 3597996586,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                84
+              ],
+              "from": 5811,
+              "to": 5821,
+              "status": "unchanged",
+              "latency": 3847858789,
+              "output_tokens": 80
+            },
+            {
+              "seams": [
+                85
+              ],
+              "from": 5874,
+              "to": 5884,
+              "status": "changed",
+              "latency": 4970667863,
+              "output_tokens": 105,
+              "before": "we had a multiple x multiple of the system credit",
+              "after": "we had a multiple of the system credit"
+            },
+            {
+              "seams": [
+                86
+              ],
+              "from": 5949,
+              "to": 5959,
+              "status": "unchanged",
+              "latency": 3510603854,
+              "output_tokens": 74
+            },
+            {
+              "seams": [
+                87
+              ],
+              "from": 5989,
+              "to": 5999,
+              "status": "unchanged",
+              "latency": 3615600784,
+              "output_tokens": 75
+            },
+            {
+              "seams": [
+                88
+              ],
+              "from": 6082,
+              "to": 6092,
+              "status": "changed",
+              "latency": 7114986546,
+              "output_tokens": 153,
+              "before": "and and crisp as possible said an and crisper possible",
+              "after": "and crisp as possible said and crisper possible"
+            },
+            {
+              "seams": [
+                89
+              ],
+              "from": 6161,
+              "to": 6171,
+              "status": "unchanged",
+              "latency": 2788275378,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                90
+              ],
+              "from": 6240,
+              "to": 6250,
+              "status": "changed",
+              "latency": 4493507584,
+              "output_tokens": 96,
+              "before": "of growth that's that's what have handled at that time",
+              "after": "of growth that's what have handled at that time"
+            },
+            {
+              "seams": [
+                91
+              ],
+              "from": 6324,
+              "to": 6334,
+              "status": "unchanged",
+              "latency": 3108795022,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                92
+              ],
+              "from": 6391,
+              "to": 6401,
+              "status": "changed",
+              "latency": 3948328732,
+              "output_tokens": 84,
+              "before": "what year on year we see in the whole set",
+              "after": "what year we see in the whole set"
+            },
+            {
+              "seams": [
+                93
+              ],
+              "from": 6464,
+              "to": 6474,
+              "status": "unchanged",
+              "latency": 3085905427,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                94
+              ],
+              "from": 6543,
+              "to": 6553,
+              "status": "changed",
+              "latency": 5107447193,
+              "output_tokens": 112,
+              "before": "and we will continue to capture market share and again",
+              "after": "and we will continue to capture market share again"
+            },
+            {
+              "seams": [
+                95
+              ],
+              "from": 6572,
+              "to": 6582,
+              "status": "failed",
+              "reason": "words beyond removals",
+              "latency": 5402231912,
+              "output_tokens": 118,
+              "before": "product spectrums customer spectrum thank you the next question is",
+              "after": "product spectrum customer spectrum thank you the next question is"
+            },
+            {
+              "seams": [
+                96
+              ],
+              "from": 6622,
+              "to": 6632,
+              "status": "changed",
+              "latency": 3404855565,
+              "output_tokens": 75,
+              "before": "new restructuring that we did in this quarter no no",
+              "after": "new restructuring that we did in this quarter no"
+            },
+            {
+              "seams": [
+                97
+              ],
+              "from": 6691,
+              "to": 6701,
+              "status": "unchanged",
+              "latency": 3439859710,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                98
+              ],
+              "from": 6763,
+              "to": 6773,
+              "status": "unchanged",
+              "latency": 6517323991,
+              "output_tokens": 142
+            },
+            {
+              "seams": [
+                99
+              ],
+              "from": 6826,
+              "to": 6836,
+              "status": "changed",
+              "latency": 5631407678,
+              "output_tokens": 123,
+              "before": "all i can point to is to historical to say",
+              "after": "all i can point to is historical to say"
+            },
+            {
+              "seams": [
+                100
+              ],
+              "from": 6872,
+              "to": 6882,
+              "status": "changed",
+              "latency": 3168340374,
+              "output_tokens": 68,
+              "before": "the the contingent provisions about 95 basis points but yes",
+              "after": "the contingent provisions about 95 basis points but yes"
+            },
+            {
+              "seams": [
+                101
+              ],
+              "from": 6949,
+              "to": 6959,
+              "status": "changed",
+              "latency": 6211183990,
+              "output_tokens": 135,
+              "before": "booked across various segments right across various segments they they",
+              "after": "booked across various segments right they"
+            },
+            {
+              "seams": [
+                102
+              ],
+              "from": 7015,
+              "to": 7025,
+              "status": "changed",
+              "latency": 4431039123,
+              "output_tokens": 93,
+              "before": "existing to existing to bank personal loan or or call",
+              "after": "existing to bank personal loan or call"
+            },
+            {
+              "seams": [
+                103
+              ],
+              "from": 7065,
+              "to": 7075,
+              "status": "unchanged",
+              "latency": 3464703521,
+              "output_tokens": 71
+            },
+            {
+              "seams": [
+                104
+              ],
+              "from": 7155,
+              "to": 7165,
+              "status": "changed",
+              "latency": 3577811591,
+              "output_tokens": 74,
+              "before": "you look at june june 19 also when we initiated",
+              "after": "you look at june 19 also when we initiated"
+            },
+            {
+              "seams": [
+                105
+              ],
+              "from": 7236,
+              "to": 7246,
+              "status": "changed",
+              "latency": 9100602703,
+              "output_tokens": 198,
+              "before": "the balance sheet much more resilient for any shocks uncertainty",
+              "after": "the balance sheet much more resilient for any shocks"
+            },
+            {
+              "seams": [
+                106
+              ],
+              "from": 7312,
+              "to": 7322,
+              "status": "unchanged",
+              "latency": 4376976273,
+              "output_tokens": 95
+            },
+            {
+              "seams": [
+                107
+              ],
+              "from": 7392,
+              "to": 7402,
+              "status": "unchanged",
+              "latency": 4423797242,
+              "output_tokens": 96
+            },
+            {
+              "seams": [
+                108
+              ],
+              "from": 7471,
+              "to": 7481,
+              "status": "changed",
+              "latency": 3842374046,
+              "output_tokens": 82,
+              "before": "and the spend is quite quite picked up 24% or",
+              "after": "and the spend is quite picked up 24% or"
+            },
+            {
+              "seams": [
+                109
+              ],
+              "from": 7577,
+              "to": 7587,
+              "status": "unchanged",
+              "latency": 2971459717,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                110
+              ],
+              "from": 7629,
+              "to": 7639,
+              "status": "unchanged",
+              "latency": 3689884163,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                111
+              ],
+              "from": 7706,
+              "to": 7716,
+              "status": "unchanged",
+              "latency": 2668093393,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                112
+              ],
+              "from": 7766,
+              "to": 7776,
+              "status": "unchanged",
+              "latency": 3079731246,
+              "output_tokens": 65
+            },
+            {
+              "seams": [
+                113
+              ],
+              "from": 7845,
+              "to": 7855,
+              "status": "changed",
+              "latency": 5571886015,
+              "output_tokens": 120,
+              "before": "irrespective of whatever for it for the last question on",
+              "after": "irrespective of whatever for it the last question on"
+            },
+            {
+              "seams": [
+                114
+              ],
+              "from": 7922,
+              "to": 7932,
+              "status": "unchanged",
+              "latency": 2868362462,
+              "output_tokens": 60
+            },
+            {
+              "seams": [
+                115
+              ],
+              "from": 8006,
+              "to": 8016,
+              "status": "changed",
+              "latency": 3753942815,
+              "output_tokens": 82,
+              "before": "at things in three different kind of of activity call",
+              "after": "at things in three different kind of activity call"
+            },
+            {
+              "seams": [
+                116
+              ],
+              "from": 8073,
+              "to": 8083,
+              "status": "unchanged",
+              "latency": 2920526543,
+              "output_tokens": 62
+            },
+            {
+              "seams": [
+                117
+              ],
+              "from": 8158,
+              "to": 8168,
+              "status": "unchanged",
+              "latency": 3637227699,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                118
+              ],
+              "from": 8231,
+              "to": 8241,
+              "status": "unchanged",
+              "latency": 3050545428,
+              "output_tokens": 63
+            },
+            {
+              "seams": [
+                119
+              ],
+              "from": 8289,
+              "to": 8299,
+              "status": "unchanged",
+              "latency": 3359180193,
+              "output_tokens": 70
+            },
+            {
+              "seams": [
+                120
+              ],
+              "from": 8375,
+              "to": 8385,
+              "status": "changed",
+              "latency": 6289753188,
+              "output_tokens": 138,
+              "before": "executing on that aspect of it right now on the",
+              "after": "executing on that aspect of it right now the"
+            },
+            {
+              "seams": [
+                121
+              ],
+              "from": 8446,
+              "to": 8456,
+              "status": "unchanged",
+              "latency": 2779440357,
+              "output_tokens": 58
+            },
+            {
+              "seams": [
+                122
+              ],
+              "from": 8531,
+              "to": 8541,
+              "status": "changed",
+              "latency": 8357530949,
+              "output_tokens": 186,
+              "before": "certain things in relationship management for example in the relationship",
+              "after": "certain things in relationship management for example the relationship"
+            },
+            {
+              "seams": [
+                123
+              ],
+              "from": 8597,
+              "to": 8607,
+              "status": "changed",
+              "latency": 3526483732,
+              "output_tokens": 77,
+              "before": "that come we have for 20 million customers we have",
+              "after": "that come we have for 20 million customers"
+            },
+            {
+              "seams": [
+                124
+              ],
+              "from": 8685,
+              "to": 8695,
+              "status": "unchanged",
+              "latency": 3080367946,
+              "output_tokens": 66
+            },
+            {
+              "seams": [
+                125
+              ],
+              "from": 8754,
+              "to": 8764,
+              "status": "changed",
+              "latency": 5245391727,
+              "output_tokens": 115,
+              "before": "of dora from jb morgan please cobra hi good evening",
+              "after": "of dora from jb morgan hi good evening"
+            },
+            {
+              "seams": [
+                126
+              ],
+              "from": 8836,
+              "to": 8846,
+              "status": "changed",
+              "latency": 6160208771,
+              "output_tokens": 134,
+              "before": "growth shouldn't idly this growth be better thanks sir okay",
+              "after": "growth shouldn't idly this be better thanks sir okay"
+            },
+            {
+              "seams": [
+                127
+              ],
+              "from": 8903,
+              "to": 8913,
+              "status": "changed",
+              "latency": 5361072480,
+              "output_tokens": 119,
+              "before": "4.45 right for 4.4 4.5 percent that's the band at",
+              "after": "4.45 percent that's the band at"
+            },
+            {
+              "seams": [
+                128
+              ],
+              "from": 8988,
+              "to": 8998,
+              "status": "unchanged",
+              "latency": 2983690017,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                129
+              ],
+              "from": 9067,
+              "to": 9077,
+              "status": "changed",
+              "latency": 4787596879,
+              "output_tokens": 103,
+              "before": "it needs to take its time to grow back to",
+              "after": "it needs to take its time to grow back"
+            },
+            {
+              "seams": [
+                130
+              ],
+              "from": 9157,
+              "to": 9167,
+              "status": "changed",
+              "latency": 4055202809,
+              "output_tokens": 87,
+              "before": "also depends on the segment in which we operate in",
+              "after": "also depends on the segment in which we operate"
+            },
+            {
+              "seams": [
+                131
+              ],
+              "from": 9232,
+              "to": 9242,
+              "status": "unchanged",
+              "latency": 4213929044,
+              "output_tokens": 89
+            },
+            {
+              "seams": [
+                132
+              ],
+              "from": 9304,
+              "to": 9314,
+              "status": "unchanged",
+              "latency": 3352825132,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                133
+              ],
+              "from": 9359,
+              "to": 9369,
+              "status": "changed",
+              "latency": 6115865620,
+              "output_tokens": 134,
+              "before": "focused and continuing to focus on that also so at",
+              "after": "and continuing to focus on that so at"
+            },
+            {
+              "seams": [
+                134
+              ],
+              "from": 9452,
+              "to": 9462,
+              "status": "changed",
+              "latency": 4821118172,
+              "output_tokens": 105,
+              "before": "rate slightly under a third right now right about 31",
+              "after": "rate slightly under a third right now about 31"
+            },
+            {
+              "seams": [
+                135
+              ],
+              "from": 9537,
+              "to": 9547,
+              "status": "changed",
+              "latency": 9251139575,
+              "output_tokens": 206,
+              "before": "it single digit but very low it was so it",
+              "after": "it single digit but very low was so"
+            },
+            {
+              "seams": [
+                136
+              ],
+              "from": 9641,
+              "to": 9651,
+              "status": "changed",
+              "latency": 9193079714,
+              "output_tokens": 205,
+              "before": "that can come and I'm bringing that the godishani so",
+              "after": "that can come and I'm bringing the godishani so"
+            },
+            {
+              "seams": [
+                137
+              ],
+              "from": 9724,
+              "to": 9734,
+              "status": "unchanged",
+              "latency": 2884435067,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                138
+              ],
+              "from": 9792,
+              "to": 9802,
+              "status": "unchanged",
+              "latency": 3596699715,
+              "output_tokens": 77
+            },
+            {
+              "seams": [
+                139
+              ],
+              "from": 9880,
+              "to": 9890,
+              "status": "unchanged",
+              "latency": 2751094737,
+              "output_tokens": 57
+            },
+            {
+              "seams": [
+                140
+              ],
+              "from": 9942,
+              "to": 9952,
+              "status": "changed",
+              "latency": 6290394809,
+              "output_tokens": 135,
+              "before": "or ppop is making kind of a lending growth rate",
+              "after": "is making kind of a lending growth rate"
+            },
+            {
+              "seams": [
+                141
+              ],
+              "from": 10022,
+              "to": 10032,
+              "status": "changed",
+              "latency": 5611196171,
+              "output_tokens": 122,
+              "before": "to come got thank you shalini thank you thank you",
+              "after": "to come got thank you shalini"
+            },
+            {
+              "seams": [
+                142
+              ],
+              "from": 10046,
+              "to": 10056,
+              "status": "changed",
+              "latency": 4728928820,
+              "output_tokens": 103,
+              "before": "from macquarie please go over sorry please cover here yeah",
+              "after": "from macquarie please go over sorry cover here yeah"
+            },
+            {
+              "seams": [
+                143
+              ],
+              "from": 10137,
+              "to": 10147,
+              "status": "unchanged",
+              "latency": 2792514617,
+              "output_tokens": 61
+            },
+            {
+              "seams": [
+                144
+              ],
+              "from": 10234,
+              "to": 10244,
+              "status": "changed",
+              "latency": 3812801346,
+              "output_tokens": 80,
+              "before": "yeah okay no thank you thank you suresh and that's",
+              "after": "yeah okay no thank you suresh and that's"
+            },
+            {
+              "seams": [
+                145
+              ],
+              "from": 10318,
+              "to": 10328,
+              "status": "changed",
+              "latency": 3132943914,
+              "output_tokens": 64,
+              "before": "is something from from our recent experience that is not",
+              "after": "is something from our recent experience that is not"
+            },
+            {
+              "seams": [
+                146
+              ],
+              "from": 10385,
+              "to": 10395,
+              "status": "changed",
+              "latency": 6385011251,
+              "output_tokens": 136,
+              "before": "means if it is an internal customer that means we",
+              "after": "means if it is an internal customer that we"
+            },
+            {
+              "seams": [
+                147
+              ],
+              "from": 10438,
+              "to": 10448,
+              "status": "changed",
+              "latency": 3975415536,
+              "output_tokens": 85,
+              "before": "such is fully neutral but we still very very vehemently",
+              "after": "such is fully neutral but we still very vehemently"
+            },
+            {
+              "seams": [
+                148
+              ],
+              "from": 10477,
+              "to": 10487,
+              "status": "unchanged",
+              "latency": 3453216962,
+              "output_tokens": 73
+            },
+            {
+              "seams": [
+                149
+              ],
+              "from": 10551,
+              "to": 10561,
+              "status": "changed",
+              "latency": 5214025274,
+              "output_tokens": 112,
+              "before": "to the interchange it is a being health study if",
+              "after": "to the interchange it is a health study if"
+            },
+            {
+              "seams": [
+                150
+              ],
+              "from": 10628,
+              "to": 10638,
+              "status": "changed",
+              "latency": 7860159301,
+              "output_tokens": 198,
+              "before": "cashback points that are cashback costs which is there costs",
+              "after": "cashback points that are costs which is there"
+            },
+            {
+              "seams": [
+                151
+              ],
+              "from": 10716,
+              "to": 10726,
+              "status": "unchanged",
+              "latency": 3231367656,
+              "output_tokens": 67
+            },
+            {
+              "seams": [
+                152
+              ],
+              "from": 10791,
+              "to": 10801,
+              "status": "unchanged",
+              "latency": 3440286448,
+              "output_tokens": 72
+            },
+            {
+              "seams": [
+                153
+              ],
+              "from": 10859,
+              "to": 10869,
+              "status": "unchanged",
+              "latency": 3287378854,
+              "output_tokens": 75
+            },
+            {
+              "seams": [
+                154
+              ],
+              "from": 10932,
+              "to": 10942,
+              "status": "changed",
+              "latency": 4136467144,
+              "output_tokens": 127,
+              "before": "of HDFC Bank Limited that concludes this conference thank you",
+              "after": "HDFC Bank Limited that concludes this conference thank you"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
