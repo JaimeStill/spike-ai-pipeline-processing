@@ -148,7 +148,7 @@ fixed overhead camera has no cut past 0.2, so every frame after the first is the
 No window, frame, or request failed in any run, and every stream ended cleanly.
 
 **AMI's paced read ended at 1,247.6 s, not 1,272.6 s.** Its camera ends 24.5 s before its audio,
-and once the video stream ended, ffmpeg's `-re` delivered the rest of the audio at once: windows 47
+and once the video stream ended, ffmpeg's `-readrate 1` delivered the rest of the audio at once: windows 47
 and 48, 1,234.8 to 1,272.6 s, were yielded at 1,247.6 s, 1 and 4 ms after their last samples
 arrived. Up to then the pacing held: each window's last sample arrived about 0.5 s before its
 source time, the read's initial burst, and each frame 0.45 s before. A source whose streams end
@@ -341,11 +341,11 @@ measurement in this session's working tree, not a committed test.
 ## Known limits
 
 - **Paced files, not live sources.** Every measured run reads a file at real time through ffmpeg's
-  `-re`. The live protocols are held equal to the file in the integration tier, over loopback,
+  `-readrate 1`. The live protocols are held equal to the file in the integration tier, over loopback,
   with a 36 s excerpt; none was timed here, and none crossed a real network.
-- **A muxed source is paced only while its video lasts.** ffmpeg's `-re` stops pacing an input
+- **A muxed source is paced only while its video lasts.** ffmpeg's `-readrate 1` stops pacing an input
   once its video stream ends, so AMI's last 24.5 s of audio, past the camera's end, arrived at
-  once. It is a limit of the source and of ffmpeg's pacing, not of the package, and isn't fixed.
+  once. It is a limit of the source and of ffmpeg's pacing, not of the package.
 - **The window's wait is the plan's policy.** A window waits for the stream to pass its 30 s limit,
   inside a silence or not: up to 30 s for a window that ends early in a long silence, 15 s on
   NASA's event. A run of silent frames open across the limit, shorter than MinSilence so far,

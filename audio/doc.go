@@ -29,12 +29,9 @@
 // The tracker is Go, not silencedetect, though the module runs a mature tool through an adapter
 // rather than reimplement it, because silencedetect can't do what the tracker is for: its
 // threshold is fixed for a run, so it can't follow a change of level or of noise floor partway
-// through a stream, and a stream has no whole-source mean to fix it from before it ends. The
-// streams task's round-2 simulation measured the cost: a threshold fixed from the first 30 s, with
-// noise added partway, cut 66 of 92 Earnings-21 windows and 25 of 51 AMI windows at the 30 s limit,
-// where a floor tracker, untuned, cut 0 and 3; ffmpeg's dynaudnorm, normalizing the level ahead of
-// silencedetect, followed a gain step but not added noise, and added about 15 s of lag.
-// TestFindingsFloor measured the tracker here at its defaults on the corpus's long sources, with
+// through a stream, and a stream has no whole-source mean to fix it from before it ends. ffmpeg's
+// dynaudnorm, normalizing the level ahead of silencedetect, follows a gain step but not added
+// noise, and adds about 15 s of lag. TestFindingsFloor measured the tracker here at its defaults on the corpus's long sources, with
 // a 12 dB gain step or a pink noise floor from 10 minutes: it cut at the limit 0 of 49 AMI windows
 // unchanged, 0 with the gain step, and 0 with the noise, where silencedetect at a threshold fixed
 // from the first 30 s cut 2, 25, and 26, and at its default 0, 0, and 24; and on the speech
