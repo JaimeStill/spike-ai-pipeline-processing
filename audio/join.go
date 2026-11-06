@@ -3,6 +3,7 @@
 package audio
 
 import (
+	"cmp"
 	"fmt"
 	"strings"
 	"unicode"
@@ -81,10 +82,7 @@ func (t Transcript) Text() string { return strings.Join(t.Words, " ") }
 //
 // A SeamWords below zero, or 1, is an error wrapping ErrRequest.
 func Join(transcripts []string, req JoinRequest) (Transcript, error) {
-	bound := req.SeamWords
-	if bound == 0 {
-		bound = DefaultSeamWords
-	}
+	bound := cmp.Or(req.SeamWords, DefaultSeamWords)
 	if bound < 2 {
 		return Transcript{}, fmt.Errorf("audio: seam words %d isn't 0 or at least 2: %w", req.SeamWords, ErrRequest)
 	}

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -294,7 +295,7 @@ func TestAudioStage(t *testing.T) {
 			"samples": strconv.Itoa(samplesOf(22.9791875, 49.82)), "seam_before": seam},
 	}
 	for i, o := range ev.Outputs[1:] {
-		if fmt.Sprint(o.Meta) != fmt.Sprint(wantMeta[i]) {
+		if !maps.Equal(o.Meta, wantMeta[i]) {
 			t.Errorf("%s's Meta %v, want %v", o.Name, o.Meta, wantMeta[i])
 		}
 	}

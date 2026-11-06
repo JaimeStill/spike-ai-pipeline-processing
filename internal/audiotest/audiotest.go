@@ -3,6 +3,7 @@
 package audiotest
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -149,10 +150,7 @@ func Run(ctx context.Context, req Request) (Result, error) {
 		return r, fmt.Errorf("audiotest: concurrency %d, cut concurrency %d", req.Concurrency, req.CutConcurrency)
 	}
 	concurrency := max(req.Concurrency, 1)
-	cut := req.CutConcurrency
-	if cut == 0 {
-		cut = concurrency
-	}
+	cut := cmp.Or(req.CutConcurrency, concurrency)
 	begun := time.Now()
 	plan, err := req.Splitter.Plan(ctx, req.Source)
 	r.PlanTime = time.Since(begun)
