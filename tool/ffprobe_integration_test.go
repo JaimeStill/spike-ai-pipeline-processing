@@ -19,9 +19,9 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
 
-// ffmpegImage is linuxserver/ffmpeg's 9.0.2 CLI image, build ls88, pinned by its index digest.
-const ffmpegImage = "linuxserver/ffmpeg:9.0.2-cli-ls88@sha256:" +
-	"f4191c1abe18d75c49a23f7224d1403d55334f80013a47cb096f5056cf19617b"
+// ffmpegImage is linuxserver/ffmpeg's 9.0.2 CLI image, build ls89, pinned by its index digest.
+const ffmpegImage = "linuxserver/ffmpeg:9.0.2-cli-ls89@sha256:" +
+	"822d04f0b2d0c4847430f5cc90f20ea48be866bb502ece63fdeb729400bf5361"
 
 // ffprobeSpec declares ffprobe, minimum 9.0. ffprobe prints "ffprobe version n9.0.2 ..." on the
 // host and "ffprobe version 9.0.2 ..." in the image; the pattern skips the n.

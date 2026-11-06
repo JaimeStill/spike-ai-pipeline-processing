@@ -6,6 +6,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Currency: `audio.FFmpegImage`, the README's, and the ffprobe integration tests'
+  linuxserver/ffmpeg image 9.0.2-cli-ls88 to 9.0.2-cli-ls89, pinned by digest: a base-image
+  rebuild, the same FFmpeg 9.0.2. An integration test checks that the image has the scdet, select,
+  and showinfo filters, the srt, rtmp, http, https, and udp protocols, and the hls demuxer and
+  muxer.
+
 ## [v0.7.0] - 2026-11-05
 
 ### Added
