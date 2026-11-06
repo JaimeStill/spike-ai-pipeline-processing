@@ -280,13 +280,13 @@
 //     [TextOutput], [MarkdownOutput], [ImageOutput], [RecordOutput], or [AudioOutput], or a
 //     [Found] part, and ends with [ErrNoProcessor] or [ErrEncrypted] to name its outcome.
 //   - The adapters, on Linux: [DocumentStage], [OfficeStage], [PictureStage], [EmailStage],
-//     [OneNoteStage], [AudioStage], and [VideoStage], made by [NewDocumentStage],
-//     [NewOfficeStage], [NewPictureStage], [NewEmailStage], [NewOneNoteStage], [NewAudioStage],
-//     and [NewVideoStage] over a [DocumentConfig], [OfficeConfig], [PictureConfig],
-//     [EmailConfig], [OneNoteConfig], [AudioConfig], and [VideoConfig]; the audio stage's plan
-//     record an [AudioPlan] of [AudioWindow]s and [AudioSpan]s, and the video stage's a
-//     [VideoPlan] of its [VideoWindowing] and [VideoSampling]; [VisionStage], made by [NewVisionStage]; and [Versions], a stage's tools'
-//     version.
+//     [OneNoteStage], [AudioStage], and [VideoStage], made by [NewDocumentStage], [NewOfficeStage],
+//     [NewPictureStage], [NewEmailStage], [NewOneNoteStage], [NewAudioStage], and [NewVideoStage]
+//     over a [DocumentConfig], [OfficeConfig], [PictureConfig], [EmailConfig], [OneNoteConfig],
+//     [AudioConfig], and [VideoConfig]; the audio stage's plan record an [AudioPlan] of
+//     [AudioWindow]s and [AudioSpan]s, and the video stage's a [VideoPlan] of its [VideoWindowing]
+//     and [VideoSampling]; [VisionStage], made by [NewVisionStage]; and [Versions], a stage's
+//     tools' version.
 //   - [ZipStage], made by [NewZipStage] over a [ZipConfig], on any platform.
 //   - [Index], keyed by a [Key], holding [Entry]s, each counting its outputs and its [Child]ren,
 //     both appended under a claim and read back streamed; the shipped

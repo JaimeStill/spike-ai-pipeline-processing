@@ -350,8 +350,8 @@ func (r *runner) err() error {
 	return r.failure
 }
 
-// publish renames it's temporary file to its SHA-256 name in the media directory and sets its
-// event's Path.
+// publish renames the item's temporary file to its SHA-256 name in the media directory and sets
+// its event's Path.
 func (r *runner) publish(it *item) error {
 	var path *string
 	var name string
@@ -411,8 +411,9 @@ type arrival struct {
 
 // audioWriter cuts the PCM ffmpeg writes to its stdout into windows as it comes: it feeds a
 // Tracker, gives the silences it finds, the one open once it is a silence, and its position to a
-// Planner, and writes each window the Planner fixes. It keeps the PCM from the start of the window not yet fixed on, and when each
-// part of it arrived. Its writes never fail; a window it can't write fails the run.
+// Planner, and writes each window the Planner fixes. It keeps the PCM from the start of the window
+// not yet fixed on, and when each part of it arrived. Its writes never fail; a window it can't
+// write fails the run.
 type audioWriter struct {
 	r         *runner
 	tracker   *audio.Tracker
@@ -571,9 +572,8 @@ func (w *audioWriter) cut(windows []audio.Window) {
 // cutThreshold returns the threshold win was cut under: the fixed threshold; or, with a rolling
 // one, for a window cut at a silence, the threshold of the silence whose middle, taken up to the
 // window's limit as the planner takes it, is the window's end, the open one's when it is still
-// open; for one cut at the end, the
-// tracker's last, which End decided the last frame against; and for one cut at the limit, the
-// one its last sample's frame was decided against.
+// open; for one cut at the end, the tracker's last, which End decided the last frame against; and
+// for one cut at the limit, the one its last sample's frame was decided against.
 func (w *audioWriter) cutThreshold(win audio.Window) float64 {
 	switch {
 	case w.fixed:

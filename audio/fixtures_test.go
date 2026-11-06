@@ -339,8 +339,8 @@ func TestLevelsTruth(t *testing.T) {
 	}
 }
 
-// canonicalWAV returns an error unless data is a canonical 44-byte header, PCM, mono, 16-bit, at rate,
-// before samples samples and nothing else.
+// canonicalWAV returns an error unless data is a canonical 44-byte header, PCM, mono, 16-bit, at
+// rate, before samples samples and nothing else.
 func canonicalWAV(data []byte, rate, samples int) error {
 	if len(data) < 44 {
 		return errors.New("shorter than its header")

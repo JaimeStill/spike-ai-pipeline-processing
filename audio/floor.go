@@ -149,9 +149,9 @@ type Tracker struct {
 // Margin. It reads no other field; Below, the mean volume's, isn't the tracker's, and must be zero.
 //
 // A MinSilence below zero; a Threshold above zero or below -120 dB; a Threshold with any of
-// Percentile, FloorWindow, or Margin; a Percentile below zero or 100 or more; a FloorWindow not zero
-// and under 1 s or over 10 minutes; a Margin below zero; or a Below not zero, is an error wrapping
-// ErrRequest.
+// Percentile, FloorWindow, or Margin; a Percentile below zero or 100 or more; a FloorWindow not
+// zero and under 1 s or over 10 minutes; a Margin below zero; or a Below not zero, is an error
+// wrapping ErrRequest.
 func NewTracker(req Request) (*Tracker, error) {
 	if req.Below != 0 {
 		return nil, fmt.Errorf("audio: %v dB below the mean volume, which the tracker doesn't measure: %w", req.Below, ErrRequest)
@@ -243,12 +243,12 @@ func (t *Tracker) Position() time.Duration {
 	return frameTime(t.decided)
 }
 
-// Open returns the silence open now, ok true, once the open run of silent frames is MinSilence long:
-// from its first frame to the end of the frames decided, with the threshold in force at its first
-// frame. It is a silence however it ends, since it can only grow, and Feed or End returns it once it
-// closes, its End then as late or later. A run shorter than MinSilence may yet end too short to be
-// one, so it isn't reported; nor is any after End. Position stays at the run's start until it
-// closes; the decided frames reach Open's End.
+// Open returns the silence open now, ok true, once the open run of silent frames is MinSilence
+// long: from its first frame to the end of the frames decided, with the threshold in force at its
+// first frame. It is a silence however it ends, since it can only grow, and Feed or End returns it
+// once it closes, its End then as late or later. A run shorter than MinSilence may yet end too
+// short to be one, so it isn't reported; nor is any after End. Position stays at the run's start
+// until it closes; the decided frames reach Open's End.
 func (t *Tracker) Open() (Silence, bool) {
 	if t.ended || t.run < 0 {
 		return Silence{}, false

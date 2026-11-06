@@ -104,10 +104,11 @@ func TestHarness(t *testing.T) {
 }
 
 // TestHarnessCancel reads the fixture at real time through the live harness and ends the context
-// inFlight after the second frame's description is sent, while it is in flight: the stream yields the context's error once and ends,
-// well before the source has played; that request returns the context's error; every request
-// either returned before the cancel or returns the context's error within a second of it; and the
-// media directory holds just the events yielded, with no frames' directory left beside the source.
+// inFlight after the second frame's description is sent, while it is in flight: the stream yields
+// the context's error once and ends, well before the source has played; that request returns the
+// context's error; every request either returned before the cancel or returns the context's error
+// within a second of it; and the media directory holds just the events yielded, with no frames'
+// directory left beside the source.
 func TestHarnessCancel(t *testing.T) {
 	// inFlight is well inside a frame's description, which took 650 ms to 1.3 s on gb10-2, so the
 	// request is on the wire, not refused before it is sent.

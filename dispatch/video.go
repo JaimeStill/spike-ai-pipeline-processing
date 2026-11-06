@@ -44,11 +44,12 @@ type VideoConfig struct {
 // transcribes and joins through audio.Join.
 //
 // It yields the plan first, a [RecordOutput] named "plan", the JSON of a [VideoPlan]: the settings
-// the run's windows are planned and its frames sampled under, each default applied. media plans
-// the windows as the audio arrives, so the plan record holds no windows: each window carries its
-// own span and seams. The plan is yielded once the run has a stream to read, just before its first
-// frame or window, so a source media refuses has no outputs. It then yields each frame and each window as the run completes it, frames in
-// source-time order and windows in plan order, interleaved as media yields them:
+// the run's windows are planned and its frames sampled under, each default applied. media plans the
+// windows as the audio arrives, so the plan record holds no windows: each window carries its own
+// span and seams. The plan is yielded once the run has a stream to read, just before its first
+// frame or window, so a source media refuses has no outputs. It then yields each frame and each
+// window as the run completes it, frames in source-time order and windows in plan order,
+// interleaved as media yields them:
 //
 //   - A frame is an [ImageOutput] named "frame N", N its index among the frames taken, from 0, a
 //     PNG, "image/png", named by its SHA-256, as a document's page image is. Its Meta is its index,

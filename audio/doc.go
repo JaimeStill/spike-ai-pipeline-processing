@@ -94,8 +94,15 @@
 //   - [PlanWindows] plans the windows of a duration and its silences, running nothing.
 //   - [Planner] plans a stream's windows as it arrives, by PlanWindows' policy; [NewPlanner] builds
 //     one.
+//   - [Planner.Silence] gives it a silence found; [Planner.Open] gives it one still open,
+//     [Planner.Advance] the stream's position, and [Planner.End] the stream's end, each returning
+//     the windows that fixes; [Planner.Overlap] returns the overlap it plans with.
 //   - [Tracker] finds a stream's silences as its PCM arrives, each a [Silence] with its
 //     threshold; [NewTracker] builds one.
+//   - [Tracker.Feed] gives it the stream's next bytes and [Tracker.End] ends the stream, each
+//     returning the silences that closes; [Tracker.Open] reports the silence still open,
+//     [Tracker.Position] how far the stream is settled, [Tracker.Duration] its length, and
+//     [Tracker.Threshold] the threshold in force.
 //   - [FrameLength] is the tracker's frame, 10 ms.
 //   - [DefaultPercentile], [DefaultFloorWindow], and [DefaultMargin] are the tracker's defaults.
 //   - [Plan] is a source's windows, each a [Window], ended as its [Cut] says, and their seams.
