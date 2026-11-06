@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.7.0] - 2026-11-05
+
 ### Added
 
 - The `audio` package plans a speech source's windows for a model's audio input, over FFmpeg's
@@ -549,7 +551,8 @@ Every move is without an alias: a caller on v0.5.0 renames as listed.
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.7.0...HEAD
+[v0.7.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.7.0
 [v0.6.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.6.0
 [v0.5.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.5.0
 [v0.4.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.4.0
