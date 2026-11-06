@@ -58,16 +58,24 @@ func streamer(t *testing.T, cfg media.Config) *media.Streamer {
 }
 
 // scenesTruth is the part of speech-scenes.truth.json the tests read: the frames the default
-// policy takes, and the video's size.
+// policy takes, the video's size and its segments' patterns, and the audio's transcript.
 type scenesTruth struct {
 	Video struct {
-		Width  int `json:"width"`
-		Height int `json:"height"`
+		Width    int `json:"width"`
+		Height   int `json:"height"`
+		Segments []struct {
+			StartMS int64  `json:"start_ms"`
+			EndMS   int64  `json:"end_ms"`
+			Pattern string `json:"pattern"`
+		} `json:"segments"`
 		Frames []struct {
 			Reason string `json:"reason"`
 			TimeMS int64  `json:"time_ms"`
 		} `json:"frames"`
 	} `json:"video"`
+	Audio struct {
+		Transcript []string `json:"transcript"`
+	} `json:"audio"`
 }
 
 // readTruth reads the fixture's truth.

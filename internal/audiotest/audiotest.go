@@ -22,6 +22,21 @@ import (
 // audio a request, audio.WindowLimit.
 const Model = "ggml-org/gemma-4-E4B-it-GGUF:Q8_0"
 
+const (
+	// SpeechWER bounds a joined transcript's normalized word error rate, textscore's, against the
+	// truth of speech.flac, or of a fixture whose audio is speech.flac's stream. Measured on
+	// gb10-2, set A, greedy, in 3 runs at concurrency 1 and 4: 0.000, 0 edits of 134 words, every
+	// run. The bound, about 6 edits of the 134, leaves room for a few words' drift across
+	// llama.cpp builds and model revisions; a seam that loses or repeats the overlap is
+	// SpeechSeamErrors' to catch.
+	SpeechWER = 0.05
+	// SpeechSeamErrors bounds the edits within textscore.SeamRadius words of each seam of the
+	// same transcript. Measured: 0 in every run. The seam's 2 s overlap holds 2 words,
+	// "managerial position", so a splice that drops or repeats it makes 2 edits; 1 leaves room for
+	// one word misheard near the seam.
+	SpeechSeamErrors = 1
+)
+
 // Transcriber is what each window is sent to the transcription endpoint with.
 type Transcriber struct {
 	// Client sends the requests. It is required.
@@ -198,7 +213,7 @@ func Run(ctx context.Context, req Request) (Result, error) {
 			r.MaxInFlight = max(r.MaxInFlight, inFlight)
 			mu.Unlock()
 			w.Start = time.Since(start)
-			tr, err := transcribe(ctx, req.Transcriber, f)
+			tr, err := req.Transcriber.Transcribe(ctx, f.Index, f.Path)
 			w.End = time.Since(start)
 			mu.Lock()
 			inFlight--
@@ -221,9 +236,11 @@ func Run(ctx context.Context, req Request) (Result, error) {
 	return r, err
 }
 
-// transcribe sends window f's file to tr's model, read as it is uploaded.
-func transcribe(ctx context.Context, tr Transcriber, f audio.WindowFile) (*client.Transcription, error) {
-	file, err := os.Open(f.Path)
+// Transcribe sends the WAV at path, window index of a source, to tr's model, read as it is
+// uploaded. Run sends each window through it; a caller with windows of its own, such as media's
+// stream, sends them the same way.
+func (tr Transcriber) Transcribe(ctx context.Context, index int, path string) (*client.Transcription, error) {
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
@@ -231,13 +248,13 @@ func transcribe(ctx context.Context, tr Transcriber, f audio.WindowFile) (*clien
 	out, err := tr.Client.Transcribe(ctx, &client.TranscriptionRequest{
 		Model:    tr.Model,
 		File:     file,
-		FileName: fmt.Sprintf("window-%d.wav", f.Index),
+		FileName: fmt.Sprintf("window-%d.wav", index),
 		Language: tr.Language,
 		Prompt:   tr.Prompt,
 		Native:   tr.Native,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("audiotest: window %d: %w", f.Index, err)
+		return nil, fmt.Errorf("audiotest: window %d: %w", index, err)
 	}
 	return out, nil
 }
