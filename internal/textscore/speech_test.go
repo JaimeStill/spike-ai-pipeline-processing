@@ -124,6 +124,120 @@ func TestAlignEditDistance(t *testing.T) {
 	}
 }
 
+// TestAlignWholeTable aligns random sequences, short and long, from alphabets of 2 to 26
+// elements, so ties are many and few: Align's alignment is exactly wholeTableAlign's, the
+// traceback over the whole table Align replaced, step for step.
+func TestAlignWholeTable(t *testing.T) {
+	rng := rand.New(rand.NewPCG(11, 17))
+	seq := func(n, alphabet int) []byte {
+		s := make([]byte, n)
+		for i := range s {
+			s[i] = 'a' + byte(rng.IntN(alphabet))
+		}
+		return s
+	}
+	for k := range 2000 {
+		size := 12
+		if k%4 == 0 {
+			size = 200
+		}
+		alphabet := 2 + rng.IntN(25)
+		truth, got := seq(rng.IntN(size+1), alphabet), seq(rng.IntN(size+1), alphabet)
+		if want, have := wholeTableAlign(truth, got), textscore.Align(truth, got); !reflect.DeepEqual(have, want) {
+			t.Fatalf("Align(%q, %q) = %v, want the whole table's %v", truth, got, have, want)
+		}
+	}
+}
+
+// wholeTableAlign is Align as it was, the traceback over the whole table, len(truth)+1 by
+// len(got)+1, kept as the reference Align is held to.
+func wholeTableAlign[T comparable](truth, got []T) []textscore.Edit {
+	n, m := len(truth), len(got)
+	d := make([][]int, n+1)
+	for i := range d {
+		d[i] = make([]int, m+1)
+		d[i][0] = i
+	}
+	for j := range d[0] {
+		d[0][j] = j
+	}
+	for i := 1; i <= n; i++ {
+		for j := 1; j <= m; j++ {
+			cost := 1
+			if truth[i-1] == got[j-1] {
+				cost = 0
+			}
+			d[i][j] = min(d[i-1][j-1]+cost, d[i-1][j]+1, d[i][j-1]+1)
+		}
+	}
+	var edits []textscore.Edit
+	for i, j := n, m; i > 0 || j > 0; {
+		switch {
+		case i > 0 && j > 0 && truth[i-1] == got[j-1] && d[i][j] == d[i-1][j-1]:
+			i, j = i-1, j-1
+			edits = append(edits, textscore.Edit{Op: textscore.OpEqual, Truth: i, Got: j})
+		case i > 0 && j > 0 && d[i][j] == d[i-1][j-1]+1:
+			i, j = i-1, j-1
+			edits = append(edits, textscore.Edit{Op: textscore.OpSubstitute, Truth: i, Got: j})
+		case i > 0 && d[i][j] == d[i-1][j]+1:
+			i--
+			edits = append(edits, textscore.Edit{Op: textscore.OpDelete, Truth: i, Got: j})
+		default:
+			j--
+			edits = append(edits, textscore.Edit{Op: textscore.OpInsert, Truth: i, Got: j})
+		}
+	}
+	slices.Reverse(edits)
+	return edits
+}
+
+func TestBestPrefix(t *testing.T) {
+	cases := []struct {
+		name, truth, got string
+		k, edits         int
+	}{
+		{"the transcript of the start", "a b c d e f", "a b c", 3, 0},
+		{"a word misheard at the end", "a b c d e f", "a b x", 3, 1},
+		{"a partial last word, a substitution", "a b c d e f", "a b c d x", 5, 1},
+		{"the whole truth", "a b c", "a b c", 3, 0},
+		{"no transcript", "a b c", "", 0, 0},
+		{"no truth", "", "a b", 0, 2},
+		{"of equal prefixes, the longest", "a b c", "a x", 2, 1},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			k, edits := textscore.BestPrefix(strings.Fields(tc.truth), strings.Fields(tc.got))
+			if k != tc.k || edits != tc.edits {
+				t.Errorf("BestPrefix(%q, %q) = %d, %d; want %d, %d", tc.truth, tc.got, k, edits, tc.k, tc.edits)
+			}
+		})
+	}
+}
+
+// TestBestPrefixEveryPrefix holds BestPrefix to EditDistance over every prefix of random truths.
+func TestBestPrefixEveryPrefix(t *testing.T) {
+	rng := rand.New(rand.NewPCG(3, 7))
+	seq := func(n int) []byte {
+		s := make([]byte, n)
+		for i := range s {
+			s[i] = 'a' + byte(rng.IntN(3))
+		}
+		return s
+	}
+	for range 500 {
+		truth, got := seq(rng.IntN(20)), seq(rng.IntN(12))
+		wantK, wantEdits := 0, textscore.EditDistance(truth[:0], got)
+		for c := 1; c <= len(truth); c++ {
+			if e := textscore.EditDistance(truth[:c], got); e <= wantEdits {
+				wantK, wantEdits = c, e
+			}
+		}
+		if k, edits := textscore.BestPrefix(truth, got); k != wantK || edits != wantEdits {
+			t.Fatalf("BestPrefix(%q, %q) = %d, %d; want %d, %d", truth, got, k, edits, wantK, wantEdits)
+		}
+	}
+}
+
 func TestSeamErrors(t *testing.T) {
 	// words are twenty truth words, w0 to w19.
 	words := make([]string, 20)

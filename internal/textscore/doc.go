@@ -16,6 +16,8 @@
 //   - [Rate] returns edits over a length, an error rate.
 //   - [NormalizeWords] returns a speech transcript's normalized words, [Fillers] dropped.
 //   - [NormalizedWordErrors] returns WordErrors over normalized words, speech's word error rate.
-//   - [Align] returns a least-edit alignment, each step an [Edit] of an [Op].
+//   - [Align] returns a least-edit alignment, each step an [Edit] of an [Op], in memory that
+//     grows as the square root of the truth's length times the transcript's.
+//   - [BestPrefix] returns the prefix of a truth nearest a transcript of its beginning.
 //   - [SeamErrors] counts the edits within [SeamRadius] words of each seam of a joined transcript.
 package textscore

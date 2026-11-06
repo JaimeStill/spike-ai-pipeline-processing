@@ -275,3 +275,15 @@ run = "scripts/findings-email.sh"
 [tasks.findings-onenote]
 description = "Run the onenote finding: routes, inspection, ink, the large sections, and the dispatcher over the ONENOTE_SCALE_STORE scale store; keeps results only in ONENOTE_FINDINGS_RESULTS"
 run = "scripts/findings-onenote.sh"
+
+# Evidence 5's audio finding, in the findings tier: the findings-tagged tests in package audio.
+# Each long source in ~/docs (DOCS names another root), checked by its SHA-256 against the corpus
+# manifest, is windowed at its silences, transcribed by Gemma 4 E4B on the router SPIKE_ROUTER_URL
+# names, 4 windows at once, and joined; scored by normalized WER and seam edits; seam passed by
+# gpt-oss-120b a few words at a time; and its first 10 minutes sent whole as one unsplit request
+# beside the same excerpt windowed. AUDIO_FINDINGS_SOURCES and AUDIO_FINDINGS_RUNS (3) choose the
+# sources and runs. None of the audio is committed. An AUDIO_FINDINGS_RESULTS the shell sets keeps
+# the run's results there; unset, the run keeps nothing. It isn't CI.
+[tasks.findings-audio]
+description = "Run the audio finding on ~/docs' long sources against the router SPIKE_ROUTER_URL names; keeps results only in AUDIO_FINDINGS_RESULTS"
+run = "scripts/findings-audio.sh"
