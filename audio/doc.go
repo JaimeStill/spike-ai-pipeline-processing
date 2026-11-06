@@ -15,12 +15,43 @@
 // DefaultMinSilence, 0.3 s, long and quieter than the mean less DefaultBelow, 15 dB. A Request
 // may set the minimum and the dB below the mean, or give a fixed threshold in their place.
 //
+// A Request's Detector chooses how the silences are found: DetectorSilencedetect, the default,
+// through volumedetect and silencedetect as above; or DetectorTracker, through a Tracker fed the
+// stream ffmpeg decodes to 16 kHz mono 16-bit PCM, its threshold following the stream's noise
+// floor. A Tracker frames the PCM in 10 ms frames, FrameLength, and takes each frame's RMS energy
+// in dB; its threshold is a low percentile of the frames' energy over a rolling window, plus a
+// margin, DefaultPercentile, the 10th, over DefaultFloorWindow, 4 s, plus DefaultMargin, 12 dB, by
+// default, or a fixed threshold in their place; a run of frames under it at least the minimum
+// silence long is a Silence, which reports the threshold in force when it opened. It is fed PCM in
+// chunks as the stream arrives, returns each silence as it closes, keeps memory bounded by its
+// window, and finds the same silences however the stream is chunked.
+//
+// The tracker is Go, not silencedetect, though the module runs a mature tool through an adapter
+// rather than reimplement it, because silencedetect can't do what the tracker is for: its
+// threshold is fixed for a run, so it can't follow a change of level or of noise floor partway
+// through a stream, and a stream has no whole-source mean to fix it from before it ends. The
+// streams task's round-2 simulation measured the cost: a threshold fixed from the first 30 s, with
+// noise added partway, cut 66 of 92 Earnings-21 windows and 25 of 51 AMI windows at the 30 s limit,
+// where a floor tracker, untuned, cut 0 and 3; ffmpeg's dynaudnorm, normalizing the level ahead of
+// silencedetect, followed a gain step but not added noise, and added about 15 s of lag.
+// TestFindingsFloor measured the tracker here at its defaults on the corpus's long sources, with
+// a 12 dB gain step or a pink noise floor from 10 minutes: it cut at the limit 0 of 49 AMI windows
+// unchanged, 0 with the gain step, and 0 with the noise, where silencedetect at a threshold fixed
+// from the first 30 s cut 2, 25, and 26, and at its default 0, 0, and 24; and on the speech
+// fixture's level-change variants it finds every inserted gap after the change, of which
+// silencedetect at the first 30 s's threshold finds none.
+//
 // PlanWindows, a pure function of a duration, its silences, and a Request's Overlap, plans the
 // windows. They cover the source in order, each at most WindowLimit, 30 s, long, overlap
 // included. Each window but the last ends at the middle of the latest silence its 30 s allow, or
 // at the limit when they allow none. The next window starts Overlap before it, DefaultOverlap,
 // 2 s, by default, and the range the two share is their seam. The same arguments give the same
-// plan. Splitter.Plan is Detect and then PlanWindows.
+// plan. Splitter.Plan is Detect and then PlanWindows. A Planner plans a stream's windows by the
+// same policy as it arrives: it is given the silences as they are found and the stream's position
+// as it advances, a Tracker's Position, and returns each window as soon as the stream passes the
+// window's limit, or ends; PlanWindows is a Planner given everything at once, so the two give the
+// same windows. With DetectorTracker, Splitter.Plan's plan is the one a Tracker and a Planner give
+// fed the same PCM as a stream.
 //
 // Splitter.Windows cuts a plan's windows as a WindowsRequest says, a lazy iter.Seq2 of WindowFile
 // in plan order. The request names the source, the media directory the windows are written into
@@ -40,7 +71,9 @@
 // so a phrase repeated further away is never the splice. A seam that matches fewer than 2
 // words, as one beside a failed window's empty transcript does, is concatenated whole. Each seam
 // is reported as a Seam, matched or not, with its position in the transcript's words. The same
-// transcripts give the same Transcript.
+// transcripts give the same Transcript. Each seam's merge reads only the windows up to it, so
+// joining the transcripts received so far again as more arrive leaves the words before the
+// latest seam unchanged: they are settled.
 //
 // Its exported identifiers:
 //
@@ -51,11 +84,18 @@
 //   - [Splitter] probes a source, detects its silences, and plans its windows.
 //   - [NewSplitter] builds a Splitter over a Config.
 //   - [Splitter.Probe] reads a source's duration and audio stream, a [Source].
-//   - [Splitter.Detect] finds a source's silences, a [Detection], as a [Request] says.
+//   - [Splitter.Detect] finds a source's silences, a [Detection], as a [Request] says, through
+//     the [Detector] it names: [DetectorSilencedetect] or [DetectorTracker].
 //   - [Splitter.Plan] plans a source's windows, as a Request says.
 //   - [Splitter.Windows] cuts a plan's windows as a [WindowsRequest] says, each a [WindowFile].
 //   - [SampleRate] is the windows' sample rate, 16 kHz.
 //   - [PlanWindows] plans the windows of a duration and its silences, running nothing.
+//   - [Planner] plans a stream's windows as it arrives, by PlanWindows' policy; [NewPlanner] builds
+//     one.
+//   - [Tracker] finds a stream's silences as its PCM arrives, each a [Silence] with its
+//     threshold; [NewTracker] builds one.
+//   - [FrameLength] is the tracker's frame, 10 ms.
+//   - [DefaultPercentile], [DefaultFloorWindow], and [DefaultMargin] are the tracker's defaults.
 //   - [Plan] is a source's windows, each a [Window], ended as its [Cut] says, and their seams.
 //   - [Cut] is what ends a window: [CutSilence], [CutLimit], or [CutEnd].
 //   - [Span] is a range of the source: a silence, a window's, or a seam.

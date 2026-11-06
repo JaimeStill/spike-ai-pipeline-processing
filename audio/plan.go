@@ -107,39 +107,161 @@ func CheckOverlap(overlap time.Duration) (time.Duration, error) {
 // another; a tail shorter than Overlap past the last cut is a last window of its own, the seam and
 // the tail.
 //
+// PlanWindows is a Planner given the silences, clipped and in order, and then the source's end,
+// so a stream planned as it arrives gets the same windows.
+//
 // A duration of zero or less, or an Overlap CheckOverlap refuses, is an error wrapping
 // ErrRequest.
 func PlanWindows(duration time.Duration, silences []Span, req Request) (Plan, error) {
 	if duration <= 0 {
 		return Plan{}, fmt.Errorf("audio: duration %v isn't positive: %w", duration, ErrRequest)
 	}
-	overlap, err := CheckOverlap(req.Overlap)
+	p, err := NewPlanner(req)
 	if err != nil {
 		return Plan{}, err
 	}
-	sorted := clipSilences(duration, silences)
-	plan := Plan{Duration: duration, Overlap: overlap}
-	start := time.Duration(0)
-	for {
-		limit := start + WindowLimit
-		if limit >= duration {
-			plan.Windows = append(plan.Windows, Window{Span: Span{start, duration}, Cut: CutEnd})
-			return plan, nil
+	for _, s := range clipSilences(duration, silences) {
+		// Clipped to the source and in order, from a position of 0: never refused.
+		_ = p.Silence(s)
+	}
+	windows, err := p.End(duration)
+	if err != nil {
+		return Plan{}, err
+	}
+	plan := Plan{Duration: duration, Overlap: p.overlap, Windows: windows}
+	for i, w := range windows[1:] {
+		plan.Seams = append(plan.Seams, Span{w.Start, windows[i].End})
+	}
+	return plan, nil
+}
+
+// Planner plans a stream's windows as it arrives, as PlanWindows plans a source's: it is given the
+// silences as they are found and the stream's position as it advances, and returns each window as
+// soon as it is fixed, once the stream has passed the window's limit, WindowLimit from its start,
+// or the stream has ended. Given the same silences and the same duration, in any chunking, a
+// Planner returns PlanWindows' windows exactly: they are one policy, and PlanWindows is a Planner
+// given everything at once.
+//
+// A window's seams are the next window's start to its end; a Planner returns windows alone, and
+// window i's seam with window i+1 is Span{Start: windows[i+1].Start, End: windows[i].End}.
+//
+// A Planner keeps only the silences that can still end a window: those that begin at the current
+// window's start or later. It isn't safe for concurrent use.
+type Planner struct {
+	overlap time.Duration
+	// start is the start of the window not yet fixed, and windows the windows fixed before it.
+	start   time.Duration
+	windows int
+	// pos is the stream's position: every silence that begins before it has been given.
+	pos time.Duration
+	// silences are the silences given that begin at start or later, sorted by start and then end.
+	silences []Span
+	ended    bool
+}
+
+// NewPlanner returns a Planner that plans with req's Overlap, as PlanWindows does; it reads no
+// other field. An Overlap CheckOverlap refuses is an error wrapping ErrRequest.
+func NewPlanner(req Request) (*Planner, error) {
+	overlap, err := CheckOverlap(req.Overlap)
+	if err != nil {
+		return nil, err
+	}
+	return &Planner{overlap: overlap}, nil
+}
+
+// Overlap returns the overlap the planner plans with, its request's Overlap or DefaultOverlap.
+func (p *Planner) Overlap() time.Duration { return p.overlap }
+
+// Silence gives the planner a silence of the stream. A silence before 0 is clipped to it, and an
+// empty one is dropped; silences may overlap, and come in any order but one: each must begin at the
+// stream's position or after, since the windows before it are planned from the silences already
+// given. A silence that begins before the position, or one given after End, is an error wrapping
+// ErrRequest.
+func (p *Planner) Silence(s Span) error {
+	if p.ended {
+		return fmt.Errorf("audio: a silence after the stream's end: %w", ErrRequest)
+	}
+	s.Start = max(s.Start, 0)
+	if s.Start >= s.End {
+		return nil
+	}
+	if s.Start < p.pos {
+		return fmt.Errorf("audio: silence %v begins before the stream's position, %v: %w", s, p.pos, ErrRequest)
+	}
+	i, _ := slices.BinarySearchFunc(p.silences, s, compareSpans)
+	p.silences = slices.Insert(p.silences, i, s)
+	return nil
+}
+
+// Advance moves the stream's position to pos, which promises that every silence that begins
+// before pos has been given, and returns the windows that fixes, in order: each window whose
+// limit, WindowLimit from its start, is before pos. A pos before the position, or an Advance
+// after End, is an error wrapping ErrRequest.
+func (p *Planner) Advance(pos time.Duration) ([]Window, error) {
+	if p.ended {
+		return nil, fmt.Errorf("audio: an advance after the stream's end: %w", ErrRequest)
+	}
+	if pos < p.pos {
+		return nil, fmt.Errorf("audio: position %v is before the stream's, %v: %w", pos, p.pos, ErrRequest)
+	}
+	p.pos = pos
+	return p.fix(0, false), nil
+}
+
+// End ends the stream at duration, its length, which promises that every silence of the stream
+// has been given, and returns the windows left, in order, the last cut at the end, CutEnd. After
+// End, the planner takes nothing more. A duration of zero or less, or before the position, or an
+// End after End, is an error wrapping ErrRequest.
+func (p *Planner) End(duration time.Duration) ([]Window, error) {
+	switch {
+	case p.ended:
+		return nil, fmt.Errorf("audio: the stream's end after its end: %w", ErrRequest)
+	case duration <= 0:
+		return nil, fmt.Errorf("audio: duration %v isn't positive: %w", duration, ErrRequest)
+	case duration < p.pos:
+		return nil, fmt.Errorf("audio: duration %v is before the stream's position, %v: %w", duration, p.pos, ErrRequest)
+	}
+	p.pos = duration
+	return p.fix(duration, true), nil
+}
+
+// fix returns the windows the position fixes, from the window not yet fixed on: while the stream
+// has passed the window's limit, or, once ended at duration, until the window that reaches it.
+// A window that doesn't reach the end ends where PlanWindows says; a silence past duration, which
+// the planner doesn't clip, begins past every limit fix reads, so it ends no window.
+func (p *Planner) fix(duration time.Duration, ended bool) []Window {
+	var out []Window
+	for !p.ended {
+		limit := p.start + WindowLimit
+		if ended && limit >= duration {
+			out = append(out, Window{Span: Span{p.start, duration}, Cut: CutEnd})
+			p.ended, p.silences = true, nil
+			break
+		}
+		if !ended && p.pos <= limit {
+			break
 		}
 		// The window's own audio begins after its leading seam, if it has one, and must reach
 		// past its end less Overlap, the seam after it.
-		own := start
-		if len(plan.Windows) > 0 {
-			own += overlap
+		own := p.start
+		if p.windows > 0 {
+			own += p.overlap
 		}
-		w := Window{Span: Span{start, limit}, Cut: CutLimit}
-		if end, ok := latestMiddle(sorted, start, limit, own+overlap); ok {
-			w = Window{Span: Span{start, end}, Cut: CutSilence}
+		w := Window{Span: Span{p.start, limit}, Cut: CutLimit}
+		if end, ok := latestMiddle(p.silences, p.start, limit, own+p.overlap); ok {
+			w = Window{Span: Span{p.start, end}, Cut: CutSilence}
 		}
-		plan.Windows = append(plan.Windows, w)
-		start = w.End - overlap
-		plan.Seams = append(plan.Seams, Span{start, w.End})
+		out = append(out, w)
+		p.windows++
+		p.start = w.End - p.overlap
+		// A silence that begins before the next window's start is behind it and ends no window.
+		i := 0
+		for i < len(p.silences) && p.silences[i].Start < p.start {
+			i++
+		}
+		p.silences = p.silences[i:]
 	}
+	return out
 }
 
 // clipSilences returns silences clipped to the source, 0 to duration, the empty ones dropped,
@@ -152,10 +274,13 @@ func clipSilences(duration time.Duration, silences []Span) []Span {
 			out = append(out, s)
 		}
 	}
-	slices.SortFunc(out, func(a, b Span) int {
-		return cmp.Or(cmp.Compare(a.Start, b.Start), cmp.Compare(a.End, b.End))
-	})
+	slices.SortFunc(out, compareSpans)
 	return out
+}
+
+// compareSpans orders spans by start and then end.
+func compareSpans(a, b Span) int {
+	return cmp.Or(cmp.Compare(a.Start, b.Start), cmp.Compare(a.End, b.End))
 }
 
 // latestMiddle returns the latest middle past after of the sorted silences that begin at start or

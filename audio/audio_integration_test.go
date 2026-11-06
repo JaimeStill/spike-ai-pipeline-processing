@@ -93,17 +93,6 @@ func TestSpeechFixedThreshold(t *testing.T) {
 	}
 }
 
-// within reports whether s lies within one of silences, to the millisecond: silencedetect's times
-// fall on its sample boundaries, and the fixture's utterances end on a millisecond's.
-func within(s audio.Span, silences []audio.Span) bool {
-	for _, x := range silences {
-		if x.Start <= s.Start+time.Millisecond && s.End <= x.End+time.Millisecond {
-			return true
-		}
-	}
-	return false
-}
-
 // logPlan logs plan's windows and seams.
 func logPlan(t *testing.T, plan audio.Plan) {
 	t.Helper()

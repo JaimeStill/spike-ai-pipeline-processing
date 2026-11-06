@@ -3,9 +3,11 @@
 package audio_test
 
 import (
+	"cmp"
 	"errors"
 	"math/rand/v2"
 	"reflect"
+	"slices"
 	"testing"
 	"time"
 
@@ -274,5 +276,218 @@ func TestCheckOverlap(t *testing.T) {
 func TestSpanString(t *testing.T) {
 	if got, want := span(22.9791875, 49.82).String(), "22.979s-49.820s"; got != want {
 		t.Errorf("String() = %q, want %q", got, want)
+	}
+}
+
+// planIncrementally plans a source duration long whose silences are silences through a Planner
+// of req, as a stream: it advances through positions, in order, giving before each the silences
+// that begin before it, and then ends at duration. It checks that each Advance returns exactly
+// the windows of want, PlanWindows' plan, whose limit the position has passed, and returns every
+// window the planner returned, in order.
+func planIncrementally(t *testing.T, duration time.Duration, silences []audio.Span, positions []time.Duration, req audio.Request, want audio.Plan) []audio.Window {
+	t.Helper()
+	p, err := audio.NewPlanner(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sorted := slices.Clone(silences)
+	slices.SortFunc(sorted, func(a, b audio.Span) int { return cmp.Compare(max(a.Start, 0), max(b.Start, 0)) })
+	var got []audio.Window
+	for _, pos := range positions {
+		for len(sorted) > 0 && max(sorted[0].Start, 0) < pos {
+			if err := p.Silence(sorted[0]); err != nil {
+				t.Fatal(err)
+			}
+			sorted = sorted[1:]
+		}
+		ws, err := p.Advance(pos)
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, ws...)
+		fixed := 0
+		for _, w := range want.Windows {
+			if w.Start+audio.WindowLimit < pos && w.Cut != audio.CutEnd {
+				fixed++
+			}
+		}
+		if len(got) != fixed {
+			t.Fatalf("at %v, %d windows returned, want the %d fixed", pos, len(got), fixed)
+		}
+	}
+	for _, s := range sorted {
+		if err := p.Silence(s); err != nil {
+			t.Fatal(err)
+		}
+	}
+	ws, err := p.End(duration)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return append(got, ws...)
+}
+
+// randomPositions returns up to n positions from 0 to duration, in order, from r.
+func randomPositions(r *rand.Rand, duration time.Duration, n int) []time.Duration {
+	var out []time.Duration
+	for range r.IntN(n + 1) {
+		out = append(out, time.Duration(r.Int64N(int64(duration)+1)))
+	}
+	slices.Sort(out)
+	return out
+}
+
+// TestPlannerMatchesPlanWindows plans sources of random durations, silences, and overlaps, from
+// a fixed seed, as streams advanced in random steps, or to each window's limit and just past it:
+// the windows a Planner returns, as each is
+// fixed, are PlanWindows' windows exactly, and each is returned as soon as the stream passes its
+// limit.
+func TestPlannerMatchesPlanWindows(t *testing.T) {
+	r := rand.New(rand.NewPCG(5, 6))
+	for range 2000 {
+		duration := time.Duration(1 + r.Int64N(int64(5*time.Minute)))
+		var silences []audio.Span
+		for range r.IntN(40) {
+			start := time.Duration(r.Int64N(int64(duration))) - time.Second
+			silences = append(silences, audio.Span{Start: start, End: start + time.Duration(r.Int64N(int64(3*time.Second)))})
+		}
+		req := audio.Request{Overlap: time.Duration(r.Int64N(int64(audio.WindowLimit / 2)))}
+		want, err := audio.PlanWindows(duration, silences, req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		positions := randomPositions(r, duration, 30)
+		if r.IntN(2) == 0 {
+			// The positions at each window's limit and just past it, where it is fixed.
+			positions = nil
+			for _, w := range want.Windows {
+				if limit := w.Start + audio.WindowLimit; limit < duration {
+					positions = append(positions, limit, limit+1)
+				}
+			}
+		}
+		if got := planIncrementally(t, duration, silences, positions, req, want); !reflect.DeepEqual(got, want.Windows) {
+			t.Fatalf("duration %v, overlap %v, silences %v, positions %v: windows %v, want %v",
+				duration, req.Overlap, silences, positions, got, want.Windows)
+		}
+	}
+}
+
+// TestPlannerFixtures plans each level-change variant from the tracker's silences, as a stream fed
+// in chunks: the Planner advanced to the tracker's Position after each chunk returns PlanWindows'
+// windows of the same silences, each as soon as it is fixed.
+func TestPlannerFixtures(t *testing.T) {
+	var f levelsFixture
+	readTruth(t, levelsTruth, &f)
+	r := rand.New(rand.NewPCG(7, 8))
+	for _, v := range f.Variants {
+		pcm := samplesOf(t, v.File)
+		for _, chunk := range []int{1 << 10, 1 << 16, 3 * 1 << 18} {
+			tr, err := audio.NewTracker(audio.Request{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			p, err := audio.NewPlanner(audio.Request{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			var silences []audio.Span
+			var got []audio.Window
+			var fixedAt []time.Duration
+			for rest := pcm; len(rest) > 0; {
+				n := min(chunk+r.IntN(chunk), len(rest))
+				for _, s := range tr.Feed(rest[:n]) {
+					silences = append(silences, s.Span)
+					if err := p.Silence(s.Span); err != nil {
+						t.Fatal(err)
+					}
+				}
+				rest = rest[n:]
+				ws, err := p.Advance(tr.Position())
+				if err != nil {
+					t.Fatal(err)
+				}
+				for range ws {
+					fixedAt = append(fixedAt, tr.Position())
+				}
+				got = append(got, ws...)
+			}
+			for _, s := range tr.End() {
+				silences = append(silences, s.Span)
+				if err := p.Silence(s.Span); err != nil {
+					t.Fatal(err)
+				}
+			}
+			ws, err := p.End(tr.Duration())
+			if err != nil {
+				t.Fatal(err)
+			}
+			got = append(got, ws...)
+			want, err := audio.PlanWindows(tr.Duration(), silences, audio.Request{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, want.Windows) {
+				t.Errorf("%s in chunks of %d: windows %v, want %v", v.File, chunk, got, want.Windows)
+			}
+			for i, at := range fixedAt {
+				if limit := got[i].Start + audio.WindowLimit; at <= limit {
+					t.Errorf("%s: window %d returned at %v, before its limit, %v", v.File, i, at, limit)
+				}
+			}
+		}
+	}
+}
+
+func TestPlannerRefuses(t *testing.T) {
+	if _, err := audio.NewPlanner(audio.Request{Overlap: audio.WindowLimit / 2}); !errors.Is(err, audio.ErrRequest) {
+		t.Errorf("an overlap of half a window: %v, want ErrRequest", err)
+	}
+	p, err := audio.NewPlanner(audio.Request{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Overlap() != audio.DefaultOverlap {
+		t.Errorf("overlap %v, want the default, %v", p.Overlap(), audio.DefaultOverlap)
+	}
+	first, err := p.Advance(40 * time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := []audio.Window{win(0, 30, audio.CutLimit)}; !reflect.DeepEqual(first, want) {
+		t.Errorf("advanced past the first limit: windows %v, want %v", first, want)
+	}
+	// Clipped to 0 and empty, a silence before the position is dropped, not refused.
+	if err := p.Silence(span(-2, -1)); err != nil {
+		t.Errorf("an empty silence: %v", err)
+	}
+	for name, call := range map[string]func() error{
+		"a silence before the position": func() error { return p.Silence(span(39, 41)) },
+		"a position before it":          func() error { _, err := p.Advance(39 * time.Second); return err },
+		"an end before it":              func() error { _, err := p.End(39 * time.Second); return err },
+		"an end at zero":                func() error { _, err := p.End(0); return err },
+	} {
+		if err := call(); !errors.Is(err, audio.ErrRequest) {
+			t.Errorf("%s: %v, want ErrRequest", name, err)
+		}
+	}
+	if err := p.Silence(span(40, 41)); err != nil {
+		t.Errorf("a silence at the position: %v", err)
+	}
+	ws, err := p.End(40 * time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := []audio.Window{win(28, 40, audio.CutEnd)}; !reflect.DeepEqual(ws, want) {
+		t.Errorf("windows %v, want %v", ws, want)
+	}
+	for name, call := range map[string]func() error{
+		"a silence after the end": func() error { return p.Silence(span(41, 42)) },
+		"an advance after it":     func() error { _, err := p.Advance(50 * time.Second); return err },
+		"an end after it":         func() error { _, err := p.End(50 * time.Second); return err },
+	} {
+		if err := call(); !errors.Is(err, audio.ErrRequest) {
+			t.Errorf("%s: %v, want ErrRequest", name, err)
+		}
 	}
 }

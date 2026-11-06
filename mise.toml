@@ -297,3 +297,13 @@ run = "scripts/findings-onenote.sh"
 [tasks.findings-audio]
 description = "Run the audio finding on ~/docs' long sources against the router SPIKE_ROUTER_URL names; keeps results only in AUDIO_FINDINGS_RESULTS"
 run = "scripts/findings-audio.sh"
+
+# The noise-floor tracker's tuning, in the findings tier: TestFindingsFloor in package audio
+# measures a grid of tracker settings, and silencedetect, over the level-change fixtures and
+# ~/docs' long sources (DOCS names another root), unchanged and with a gain step or a noise floor
+# added at 10 minutes, and logs each plan's windows cut at the limit. AUDIO_FLOOR_SOURCES chooses
+# the sources. It calls no model, and keeps nothing.
+[tasks.findings-floor]
+description = "Run the tracker's tuning grid over the level-change fixtures and ~/docs' long sources; logs each setting's windows cut at the limit"
+env = { AUDIO_FLOOR_SOURCES = "{{ get_env(name='AUDIO_FLOOR_SOURCES', default='ami earnings21 earnings22') }}" }
+run = "GOWORK=off go test -tags findings -count=1 -timeout 1h -v -run '^TestFindingsFloor$' ./audio/"

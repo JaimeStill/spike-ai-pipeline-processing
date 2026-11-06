@@ -360,3 +360,14 @@ func canonicalWAV(data []byte, rate, samples int) error {
 	}
 	return nil
 }
+
+// within reports whether s lies within one of silences, to the millisecond: silencedetect's times
+// fall on its sample boundaries, and the fixture's utterances end on a millisecond's.
+func within(s audio.Span, silences []audio.Span) bool {
+	for _, x := range silences {
+		if x.Start <= s.Start+time.Millisecond && s.End <= x.End+time.Millisecond {
+			return true
+		}
+	}
+	return false
+}
