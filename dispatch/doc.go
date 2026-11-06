@@ -1,7 +1,7 @@
 // Package dispatch walks an input and every part found in it to the stages that prepare them,
 // on the standard library and this module's route and inspect packages, and, for the format
 // packages' adapters, which build on Linux only, on document, office, picture, email, onenote,
-// audio, and tool. It never calls a model: it reports what each part is and what its stage
+// audio, media, and tool. It never calls a model: it reports what each part is and what its stage
 // prepared, for a layer above to send on. The stages are the caller's, registered by route; the
 // format packages' adapters are stages.
 //
@@ -102,9 +102,18 @@
 //     audio.ErrNoAudio, and a failed window fails the part once the other windows are yielded. A
 //     caller with no ffmpeg and ffprobe has no Splitter and registers no audio stage, so its
 //     audio parts have no processor yet.
-//
-// No adapter takes route.Video yet: a video part is no processor yet, as is every part whose
-// route has no stage registered.
+//   - [VideoStage], for route.Video: an MP4, Matroska, WebM, or AVI through media's Streamer, one
+//     unpaced ffmpeg run per part, over a hard link to the part's file in the part's directory,
+//     so media's directory of frames is made there and never beside the caller's input. The
+//     part's plan comes first, a record holding a [VideoPlan], the settings its windows are
+//     planned and its frames sampled under; then each frame, an image output holding a PNG, its
+//     Meta its index, time, reason, and size, and each window, an audio output holding a 16 kHz
+//     mono WAV, its Meta the audio stage's but its count, with the threshold it was cut under,
+//     interleaved as the run completes them. A video with no audio stream yields frames only, and
+//     one with no video stream windows only; a source with neither fails, its error wrapping
+//     media.ErrNoMedia. The stage runs no model. A caller with no ffmpeg and ffprobe has no
+//     Streamer and registers no video stage, so its video parts have no processor yet, as is
+//     every part whose route has no stage registered.
 //
 // Where a stage yields a record and its Markdown, per message or page, the record comes first,
 // then the Markdown of the same name.
@@ -271,11 +280,12 @@
 //     [TextOutput], [MarkdownOutput], [ImageOutput], [RecordOutput], or [AudioOutput], or a
 //     [Found] part, and ends with [ErrNoProcessor] or [ErrEncrypted] to name its outcome.
 //   - The adapters, on Linux: [DocumentStage], [OfficeStage], [PictureStage], [EmailStage],
-//     [OneNoteStage], and [AudioStage], made by [NewDocumentStage], [NewOfficeStage],
-//     [NewPictureStage], [NewEmailStage], [NewOneNoteStage], and [NewAudioStage] over a
-//     [DocumentConfig], [OfficeConfig], [PictureConfig], [EmailConfig], [OneNoteConfig], and
-//     [AudioConfig]; the audio stage's plan record an [AudioPlan] of [AudioWindow]s and
-//     [AudioSpan]s; [VisionStage], made by [NewVisionStage]; and [Versions], a stage's tools'
+//     [OneNoteStage], [AudioStage], and [VideoStage], made by [NewDocumentStage],
+//     [NewOfficeStage], [NewPictureStage], [NewEmailStage], [NewOneNoteStage], [NewAudioStage],
+//     and [NewVideoStage] over a [DocumentConfig], [OfficeConfig], [PictureConfig],
+//     [EmailConfig], [OneNoteConfig], [AudioConfig], and [VideoConfig]; the audio stage's plan
+//     record an [AudioPlan] of [AudioWindow]s and [AudioSpan]s, and the video stage's a
+//     [VideoPlan] of its [VideoWindowing] and [VideoSampling]; [VisionStage], made by [NewVisionStage]; and [Versions], a stage's tools'
 //     version.
 //   - [ZipStage], made by [NewZipStage] over a [ZipConfig], on any platform.
 //   - [Index], keyed by a [Key], holding [Entry]s, each counting its outputs and its [Child]ren,

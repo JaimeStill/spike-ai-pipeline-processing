@@ -75,8 +75,8 @@ func init() {
 var audioWindowFilter = regexp.MustCompile(`^aresample=16000,atrim=start_sample=(\d+):end_sample=(\d+)$`)
 
 // audioStandin is the stand-in named name, ffmpeg or ffprobe: it prints its version at 9.0.2,
-// ffprobe's report, volumedetect's and silencedetect's reports, or a window's samples, each
-// sample its index in the source modulo 30011.
+// ffprobe's report, volumedetect's and silencedetect's reports, a window's samples, each sample its
+// index in the source modulo 30011, or, for media's run, its PCM and frames, as mediaStandin does.
 func audioStandin(name string, args []string) int {
 	if len(args) == 1 && args[0] == "-version" {
 		fmt.Printf("%s version n9.0.2 Copyright (c) 2000-2026 the FFmpeg developers\n", name)
@@ -89,6 +89,10 @@ func audioStandin(name string, args []string) int {
 	if name == "ffprobe" {
 		fmt.Print(os.Getenv(audioProbeEnv))
 		return 0
+	}
+	if slices.Contains(args, "-protocol_whitelist") {
+		// Only media's run allows its input's protocols.
+		return mediaStandin(args)
 	}
 	filter := args[slices.Index(args, "-af")+1]
 	switch {
@@ -120,10 +124,20 @@ func audioStandin(name string, args []string) int {
 	return 0
 }
 
-// standinSplitter links the stand-ins as ffmpeg and ffprobe in a directory of their own, makes it
-// the whole PATH, sets ffprobe's report to probe, and builds a Splitter over them through the exec
-// runner.
+// standinSplitter installs the stand-ins, ffprobe reporting probe, and builds a Splitter over them.
 func standinSplitter(t *testing.T, probe string) *audio.Splitter {
+	t.Helper()
+	ffmpeg, ffprobe := standinTools(t, probe)
+	s, err := audio.NewSplitter(audio.Config{FFmpeg: ffmpeg, FFprobe: ffprobe})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return s
+}
+
+// standinTools links the stand-ins as ffmpeg and ffprobe in a directory of their own, makes it the
+// whole PATH, sets ffprobe's report to probe, and builds them through the exec runner.
+func standinTools(t *testing.T, probe string) (ffmpeg, ffprobe *tool.Tool) {
 	t.Helper()
 	exe, err := os.Executable()
 	if err != nil {
@@ -149,11 +163,7 @@ func standinSplitter(t *testing.T, probe string) *audio.Splitter {
 		}
 		tools = append(tools, tl)
 	}
-	s, err := audio.NewSplitter(audio.Config{FFmpeg: tools[0], FFprobe: tools[1]})
-	if err != nil {
-		t.Fatal(err)
-	}
-	return s
+	return tools[0], tools[1]
 }
 
 // audioRuns returns the programs the stand-ins ran as, in order, version commands aside.
