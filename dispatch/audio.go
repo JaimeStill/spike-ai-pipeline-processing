@@ -67,8 +67,8 @@ type AudioStage struct {
 }
 
 // AudioPlan is the JSON of an audio part's "plan" record: the source as ffprobe read it, its
-// silences as silencedetect found them, the threshold and shortest silence it ran with, and the windows and seams audio.PlanWindows planned in
-// them, every time in seconds.
+// silences as silencedetect found them, the threshold and shortest silence it ran with, and the
+// windows and seams audio.PlanWindows planned in them, every time in seconds.
 type AudioPlan struct {
 	// Duration is the source's duration, which the windows cover.
 	Duration float64 `json:"duration"`

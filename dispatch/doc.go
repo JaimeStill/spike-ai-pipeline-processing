@@ -1,9 +1,9 @@
 // Package dispatch walks an input and every part found in it to the stages that prepare them,
 // on the standard library and this module's route and inspect packages, and, for the format
 // packages' adapters, which build on Linux only, on document, office, picture, email, onenote,
-// audio, and tool. It never calls a model: it reports what each part is and what its stage prepared,
-// for a layer above to send on. The stages are the caller's, registered by route; the format
-// packages' adapters are stages.
+// audio, and tool. It never calls a model: it reports what each part is and what its stage
+// prepared, for a layer above to send on. The stages are the caller's, registered by route; the
+// format packages' adapters are stages.
 //
 // [Dispatcher.Dispatch] takes an [Input], a file the caller owns and the dispatcher never
 // removes, and yields [Event]s, depth-first, in each stage's own order: each output a stage
@@ -268,8 +268,7 @@
 //   - [Stage], its [Identity], and [HashConfig] for an identity's configuration hash; a stage
 //     yields [Item]s, made by [OutputItem] and [PartItem], each an [Output] of an [OutputKind],
 //     [TextOutput], [MarkdownOutput], [ImageOutput], [RecordOutput], or [AudioOutput], or a
-//     [Found] part, and
-//     ends with [ErrNoProcessor] or [ErrEncrypted] to name its outcome.
+//     [Found] part, and ends with [ErrNoProcessor] or [ErrEncrypted] to name its outcome.
 //   - The adapters, on Linux: [DocumentStage], [OfficeStage], [PictureStage], [EmailStage],
 //     [OneNoteStage], and [AudioStage], made by [NewDocumentStage], [NewOfficeStage],
 //     [NewPictureStage], [NewEmailStage], [NewOneNoteStage], and [NewAudioStage] over a

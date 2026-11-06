@@ -244,8 +244,9 @@ an embedded message mail gives no file for prepared inline in its attachment's p
 `OneNoteStage`, onenote's records, each page's record then its Markdown, and each of its media
 found as a part; and `AudioStage`, an audio part's plan, a record, then each window cut at a
 silence, a 16 kHz mono WAV, an audio output in plan order whose Meta carries its index, span, cut,
-and seams, for a layer above to transcribe and join with `audio.Join`. A found part's `Where` names its place, such as `message 2097220, attachment 1`
-or `page {...}, page ink`, and it is dispatched again, so a PDF attached to a message reaches the
+and seams, for a layer above to transcribe and join with `audio.Join`. A found part's `Where`
+names its place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is
+dispatched again, so a PDF attached to a message reaches the
 document stage and a page's ink becomes a PNG. Kinds no adapter reads yet, ODF, RTF,
 WordPerfect, xlsb, HEIC, WebP, and AVIF, are no processor yet, as is video, and audio when the
 caller, with no ffmpeg, registers no audio stage. An encrypted OOXML package, which office refuses,
@@ -695,8 +696,8 @@ ffprobe, its `Request` names the source and no media directory, planning writing
 windows as `WindowFile`s in plan order, `Concurrency` ffmpeg runs at once, each a 16 kHz mono WAV
 named by its SHA-256; the source is read in place rather than spooled, ffmpeg's failures are the
 Tool's `*tool.ExitError`, ffmpeg having no exit contract, and a window names no route, a speech
-model its one stage; and `route` and `inspect` are pure functions, with no Tool, Config, or Request, which run
-before a part's stage rather than as one.
+model its one stage; and `route` and `inspect` are pure functions, with no Tool, Config, or
+Request, which run before a part's stage rather than as one.
 
 Known limits:
 
