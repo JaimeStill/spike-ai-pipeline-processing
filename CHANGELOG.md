@@ -81,6 +81,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Currency: jdx/mise-action v5.2.6 to v5.2.7 in CI.
 - Currency: `audio.FFmpegImage`, the README's, and the ffprobe integration tests'
   linuxserver/ffmpeg image 9.0.2-cli-ls88 to 9.0.2-cli-ls89, pinned by digest: a base-image
   rebuild, the same FFmpeg 9.0.2. An integration test checks that the image has the scdet, select,
