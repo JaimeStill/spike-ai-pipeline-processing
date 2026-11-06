@@ -7,9 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"image"
-	"image/color"
-	"image/png"
 	"io"
 	"os"
 	"path/filepath"
@@ -19,6 +16,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/mediatest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/media"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
@@ -39,7 +37,7 @@ const (
 	// pcmEnv names a canonical 44-byte WAV whose samples the stand-in ffmpeg writes to its stdout,
 	// when it has an audio output, half a second at a time.
 	pcmEnv = "MEDIA_TEST_PCM"
-	// framesEnv is a JSON array of the frames the stand-in ffmpeg takes, each a standinFrame,
+	// framesEnv is a JSON array of the frames the stand-in ffmpeg takes, each a mediatest.Frame,
 	// when it has a video output: it reports each on stderr as the metadata filter does, and then
 	// writes its PNG, each before the PCM from its time on.
 	framesEnv = "MEDIA_TEST_FRAMES"
@@ -60,15 +58,6 @@ const (
 	// dockerServerEnv is the version the stand-in docker's daemon reports.
 	dockerServerEnv = "MEDIA_TEST_DOCKER_SERVER"
 )
-
-// standinFrame is a frame the stand-in ffmpeg takes: its time, in milliseconds, its scene score,
-// and its PNG's size.
-type standinFrame struct {
-	MS     int64   `json:"ms"`
-	Score  float64 `json:"score"`
-	Width  int     `json:"width"`
-	Height int     `json:"height"`
-}
 
 func TestMain(m *testing.M) {
 	if os.Getenv(standinEnv) == "1" {
@@ -179,7 +168,7 @@ func standinRun(args []string) error {
 			}
 		}
 	}
-	var frames []standinFrame
+	var frames []mediatest.Frame
 	pattern := ""
 	if slices.Contains(args, "image2") {
 		if err := json.Unmarshal([]byte(os.Getenv(framesEnv)), &frames); err != nil {
@@ -187,24 +176,19 @@ func standinRun(args []string) error {
 		}
 		pattern = args[len(args)-1]
 	}
-	const chunk = 2 * audio.SampleRate / 2
-	next := 0
-	for at := 0; at < len(pcm) || next < len(frames); at += chunk {
-		ms := int64(at) * 1000 / (2 * audio.SampleRate)
-		for next < len(frames) && (frames[next].MS <= ms || at >= len(pcm)) {
-			if err := standinFrameOut(pattern, next, frames[next]); err != nil {
-				return err
-			}
-			next++
-		}
-		if at < len(pcm) {
+	return mediatest.Stream(pcm, frames,
+		func(at, end int) error {
 			var err error
-			if gates, err = writeGated(pcm, at, min(at+chunk, len(pcm)), gates); err != nil {
-				return err
+			gates, err = writeGated(pcm, at, end, gates)
+			return err
+		},
+		func(i int) error {
+			mediatest.Report(i, frames[i])
+			if os.Getenv(noPNGEnv) != "" {
+				return nil
 			}
-		}
-	}
-	return nil
+			return mediatest.WritePNG(pattern, i, frames[i])
+		})
 }
 
 // writeGated writes pcm's bytes from at to end to stdout, waiting at each of the gates, in order,
@@ -228,37 +212,6 @@ func writeGated(pcm []byte, at, end int, gates []standinGate) ([]standinGate, er
 	}
 	_, err := os.Stdout.Write(pcm[at:end])
 	return gates, err
-}
-
-// standinFrameOut reports frame i, f, on stderr as the metadata filter does, after settb, and
-// writes its PNG to pattern's file for i, through a temporary file, as the image2 muxer's atomic
-// writing does; noPNGEnv writes none.
-func standinFrameOut(pattern string, i int, f standinFrame) error {
-	fmt.Fprintf(os.Stderr, "[Parsed_metadata_2 @ 0x55d0c0de] frame:%-4d pts:%-7d pts_time:%g\n", i, f.MS*1000, float64(f.MS)/1000)
-	fmt.Fprintf(os.Stderr, "[Parsed_metadata_2 @ 0x55d0c0de] lavfi.scene_score=%f\n", f.Score)
-	if os.Getenv(noPNGEnv) != "" {
-		return nil
-	}
-	img := image.NewRGBA(image.Rect(0, 0, f.Width, f.Height))
-	c := color.RGBA{R: uint8(f.MS / 1000), G: uint8(i), B: 7, A: 255}
-	for y := range f.Height {
-		for x := range f.Width {
-			img.SetRGBA(x, y, c)
-		}
-	}
-	path := fmt.Sprintf(pattern, i)
-	out, err := os.Create(path + ".tmp")
-	if err != nil {
-		return err
-	}
-	err = png.Encode(out, img)
-	if cerr := out.Close(); err == nil {
-		err = cerr
-	}
-	if err != nil {
-		return err
-	}
-	return os.Rename(path+".tmp", path)
 }
 
 // dockerStandin is the stand-in docker CLI: version prints dockerServerEnv's version; image

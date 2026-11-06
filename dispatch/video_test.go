@@ -11,8 +11,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"image"
-	"image/color"
 	"image/png"
 	"maps"
 	"os"
@@ -25,6 +23,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/mediatest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/media"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 )
@@ -36,7 +35,7 @@ const (
 	// has an audio output, each sample its index modulo 30011.
 	videoPCMEnv = "DISPATCH_VIDEO_PCM_MS"
 	// videoFramesEnv is a JSON array of the frames the stand-in takes when the run has a video
-	// output, each a videoFrame.
+	// output, each a mediatest.Frame.
 	videoFramesEnv = "DISPATCH_VIDEO_FRAMES"
 	// videoFailEnv, when set, makes the stand-in, once it has written its output, write its value
 	// to stderr and exit 1.
@@ -48,15 +47,6 @@ const (
 	// line each.
 	videoArgsEnv = "DISPATCH_VIDEO_ARGS"
 )
-
-// videoFrame is a frame the stand-in takes: its time, in milliseconds, its scene score, and its
-// PNG's size.
-type videoFrame struct {
-	MS     int64   `json:"ms"`
-	Score  float64 `json:"score"`
-	Width  int     `json:"width"`
-	Height int     `json:"height"`
-}
 
 // mediaStandin is the stand-in ffmpeg's run for media: it records its input and frame pattern, then
 // writes videoPCMEnv's PCM to its stdout, when its arguments have an audio output, half a second
@@ -96,61 +86,28 @@ func mediaStandinRun(args []string) error {
 			pcm = binary.LittleEndian.AppendUint16(pcm, uint16(i%30011))
 		}
 	}
-	var frames []videoFrame
+	var frames []mediatest.Frame
 	if pattern != "" {
 		if err := json.Unmarshal([]byte(os.Getenv(videoFramesEnv)), &frames); err != nil {
 			return err
 		}
 	}
-	const chunk = 2 * audio.SampleRate / 2
-	next := 0
-	for at := 0; at < len(pcm) || next < len(frames); at += chunk {
-		ms := int64(at) * 1000 / (2 * audio.SampleRate)
-		for next < len(frames) && (frames[next].MS <= ms || at >= len(pcm)) {
-			if err := mediaStandinFrame(pattern, next, frames[next]); err != nil {
+	return mediatest.Stream(pcm, frames,
+		func(at, end int) error {
+			_, err := os.Stdout.Write(pcm[at:end])
+			return err
+		},
+		func(i int) error {
+			mediatest.Report(i, frames[i])
+			if err := mediatest.WritePNG(pattern, i, frames[i]); err != nil {
 				return err
 			}
-			if v := os.Getenv(videoHoldEnv); v != "" && next == 0 {
+			if v := os.Getenv(videoHoldEnv); v != "" && i == 0 {
 				hold, _ := strconv.Atoi(v)
 				time.Sleep(time.Duration(hold) * time.Millisecond)
 			}
-			next++
-		}
-		if at < len(pcm) {
-			if _, err := os.Stdout.Write(pcm[at:min(at+chunk, len(pcm))]); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-// mediaStandinFrame reports frame i, f, on stderr as the metadata filter does, after settb, and
-// writes its PNG to pattern's file for i, through a temporary file, as the image2 muxer's atomic
-// writing does.
-func mediaStandinFrame(pattern string, i int, f videoFrame) error {
-	fmt.Fprintf(os.Stderr, "[Parsed_metadata_2 @ 0x55d0c0de] frame:%-4d pts:%-7d pts_time:%g\n", i, f.MS*1000, float64(f.MS)/1000)
-	fmt.Fprintf(os.Stderr, "[Parsed_metadata_2 @ 0x55d0c0de] lavfi.scene_score=%f\n", f.Score)
-	img := image.NewRGBA(image.Rect(0, 0, f.Width, f.Height))
-	c := color.RGBA{R: uint8(f.MS / 1000), G: uint8(i), B: 7, A: 255}
-	for y := range f.Height {
-		for x := range f.Width {
-			img.SetRGBA(x, y, c)
-		}
-	}
-	path := fmt.Sprintf(pattern, i)
-	out, err := os.Create(path + ".tmp")
-	if err != nil {
-		return err
-	}
-	err = png.Encode(out, img)
-	if cerr := out.Close(); err == nil {
-		err = cerr
-	}
-	if err != nil {
-		return err
-	}
-	return os.Rename(path+".tmp", path)
+			return nil
+		})
 }
 
 // ffprobe's reports of the stand-in videos: one with a video stream and an audio stream, one with
@@ -173,7 +130,7 @@ const (
 // videoFrames are the stand-in's frames: the first, a scene change at 1.2 s, and one taken at
 // 11.2 s that is past no threshold, which media names an interval frame, the gap since the last
 // being 10 s.
-var videoFrames = []videoFrame{
+var videoFrames = []mediatest.Frame{
 	{MS: 0, Score: 0, Width: 32, Height: 18},
 	{MS: 1200, Score: 0.9, Width: 32, Height: 18},
 	{MS: 11200, Score: 0.05, Width: 32, Height: 18},

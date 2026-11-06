@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/mediatest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/media"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/tool"
 )
@@ -34,7 +35,7 @@ const (
 // sceneFrames are the frames the stand-in takes, the fixture's under the default policy, their
 // scores as select gives them; the frame at 31 s scores the threshold exactly, as select's printed
 // score rounds one just past it, before the gap has passed, so it is a scene change.
-var sceneFrames = []standinFrame{
+var sceneFrames = []mediatest.Frame{
 	{MS: 0, Score: 0, Width: 32, Height: 18},
 	{MS: 6000, Score: 1, Width: 32, Height: 18},
 	{MS: 9000, Score: 0.9, Width: 32, Height: 18},
@@ -67,7 +68,7 @@ func source(t *testing.T) string {
 
 // setStandin sets what the stand-ins report and write: probe's streams, the PCM of gainWAV, and
 // frames.
-func setStandin(t *testing.T, probe string, frames []standinFrame) {
+func setStandin(t *testing.T, probe string, frames []mediatest.Frame) {
 	t.Helper()
 	t.Setenv(probeEnv, probe)
 	pcm, err := filepath.Abs(gainWAV)

@@ -878,8 +878,10 @@ The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the v
 harnesses the integration, bake-off, and findings tiers run on; no released package imports it.
 `internal/visiontest`, the router client and response helpers the vision tests share, and
 `internal/audiotest`, the speech harness, build under the integration and findings tags alone.
-`internal/goldentest`, the golden sums, and `internal/textscore`, the character and word error
-rates the bake-offs and the ink and audio findings score by, are test helpers too, built untagged.
+`internal/goldentest`, the golden sums; `internal/textscore`, the character and word error rates
+the bake-offs and the ink and audio findings score by; and `internal/mediatest`, the stand-in for
+media's ffmpeg run that media's and dispatch's unit tests share, are test helpers too, built
+untagged.
 It is released by tag, `vX.Y.Z`, with a CHANGELOG. The spike's question, evidence, and answer are
 in the root repository's README.
 
