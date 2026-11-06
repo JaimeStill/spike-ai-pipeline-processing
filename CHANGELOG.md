@@ -6,6 +6,79 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.8.0] - 2026-11-06
+
+### Added
+
+- The `media` package reads a source's audio and video through one ffmpeg run and streams them,
+  as they arrive, as a model's inputs, running no model. `NewStreamer` builds a `Streamer` over a
+  `Config` of ffmpeg and ffprobe, built through either runner, and `Streamer.Events` streams a
+  `Request`'s windows and frames as one lazy `iter.Seq2[Event, error]`, windows in plan order and
+  frames in source-time order, interleaved as they complete. A `Source` names exactly one of a
+  file, read unpaced or, with `Paced`, at real time through ffmpeg's `-readrate 1`; a reader the
+  caller holds, fed to ffmpeg's stdin; or a URL whose scheme is srt, rtmp, http, https, an HLS
+  playlist's included, or udp. Each run allows ffmpeg only its source's protocols through
+  `-protocol_whitelist`, so a playlist can't open another protocol or a local file. Through the
+  container runner a URL run joins the docker network the ffmpeg Tool's image names, and is
+  refused without one. A file is probed for its first audio and first video stream ahead; a
+  reader's or URL's run takes the streams its `Tracks` names, and a source without them fails
+  with `ErrNoMedia` before any event. Each `Window` is the audio cut as audio cuts it, through an
+  `audio.Tracker` and an `audio.Planner` under the request's fixed or rolling threshold, written as
+  16 kHz mono WAV through `audio.WAV`, the same bytes `Splitter.Windows` cuts under the tracker;
+  it carries its index, span, cut, seams, samples, and the threshold it was cut under. Each `Frame`
+  is a PNG taken by ffmpeg's select filter, its `Reason` first, scene, past `SceneThreshold`,
+  `DefaultSceneThreshold`, 0.2, or interval, `MaxGap`, `DefaultMaxGap`, 10 s, after the last; a
+  `MaxSide` scales a larger frame down to fit. Each is named by its SHA-256 in the media directory,
+  and each `Event` carries its source time and the wall-clock time its last sample or frame
+  arrived. A context that ends stops ffmpeg through either runner and the stream yields its error
+  once; nothing the stream didn't yield is left behind. Pacing changes when an event comes, never
+  what it is, and the two runners write the same files. A refused request wraps `ErrRequest`,
+  audio's own. rtsp, capture devices, and http(s) reconnection aren't supported.
+- `audio.Tracker` finds a stream's silences as its 16 kHz mono PCM arrives: each 10 ms frame's
+  energy, `FrameLength`, against a fixed `Threshold` or a rolling one, a `Percentile` of the
+  frames' energy over a `FloorWindow` plus a `Margin`, by default `DefaultPercentile`, the 10th,
+  over `DefaultFloorWindow`, 4 s, plus `DefaultMargin`, 12 dB, so its threshold follows a change of
+  level or noise floor. Each `Silence` reports the threshold in force when it opened; `Open`
+  reports a silence still open once it is `MinSilence` long. Its memory is bounded by its window,
+  and the same samples give the same silences however they are chunked. `NewTracker` builds one.
+- `audio.Planner` plans a stream's windows as it arrives, by `PlanWindows`' policy: given the
+  silences as they are found and the stream's position, it returns each window once the stream
+  passes its limit, or ends. `Planner.Open` takes a silence still open, so a window whose limit
+  falls inside one is fixed at its limit, however long the silence lasts. In any chunking it gives
+  `PlanWindows`' windows exactly. `NewPlanner` builds one.
+- `audio.Request.Detector` chooses the file path's detector: `DetectorSilencedetect`, the default,
+  as before, or `DetectorTracker`, a `Tracker` fed the stream ffmpeg decodes, with its
+  `Percentile`, `FloorWindow`, and `Margin`. A `Detection` reports its `Detector` and, under the
+  tracker, each silence's threshold in `Thresholds`. `audio.Sample` and `audio.WAV`, a time's
+  sample and a window's WAV, are exported, so another package's windows are the same bytes.
+- `audio.Join`'s settled prefix: each seam is merged from the windows up to it alone, so joining
+  the transcripts received so far again leaves every word before the latest seam unchanged.
+- `dispatch.VideoStage`, for `route.Video`, an MP4, Matroska, WebM, or AVI, prepares a video
+  through media's `Streamer`, one unpaced ffmpeg run per part over a hard link in the part's
+  directory, running no model. `NewVideoStage` builds it over a `VideoConfig`: the `Streamer`, its
+  tools' `Version`, and the `media.Request` every part is run under. It yields a `plan` record, a
+  `VideoPlan` of its `VideoWindowing` and `VideoSampling` settings, then each frame, an
+  `ImageOutput` PNG, and each window, an `AudioOutput` WAV with the threshold it was cut under,
+  interleaved as the run completes them. A video with no audio yields frames only, and one with no
+  video windows only; one with neither fails with `media.ErrNoMedia`. A caller with no ffmpeg
+  registers no video stage.
+- `tool.Tool.Image` returns the `Image` a container tool runs in, its `Network` and `CapAdd`
+  included, and false for an exec tool.
+- The streams fixtures in `audio/testdata`: `speech-scenes.mkv`, the speech fixture beside a
+  generated video with known scene cuts, and `speech-gain.wav` and `speech-noise.wav`, the speech
+  with a gain step and with added noise, each with its truth, rebuilt by `mise run
+  fixtures:streams` and checked by SHA-256.
+- `mise run findings-floor`, the tracker's tuning grid over the level-change fixtures and three
+  long sources, and `mise run findings-streams`, the streams finding's harness, both in the
+  findings tier.
+- The streams finding, `docs/findings/streams.md`, from runs recorded in
+  `docs/findings/streams-results/`: three real videos, Tears of Steel's 180 s clip, AMI ES2002a,
+  and NASA's 25.5 min in-flight event, read at real time, each window sent to Gemma 4 E4B and each
+  frame to Gemma 4 26B-A4B as it arrives. The paced runs gave the unpaced read's windows and frames
+  byte for byte; a window came at its limit, a frame 20 to 170 ms after ffmpeg reported it, and no
+  request queued. The live transcript is as accurate as audio's file path under the same detector,
+  and a cancellation stopped cleanly.
+
 ### Changed
 
 - Currency: `audio.FFmpegImage`, the README's, and the ffprobe integration tests'
@@ -13,6 +86,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   rebuild, the same FFmpeg 9.0.2. An integration test checks that the image has the scdet, select,
   and showinfo filters, the srt, rtmp, http, https, and udp protocols, and the hls demuxer and
   muxer.
+- The dispatcher's video parts, which had no processor, go to `VideoStage` where a caller
+  registers one.
 
 ## [v0.7.0] - 2026-11-05
 
@@ -560,7 +635,8 @@ Every move is without an alias: a caller on v0.5.0 renames as listed.
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.8.0...HEAD
+[v0.8.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.8.0
 [v0.7.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.7.0
 [v0.6.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.6.0
 [v0.5.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.5.0
