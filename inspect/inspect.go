@@ -106,6 +106,70 @@ const (
 	// ZIPUnreadable is content with a ZIP signature whose central directory can't be read, so
 	// its entries can't be checked.
 	ZIPUnreadable Check = "zip-unreadable"
+	// TarTraversal is a tar entry whose name has a ".." element.
+	TarTraversal Check = "tar-traversal"
+	// TarAbsolutePath is a tar entry whose name is absolute or begins with a drive letter.
+	TarAbsolutePath Check = "tar-absolute-path"
+	// TarSymlink is a tar entry that is a symbolic link.
+	TarSymlink Check = "tar-symlink"
+	// TarHardlink is a tar entry that is a hard link.
+	TarHardlink Check = "tar-hardlink"
+	// TarDevice is a tar entry that is a character or block device, or a FIFO: a node an
+	// extraction would make rather than a file.
+	TarDevice Check = "tar-device"
+	// TarBomb is a tar entry past both the expansion ratio, against the whole tar's size, and
+	// the expanded size its [Options] allow, by the size its header declares. Only a sparse
+	// entry, whose holes the tar doesn't store, or a header that lies, can declare one.
+	TarBomb Check = "tar-bomb"
+	// TarUnreadable is content with a tar signature whose headers can't all be read, so its
+	// entries can't all be checked: a truncated tar among them.
+	TarUnreadable Check = "tar-unreadable"
+	// GzipBomb is a gzip stream past both the expansion ratio and the expanded size its
+	// [Options] allow, by the bytes it decompresses to. [Inspect] raises it for no part: a gzip
+	// declares its expanded size only modulo 4 GiB, in its trailer, so the stage that
+	// decompresses the stream raises it on the bytes it writes.
+	GzipBomb Check = "gzip-bomb"
+	// PDFAttachmentBomb is a PDF's embedded file past both the expansion ratio, against the
+	// whole PDF's size, and the expanded size its [Options] allow, by the bytes it is saved as.
+	// [Inspect] raises it for no part: the dispatcher's document stage raises it on the bytes
+	// pdfdetach writes, since an embedded file's stream may be compressed.
+	PDFAttachmentBomb Check = "pdf-attachment-bomb"
+)
+
+// The checks of a listing, which [CheckListing] raises, and [Inspect] never: an archive only a
+// program reads, such as 7-Zip, is listed by the stage that runs it, before anything is
+// extracted. Each is of class [Unsafe] but SevenZipEncrypted, of class [Active].
+const (
+	// SevenZipTraversal is a 7z entry whose name has a ".." element.
+	SevenZipTraversal Check = "7z-traversal"
+	// SevenZipAbsolutePath is a 7z entry whose name is absolute or begins with a drive letter.
+	SevenZipAbsolutePath Check = "7z-absolute-path"
+	// SevenZipSymlink is a 7z entry that is a symbolic link, by the Unix mode its attributes
+	// carry.
+	SevenZipSymlink Check = "7z-symlink"
+	// SevenZipHardlink is a 7z entry its listing names a hard link.
+	SevenZipHardlink Check = "7z-hardlink"
+	// SevenZipDevice is a 7z entry that is a character or block device, a FIFO, or a socket, by
+	// the Unix mode its attributes carry.
+	SevenZipDevice Check = "7z-device"
+	// SevenZipBomb is a 7z entry past both the expansion ratio, against the whole archive's
+	// size, and the expanded size its [Options] allow, by the size its listing declares, or as
+	// the stage writes it.
+	SevenZipBomb Check = "7z-bomb"
+	// SevenZipEncrypted is a 7z entry its listing reports encrypted.
+	SevenZipEncrypted Check = "7z-encrypted"
+	// CabTraversal is a cabinet entry whose name has a ".." element.
+	CabTraversal Check = "cab-traversal"
+	// CabAbsolutePath is a cabinet entry whose name is absolute or begins with a drive letter.
+	CabAbsolutePath Check = "cab-absolute-path"
+	// CabBomb is a cabinet entry past both the expansion ratio, against the whole cabinet's
+	// size, and the expanded size its [Options] allow, by the size its listing declares, or as
+	// the stage writes it.
+	CabBomb Check = "cab-bomb"
+	// ZstdBomb is a zstd stream past both the expansion ratio and the expanded size its
+	// [Options] allow, by the content size its frame header declares, when it declares one, or
+	// by the bytes it decompresses to.
+	ZstdBomb Check = "zstd-bomb"
 )
 
 // classes are every check's class.
@@ -120,6 +184,11 @@ var classes = map[Check]Class{
 	SVGScript:  Active, SVGEventHandler: Active, SVGExternalHref: Active, SVGForeignObject: Active,
 	ZIPTraversal: Unsafe, ZIPAbsolutePath: Unsafe, ZIPSymlink: Unsafe, ZIPBomb: Unsafe,
 	ZIPUnreadable: Unsafe,
+	TarTraversal:  Unsafe, TarAbsolutePath: Unsafe, TarSymlink: Unsafe, TarHardlink: Unsafe,
+	TarDevice: Unsafe, TarBomb: Unsafe, TarUnreadable: Unsafe, GzipBomb: Unsafe, PDFAttachmentBomb: Unsafe,
+	SevenZipTraversal: Unsafe, SevenZipAbsolutePath: Unsafe, SevenZipSymlink: Unsafe,
+	SevenZipHardlink: Unsafe, SevenZipDevice: Unsafe, SevenZipBomb: Unsafe, SevenZipEncrypted: Active,
+	CabTraversal: Unsafe, CabAbsolutePath: Unsafe, CabBomb: Unsafe, ZstdBomb: Unsafe,
 }
 
 // Checks returns every check, sorted.
@@ -157,7 +226,7 @@ func (r Report) Has(c Check) bool {
 	return slices.ContainsFunc(r.Flags, func(f Flag) bool { return f.Check == c })
 }
 
-// The zip bomb rule's defaults: an entry is a bomb past both.
+// The bomb rule's defaults, every archive's and stream's: an entry is a bomb past both.
 const (
 	// DefaultBombRatio is the expansion ratio, expanded to compressed size, past which an
 	// entry may be a bomb.
@@ -167,16 +236,16 @@ const (
 )
 
 // Options tune an inspection. The zero Options is the default: each flag's class decides, and
-// the zip bomb rule's thresholds are the defaults.
+// the bomb rule's thresholds are the defaults.
 type Options struct {
 	// Policy overrides the default action of the checks it names, Proceed or Quarantine, so a
 	// caller may quarantine an active finding, such as a macro, or let an unsafe one proceed.
 	Policy map[Check]Verdict
-	// BombRatio is the expansion ratio past which a ZIP entry may be a bomb;
-	// [DefaultBombRatio] when zero.
+	// BombRatio is the expansion ratio past which an archive's entry, or a gzip or zstd stream,
+	// may be a bomb; [DefaultBombRatio] when zero.
 	BombRatio float64
-	// BombSize is the expanded size in bytes past which a ZIP entry may be a bomb;
-	// [DefaultBombSize] when zero.
+	// BombSize is the expanded size in bytes past which an archive's entry, or a gzip or zstd
+	// stream, may be a bomb; [DefaultBombSize] when zero.
 	BombSize uint64
 }
 
@@ -227,7 +296,8 @@ func (o Options) verdict(flags []Flag) Verdict {
 // Inspect inspects the part at path, named name, before its stage, and returns its report. The
 // name's extension is name's, which may differ from path's, as a file named by its SHA-256
 // does. It runs no stage and no program: it reads the file, streaming, its memory bounded
-// whatever the file's size, and a ZIP's central directory without extracting an entry. The
+// whatever the file's size, and a ZIP's central directory or a tar's headers without extracting
+// an entry. The
 // report is a function of the file's bytes and name alone, and opts, so the same content and
 // name give the same report on every run. Inspect returns an error for opts it refuses,
 // matching [ErrOptions], for a file it can't read, and for ctx's end.
@@ -260,6 +330,11 @@ func Inspect(ctx context.Context, path, name string, opts Options) (Report, erro
 	in.mismatch()
 	if in.kind == route.ZIP || in.kind == route.ODF {
 		if err := in.zip(ctx); err != nil {
+			return Report{}, err
+		}
+	}
+	if in.kind == route.Tar {
+		if err := in.tar(ctx); err != nil {
 			return Report{}, err
 		}
 	}

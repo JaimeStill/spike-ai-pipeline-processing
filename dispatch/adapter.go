@@ -16,7 +16,7 @@ import (
 // adapterVersion is the version of the format packages' adapters, part of every adapter's
 // configuration hash: a change to what an adapter yields for the same tools and options changes
 // it, so the index prepares content again.
-const adapterVersion = "2"
+const adapterVersion = "3"
 
 // Versions returns the versions of the tools behind a stage, for its config's Version: each
 // tool's name and version, as "gs 10.05.1", joined by ", " in the order given.

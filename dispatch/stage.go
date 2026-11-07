@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"strings"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
@@ -28,7 +29,8 @@ type Stage interface {
 	// any order, as it has them; a loop that stops early stops the stage. An error ends the
 	// stage: one matching [ErrNoProcessor] says the stage has no processor for this kind of
 	// content, one matching [ErrEncrypted] that it can't read the content because it is
-	// encrypted, and any other that it failed.
+	// encrypted, one matching [ErrQuarantined] that what it read of the content before preparing
+	// any of it, such as an archive's listing, quarantines it, and any other that it failed.
 	Prepare(ctx context.Context, p Part, dir string) iter.Seq2[Item, error]
 }
 
@@ -68,7 +70,37 @@ var (
 	// ErrEncrypted is a stage's word that it can't read the part because it is encrypted: the
 	// part's outcome is [Encrypted].
 	ErrEncrypted = errors.New("encrypted")
+	// ErrQuarantined is a stage's word that what it read of the part before preparing any of
+	// it, such as the archive stage's 7-Zip listing, quarantines the part: its outcome is
+	// [Quarantined]. A stage ends with a [*QuarantineError], which matches it, to give its flags.
+	ErrQuarantined = errors.New("quarantined")
 )
+
+// QuarantineError is a stage's word that the flags it raised on what it read of the part, before
+// preparing any of it, quarantine the part, as inspect's do before the stage runs: the archive
+// stage raises it on a 7-Zip listing, through inspect.CheckListing. The dispatcher adds the
+// flags to the part's, records them in the index with its inspection's, and reports the part
+// [Quarantined], its file kept, as it does a part its inspection quarantines.
+type QuarantineError struct {
+	// Flags are the flags the stage raised, as inspect reports them, with their evidence.
+	Flags []inspect.Flag
+}
+
+func (e *QuarantineError) Error() string {
+	var unsafe []string
+	for _, f := range e.Flags {
+		if f.Class == inspect.Unsafe {
+			unsafe = append(unsafe, string(f.Check)+": "+f.Evidence)
+		}
+	}
+	if len(unsafe) == 0 {
+		return "quarantined by policy"
+	}
+	return "quarantined: " + strings.Join(unsafe, "; ")
+}
+
+// Is reports that a QuarantineError matches [ErrQuarantined].
+func (e *QuarantineError) Is(target error) bool { return target == ErrQuarantined }
 
 // Item is one thing a stage yields: an output it prepared, or a part it found. Exactly one of
 // its fields is set.

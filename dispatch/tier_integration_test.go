@@ -17,17 +17,18 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 )
 
-// The integration tier's run of every fixture through Dispatch against the real stages: office
-// over the office CLI, LibreOffice in its pinned image for the legacy formats, and magick; the
+// The integration tier's run of every fixture through Dispatch against the real stages: office over
+// the office CLI, LibreOffice in its pinned image for the legacy formats and RTF, and magick; the
 // document stage over gs; the email stage over mail; the onenote stage over onenote; the picture
-// stage over magick and LibreOffice; the vision stage; the audio stage over ffmpeg and ffprobe;
-// and the zip stage. Each route is held to testdata/tier-routes.tsv, the hand route truth, and a
-// sample of the image outputs is sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names,
-// which set A loads.
+// stage over magick and LibreOffice; the vision stage; the audio stage over ffmpeg and ffprobe; and
+// the archive stage over 7zz. Each route is held to testdata/tier-routes.tsv, the hand route truth,
+// and a sample of the image outputs is sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL
+// names, which set A loads.
 
 const (
 	// tierRoutes is the hand route truth, as its header says.
@@ -44,17 +45,18 @@ const (
 	tierLogEnv = "DISPATCH_TIER_LOG"
 )
 
-// tierInputs are the committed fixture inputs, as globs under the repository's root, in the
-// order the tier dispatches them, each glob's matches sorted, but for a README.md or a Go file,
-// which is no fixture: every input the format packages' fixtures hold, the inspect package's
-// hazards, and the tool package's WAV. A notebook is its .onetoc2, which onenote reads with the
-// sections beside it.
+// tierInputs are the committed fixture inputs, as globs under the repository's root, in the order
+// the tier dispatches them, each glob's matches sorted, but for a README.md or a Go file, which is
+// no fixture: every input the format packages' fixtures hold, the inspect package's hazards, the
+// sevenzip package's archives, and the tool package's WAV. A notebook is its .onetoc2, which
+// onenote reads with the sections beside it.
 var tierInputs = []string{
 	"document/testdata/*.pdf",
 	"office/testdata/ooxml/*",
 	"office/testdata/legacy/generated/*.*.*",
 	"office/testdata/legacy/real/*.???",
 	"office/testdata/pictures/*.docx",
+	"office/testdata/rtf/*.rtf",
 	"picture/testdata/*.svg",
 	"email/testdata/mail/fixtures/generated/eml/*.eml",
 	"email/testdata/mail/fixtures/generated/msg/*.msg",
@@ -71,6 +73,10 @@ var tierInputs = []string{
 	"onenote/testdata/onenote/fixtures/onenote-rs/*.one*",
 	"onenote/testdata/onenote/fixtures/onenote-rs/*/*.one*",
 	"inspect/testdata/*",
+	"sevenzip/testdata/commons-compress/*.zip",
+	"sevenzip/testdata/commons-compress/*.7z",
+	"sevenzip/testdata/libarchive/*.zipx",
+	"sevenzip/testdata/generated/*",
 	"tool/testdata/*.wav",
 }
 
@@ -132,38 +138,6 @@ func glob(pattern, s string) bool {
 	return strings.HasSuffix(s, parts[len(parts)-1])
 }
 
-// tierEvent is a part's own event as the tier logs it: the input it came from, under the
-// repository's root, its place, each Where from the input's child down to it joined by " > ",
-// "-" for the input, and the event.
-type tierEvent struct {
-	input string
-	place string
-	ev    dispatched
-}
-
-// places returns events, one input's parts' events in the post-order Dispatch yields them, with
-// each part's place: a part's parent's event is the first after it one level up.
-func places(input string, events []dispatched) []tierEvent {
-	out := make([]tierEvent, len(events))
-	for i := len(events) - 1; i >= 0; i-- {
-		ev := events[i]
-		place := "-"
-		if ev.Part.Depth > 0 {
-			place = ev.Part.Where
-			for j := i + 1; j < len(events); j++ {
-				if events[j].Part.Depth == ev.Part.Depth-1 {
-					if out[j].place != "-" {
-						place = out[j].place + " > " + place
-					}
-					break
-				}
-			}
-		}
-		out[i] = tierEvent{input, place, ev}
-	}
-	return out
-}
-
 // sampled is an image output sent to the model: the input and part it came from, its output's
 // name and media type, its bytes, and its key, the stage that wrote it and the part's kind.
 type sampled struct {
@@ -213,7 +187,7 @@ func sampleable(data []byte) bool {
 func TestTierRoutes(t *testing.T) {
 	truth := readTruth(t)
 	stages := allStages(t)
-	zs, err := dispatch.NewZipStage(dispatch.ZipConfig{})
+	zs, err := dispatch.NewArchiveStage(sevenZipConfig(t, inspect.Options{}))
 	if err != nil {
 		t.Fatal(err)
 	}

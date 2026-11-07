@@ -6,6 +6,213 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.9.0] - 2026-11-06
+
+### Added
+
+- The formats finding, `docs/findings/formats.md`, and its run's results in
+  `docs/findings/formats-results/`: every route this release adds over its fixtures and ~/docs
+  against their truth, archives with and without 7-Zip and under a lowered bomb rule, ~/docs'
+  mixed bundle in four forms, pictures, the encodings table and the text limit, RTF, a PDF's
+  password, forms, and attachments, and the conversation records against mail's hand truth, with
+  the dispatcher's time and peak memory on each ~/docs input. `mise run findings-formats`
+  (`scripts/findings-formats.sh`) reruns it, in the findings tier, calling no model; dispatch's
+  findings-tagged `TestFindingsFormats` and `TestFindingsFormatsCost` are its tests.
+
+- `document.QPDF`, over qpdf, minimum 11.0 (`QPDFSpec`, `QPDFMinimum`), built by `NewQPDF`.
+  `QPDF.RequiresPassword` asks `qpdf --requires-password`: exit 0 a password is needed, 2 not
+  encrypted, 3 encrypted but opening without one; an exit 2 with qpdf's error, a file it can't
+  open, fails. `QPDF.Form` reads `qpdf --json=2 --json-key=acroform` into a `Form` of `FormField`s:
+  each terminal field's full name, type (`TextField`, `CheckboxField`, `RadioField`,
+  `ChoiceField`, `PushbuttonField`, `SignatureField`, or the PDF's own), and value; a checkbox's
+  or radio group's `Checked`; and a choice's `Options` and `Selected`. A radio group's widgets are
+  one field.
+- `document.Detacher`, over poppler's pdfdetach, minimum 22.02 (`PDFDetachSpec`,
+  `PDFDetachMinimum`), built by `NewDetacher`. `Detacher.List` lists a PDF's embedded files, the
+  name tree's and the file attachment annotations', as `Attachment`s; `Detacher.Save` writes one
+  to the caller's writer through `pdfdetach -save N -o /dev/stdout`, never to its stored name; a
+  number the PDF has none of is `ErrNoAttachment`.
+- `dispatch.DocumentStage`, given qpdf through `DocumentConfig.QPDF`, ends a PDF that needs a
+  password with `ErrEncrypted` before anything is rendered, so it is encrypted with no output; a
+  PDF restricted only by its permissions renders as before. It yields a PDF's AcroForm, when it has
+  fields, as a `forms` record, a `document.Form`, before its pages. Given pdfdetach through
+  `DocumentConfig.PDFDetach`, each embedded file is written under its SHA-256 and found as a part,
+  `attachment <name>`, inspected and routed again; the bomb rule, `DocumentConfig.Inspect`'s
+  thresholds, the ratio against the whole PDF's size, is enforced on the bytes pdfdetach writes,
+  a file past it a record with `inspect.PDFAttachmentBomb`'s evidence, quarantined. The media
+  behind a Screen or Rendition annotation isn't extracted, and XFA is flagged only, as before. A
+  qpdf or pdfdetach failure fails the PDF once its pages are prepared. Without either tool the
+  stage is as before, and the bomb thresholds leave its identity alone; each tool given changes
+  its configuration's hash.
+- `inspect.PDFAttachmentBomb`, of class Unsafe, which the document stage raises on an embedded
+  file's written bytes, as the archive stage raises `GzipBomb`.
+- `tool.Spec.VersionExit`, the exit code of a version command that exits nonzero having printed
+  the version, as pdfdetach's `-v` exits 99.
+- document's generated AcroForm fixture, `document/testdata/forms/acroform.pdf`, written by hand by
+  `generate.go`, with seven filled fields, text, a checkbox checked and one not, a radio group, a
+  combo box, and a multi-select list box, and qpdf's JSON of it; the forms record is held to its
+  fields exactly. The integration tier reads ~/docs' encrypted, form, and attachment PDFs.
+
+- The `sevenzip` package, the adapter over 7-Zip's 7zz, minimum 24.01 (`SevenZipSpec`,
+  `SevenZipMinimum`), which mise pins at 26.05 from ip7z/7zip's GitHub release, its digest checked.
+  `NewReader` builds a `Reader` over a `Config` of the Tool, refusing a missing one with
+  `ErrNoSevenZip` and an older one with a `*tool.VersionError`. `Reader.List` parses an archive's
+  technical listing, `-slt`, into a `Listing` of `Entry` items, a zstd stream's one item sized by
+  the content size its frame header declares; `Reader.Extract` writes one item, named whole, never
+  as a wildcard or a list file, to the caller's writer through 7zz's standard output alone. Every
+  run names its `Format`, 7z, zstd, cab, or zip, and an empty password, so 7zz never prompts:
+  encrypted headers or items fail with `ErrEncrypted`, a file that isn't the format with
+  `ErrNotArchive`. Its types build on any platform; the Reader on Linux.
+- `dispatch.ArchiveStage` reads, given 7-Zip through `ArchiveConfig.SevenZip` and its `Version`, a
+  7z archive's and a cabinet's files, each extracted alone and found `7z entry <name>` or `cabinet
+  entry <name>`; a zstd stream's content as one part, found `zstd content <name>`, named by the
+  stream's stem (.zst dropped, .tzst to .tar), and routed again; and a ZIP entry of a method
+  `archive/zip` doesn't read, such as Deflate64, implode, LZMA, xz, zstd, or PPMd, under the zip
+  rules unchanged. Before anything of a 7z, a cabinet, or a zstd stream is extracted, the listing is
+  checked by `inspect.CheckListing`; a verdict to quarantine ends the stage with a
+  `dispatch.QuarantineError`. The bomb rule is enforced on the bytes read from 7zz, against the
+  whole archive's size, or the stream's. An encrypted 7z entry is a record,
+  `inspect.SevenZipEncrypted`, and the 7z encrypted after its readable entries; a 7z whose headers
+  are encrypted is encrypted at once. With no 7-Zip these kinds have no processor yet, and ZIP's
+  stored and deflated entries are unaffected.
+- `dispatch.ArchiveStage` reads a ZIP's bzip2 entries through `compress/bzip2`, an `archive/zip`
+  decompressor of the stage's own, without 7-Zip.
+- `dispatch.ErrQuarantined` and `dispatch.QuarantineError`: a stage that quarantines a part on what
+  it read before preparing any of it ends with a QuarantineError holding its flags, and the
+  dispatcher adds them to the part's, records them in the index, and reports the part quarantined,
+  its file kept, as an inspection's quarantine is.
+- `inspect.CheckListing` checks an archive's listing, its `Listed` entries, each of an `EntryType`,
+  against the rules a tar's headers are held to, by the same name checks, and returns its report:
+  `SevenZipTraversal`, `SevenZipAbsolutePath`, `SevenZipSymlink`, `SevenZipHardlink`,
+  `SevenZipDevice`, and `SevenZipBomb`; `CabTraversal`, `CabAbsolutePath`, and `CabBomb`; and
+  `ZstdBomb`, each of class Unsafe; and `SevenZipEncrypted`, of class Active.
+- sevenzip's fixtures: commons-compress's `lorem-ipsum-deflate64.zip`, `lorem-ipsum-implode.zip`,
+  `bzip2-zip.zip`, `test-method-xz.zip`, and `bla.deflate64.7z` (Apache-2.0); libarchive's LZMA,
+  PPMd, and zstd ZIPs, decoded from its .uu files (BSD-2-Clause); and generated 7z, zstd, and
+  cabinet archives, clean, traversing, absolute, linked, a FIFO, bombs, and encrypted, the cabinet
+  a OneNote package's shape named .cab, each with its source, license, and SHA-256 in the testdata
+  README. The integration tier dispatches each, and ~/docs' `mixed-bundle.7z` and
+  `mixed-bundle.tar.zst` when the machine has them.
+- `dispatch.ArchiveStage` reads a tar through `archive/tar`, one entry at a time: each regular file,
+  a sparse one among them, is written under its SHA-256 and found as a part, `tar entry <name>`,
+  its stored name never a path. A directory is no part, and a link, a device, or a FIFO, under a
+  policy that lets the tar proceed, is a record, no link or node made. The bomb rule is enforced on
+  the bytes written, the ratio against the whole tar's size, so only a sparse entry's holes can
+  pass it, recorded quarantined with `inspect.TarBomb`'s evidence.
+- `dispatch.ArchiveStage` decompresses a gzip stream through `compress/gzip` into one part, named by
+  its header's name, else by the stream's name without its .gz, or with a .tgz's .tar, found
+  `gzip content <name>` and routed again, so a .tar.gz is a gzip part holding a tar part. The bomb
+  rule is enforced on the decompressed bytes, the ratio against the stream's size, recorded
+  quarantined with `inspect.GzipBomb`'s evidence; content that doesn't decompress is a record.
+- `inspect` reads a tar's headers, as it reads a ZIP's central directory, extracting no entry, and
+  quarantines a tar with an entry whose name has a ".." element, `TarTraversal`, is absolute or
+  begins with a drive letter, `TarAbsolutePath`, is a symbolic link, `TarSymlink`, a hard link,
+  `TarHardlink`, or a character or block device or a FIFO, `TarDevice`; an entry past both bomb
+  thresholds by the size its header declares, against the whole tar's size, `TarBomb`; or headers
+  that can't all be read, `TarUnreadable`. `GzipBomb`, of class Unsafe, is the archive stage's,
+  raised on the bytes it writes; `Inspect` raises it for no part, since a gzip declares its
+  expanded size only modulo 4 GiB.
+- inspect's generated tar fixtures: `clean.tar`, `clean.tar.gz`, `unnamed.tgz`, `traversal.tar`,
+  `traversal.tar.gz`, `absolute.tar`, `symlink.tar`, `hardlink.tar`, `device.tar`,
+  `sparse-bomb.tar`, an old GNU sparse entry written by hand, and `bomb.tar.gz`, written by
+  `generate.go` with their SHA-256 in the testdata README. The integration tier dispatches each,
+  and ~/docs' `mixed-bundle.tar.gz` when the machine has it.
+- `picture.Converter.ConvertPages` converts a TIFF to one PNG per page, its images in file order,
+  in one magick run, `tiff:<copy> +adjoin` writing each page without the run's time: each PNG is
+  named by the TIFF's SHA-256, `-page`, its number from 1, and .png, so no page shares a stem with
+  another or with a picture's PNG, and a page converted twice is the same bytes. A picture of any
+  other kind gives the one PNG `Convert` gives. A run that fails or leaves a gap in the pages is an
+  error, and the pages it wrote are removed. `Convert` and `ConvertBatch` still convert a TIFF's
+  first image alone, so office's pictures are unchanged.
+- The picture package converts HEIC, WebP, and AVIF to PNG through magick, in `Convert`,
+  `ConvertPages`, and `ConvertBatch`: the first image, read through the kind's coder, `heic:`,
+  `webp:`, or `avif:`, whatever the content, which is a HEIC's primary image, never a thumbnail, and
+  an animated WebP's or AVIF's first frame, turned upright by `-auto-orient`. libheif applies a
+  HEIC's or AVIF's irot and imir itself; -auto-orient applies a WebP's EXIF orientation.
+  `NewConverter` reads magick's format listing, `magick -list format`, once, and a kind whose
+  reader it doesn't mark readable is refused with `picture.ErrNoReader` before anything runs.
+- `dispatch.PictureStage` prepares a TIFF as one image output per page, in page order, named
+  "page N", its Meta naming `page` and `count` beside `from`, as the document stage names a PDF's
+  pages; and a HEIC, WebP, or AVIF as one image output named "picture". A HEIC, WebP, or AVIF whose
+  reader magick lacks has no processor yet, its reason naming `ErrNoReader`.
+- picture's fixtures: `pages.tiff`, three pages of different sizes; `two-images.heic`, a primary
+  image rotated by its irot box beside a second image, each with a thumbnail; `oriented.webp`,
+  under EXIF orientation 6; and `animated.webp` and `animated.avif`, three frames each, generated
+  with their commands and SHA-256 in the testdata README. The integration tier converts each, and
+  ~/docs' TIFF, HEIC, WebP, and AVIF samples when the machine has them; magick isn't pinned, so it
+  checks sizes, page order, pixels, and that two conversions give the same bytes, recording no sums.
+- `dispatch.TextStage`, made by `NewTextStage`, for route.Text, on any platform, running no tool:
+  one text output, "text", UTF-8, its line endings as stored. Its encoding is decided, never
+  detected: a byte order mark (UTF-8, UTF-16LE or BE, UTF-32LE or BE), which the output drops; else
+  UTF-8, when the whole part is valid UTF-8; else windows-1252 as a fallback, with a warning. It
+  decodes through golang.org/x/text v0.43.0, the module's first dependency outside the standard
+  library and the spike's own. Meta `encoding` names the encoding and how it was decided, such as
+  `utf-8 (byte order mark)`, `utf-8`, or `windows-1252 (fallback)`; bytes the encoding can't decode
+  become U+FFFD, counted in Meta `warnings`. Valid UTF-8 without a mark is passed through, its
+  output's Path the part's own file; other text is decoded, streamed, into a file in the part's
+  directory, and a large part is held to the dispatcher's `Limits` alone. The unit tier holds it to
+  ~/docs' encodings and their truth when the machine has them: correct for UTF-8 with and without a
+  mark, UTF-16LE with one, windows-1252, with CRLF too, and ISO-8859-1; garbled, the known limit,
+  for UTF-16BE without a mark, KOI8-R, EUC-JP, Shift_JIS, and windows-1256.
+- `email.Conversation`, a record of the Stream's in place of the `Message` of a conversation
+  class, `email.ConversationClass` (IPM.Note.Microsoft.Conversation) or `email.MissedClass`
+  (IPM.Note.Microsoft.Missed), a Skype for Business conversation history item: its participants,
+  the sender then To, CC, and BCC; its start and end, the submit and delivery times; its topic,
+  the conversation topic, else the subject; `Missed`, by its class; its transcript as mail's
+  Markdown and as the stored HTML; and its id, folder, class, and attachments. Its `Line` is
+  "conversation". The class decides, without regard to case, never the folder: every other class,
+  the note beside them in Conversation History and the Voice classes among them, is a `Message` as
+  before. No turn is parsed from the transcript. `email.IsConversation` reports whether a class is
+  one, and `Message.Conversation` reads a `Message` as the Stream does.
+- `dispatch.EmailStage` yields a conversation as its record, `conversation <id>`, then its
+  transcript's Markdown of the same name, as it yields a message, its attachments before both; the
+  Meta of both names its id, folder, topic, and `missed`, and an inline one's `embedded_in`. A
+  conversation record moves a resuming caller's cursor as a message's does, and feeds no Threader.
+- mail v0.3.1's fixtures in `email/testdata/mail`: its generated `conversations.pst`, a
+  Conversation History folder of three conversations, a missed one, and a note, built from item
+  sources, `layout.json`'s folders listing `items`, and hand truth under `truth.json`'s `items`.
+  The tests hold every item to the truth, read from `truth.json`, through the email Reader and the
+  email stage.
+
+### Changed
+
+- mise pins mail at 0.3.1, and `mise run fixtures:mail` copies its tag; every fixture but the
+  conversation history store's is unchanged. The email stage's identity names mail's version,
+  which moves with the pin, so an index prepares a store again.
+
+- `office.Converter.Convert` converts an RTF, known by its signature whatever `Request.Name`'s
+  extension, through LibreOffice to docx with Writer's docx export filter, as a .doc, then runs
+  office on it; `Result.ConvertedFrom` is "rtf". Without a LibreOffice Tool an RTF is refused with
+  `ErrNoLibreOffice`, as a legacy document is, before anything runs. `dispatch.OfficeStage` takes
+  an RTF so, yielding its Markdown and media as for a legacy document, its Meta's `converted_from`
+  "rtf"; without LibreOffice its reason names the missing converter. ODF, WordPerfect, and .xlsb
+  are still no processor yet. The integration tier converts the hand-written
+  `office/testdata/rtf/memo.rtf` and `~/docs`'s `test-rtf.rtf`, and its route truth has the RTF
+  prepared.
+
+- The integration tier registers the text stage, so its route truth has the text parts it held as
+  no processor yet prepared, or seen where an earlier fixture holds the same bytes.
+
+- `picture.NewConverter` and `office.NewConverter` take a `context.Context`, under which the picture
+  Converter runs magick's format listing when it is given magick; a listing that fails is an error.
+- `dispatch.PictureStage` converts through `ConvertPages`: a standalone TIFF of one page is now
+  named by its SHA-256 and `-page1.png`, its output "page 1".
+- `dispatch.adapterVersion` is 3, bumped once for the release: an index recorded an RTF as no
+  processor yet under the office stage's identity, and a standalone TIFF as one picture under the
+  picture stage's, so an index prepares every adapter's parts again.
+
+- `dispatch.ZipStage` is `dispatch.ArchiveStage`, built by `NewArchiveStage` over an
+  `ArchiveConfig`, since it reads every archive kind; its identity is "archive", version 2, its
+  configuration's hash naming its 7-Zip's version. The zip stage recorded tar, gzip, zstd, 7z, and
+  cabinet parts and ZIP entries of other methods as no processor yet, and an index holding those
+  entries prepares them again. Its errors begin "archive stage:".
+- A ZIP entry of a method the stage reads neither itself nor, without 7-Zip, through 7zz is a
+  record whose reason says "has no processor yet without 7-Zip".
+- The default LibreOffice image, `picture.LibreOfficeImage`, moves to
+  gotenberg/gotenberg:9.1.0-libreoffice, pinned by digest. It carries the same LibreOffice,
+  26.8.2.2, and soffice runs in it headless as before, through the container runner's lockdown,
+  with no change of path, arguments, or filters.
+
 ## [v0.8.0] - 2026-11-06
 
 ### Added
@@ -636,7 +843,8 @@ Every move is without an alias: a caller on v0.5.0 renames as listed.
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.9.0...HEAD
+[v0.9.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.9.0
 [v0.8.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.8.0
 [v0.7.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.7.0
 [v0.6.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.6.0

@@ -196,7 +196,8 @@ func TestReal(t *testing.T) {
 // checkLines checks recs, a read's records, against want, mail's lines for the same input, whose
 // lines its errors call them: there is one record per line, in order and of the line's kind, none
 // of an unknown kind, and each marshals back to its line's fields, less "line" and any false
-// boolean.
+// boolean. A Conversation is a message line's: the line, decoded as a Message and read through
+// Message.Conversation, marshals as the record does.
 func checkLines(t *testing.T, recs []email.Record, want []map[string]any, whose string) {
 	t.Helper()
 	if len(recs) != len(want) {
@@ -207,10 +208,17 @@ func checkLines(t *testing.T, recs []email.Record, want []map[string]any, whose 
 			t.Errorf("record %d: unknown kind %s", i, rec.Line())
 		}
 		line := maps.Clone(want[i])
-		if kind := line["line"]; kind != rec.Line() {
-			t.Errorf("record %d: kind %s, %s %v", i, rec.Line(), whose, kind)
+		kind := rec.Line()
+		if _, ok := rec.(*email.Conversation); ok {
+			kind = "message"
+		}
+		if line["line"] != kind {
+			t.Errorf("record %d: kind %s, %s %v", i, rec.Line(), whose, line["line"])
 		}
 		delete(line, "line")
+		if _, ok := rec.(*email.Conversation); ok {
+			line = conversationLine(t, line)
+		}
 		got := marshalled(t, rec)
 		dropFalse(line)
 		if !reflect.DeepEqual(got, line) {
@@ -446,7 +454,7 @@ func checkMIMEMessage(t *testing.T, m *email.Message) {
 }
 
 // realInputs returns every input the real-binary tests read, and fails the test unless they are
-// the 39. stores are the copied fixtures' .pst and .msg, mail's 22, each a path under
+// the 40. stores are the copied fixtures' .pst and .msg, mail's 23, each a path under
 // fixtures/, which mail ships goldens for. mime are the 17 .eml and mbox, each a path under
 // testdata/: the copied fixtures' .eml, the nine-message mboxrd, mbox.rlug and its five splits,
 // and the built .msg's .eml source.
@@ -473,8 +481,8 @@ func realInputs(t *testing.T) (stores, mime []string) {
 		t.Fatal(err)
 	}
 	mime = append(mime, "built/"+builtEML)
-	if len(stores) != 22 || len(mime) != 17 {
-		t.Errorf("%d .pst and .msg, %d .eml and mbox, want 22 and 17, 39 in all", len(stores), len(mime))
+	if len(stores) != 23 || len(mime) != 17 {
+		t.Errorf("%d .pst and .msg, %d .eml and mbox, want 23 and 17, 40 in all", len(stores), len(mime))
 	}
 	return stores, mime
 }
@@ -554,6 +562,25 @@ func marshalled(t *testing.T, rec email.Record) map[string]any {
 		t.Fatal(err)
 	}
 	return obj
+}
+
+// conversationLine returns line, a message line's fields, as the Conversation Message.Conversation
+// reads from it marshals; it fails the test for a line of no conversation class.
+func conversationLine(t *testing.T, line map[string]any) map[string]any {
+	t.Helper()
+	data, err := jsonv2.Marshal(line)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var m email.Message
+	if err := jsonv2.Unmarshal(data, &m); err != nil {
+		t.Fatal(err)
+	}
+	c, ok := m.Conversation()
+	if !ok {
+		t.Fatalf("a conversation from a line of class %q", m.Class)
+	}
+	return marshalled(t, c)
 }
 
 // dropFalse removes every false boolean from v, nested objects and arrays included: a record

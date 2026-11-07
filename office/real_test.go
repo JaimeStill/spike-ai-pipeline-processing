@@ -41,7 +41,7 @@ func realConverter(t *testing.T) *office.Converter {
 	if err != nil {
 		t.Fatalf("office, which mise pins, run the check through mise run check: %v", err)
 	}
-	c, err := office.NewConverter(office.Config{Office: tl})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: tl})
 	if err != nil {
 		t.Fatal(err)
 	}

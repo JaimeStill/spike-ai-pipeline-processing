@@ -1,0 +1,6797 @@
+[
+  {
+    "input": "email/testdata/mail/fixtures/generated/pst/conversations.pst",
+    "path": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/conversations.pst",
+    "size": 271360,
+    "floor": {
+      "max_rss": 11116544,
+      "user": 846000,
+      "system": 2533000,
+      "wall": 3131560
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34869248,
+          "user": 101430000,
+          "system": 63004000,
+          "wall": 550074482
+        },
+        "self": {
+          "max_rss": 17350656,
+          "user": 8735000,
+          "system": 3865000
+        },
+        "children": {
+          "max_rss": 34869248,
+          "user": 92421000,
+          "system": 59017000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 271360,
+          "parts": 1,
+          "counts": {
+            "nested × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/conversations.pst",
+              "size": 271360,
+              "outcome": "prepared",
+              "outputs": 14,
+              "children": 0,
+              "at": 2943538
+            }
+          ],
+          "elapsed": 3725783,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 13797
+        },
+        "written_files": 3,
+        "written_bytes": 13797
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34938880,
+          "user": 113200000,
+          "system": 54195000,
+          "wall": 536133284
+        },
+        "self": {
+          "max_rss": 19488768,
+          "user": 7466000,
+          "system": 3191000
+        },
+        "children": {
+          "max_rss": 34938880,
+          "user": 105412000,
+          "system": 50866000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 271360,
+          "parts": 1,
+          "counts": {
+            "nested × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/conversations.pst",
+              "size": 271360,
+              "outcome": "prepared",
+              "outputs": 14,
+              "children": 0,
+              "at": 3303516
+            }
+          ],
+          "elapsed": 3395592,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 13797
+        },
+        "written_files": 3,
+        "written_bytes": 13797
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35094528,
+          "user": 79931000,
+          "system": 77279000,
+          "wall": 534588912
+        },
+        "self": {
+          "max_rss": 19132416,
+          "user": 4608000,
+          "system": 4565000
+        },
+        "children": {
+          "max_rss": 35094528,
+          "user": 75309000,
+          "system": 71774000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 271360,
+          "parts": 1,
+          "counts": {
+            "nested × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/experiments/spike-ai-pipeline-processing/email/testdata/mail/fixtures/generated/pst/conversations.pst",
+              "size": 271360,
+              "outcome": "prepared",
+              "outputs": 14,
+              "children": 0,
+              "at": 2517184
+            }
+          ],
+          "elapsed": 2595402,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 13797
+        },
+        "written_files": 3,
+        "written_bytes": 13797
+      }
+    ]
+  },
+  {
+    "input": "~/docs/archive/mixed-bundle.zip",
+    "path": "/home/jaime/docs/archive/mixed-bundle.zip",
+    "size": 43464,
+    "floor": {
+      "max_rss": 13844480,
+      "user": 1427000,
+      "system": 965000,
+      "wall": 2284526
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35147776,
+          "user": 517134000,
+          "system": 152894000,
+          "wall": 1675796327
+        },
+        "self": {
+          "max_rss": 18333696,
+          "user": 23455000,
+          "system": 20276000
+        },
+        "children": {
+          "max_rss": 35147776,
+          "user": 493227000,
+          "system": 131397000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 43464,
+          "parts": 8,
+          "counts": {
+            "archive × prepared": 1,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.zip",
+              "size": 43464,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 6,
+              "at": 1147771270
+            }
+          ],
+          "elapsed": 1147814279,
+          "peak_disk": 347452,
+          "disk_samples": 115,
+          "index_files": 25,
+          "index_bytes": 18566
+        },
+        "written_files": 25,
+        "written_bytes": 18566
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34820096,
+          "user": 506573000,
+          "system": 152531000,
+          "wall": 1711722805
+        },
+        "self": {
+          "max_rss": 18923520,
+          "user": 32415000,
+          "system": 16640000
+        },
+        "children": {
+          "max_rss": 34820096,
+          "user": 474157000,
+          "system": 134487000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 43464,
+          "parts": 8,
+          "counts": {
+            "archive × prepared": 1,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.zip",
+              "size": 43464,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 6,
+              "at": 1170176617
+            }
+          ],
+          "elapsed": 1170298068,
+          "peak_disk": 347452,
+          "disk_samples": 117,
+          "index_files": 25,
+          "index_bytes": 18566
+        },
+        "written_files": 25,
+        "written_bytes": 18566
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34934784,
+          "user": 505917000,
+          "system": 148070000,
+          "wall": 1702944403
+        },
+        "self": {
+          "max_rss": 17203200,
+          "user": 20811000,
+          "system": 22906000
+        },
+        "children": {
+          "max_rss": 34934784,
+          "user": 484931000,
+          "system": 123916000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 43464,
+          "parts": 8,
+          "counts": {
+            "archive × prepared": 1,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.zip",
+              "size": 43464,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 6,
+              "at": 1159619428
+            }
+          ],
+          "elapsed": 1159662698,
+          "peak_disk": 347452,
+          "disk_samples": 116,
+          "index_files": 25,
+          "index_bytes": 18566
+        },
+        "written_files": 25,
+        "written_bytes": 18566
+      }
+    ]
+  },
+  {
+    "input": "~/docs/archive/mixed-bundle.tar.gz",
+    "path": "/home/jaime/docs/archive/mixed-bundle.tar.gz",
+    "size": 43608,
+    "floor": {
+      "max_rss": 12603392,
+      "user": 1134000,
+      "system": 1135000,
+      "wall": 2045180
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34959360,
+          "user": 521600000,
+          "system": 153611000,
+          "wall": 1752220424
+        },
+        "self": {
+          "max_rss": 17453056,
+          "user": 25289000,
+          "system": 21542000
+        },
+        "children": {
+          "max_rss": 34959360,
+          "user": 496282000,
+          "system": 131105000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 43608,
+          "parts": 9,
+          "counts": {
+            "archive × prepared": 2,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.tar.gz",
+              "size": 43608,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 1,
+              "at": 1195910584
+            }
+          ],
+          "elapsed": 1195974439,
+          "peak_disk": 430396,
+          "disk_samples": 120,
+          "index_files": 28,
+          "index_bytes": 19159
+        },
+        "written_files": 28,
+        "written_bytes": 19159
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34983936,
+          "user": 482231000,
+          "system": 164562000,
+          "wall": 1686599642
+        },
+        "self": {
+          "max_rss": 20033536,
+          "user": 22672000,
+          "system": 27092000
+        },
+        "children": {
+          "max_rss": 34983936,
+          "user": 459096000,
+          "system": 136916000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 43608,
+          "parts": 9,
+          "counts": {
+            "archive × prepared": 2,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.tar.gz",
+              "size": 43608,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 1,
+              "at": 1142726640
+            }
+          ],
+          "elapsed": 1142774678,
+          "peak_disk": 430396,
+          "disk_samples": 115,
+          "index_files": 28,
+          "index_bytes": 19159
+        },
+        "written_files": 28,
+        "written_bytes": 19159
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35016704,
+          "user": 485181000,
+          "system": 155101000,
+          "wall": 1688271544
+        },
+        "self": {
+          "max_rss": 18055168,
+          "user": 20231000,
+          "system": 22273000
+        },
+        "children": {
+          "max_rss": 35016704,
+          "user": 464602000,
+          "system": 131413000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 43608,
+          "parts": 9,
+          "counts": {
+            "archive × prepared": 2,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.tar.gz",
+              "size": 43608,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 1,
+              "at": 1146267110
+            }
+          ],
+          "elapsed": 1146303551,
+          "peak_disk": 430396,
+          "disk_samples": 115,
+          "index_files": 28,
+          "index_bytes": 19159
+        },
+        "written_files": 28,
+        "written_bytes": 19159
+      }
+    ]
+  },
+  {
+    "input": "~/docs/archive/mixed-bundle.tar.zst",
+    "path": "/home/jaime/docs/archive/mixed-bundle.tar.zst",
+    "size": 44020,
+    "floor": {
+      "max_rss": 13930496,
+      "user": 0,
+      "system": 2945000,
+      "wall": 2773666
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34873344,
+          "user": 536969000,
+          "system": 163622000,
+          "wall": 1755667509
+        },
+        "self": {
+          "max_rss": 17522688,
+          "user": 28413000,
+          "system": 19929000
+        },
+        "children": {
+          "max_rss": 34873344,
+          "user": 508013000,
+          "system": 142235000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 44020,
+          "parts": 9,
+          "counts": {
+            "archive × prepared": 2,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.tar.zst",
+              "size": 44020,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 1,
+              "at": 1182143365
+            }
+          ],
+          "elapsed": 1182291491,
+          "peak_disk": 430396,
+          "disk_samples": 119,
+          "index_files": 28,
+          "index_bytes": 19159
+        },
+        "written_files": 28,
+        "written_bytes": 19159
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34873344,
+          "user": 483725000,
+          "system": 187646000,
+          "wall": 1755669001
+        },
+        "self": {
+          "max_rss": 18538496,
+          "user": 23039000,
+          "system": 21780000
+        },
+        "children": {
+          "max_rss": 34873344,
+          "user": 460685000,
+          "system": 164840000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 44020,
+          "parts": 9,
+          "counts": {
+            "archive × prepared": 2,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.tar.zst",
+              "size": 44020,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 1,
+              "at": 1184818157
+            }
+          ],
+          "elapsed": 1184854633,
+          "peak_disk": 430396,
+          "disk_samples": 119,
+          "index_files": 28,
+          "index_bytes": 19159
+        },
+        "written_files": 28,
+        "written_bytes": 19159
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 37638144,
+          "user": 513880000,
+          "system": 159952000,
+          "wall": 1740583898
+        },
+        "self": {
+          "max_rss": 19062784,
+          "user": 30593000,
+          "system": 17338000
+        },
+        "children": {
+          "max_rss": 37638144,
+          "user": 482934000,
+          "system": 141386000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 44020,
+          "parts": 9,
+          "counts": {
+            "archive × prepared": 2,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.tar.zst",
+              "size": 44020,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 1,
+              "at": 1172637390
+            }
+          ],
+          "elapsed": 1172674975,
+          "peak_disk": 430396,
+          "disk_samples": 118,
+          "index_files": 28,
+          "index_bytes": 19159
+        },
+        "written_files": 28,
+        "written_bytes": 19159
+      }
+    ]
+  },
+  {
+    "input": "~/docs/archive/mixed-bundle.7z",
+    "path": "/home/jaime/docs/archive/mixed-bundle.7z",
+    "size": 41061,
+    "floor": {
+      "max_rss": 15450112,
+      "user": 1229000,
+      "system": 1237000,
+      "wall": 2325046
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35086336,
+          "user": 514326000,
+          "system": 169537000,
+          "wall": 1757663515
+        },
+        "self": {
+          "max_rss": 17874944,
+          "user": 22243000,
+          "system": 27768000
+        },
+        "children": {
+          "max_rss": 35086336,
+          "user": 492006000,
+          "system": 140552000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 41061,
+          "parts": 8,
+          "counts": {
+            "archive × prepared": 1,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.7z",
+              "size": 41061,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 6,
+              "at": 1179291238
+            }
+          ],
+          "elapsed": 1179358995,
+          "peak_disk": 347452,
+          "disk_samples": 118,
+          "index_files": 25,
+          "index_bytes": 18584
+        },
+        "written_files": 25,
+        "written_bytes": 18584
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34742272,
+          "user": 550653000,
+          "system": 160864000,
+          "wall": 2150384682
+        },
+        "self": {
+          "max_rss": 16605184,
+          "user": 22511000,
+          "system": 21555000
+        },
+        "children": {
+          "max_rss": 34742272,
+          "user": 528142000,
+          "system": 137769000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 41061,
+          "parts": 8,
+          "counts": {
+            "archive × prepared": 1,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.7z",
+              "size": 41061,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 6,
+              "at": 1202627575
+            }
+          ],
+          "elapsed": 1202667987,
+          "peak_disk": 347452,
+          "disk_samples": 121,
+          "index_files": 25,
+          "index_bytes": 18584
+        },
+        "written_files": 25,
+        "written_bytes": 18584
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35147776,
+          "user": 536788000,
+          "system": 155371000,
+          "wall": 1740784009
+        },
+        "self": {
+          "max_rss": 17260544,
+          "user": 32034000,
+          "system": 19452000
+        },
+        "children": {
+          "max_rss": 35147776,
+          "user": 504327000,
+          "system": 134695000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 41061,
+          "parts": 8,
+          "counts": {
+            "archive × prepared": 1,
+            "document × prepared": 1,
+            "nested × prepared": 1,
+            "office × prepared": 2,
+            "text × prepared": 2,
+            "vision × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 1,
+          "seen_messages": 0,
+          "outputs": 14,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/archive/mixed-bundle.7z",
+              "size": 41061,
+              "outcome": "prepared",
+              "outputs": 0,
+              "children": 6,
+              "at": 1186960435
+            }
+          ],
+          "elapsed": 1187001232,
+          "peak_disk": 347452,
+          "disk_samples": 119,
+          "index_files": 25,
+          "index_bytes": 18584
+        },
+        "written_files": 25,
+        "written_bytes": 18584
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/tiff/scanned-3page-g4.tif",
+    "path": "/home/jaime/docs/image/formats/tiff/scanned-3page-g4.tif",
+    "size": 13748,
+    "floor": {
+      "max_rss": 11952128,
+      "user": 1441000,
+      "system": 1439000,
+      "wall": 2620094
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 121692160,
+          "user": 396186000,
+          "system": 129686000,
+          "wall": 817689991
+        },
+        "self": {
+          "max_rss": 15134720,
+          "user": 9649000,
+          "system": 2129000
+        },
+        "children": {
+          "max_rss": 121692160,
+          "user": 386537000,
+          "system": 126676000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 13748,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/scanned-3page-g4.tif",
+              "size": 13748,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 248652539
+            }
+          ],
+          "elapsed": 248744004,
+          "peak_disk": 30834,
+          "disk_samples": 25,
+          "index_files": 3,
+          "index_bytes": 703
+        },
+        "written_files": 3,
+        "written_bytes": 703
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 120606720,
+          "user": 392691000,
+          "system": 112013000,
+          "wall": 781802093
+        },
+        "self": {
+          "max_rss": 13639680,
+          "user": 4805000,
+          "system": 7459000
+        },
+        "children": {
+          "max_rss": 120606720,
+          "user": 387722000,
+          "system": 104301000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 13748,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/scanned-3page-g4.tif",
+              "size": 13748,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 244443522
+            }
+          ],
+          "elapsed": 244542964,
+          "peak_disk": 38422,
+          "disk_samples": 25,
+          "index_files": 3,
+          "index_bytes": 703
+        },
+        "written_files": 3,
+        "written_bytes": 703
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 120942592,
+          "user": 411649000,
+          "system": 135495000,
+          "wall": 829392512
+        },
+        "self": {
+          "max_rss": 14442496,
+          "user": 1946000,
+          "system": 11665000
+        },
+        "children": {
+          "max_rss": 120942592,
+          "user": 409651000,
+          "system": 123518000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 13748,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/scanned-3page-g4.tif",
+              "size": 13748,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 262355569
+            }
+          ],
+          "elapsed": 262448952,
+          "peak_disk": 38422,
+          "disk_samples": 27,
+          "index_files": 3,
+          "index_bytes": 703
+        },
+        "written_files": 3,
+        "written_bytes": 703
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif",
+    "path": "/home/jaime/docs/image/formats/tiff/scanned-3page-lzw-gray.tif",
+    "size": 2338130,
+    "floor": {
+      "max_rss": 12890112,
+      "user": 0,
+      "system": 3291000,
+      "wall": 3102478
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 100118528,
+          "user": 875837000,
+          "system": 110876000,
+          "wall": 1358457929
+        },
+        "self": {
+          "max_rss": 15650816,
+          "user": 9667000,
+          "system": 13576000
+        },
+        "children": {
+          "max_rss": 100118528,
+          "user": 866076000,
+          "system": 96185000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2338130,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/scanned-3page-lzw-gray.tif",
+              "size": 2338130,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 814848431
+            }
+          ],
+          "elapsed": 815026679,
+          "peak_disk": 4289226,
+          "disk_samples": 82,
+          "index_files": 3,
+          "index_bytes": 703
+        },
+        "written_files": 3,
+        "written_bytes": 703
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 100585472,
+          "user": 917801000,
+          "system": 107770000,
+          "wall": 1405511539
+        },
+        "self": {
+          "max_rss": 14622720,
+          "user": 13918000,
+          "system": 10617000
+        },
+        "children": {
+          "max_rss": 100585472,
+          "user": 903882000,
+          "system": 96235000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2338130,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/scanned-3page-lzw-gray.tif",
+              "size": 2338130,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 852710472
+            }
+          ],
+          "elapsed": 852873572,
+          "peak_disk": 4289226,
+          "disk_samples": 86,
+          "index_files": 3,
+          "index_bytes": 703
+        },
+        "written_files": 3,
+        "written_bytes": 703
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 100016128,
+          "user": 894921000,
+          "system": 109397000,
+          "wall": 1385908260
+        },
+        "self": {
+          "max_rss": 14999552,
+          "user": 15593000,
+          "system": 8318000
+        },
+        "children": {
+          "max_rss": 100016128,
+          "user": 879214000,
+          "system": 99973000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2338130,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/scanned-3page-lzw-gray.tif",
+              "size": 2338130,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 833908159
+            }
+          ],
+          "elapsed": 834075885,
+          "peak_disk": 4289226,
+          "disk_samples": 84,
+          "index_files": 3,
+          "index_bytes": 703
+        },
+        "written_files": 3,
+        "written_bytes": 703
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/tiff/photo-deflate.tif",
+    "path": "/home/jaime/docs/image/formats/tiff/photo-deflate.tif",
+    "size": 963758,
+    "floor": {
+      "max_rss": 11755520,
+      "user": 3108000,
+      "system": 0,
+      "wall": 2910819
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35016704,
+          "user": 268699000,
+          "system": 92994000,
+          "wall": 751175220
+        },
+        "self": {
+          "max_rss": 15638528,
+          "user": 6044000,
+          "system": 10885000
+        },
+        "children": {
+          "max_rss": 35016704,
+          "user": 262654000,
+          "system": 81305000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 963758,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/photo-deflate.tif",
+              "size": 963758,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 181754784
+            }
+          ],
+          "elapsed": 181876203,
+          "peak_disk": 1833453,
+          "disk_samples": 19,
+          "index_files": 3,
+          "index_bytes": 495
+        },
+        "written_files": 3,
+        "written_bytes": 495
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35045376,
+          "user": 272088000,
+          "system": 73097000,
+          "wall": 712839335
+        },
+        "self": {
+          "max_rss": 14192640,
+          "user": 9975000,
+          "system": 4243000
+        },
+        "children": {
+          "max_rss": 35045376,
+          "user": 261535000,
+          "system": 68608000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 963758,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/photo-deflate.tif",
+              "size": 963758,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 179774273
+            }
+          ],
+          "elapsed": 180518590,
+          "peak_disk": 1782958,
+          "disk_samples": 19,
+          "index_files": 3,
+          "index_bytes": 495
+        },
+        "written_files": 3,
+        "written_bytes": 495
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35106816,
+          "user": 266166000,
+          "system": 79350000,
+          "wall": 740420504
+        },
+        "self": {
+          "max_rss": 14753792,
+          "user": 8179000,
+          "system": 5117000
+        },
+        "children": {
+          "max_rss": 35106816,
+          "user": 257854000,
+          "system": 73114000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 963758,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/photo-deflate.tif",
+              "size": 963758,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 178679204
+            }
+          ],
+          "elapsed": 178797074,
+          "peak_disk": 1782958,
+          "disk_samples": 18,
+          "index_files": 3,
+          "index_bytes": 495
+        },
+        "written_files": 3,
+        "written_bytes": 495
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/tiff/old-style-jpeg-compression.tif",
+    "path": "/home/jaime/docs/image/formats/tiff/old-style-jpeg-compression.tif",
+    "size": 213760,
+    "floor": {
+      "max_rss": 11657216,
+      "user": 0,
+      "system": 3155000,
+      "wall": 3076081
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 105889792,
+          "user": 973920000,
+          "system": 128549000,
+          "wall": 1435166951
+        },
+        "self": {
+          "max_rss": 14794752,
+          "user": 9325000,
+          "system": 7141000
+        },
+        "children": {
+          "max_rss": 105889792,
+          "user": 964200000,
+          "system": 120533000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 213760,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/old-style-jpeg-compression.tif",
+              "size": 213760,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 880983682
+            }
+          ],
+          "elapsed": 881132626,
+          "peak_disk": 1693879,
+          "disk_samples": 89,
+          "index_files": 3,
+          "index_bytes": 495
+        },
+        "written_files": 3,
+        "written_bytes": 495
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 105803776,
+          "user": 964855000,
+          "system": 121359000,
+          "wall": 1432621082
+        },
+        "self": {
+          "max_rss": 16031744,
+          "user": 4233000,
+          "system": 12082000
+        },
+        "children": {
+          "max_rss": 105803776,
+          "user": 960426000,
+          "system": 107971000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 213760,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/old-style-jpeg-compression.tif",
+              "size": 213760,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 873942380
+            }
+          ],
+          "elapsed": 874086456,
+          "peak_disk": 1693879,
+          "disk_samples": 88,
+          "index_files": 3,
+          "index_bytes": 495
+        },
+        "written_files": 3,
+        "written_bytes": 495
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 106156032,
+          "user": 1003618000,
+          "system": 118047000,
+          "wall": 1462968532
+        },
+        "self": {
+          "max_rss": 17588224,
+          "user": 6799000,
+          "system": 12212000
+        },
+        "children": {
+          "max_rss": 106156032,
+          "user": 996542000,
+          "system": 105336000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 213760,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/tiff/old-style-jpeg-compression.tif",
+              "size": 213760,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 897310650
+            }
+          ],
+          "elapsed": 897547570,
+          "peak_disk": 1692416,
+          "disk_samples": 90,
+          "index_files": 3,
+          "index_bytes": 495
+        },
+        "written_files": 3,
+        "written_bytes": 495
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/heic/example.heic",
+    "path": "/home/jaime/docs/image/formats/heic/example.heic",
+    "size": 718114,
+    "floor": {
+      "max_rss": 13320192,
+      "user": 0,
+      "system": 2587000,
+      "wall": 2399712
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 55582720,
+          "user": 362659000,
+          "system": 85692000,
+          "wall": 834538820
+        },
+        "self": {
+          "max_rss": 14561280,
+          "user": 2880000,
+          "system": 8634000
+        },
+        "children": {
+          "max_rss": 55582720,
+          "user": 359741000,
+          "system": 75978000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 718114,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/heic/example.heic",
+              "size": 718114,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 271289093
+            }
+          ],
+          "elapsed": 271459330,
+          "peak_disk": 2669283,
+          "disk_samples": 28,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 55808000,
+          "user": 388111000,
+          "system": 71651000,
+          "wall": 825966847
+        },
+        "self": {
+          "max_rss": 14368768,
+          "user": 10793000,
+          "system": 4175000
+        },
+        "children": {
+          "max_rss": 55808000,
+          "user": 377045000,
+          "system": 67370000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 718114,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/heic/example.heic",
+              "size": 718114,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 285394229
+            }
+          ],
+          "elapsed": 285663619,
+          "peak_disk": 2618658,
+          "disk_samples": 29,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 55328768,
+          "user": 351664000,
+          "system": 98643000,
+          "wall": 824280097
+        },
+        "self": {
+          "max_rss": 13721600,
+          "user": 8661000,
+          "system": 4344000
+        },
+        "children": {
+          "max_rss": 55328768,
+          "user": 342538000,
+          "system": 94066000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 718114,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/heic/example.heic",
+              "size": 718114,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 273609242
+            }
+          ],
+          "elapsed": 273785983,
+          "peak_disk": 2667810,
+          "disk_samples": 28,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/webp/photo.webp",
+    "path": "/home/jaime/docs/image/formats/webp/photo.webp",
+    "size": 247404,
+    "floor": {
+      "max_rss": 12034048,
+      "user": 1102000,
+      "system": 1102000,
+      "wall": 2130349
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 65814528,
+          "user": 890925000,
+          "system": 92033000,
+          "wall": 1338588843
+        },
+        "self": {
+          "max_rss": 15446016,
+          "user": 13300000,
+          "system": 5711000
+        },
+        "children": {
+          "max_rss": 65814528,
+          "user": 877624000,
+          "system": 85037000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 247404,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/webp/photo.webp",
+              "size": 247404,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 781131858
+            }
+          ],
+          "elapsed": 781448995,
+          "peak_disk": 2858429,
+          "disk_samples": 79,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 65961984,
+          "user": 867487000,
+          "system": 90263000,
+          "wall": 1314186174
+        },
+        "self": {
+          "max_rss": 12967936,
+          "user": 13331000,
+          "system": 3093000
+        },
+        "children": {
+          "max_rss": 65961984,
+          "user": 854155000,
+          "system": 86470000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 247404,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/webp/photo.webp",
+              "size": 247404,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 766405024
+            }
+          ],
+          "elapsed": 766656521,
+          "peak_disk": 2815596,
+          "disk_samples": 77,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 66199552,
+          "user": 880265000,
+          "system": 89487000,
+          "wall": 1341464514
+        },
+        "self": {
+          "max_rss": 18391040,
+          "user": 9126000,
+          "system": 9624000
+        },
+        "children": {
+          "max_rss": 66199552,
+          "user": 870925000,
+          "system": 78968000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 247404,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/webp/photo.webp",
+              "size": 247404,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 775007355
+            }
+          ],
+          "elapsed": 775237346,
+          "peak_disk": 2856556,
+          "disk_samples": 78,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/webp/text-lossless.webp",
+    "path": "/home/jaime/docs/image/formats/webp/text-lossless.webp",
+    "size": 20082,
+    "floor": {
+      "max_rss": 15630336,
+      "user": 1488000,
+      "system": 1490000,
+      "wall": 2777735
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34861056,
+          "user": 111958000,
+          "system": 64277000,
+          "wall": 585521868
+        },
+        "self": {
+          "max_rss": 13754368,
+          "user": 2567000,
+          "system": 7682000
+        },
+        "children": {
+          "max_rss": 34861056,
+          "user": 109391000,
+          "system": 55520000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 20082,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/webp/text-lossless.webp",
+              "size": 20082,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 15109166
+            }
+          ],
+          "elapsed": 15244349,
+          "peak_disk": 20082,
+          "disk_samples": 2,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35086336,
+          "user": 107304000,
+          "system": 78625000,
+          "wall": 586876339
+        },
+        "self": {
+          "max_rss": 14753792,
+          "user": 5273000,
+          "system": 6347000
+        },
+        "children": {
+          "max_rss": 35086336,
+          "user": 101802000,
+          "system": 72002000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 20082,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/webp/text-lossless.webp",
+              "size": 20082,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 20416390
+            }
+          ],
+          "elapsed": 20524292,
+          "peak_disk": 64583,
+          "disk_samples": 3,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34803712,
+          "user": 104577000,
+          "system": 66259000,
+          "wall": 566539180
+        },
+        "self": {
+          "max_rss": 13656064,
+          "user": 3966000,
+          "system": 6262000
+        },
+        "children": {
+          "max_rss": 34803712,
+          "user": 100332000,
+          "system": 59556000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 20082,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/webp/text-lossless.webp",
+              "size": 20082,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 15234653
+            }
+          ],
+          "elapsed": 15318737,
+          "peak_disk": 20082,
+          "disk_samples": 2,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/avif/example.avif",
+    "path": "/home/jaime/docs/image/formats/avif/example.avif",
+    "size": 113604,
+    "floor": {
+      "max_rss": 11407360,
+      "user": 2021000,
+      "system": 1345000,
+      "wall": 3005697
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 36941824,
+          "user": 198266000,
+          "system": 87695000,
+          "wall": 681467511
+        },
+        "self": {
+          "max_rss": 16211968,
+          "user": 4712000,
+          "system": 8635000
+        },
+        "children": {
+          "max_rss": 36941824,
+          "user": 193150000,
+          "system": 78320000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 113604,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/example.avif",
+              "size": 113604,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 102411331
+            }
+          ],
+          "elapsed": 102533843,
+          "peak_disk": 916017,
+          "disk_samples": 11,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 38023168,
+          "user": 211340000,
+          "system": 72887000,
+          "wall": 665009418
+        },
+        "self": {
+          "max_rss": 14442496,
+          "user": 3823000,
+          "system": 8598000
+        },
+        "children": {
+          "max_rss": 38023168,
+          "user": 207402000,
+          "system": 64032000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 113604,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/example.avif",
+              "size": 113604,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 103122901
+            }
+          ],
+          "elapsed": 103779015,
+          "peak_disk": 916017,
+          "disk_samples": 11,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 37548032,
+          "user": 208241000,
+          "system": 85017000,
+          "wall": 676189829
+        },
+        "self": {
+          "max_rss": 14008320,
+          "user": 5152000,
+          "system": 7675000
+        },
+        "children": {
+          "max_rss": 37548032,
+          "user": 203036000,
+          "system": 75986000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 113604,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/example.avif",
+              "size": 113604,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 109043261
+            }
+          ],
+          "elapsed": 109211576,
+          "peak_disk": 801732,
+          "disk_samples": 11,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/avif/bbb-alpha-inverted.avif",
+    "path": "/home/jaime/docs/image/formats/avif/bbb-alpha-inverted.avif",
+    "size": 8468,
+    "floor": {
+      "max_rss": 11935744,
+      "user": 2082000,
+      "system": 1033000,
+      "wall": 2919288
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 361025536,
+          "user": 767579000,
+          "system": 203858000,
+          "wall": 1118704319
+        },
+        "self": {
+          "max_rss": 14192640,
+          "user": 11751000,
+          "system": 1067000
+        },
+        "children": {
+          "max_rss": 361025536,
+          "user": 755365000,
+          "system": 202749000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 8468,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/bbb-alpha-inverted.avif",
+              "size": 8468,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 563256219
+            }
+          ],
+          "elapsed": 563375726,
+          "peak_disk": 459629,
+          "disk_samples": 57,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 361689088,
+          "user": 763626000,
+          "system": 220362000,
+          "wall": 1127749408
+        },
+        "self": {
+          "max_rss": 14000128,
+          "user": 7578000,
+          "system": 8845000
+        },
+        "children": {
+          "max_rss": 361689088,
+          "user": 756048000,
+          "system": 210688000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 8468,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/bbb-alpha-inverted.avif",
+              "size": 8468,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 559061280
+            }
+          ],
+          "elapsed": 559173580,
+          "peak_disk": 459629,
+          "disk_samples": 56,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 361807872,
+          "user": 783819000,
+          "system": 202989000,
+          "wall": 1694444702
+        },
+        "self": {
+          "max_rss": 13524992,
+          "user": 13632000,
+          "system": 3887000
+        },
+        "children": {
+          "max_rss": 361807872,
+          "user": 770040000,
+          "system": 198074000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 8468,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/bbb-alpha-inverted.avif",
+              "size": 8468,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 567845347
+            }
+          ],
+          "elapsed": 567948440,
+          "peak_disk": 459629,
+          "disk_samples": 57,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/avif/hdr-cosmos.avif",
+    "path": "/home/jaime/docs/image/formats/avif/hdr-cosmos.avif",
+    "size": 8156,
+    "floor": {
+      "max_rss": 12320768,
+      "user": 1278000,
+      "system": 1278000,
+      "wall": 2277318
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 78987264,
+          "user": 1235647000,
+          "system": 101398000,
+          "wall": 1719110102
+        },
+        "self": {
+          "max_rss": 15527936,
+          "user": 7242000,
+          "system": 11809000
+        },
+        "children": {
+          "max_rss": 78987264,
+          "user": 1228194000,
+          "system": 88311000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 8156,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/hdr-cosmos.avif",
+              "size": 8156,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1168860521
+            }
+          ],
+          "elapsed": 1169012027,
+          "peak_disk": 1449948,
+          "disk_samples": 117,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 79314944,
+          "user": 1252200000,
+          "system": 107069000,
+          "wall": 1736354869
+        },
+        "self": {
+          "max_rss": 15310848,
+          "user": 15522000,
+          "system": 4144000
+        },
+        "children": {
+          "max_rss": 79314944,
+          "user": 1236677000,
+          "system": 102083000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 8156,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/hdr-cosmos.avif",
+              "size": 8156,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1187236292
+            }
+          ],
+          "elapsed": 1187534100,
+          "peak_disk": 1449948,
+          "disk_samples": 119,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 78610432,
+          "user": 1267145000,
+          "system": 110672000,
+          "wall": 1739639209
+        },
+        "self": {
+          "max_rss": 14360576,
+          "user": 10868000,
+          "system": 12048000
+        },
+        "children": {
+          "max_rss": 78610432,
+          "user": 1256058000,
+          "system": 97155000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 8156,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/hdr-cosmos.avif",
+              "size": 8156,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1198760497
+            }
+          ],
+          "elapsed": 1198975752,
+          "peak_disk": 1449948,
+          "disk_samples": 120,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      }
+    ]
+  },
+  {
+    "input": "~/docs/image/formats/avif/monochrome.avif",
+    "path": "/home/jaime/docs/image/formats/avif/monochrome.avif",
+    "size": 7436,
+    "floor": {
+      "max_rss": 13459456,
+      "user": 1279000,
+      "system": 1286000,
+      "wall": 2424898
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 69959680,
+          "user": 188761000,
+          "system": 87190000,
+          "wall": 659837760
+        },
+        "self": {
+          "max_rss": 16048128,
+          "user": 3033000,
+          "system": 10616000
+        },
+        "children": {
+          "max_rss": 69959680,
+          "user": 185727000,
+          "system": 76198000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 7436,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/monochrome.avif",
+              "size": 7436,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 100080809
+            }
+          ],
+          "elapsed": 100881889,
+          "peak_disk": 146881,
+          "disk_samples": 11,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 69382144,
+          "user": 175606000,
+          "system": 100881000,
+          "wall": 662744966
+        },
+        "self": {
+          "max_rss": 15204352,
+          "user": 4192000,
+          "system": 8427000
+        },
+        "children": {
+          "max_rss": 69382144,
+          "user": 171296000,
+          "system": 92216000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 7436,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/monochrome.avif",
+              "size": 7436,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 99487974
+            }
+          ],
+          "elapsed": 100340694,
+          "peak_disk": 146881,
+          "disk_samples": 11,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 69611520,
+          "user": 198906000,
+          "system": 83285000,
+          "wall": 660646532
+        },
+        "self": {
+          "max_rss": 12898304,
+          "user": 6842000,
+          "system": 3890000
+        },
+        "children": {
+          "max_rss": 69611520,
+          "user": 192064000,
+          "system": 78711000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 7436,
+          "parts": 1,
+          "counts": {
+            "vision-converted × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/image/formats/avif/monochrome.avif",
+              "size": 7436,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 107557850
+            }
+          ],
+          "elapsed": 107664120,
+          "peak_disk": 138508,
+          "disk_samples": 11,
+          "index_files": 3,
+          "index_bytes": 473
+        },
+        "written_files": 3,
+        "written_bytes": 473
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/utf8-nobom.txt",
+    "path": "/home/jaime/docs/text/encodings/utf8-nobom.txt",
+    "size": 801,
+    "floor": {
+      "max_rss": 12316672,
+      "user": 2591000,
+      "system": 0,
+      "wall": 2386587
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35196928,
+          "user": 91507000,
+          "system": 68188000,
+          "wall": 549388911
+        },
+        "self": {
+          "max_rss": 14548992,
+          "user": 5366000,
+          "system": 3257000
+        },
+        "children": {
+          "max_rss": 35196928,
+          "user": 86141000,
+          "system": 64008000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 801,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf8-nobom.txt",
+              "size": 801,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 155683
+            }
+          ],
+          "elapsed": 223771,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 443
+        },
+        "written_files": 3,
+        "written_bytes": 443
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34803712,
+          "user": 89253000,
+          "system": 72730000,
+          "wall": 561447418
+        },
+        "self": {
+          "max_rss": 13148160,
+          "user": 2654000,
+          "system": 6635000
+        },
+        "children": {
+          "max_rss": 34803712,
+          "user": 86599000,
+          "system": 65072000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 801,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf8-nobom.txt",
+              "size": 801,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 163628
+            }
+          ],
+          "elapsed": 238347,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 443
+        },
+        "written_files": 3,
+        "written_bytes": 443
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34664448,
+          "user": 95665000,
+          "system": 66980000,
+          "wall": 547716824
+        },
+        "self": {
+          "max_rss": 13803520,
+          "user": 3905000,
+          "system": 7751000
+        },
+        "children": {
+          "max_rss": 34664448,
+          "user": 91587000,
+          "system": 58884000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 801,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf8-nobom.txt",
+              "size": 801,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 187511
+            }
+          ],
+          "elapsed": 281685,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 443
+        },
+        "written_files": 3,
+        "written_bytes": 443
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/utf8-bom.txt",
+    "path": "/home/jaime/docs/text/encodings/utf8-bom.txt",
+    "size": 804,
+    "floor": {
+      "max_rss": 12574720,
+      "user": 0,
+      "system": 3212000,
+      "wall": 2939948
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34836480,
+          "user": 84162000,
+          "system": 75432000,
+          "wall": 552611971
+        },
+        "self": {
+          "max_rss": 15212544,
+          "user": 2726000,
+          "system": 6827000
+        },
+        "children": {
+          "max_rss": 34836480,
+          "user": 81436000,
+          "system": 67838000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 804,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf8-bom.txt",
+              "size": 804,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 185732
+            }
+          ],
+          "elapsed": 264999,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 461
+        },
+        "written_files": 3,
+        "written_bytes": 461
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35074048,
+          "user": 83978000,
+          "system": 76295000,
+          "wall": 563110771
+        },
+        "self": {
+          "max_rss": 13295616,
+          "user": 1683000,
+          "system": 6729000
+        },
+        "children": {
+          "max_rss": 35074048,
+          "user": 82294000,
+          "system": 68438000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 804,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf8-bom.txt",
+              "size": 804,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 182600
+            }
+          ],
+          "elapsed": 266891,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 461
+        },
+        "written_files": 3,
+        "written_bytes": 461
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35110912,
+          "user": 102261000,
+          "system": 62338000,
+          "wall": 537305788
+        },
+        "self": {
+          "max_rss": 12984320,
+          "user": 5129000,
+          "system": 4078000
+        },
+        "children": {
+          "max_rss": 35110912,
+          "user": 97090000,
+          "system": 57232000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 804,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf8-bom.txt",
+              "size": 804,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 174557
+            }
+          ],
+          "elapsed": 266879,
+          "peak_disk": 801,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 461
+        },
+        "written_files": 3,
+        "written_bytes": 461
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/utf16le-bom.txt",
+    "path": "/home/jaime/docs/text/encodings/utf16le-bom.txt",
+    "size": 780,
+    "floor": {
+      "max_rss": 13406208,
+      "user": 747000,
+      "system": 2322000,
+      "wall": 2784125
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34996224,
+          "user": 87821000,
+          "system": 72894000,
+          "wall": 559584433
+        },
+        "self": {
+          "max_rss": 15196160,
+          "user": 3309000,
+          "system": 4952000
+        },
+        "children": {
+          "max_rss": 34996224,
+          "user": 84495000,
+          "system": 67089000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 780,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf16le-bom.txt",
+              "size": 780,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 209238
+            }
+          ],
+          "elapsed": 287003,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 464
+        },
+        "written_files": 3,
+        "written_bytes": 464
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34869248,
+          "user": 90676000,
+          "system": 77076000,
+          "wall": 546046556
+        },
+        "self": {
+          "max_rss": 15228928,
+          "user": 3572000,
+          "system": 4269000
+        },
+        "children": {
+          "max_rss": 34869248,
+          "user": 86696000,
+          "system": 72320000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 780,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf16le-bom.txt",
+              "size": 780,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 206941
+            }
+          ],
+          "elapsed": 285574,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 464
+        },
+        "written_files": 3,
+        "written_bytes": 464
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34902016,
+          "user": 95049000,
+          "system": 77159000,
+          "wall": 576163016
+        },
+        "self": {
+          "max_rss": 15294464,
+          "user": 7259000,
+          "system": 5185000
+        },
+        "children": {
+          "max_rss": 34902016,
+          "user": 87539000,
+          "system": 71794000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 780,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf16le-bom.txt",
+              "size": 780,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1086260
+            }
+          ],
+          "elapsed": 1320140,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 464
+        },
+        "written_files": 3,
+        "written_bytes": 464
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/windows-1252.txt",
+    "path": "/home/jaime/docs/text/encodings/windows-1252.txt",
+    "size": 78,
+    "floor": {
+      "max_rss": 15642624,
+      "user": 2125000,
+      "system": 1066000,
+      "wall": 2995448
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35000320,
+          "user": 99287000,
+          "system": 60351000,
+          "wall": 545709398
+        },
+        "self": {
+          "max_rss": 18235392,
+          "user": 6235000,
+          "system": 4143000
+        },
+        "children": {
+          "max_rss": 35000320,
+          "user": 92808000,
+          "system": 56046000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 78,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/windows-1252.txt",
+              "size": 78,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 515003
+            }
+          ],
+          "elapsed": 664706,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35061760,
+          "user": 95733000,
+          "system": 66234000,
+          "wall": 549899031
+        },
+        "self": {
+          "max_rss": 14839808,
+          "user": 4909000,
+          "system": 4903000
+        },
+        "children": {
+          "max_rss": 35061760,
+          "user": 89961000,
+          "system": 61330000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 78,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/windows-1252.txt",
+              "size": 78,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 183215
+            }
+          ],
+          "elapsed": 259592,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35037184,
+          "user": 107020000,
+          "system": 49989000,
+          "wall": 546843782
+        },
+        "self": {
+          "max_rss": 16084992,
+          "user": 9644000,
+          "system": 1063000
+        },
+        "children": {
+          "max_rss": 35037184,
+          "user": 96599000,
+          "system": 48925000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 78,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/windows-1252.txt",
+              "size": 78,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 219931
+            }
+          ],
+          "elapsed": 331096,
+          "peak_disk": 97,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/crlf-windows-1252.txt",
+    "path": "/home/jaime/docs/text/encodings/crlf-windows-1252.txt",
+    "size": 237,
+    "floor": {
+      "max_rss": 10723328,
+      "user": 0,
+      "system": 3006000,
+      "wall": 2679115
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35115008,
+          "user": 96542000,
+          "system": 68197000,
+          "wall": 565266815
+        },
+        "self": {
+          "max_rss": 15454208,
+          "user": 3928000,
+          "system": 5929000
+        },
+        "children": {
+          "max_rss": 35115008,
+          "user": 92614000,
+          "system": 61312000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 237,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/crlf-windows-1252.txt",
+              "size": 237,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 561016
+            }
+          ],
+          "elapsed": 757673,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34902016,
+          "user": 91099000,
+          "system": 70406000,
+          "wall": 547984136
+        },
+        "self": {
+          "max_rss": 15458304,
+          "user": 4326000,
+          "system": 3594000
+        },
+        "children": {
+          "max_rss": 34902016,
+          "user": 86456000,
+          "system": 65773000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 237,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/crlf-windows-1252.txt",
+              "size": 237,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 200115
+            }
+          ],
+          "elapsed": 278126,
+          "peak_disk": 294,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34922496,
+          "user": 91131000,
+          "system": 66096000,
+          "wall": 538679702
+        },
+        "self": {
+          "max_rss": 17412096,
+          "user": 3729000,
+          "system": 6193000
+        },
+        "children": {
+          "max_rss": 34922496,
+          "user": 87401000,
+          "system": 59370000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 237,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/crlf-windows-1252.txt",
+              "size": 237,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 164009
+            }
+          ],
+          "elapsed": 235378,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/iso-8859-1.txt",
+    "path": "/home/jaime/docs/text/encodings/iso-8859-1.txt",
+    "size": 80,
+    "floor": {
+      "max_rss": 10727424,
+      "user": 761000,
+      "system": 2276000,
+      "wall": 2758184
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34676736,
+          "user": 98283000,
+          "system": 63511000,
+          "wall": 556922790
+        },
+        "self": {
+          "max_rss": 15962112,
+          "user": 8548000,
+          "system": 2431000
+        },
+        "children": {
+          "max_rss": 34676736,
+          "user": 89434000,
+          "system": 60994000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 80,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/iso-8859-1.txt",
+              "size": 80,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 950719
+            }
+          ],
+          "elapsed": 1071715,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34861056,
+          "user": 91202000,
+          "system": 72191000,
+          "wall": 563282657
+        },
+        "self": {
+          "max_rss": 15478784,
+          "user": 5765000,
+          "system": 4117000
+        },
+        "children": {
+          "max_rss": 34861056,
+          "user": 85004000,
+          "system": 67765000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 80,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/iso-8859-1.txt",
+              "size": 80,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 179434
+            }
+          ],
+          "elapsed": 267033,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35241984,
+          "user": 93390000,
+          "system": 74376000,
+          "wall": 572151953
+        },
+        "self": {
+          "max_rss": 14413824,
+          "user": 4386000,
+          "system": 4406000
+        },
+        "children": {
+          "max_rss": 35241984,
+          "user": 89003000,
+          "system": 69185000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 80,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/iso-8859-1.txt",
+              "size": 80,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 171073
+            }
+          ],
+          "elapsed": 245997,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/koi8-r.txt",
+    "path": "/home/jaime/docs/text/encodings/koi8-r.txt",
+    "size": 235,
+    "floor": {
+      "max_rss": 12754944,
+      "user": 0,
+      "system": 2436000,
+      "wall": 2245846
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35012608,
+          "user": 96989000,
+          "system": 61981000,
+          "wall": 550419471
+        },
+        "self": {
+          "max_rss": 15695872,
+          "user": 4469000,
+          "system": 3368000
+        },
+        "children": {
+          "max_rss": 35012608,
+          "user": 92520000,
+          "system": 57704000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 235,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/koi8-r.txt",
+              "size": 235,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 195323
+            }
+          ],
+          "elapsed": 269481,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34897920,
+          "user": 87091000,
+          "system": 77766000,
+          "wall": 562180789
+        },
+        "self": {
+          "max_rss": 14180352,
+          "user": 7075000,
+          "system": 2679000
+        },
+        "children": {
+          "max_rss": 34897920,
+          "user": 79728000,
+          "system": 74977000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 235,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/koi8-r.txt",
+              "size": 235,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1041579
+            }
+          ],
+          "elapsed": 1143408,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35004416,
+          "user": 90719000,
+          "system": 72210000,
+          "wall": 571789959
+        },
+        "self": {
+          "max_rss": 14938112,
+          "user": 5854000,
+          "system": 4862000
+        },
+        "children": {
+          "max_rss": 35004416,
+          "user": 84658000,
+          "system": 67177000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 235,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/koi8-r.txt",
+              "size": 235,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 683148
+            }
+          ],
+          "elapsed": 1199049,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/euc-jp.txt",
+    "path": "/home/jaime/docs/text/encodings/euc-jp.txt",
+    "size": 203,
+    "floor": {
+      "max_rss": 12689408,
+      "user": 1081000,
+      "system": 2157000,
+      "wall": 2866409
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35008512,
+          "user": 90923000,
+          "system": 65291000,
+          "wall": 559399109
+        },
+        "self": {
+          "max_rss": 13279232,
+          "user": 4994000,
+          "system": 4180000
+        },
+        "children": {
+          "max_rss": 35008512,
+          "user": 85474000,
+          "system": 60730000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 203,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/euc-jp.txt",
+              "size": 203,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 200314
+            }
+          ],
+          "elapsed": 291255,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35000320,
+          "user": 96381000,
+          "system": 57649000,
+          "wall": 557075928
+        },
+        "self": {
+          "max_rss": 14573568,
+          "user": 8289000,
+          "system": 3594000
+        },
+        "children": {
+          "max_rss": 35000320,
+          "user": 87768000,
+          "system": 53914000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 203,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/euc-jp.txt",
+              "size": 203,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1140909
+            }
+          ],
+          "elapsed": 1242175,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35176448,
+          "user": 99562000,
+          "system": 57535000,
+          "wall": 565790638
+        },
+        "self": {
+          "max_rss": 12922880,
+          "user": 5738000,
+          "system": 2160000
+        },
+        "children": {
+          "max_rss": 35176448,
+          "user": 93274000,
+          "system": 55168000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 203,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/euc-jp.txt",
+              "size": 203,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 209961
+            }
+          ],
+          "elapsed": 300509,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/shift-jis.txt",
+    "path": "/home/jaime/docs/text/encodings/shift-jis.txt",
+    "size": 203,
+    "floor": {
+      "max_rss": 12316672,
+      "user": 0,
+      "system": 3265000,
+      "wall": 3113898
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35119104,
+          "user": 101100000,
+          "system": 67482000,
+          "wall": 561197627
+        },
+        "self": {
+          "max_rss": 13123584,
+          "user": 4036000,
+          "system": 4034000
+        },
+        "children": {
+          "max_rss": 35119104,
+          "user": 96959000,
+          "system": 62513000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 203,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/shift-jis.txt",
+              "size": 203,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 198816
+            }
+          ],
+          "elapsed": 278741,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 621
+        },
+        "written_files": 3,
+        "written_bytes": 621
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35131392,
+          "user": 91340000,
+          "system": 78798000,
+          "wall": 591794926
+        },
+        "self": {
+          "max_rss": 14360576,
+          "user": 3846000,
+          "system": 9188000
+        },
+        "children": {
+          "max_rss": 35131392,
+          "user": 87346000,
+          "system": 69256000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 203,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/shift-jis.txt",
+              "size": 203,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1939263
+            }
+          ],
+          "elapsed": 2274467,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 621
+        },
+        "written_files": 3,
+        "written_bytes": 621
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34983936,
+          "user": 95249000,
+          "system": 67640000,
+          "wall": 586008977
+        },
+        "self": {
+          "max_rss": 12984320,
+          "user": 3644000,
+          "system": 4873000
+        },
+        "children": {
+          "max_rss": 34983936,
+          "user": 90698000,
+          "system": 62767000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 203,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/shift-jis.txt",
+              "size": 203,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 193740
+            }
+          ],
+          "elapsed": 279033,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 621
+        },
+        "written_files": 3,
+        "written_bytes": 621
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/windows-1256-arabic.txt",
+    "path": "/home/jaime/docs/text/encodings/windows-1256-arabic.txt",
+    "size": 407,
+    "floor": {
+      "max_rss": 12578816,
+      "user": 1563000,
+      "system": 1571000,
+      "wall": 2867747
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34934784,
+          "user": 92752000,
+          "system": 71102000,
+          "wall": 578418536
+        },
+        "self": {
+          "max_rss": 18223104,
+          "user": 4679000,
+          "system": 5853000
+        },
+        "children": {
+          "max_rss": 34934784,
+          "user": 87920000,
+          "system": 65058000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 407,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/windows-1256-arabic.txt",
+              "size": 407,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1300841
+            }
+          ],
+          "elapsed": 1391851,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34955264,
+          "user": 99144000,
+          "system": 63537000,
+          "wall": 562733379
+        },
+        "self": {
+          "max_rss": 14802944,
+          "user": 5219000,
+          "system": 6545000
+        },
+        "children": {
+          "max_rss": 34955264,
+          "user": 93763000,
+          "system": 56789000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 407,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/windows-1256-arabic.txt",
+              "size": 407,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 942240
+            }
+          ],
+          "elapsed": 1031595,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34869248,
+          "user": 91340000,
+          "system": 69558000,
+          "wall": 560213955
+        },
+        "self": {
+          "max_rss": 12914688,
+          "user": 6506000,
+          "system": 3252000
+        },
+        "children": {
+          "max_rss": 34869248,
+          "user": 84495000,
+          "system": 66137000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 407,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/windows-1256-arabic.txt",
+              "size": 407,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 337529
+            }
+          ],
+          "elapsed": 474145,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 570
+        },
+        "written_files": 3,
+        "written_bytes": 570
+      }
+    ]
+  },
+  {
+    "input": "~/docs/text/encodings/utf16be-nobom.txt",
+    "path": "/home/jaime/docs/text/encodings/utf16be-nobom.txt",
+    "size": 376,
+    "floor": {
+      "max_rss": 12492800,
+      "user": 0,
+      "system": 3225000,
+      "wall": 2902429
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34852864,
+          "user": 88727000,
+          "system": 82767000,
+          "wall": 592136195
+        },
+        "self": {
+          "max_rss": 14897152,
+          "user": 4108000,
+          "system": 6857000
+        },
+        "children": {
+          "max_rss": 34852864,
+          "user": 84619000,
+          "system": 75063000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 376,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf16be-nobom.txt",
+              "size": 376,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 186288
+            }
+          ],
+          "elapsed": 266929,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 621
+        },
+        "written_files": 3,
+        "written_bytes": 621
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34926592,
+          "user": 80386000,
+          "system": 84350000,
+          "wall": 593428507
+        },
+        "self": {
+          "max_rss": 12935168,
+          "user": 815000,
+          "system": 8948000
+        },
+        "children": {
+          "max_rss": 34926592,
+          "user": 79563000,
+          "system": 74503000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 376,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf16be-nobom.txt",
+              "size": 376,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 315473
+            }
+          ],
+          "elapsed": 472633,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 621
+        },
+        "written_files": 3,
+        "written_bytes": 621
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35131392,
+          "user": 93826000,
+          "system": 71912000,
+          "wall": 582779664
+        },
+        "self": {
+          "max_rss": 14553088,
+          "user": 3498000,
+          "system": 7018000
+        },
+        "children": {
+          "max_rss": 35131392,
+          "user": 90149000,
+          "system": 64538000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 376,
+          "parts": 1,
+          "counts": {
+            "text × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/text/encodings/utf16be-nobom.txt",
+              "size": 376,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1096963
+            }
+          ],
+          "elapsed": 1195783,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 3,
+          "index_bytes": 621
+        },
+        "written_files": 3,
+        "written_bytes": 621
+      }
+    ]
+  },
+  {
+    "input": "~/docs/office/rtf/test-rtf.rtf",
+    "path": "/home/jaime/docs/office/rtf/test-rtf.rtf",
+    "size": 1308,
+    "floor": {
+      "max_rss": 11657216,
+      "user": 0,
+      "system": 2485000,
+      "wall": 2187545
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34844672,
+          "user": 145380000,
+          "system": 111715000,
+          "wall": 1782642951
+        },
+        "self": {
+          "max_rss": 16822272,
+          "user": 32517000,
+          "system": 35596000
+        },
+        "children": {
+          "max_rss": 34844672,
+          "user": 112516000,
+          "system": 74710000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 1308,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/test-rtf.rtf",
+              "size": 1308,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 1210154360
+            }
+          ],
+          "elapsed": 1210434643,
+          "peak_disk": 239688,
+          "disk_samples": 122,
+          "index_files": 3,
+          "index_bytes": 1092
+        },
+        "written_files": 3,
+        "written_bytes": 1092
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34750464,
+          "user": 131912000,
+          "system": 113669000,
+          "wall": 1436685789
+        },
+        "self": {
+          "max_rss": 19353600,
+          "user": 14464000,
+          "system": 19737000
+        },
+        "children": {
+          "max_rss": 34750464,
+          "user": 117248000,
+          "system": 92602000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 1308,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/test-rtf.rtf",
+              "size": 1308,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 784050988
+            }
+          ],
+          "elapsed": 784137921,
+          "peak_disk": 239561,
+          "disk_samples": 79,
+          "index_files": 3,
+          "index_bytes": 1092
+        },
+        "written_files": 3,
+        "written_bytes": 1092
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34885632,
+          "user": 129208000,
+          "system": 105002000,
+          "wall": 1721146437
+        },
+        "self": {
+          "max_rss": 20652032,
+          "user": 18547000,
+          "system": 12331000
+        },
+        "children": {
+          "max_rss": 34885632,
+          "user": 110622000,
+          "system": 91760000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 1308,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/test-rtf.rtf",
+              "size": 1308,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 763730532
+            }
+          ],
+          "elapsed": 764368683,
+          "peak_disk": 239688,
+          "disk_samples": 77,
+          "index_files": 3,
+          "index_bytes": 1092
+        },
+        "written_files": 3,
+        "written_bytes": 1092
+      }
+    ]
+  },
+  {
+    "input": "~/docs/office/rtf/lists.libreoffice.rtf",
+    "path": "/home/jaime/docs/office/rtf/lists.libreoffice.rtf",
+    "size": 30836,
+    "floor": {
+      "max_rss": 13418496,
+      "user": 1517000,
+      "system": 1519000,
+      "wall": 2694777
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34918400,
+          "user": 130870000,
+          "system": 92496000,
+          "wall": 1311383972
+        },
+        "self": {
+          "max_rss": 16232448,
+          "user": 12855000,
+          "system": 16335000
+        },
+        "children": {
+          "max_rss": 34918400,
+          "user": 118015000,
+          "system": 75433000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 30836,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/lists.libreoffice.rtf",
+              "size": 30836,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 761751162
+            }
+          ],
+          "elapsed": 761843195,
+          "peak_disk": 271973,
+          "disk_samples": 77,
+          "index_files": 3,
+          "index_bytes": 1240
+        },
+        "written_files": 3,
+        "written_bytes": 1240
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34877440,
+          "user": 140667000,
+          "system": 87193000,
+          "wall": 1330865378
+        },
+        "self": {
+          "max_rss": 16011264,
+          "user": 15137000,
+          "system": 15141000
+        },
+        "children": {
+          "max_rss": 34877440,
+          "user": 125426000,
+          "system": 71045000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 30836,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/lists.libreoffice.rtf",
+              "size": 30836,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 766947238
+            }
+          ],
+          "elapsed": 767032412,
+          "peak_disk": 271846,
+          "disk_samples": 77,
+          "index_files": 3,
+          "index_bytes": 1240
+        },
+        "written_files": 3,
+        "written_bytes": 1240
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34848768,
+          "user": 120075000,
+          "system": 100695000,
+          "wall": 1324992934
+        },
+        "self": {
+          "max_rss": 16019456,
+          "user": 13686000,
+          "system": 15814000
+        },
+        "children": {
+          "max_rss": 34848768,
+          "user": 106166000,
+          "system": 83547000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 30836,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/lists.libreoffice.rtf",
+              "size": 30836,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 770306884
+            }
+          ],
+          "elapsed": 770409434,
+          "peak_disk": 271846,
+          "disk_samples": 77,
+          "index_files": 3,
+          "index_bytes": 1240
+        },
+        "written_files": 3,
+        "written_bytes": 1240
+      }
+    ]
+  },
+  {
+    "input": "~/docs/office/rtf/tables.libreoffice.rtf",
+    "path": "/home/jaime/docs/office/rtf/tables.libreoffice.rtf",
+    "size": 25094,
+    "floor": {
+      "max_rss": 11931648,
+      "user": 2245000,
+      "system": 0,
+      "wall": 2081885
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35074048,
+          "user": 131985000,
+          "system": 91698000,
+          "wall": 1335414701
+        },
+        "self": {
+          "max_rss": 17719296,
+          "user": 22195000,
+          "system": 7879000
+        },
+        "children": {
+          "max_rss": 35074048,
+          "user": 109062000,
+          "system": 82822000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 25094,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/tables.libreoffice.rtf",
+              "size": 25094,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 767813402
+            }
+          ],
+          "elapsed": 767903764,
+          "peak_disk": 265105,
+          "disk_samples": 77,
+          "index_files": 3,
+          "index_bytes": 752
+        },
+        "written_files": 3,
+        "written_bytes": 752
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35037184,
+          "user": 128139000,
+          "system": 104804000,
+          "wall": 1344850611
+        },
+        "self": {
+          "max_rss": 15138816,
+          "user": 14414000,
+          "system": 17695000
+        },
+        "children": {
+          "max_rss": 35037184,
+          "user": 113724000,
+          "system": 86192000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 25094,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/tables.libreoffice.rtf",
+              "size": 25094,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 778874944
+            }
+          ],
+          "elapsed": 779025851,
+          "peak_disk": 265232,
+          "disk_samples": 78,
+          "index_files": 3,
+          "index_bytes": 752
+        },
+        "written_files": 3,
+        "written_bytes": 752
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35119104,
+          "user": 127604000,
+          "system": 91729000,
+          "wall": 1347202289
+        },
+        "self": {
+          "max_rss": 20033536,
+          "user": 19840000,
+          "system": 14933000
+        },
+        "children": {
+          "max_rss": 35119104,
+          "user": 107608000,
+          "system": 75669000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 25094,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/tables.libreoffice.rtf",
+              "size": 25094,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 790327517
+            }
+          ],
+          "elapsed": 790417546,
+          "peak_disk": 265105,
+          "disk_samples": 80,
+          "index_files": 3,
+          "index_bytes": 752
+        },
+        "written_files": 3,
+        "written_bytes": 752
+      }
+    ]
+  },
+  {
+    "input": "~/docs/office/rtf/lorem-ipsum-calibre.rtf",
+    "path": "/home/jaime/docs/office/rtf/lorem-ipsum-calibre.rtf",
+    "size": 6891,
+    "floor": {
+      "max_rss": 13471744,
+      "user": 0,
+      "system": 2353000,
+      "wall": 2219838
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34840576,
+          "user": 121636000,
+          "system": 99817000,
+          "wall": 1362904777
+        },
+        "self": {
+          "max_rss": 18268160,
+          "user": 18158000,
+          "system": 12469000
+        },
+        "children": {
+          "max_rss": 34840576,
+          "user": 103304000,
+          "system": 86251000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 6891,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/lorem-ipsum-calibre.rtf",
+              "size": 6891,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 771946343
+            }
+          ],
+          "elapsed": 772029562,
+          "peak_disk": 246968,
+          "disk_samples": 78,
+          "index_files": 3,
+          "index_bytes": 6492
+        },
+        "written_files": 3,
+        "written_bytes": 6492
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34865152,
+          "user": 122700000,
+          "system": 84726000,
+          "wall": 1338123321
+        },
+        "self": {
+          "max_rss": 18087936,
+          "user": 11625000,
+          "system": 16781000
+        },
+        "children": {
+          "max_rss": 34865152,
+          "user": 111075000,
+          "system": 66833000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 6891,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/lorem-ipsum-calibre.rtf",
+              "size": 6891,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 781840294
+            }
+          ],
+          "elapsed": 781976691,
+          "peak_disk": 247095,
+          "disk_samples": 79,
+          "index_files": 3,
+          "index_bytes": 6492
+        },
+        "written_files": 3,
+        "written_bytes": 6492
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35151872,
+          "user": 131289000,
+          "system": 88957000,
+          "wall": 1340259890
+        },
+        "self": {
+          "max_rss": 17342464,
+          "user": 17997000,
+          "system": 15439000
+        },
+        "children": {
+          "max_rss": 35151872,
+          "user": 112985000,
+          "system": 72375000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 6891,
+          "parts": 1,
+          "counts": {
+            "office × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 1,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/office/rtf/lorem-ipsum-calibre.rtf",
+              "size": 6891,
+              "outcome": "prepared",
+              "outputs": 1,
+              "children": 0,
+              "at": 756858156
+            }
+          ],
+          "elapsed": 756988099,
+          "peak_disk": 246968,
+          "disk_samples": 76,
+          "index_files": 3,
+          "index_bytes": 6492
+        },
+        "written_files": 3,
+        "written_bytes": 6492
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/encrypted/encryption-openpassword.pdf",
+    "path": "/home/jaime/docs/pdf/edge/encrypted/encryption-openpassword.pdf",
+    "size": 70599,
+    "floor": {
+      "max_rss": 13357056,
+      "user": 0,
+      "system": 2965000,
+      "wall": 2754413
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34770944,
+          "user": 99553000,
+          "system": 73192000,
+          "wall": 591804625
+        },
+        "self": {
+          "max_rss": 13283328,
+          "user": 5222000,
+          "system": 3111000
+        },
+        "children": {
+          "max_rss": 34770944,
+          "user": 94331000,
+          "system": 69152000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-openpassword.pdf",
+              "size": 70599,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 6366971
+            }
+          ],
+          "elapsed": 6502334,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 428
+        },
+        "written_files": 2,
+        "written_bytes": 428
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34938880,
+          "user": 89132000,
+          "system": 82784000,
+          "wall": 563583235
+        },
+        "self": {
+          "max_rss": 17891328,
+          "user": 4042000,
+          "system": 8101000
+        },
+        "children": {
+          "max_rss": 34938880,
+          "user": 84952000,
+          "system": 74407000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-openpassword.pdf",
+              "size": 70599,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 6401110
+            }
+          ],
+          "elapsed": 6506184,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 428
+        },
+        "written_files": 2,
+        "written_bytes": 428
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34754560,
+          "user": 89215000,
+          "system": 84022000,
+          "wall": 564717994
+        },
+        "self": {
+          "max_rss": 14213120,
+          "user": 5867000,
+          "system": 5886000
+        },
+        "children": {
+          "max_rss": 34754560,
+          "user": 82595000,
+          "system": 78136000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-openpassword.pdf",
+              "size": 70599,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 4236174
+            }
+          ],
+          "elapsed": 4345902,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 428
+        },
+        "written_files": 2,
+        "written_bytes": 428
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/encrypted/simple-open-password.pdf",
+    "path": "/home/jaime/docs/pdf/edge/encrypted/simple-open-password.pdf",
+    "size": 19051,
+    "floor": {
+      "max_rss": 12165120,
+      "user": 1309000,
+      "system": 1315000,
+      "wall": 2424018
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35119104,
+          "user": 96723000,
+          "system": 67254000,
+          "wall": 572851198
+        },
+        "self": {
+          "max_rss": 15151104,
+          "user": 6926000,
+          "system": 1980000
+        },
+        "children": {
+          "max_rss": 35119104,
+          "user": 89135000,
+          "system": 65085000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 19051,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/simple-open-password.pdf",
+              "size": 19051,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 3392197
+            }
+          ],
+          "elapsed": 3516834,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 503
+        },
+        "written_files": 2,
+        "written_bytes": 503
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35061760,
+          "user": 104062000,
+          "system": 60501000,
+          "wall": 568180511
+        },
+        "self": {
+          "max_rss": 13099008,
+          "user": 3523000,
+          "system": 4860000
+        },
+        "children": {
+          "max_rss": 35061760,
+          "user": 100472000,
+          "system": 54834000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 19051,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/simple-open-password.pdf",
+              "size": 19051,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 4254920
+            }
+          ],
+          "elapsed": 4376920,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 503
+        },
+        "written_files": 2,
+        "written_bytes": 503
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35217408,
+          "user": 88780000,
+          "system": 77321000,
+          "wall": 574796127
+        },
+        "self": {
+          "max_rss": 14856192,
+          "user": 2294000,
+          "system": 6857000
+        },
+        "children": {
+          "max_rss": 35217408,
+          "user": 86485000,
+          "system": 69539000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 19051,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/simple-open-password.pdf",
+              "size": 19051,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 3493417
+            }
+          ],
+          "elapsed": 3620226,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 503
+        },
+        "written_files": 2,
+        "written_bytes": 503
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf",
+    "path": "/home/jaime/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf",
+    "size": 5273,
+    "floor": {
+      "max_rss": 12197888,
+      "user": 1110000,
+      "system": 2205000,
+      "wall": 3012001
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35069952,
+          "user": 107919000,
+          "system": 63303000,
+          "wall": 593973067
+        },
+        "self": {
+          "max_rss": 16883712,
+          "user": 3703000,
+          "system": 5530000
+        },
+        "children": {
+          "max_rss": 35069952,
+          "user": 104216000,
+          "system": 56895000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 5273,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf",
+              "size": 5273,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 5005967
+            }
+          ],
+          "elapsed": 5129067,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 417
+        },
+        "written_files": 2,
+        "written_bytes": 417
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34836480,
+          "user": 100994000,
+          "system": 68738000,
+          "wall": 598065691
+        },
+        "self": {
+          "max_rss": 16527360,
+          "user": 6229000,
+          "system": 3927000
+        },
+        "children": {
+          "max_rss": 34836480,
+          "user": 94518000,
+          "system": 64654000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 5273,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf",
+              "size": 5273,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 5868843
+            }
+          ],
+          "elapsed": 5985337,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 417
+        },
+        "written_files": 2,
+        "written_bytes": 417
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34902016,
+          "user": 93740000,
+          "system": 78648000,
+          "wall": 587129468
+        },
+        "self": {
+          "max_rss": 16777216,
+          "user": 3993000,
+          "system": 5306000
+        },
+        "children": {
+          "max_rss": 34902016,
+          "user": 89746000,
+          "system": 72493000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 5273,
+          "parts": 1,
+          "counts": {
+            "document × encrypted": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 0,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf",
+              "size": 5273,
+              "outcome": "encrypted",
+              "reason": "document stage: the PDF needs a password: encrypted",
+              "outputs": 0,
+              "children": 0,
+              "at": 5399188
+            }
+          ],
+          "elapsed": 5515985,
+          "peak_disk": 0,
+          "disk_samples": 1,
+          "index_files": 2,
+          "index_bytes": 417
+        },
+        "written_files": 2,
+        "written_bytes": 417
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/encrypted/encryption-nocopy.pdf",
+    "path": "/home/jaime/docs/pdf/edge/encrypted/encryption-nocopy.pdf",
+    "size": 70599,
+    "floor": {
+      "max_rss": 13316096,
+      "user": 1039000,
+      "system": 2062000,
+      "wall": 2826792
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34729984,
+          "user": 212067000,
+          "system": 103110000,
+          "wall": 716898042
+        },
+        "self": {
+          "max_rss": 14716928,
+          "user": 7842000,
+          "system": 5879000
+        },
+        "children": {
+          "max_rss": 34729984,
+          "user": 204225000,
+          "system": 96353000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-nocopy.pdf",
+              "size": 70599,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 142421228
+            }
+          ],
+          "elapsed": 142595112,
+          "peak_disk": 70599,
+          "disk_samples": 15,
+          "index_files": 3,
+          "index_bytes": 1046
+        },
+        "written_files": 3,
+        "written_bytes": 1046
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34967552,
+          "user": 195260000,
+          "system": 97895000,
+          "wall": 702056546
+        },
+        "self": {
+          "max_rss": 15749120,
+          "user": 8105000,
+          "system": 8097000
+        },
+        "children": {
+          "max_rss": 34967552,
+          "user": 186976000,
+          "system": 88791000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-nocopy.pdf",
+              "size": 70599,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 129622631
+            }
+          ],
+          "elapsed": 129781782,
+          "peak_disk": 70599,
+          "disk_samples": 13,
+          "index_files": 3,
+          "index_bytes": 1046
+        },
+        "written_files": 3,
+        "written_bytes": 1046
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35078144,
+          "user": 200268000,
+          "system": 102560000,
+          "wall": 718102924
+        },
+        "self": {
+          "max_rss": 17973248,
+          "user": 5458000,
+          "system": 9464000
+        },
+        "children": {
+          "max_rss": 35078144,
+          "user": 194792000,
+          "system": 92285000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-nocopy.pdf",
+              "size": 70599,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 135788106
+            }
+          ],
+          "elapsed": 135878809,
+          "peak_disk": 70599,
+          "disk_samples": 14,
+          "index_files": 3,
+          "index_bytes": 1046
+        },
+        "written_files": 3,
+        "written_bytes": 1046
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf",
+    "path": "/home/jaime/docs/pdf/edge/encrypted/encryption-notextaccess.pdf",
+    "size": 70599,
+    "floor": {
+      "max_rss": 15908864,
+      "user": 0,
+      "system": 3342000,
+      "wall": 3028975
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34922496,
+          "user": 211881000,
+          "system": 90468000,
+          "wall": 695120030
+        },
+        "self": {
+          "max_rss": 17375232,
+          "user": 5135000,
+          "system": 8613000
+        },
+        "children": {
+          "max_rss": 34922496,
+          "user": 206745000,
+          "system": 80917000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-notextaccess.pdf",
+              "size": 70599,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 135269091
+            }
+          ],
+          "elapsed": 135362100,
+          "peak_disk": 70599,
+          "disk_samples": 14,
+          "index_files": 3,
+          "index_bytes": 1046
+        },
+        "written_files": 3,
+        "written_bytes": 1046
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35078144,
+          "user": 222083000,
+          "system": 97598000,
+          "wall": 734007003
+        },
+        "self": {
+          "max_rss": 14180352,
+          "user": 9594000,
+          "system": 6833000
+        },
+        "children": {
+          "max_rss": 35078144,
+          "user": 212424000,
+          "system": 89371000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-notextaccess.pdf",
+              "size": 70599,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 136120565
+            }
+          ],
+          "elapsed": 136224606,
+          "peak_disk": 70599,
+          "disk_samples": 14,
+          "index_files": 3,
+          "index_bytes": 1046
+        },
+        "written_files": 3,
+        "written_bytes": 1046
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34873344,
+          "user": 195291000,
+          "system": 112237000,
+          "wall": 713198418
+        },
+        "self": {
+          "max_rss": 18829312,
+          "user": 8702000,
+          "system": 8738000
+        },
+        "children": {
+          "max_rss": 34873344,
+          "user": 186110000,
+          "system": 103018000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 70599,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/encryption-notextaccess.pdf",
+              "size": 70599,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 141563754
+            }
+          ],
+          "elapsed": 141678838,
+          "peak_disk": 70599,
+          "disk_samples": 15,
+          "index_files": 3,
+          "index_bytes": 1046
+        },
+        "written_files": 3,
+        "written_bytes": 1046
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf",
+    "path": "/home/jaime/docs/pdf/edge/encrypted/unicode-password-baseline.pdf",
+    "size": 4421,
+    "floor": {
+      "max_rss": 15470592,
+      "user": 0,
+      "system": 2713000,
+      "wall": 2520346
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34922496,
+          "user": 190361000,
+          "system": 97214000,
+          "wall": 706752288
+        },
+        "self": {
+          "max_rss": 17502208,
+          "user": 8155000,
+          "system": 5759000
+        },
+        "children": {
+          "max_rss": 34922496,
+          "user": 182205000,
+          "system": 90384000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 4421,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/unicode-password-baseline.pdf",
+              "size": 4421,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 127166521
+            }
+          ],
+          "elapsed": 127295903,
+          "peak_disk": 4421,
+          "disk_samples": 13,
+          "index_files": 3,
+          "index_bytes": 662
+        },
+        "written_files": 3,
+        "written_bytes": 662
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34934784,
+          "user": 197620000,
+          "system": 98153000,
+          "wall": 694311014
+        },
+        "self": {
+          "max_rss": 15929344,
+          "user": 7707000,
+          "system": 6444000
+        },
+        "children": {
+          "max_rss": 34934784,
+          "user": 189913000,
+          "system": 90531000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 4421,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/unicode-password-baseline.pdf",
+              "size": 4421,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 127612315
+            }
+          ],
+          "elapsed": 127710208,
+          "peak_disk": 4421,
+          "disk_samples": 13,
+          "index_files": 3,
+          "index_bytes": 662
+        },
+        "written_files": 3,
+        "written_bytes": 662
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35139584,
+          "user": 200949000,
+          "system": 101118000,
+          "wall": 724669933
+        },
+        "self": {
+          "max_rss": 18407424,
+          "user": 7940000,
+          "system": 6927000
+        },
+        "children": {
+          "max_rss": 35139584,
+          "user": 193008000,
+          "system": 93197000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 4421,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/encrypted/unicode-password-baseline.pdf",
+              "size": 4421,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 140382952
+            }
+          ],
+          "elapsed": 140473871,
+          "peak_disk": 4421,
+          "disk_samples": 15,
+          "index_files": 3,
+          "index_bytes": 662
+        },
+        "written_files": 3,
+        "written_bytes": 662
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/forms/isartor-interactive-form.pdf",
+    "path": "/home/jaime/docs/pdf/edge/forms/isartor-interactive-form.pdf",
+    "size": 47977,
+    "floor": {
+      "max_rss": 13234176,
+      "user": 1560000,
+      "system": 1536000,
+      "wall": 2881341
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35074048,
+          "user": 193163000,
+          "system": 98644000,
+          "wall": 715438546
+        },
+        "self": {
+          "max_rss": 16183296,
+          "user": 8100000,
+          "system": 4489000
+        },
+        "children": {
+          "max_rss": 35074048,
+          "user": 184174000,
+          "system": 94155000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 47977,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/forms/isartor-interactive-form.pdf",
+              "size": 47977,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 125485829
+            }
+          ],
+          "elapsed": 125682736,
+          "peak_disk": 47977,
+          "disk_samples": 13,
+          "index_files": 3,
+          "index_bytes": 868
+        },
+        "written_files": 3,
+        "written_bytes": 868
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34983936,
+          "user": 195007000,
+          "system": 96458000,
+          "wall": 705502734
+        },
+        "self": {
+          "max_rss": 16064512,
+          "user": 6768000,
+          "system": 9685000
+        },
+        "children": {
+          "max_rss": 34983936,
+          "user": 188006000,
+          "system": 85439000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 47977,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/forms/isartor-interactive-form.pdf",
+              "size": 47977,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 123521223
+            }
+          ],
+          "elapsed": 123750886,
+          "peak_disk": 47977,
+          "disk_samples": 13,
+          "index_files": 3,
+          "index_bytes": 868
+        },
+        "written_files": 3,
+        "written_bytes": 868
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35184640,
+          "user": 199981000,
+          "system": 101122000,
+          "wall": 711947977
+        },
+        "self": {
+          "max_rss": 14729216,
+          "user": 7017000,
+          "system": 8198000
+        },
+        "children": {
+          "max_rss": 35184640,
+          "user": 192963000,
+          "system": 91799000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 47977,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 3,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/forms/isartor-interactive-form.pdf",
+              "size": 47977,
+              "outcome": "prepared",
+              "outputs": 3,
+              "children": 0,
+              "at": 131283056
+            }
+          ],
+          "elapsed": 131405986,
+          "peak_disk": 47977,
+          "disk_samples": 14,
+          "index_files": 3,
+          "index_bytes": 868
+        },
+        "written_files": 3,
+        "written_bytes": 868
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf",
+    "path": "/home/jaime/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf",
+    "size": 5418,
+    "floor": {
+      "max_rss": 11866112,
+      "user": 1375000,
+      "system": 1380000,
+      "wall": 2582488
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34836480,
+          "user": 202396000,
+          "system": 96824000,
+          "wall": 733993750
+        },
+        "self": {
+          "max_rss": 15613952,
+          "user": 3789000,
+          "system": 11318000
+        },
+        "children": {
+          "max_rss": 34836480,
+          "user": 198529000,
+          "system": 84307000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 5418,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf",
+              "size": 5418,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 125597523
+            }
+          ],
+          "elapsed": 125837608,
+          "peak_disk": 5418,
+          "disk_samples": 13,
+          "index_files": 3,
+          "index_bytes": 659
+        },
+        "written_files": 3,
+        "written_bytes": 659
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34926592,
+          "user": 194058000,
+          "system": 94254000,
+          "wall": 703550806
+        },
+        "self": {
+          "max_rss": 15933440,
+          "user": 6185000,
+          "system": 8690000
+        },
+        "children": {
+          "max_rss": 34926592,
+          "user": 187531000,
+          "system": 84428000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 5418,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf",
+              "size": 5418,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 123314809
+            }
+          ],
+          "elapsed": 123419298,
+          "peak_disk": 5418,
+          "disk_samples": 13,
+          "index_files": 3,
+          "index_bytes": 659
+        },
+        "written_files": 3,
+        "written_bytes": 659
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34979840,
+          "user": 186707000,
+          "system": 109954000,
+          "wall": 726903246
+        },
+        "self": {
+          "max_rss": 14213120,
+          "user": 9131000,
+          "system": 6776000
+        },
+        "children": {
+          "max_rss": 34979840,
+          "user": 177564000,
+          "system": 102022000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 5418,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf",
+              "size": 5418,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 125821625
+            }
+          ],
+          "elapsed": 125942903,
+          "peak_disk": 5418,
+          "disk_samples": 13,
+          "index_files": 3,
+          "index_bytes": 659
+        },
+        "written_files": 3,
+        "written_bytes": 659
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/attachments/file-attachment.pdf",
+    "path": "/home/jaime/docs/pdf/edge/attachments/file-attachment.pdf",
+    "size": 78950,
+    "floor": {
+      "max_rss": 15425536,
+      "user": 1083000,
+      "system": 2175000,
+      "wall": 2889999
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35028992,
+          "user": 209435000,
+          "system": 85634000,
+          "wall": 1924600967
+        },
+        "self": {
+          "max_rss": 14360576,
+          "user": 8776000,
+          "system": 5843000
+        },
+        "children": {
+          "max_rss": 35028992,
+          "user": 200426000,
+          "system": 78631000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 78950,
+          "parts": 2,
+          "counts": {
+            "document × prepared": 1,
+            "unrouted × no processor yet": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/file-attachment.pdf",
+              "size": 78950,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 1,
+              "at": 137148298
+            }
+          ],
+          "elapsed": 137250588,
+          "peak_disk": 78950,
+          "disk_samples": 14,
+          "index_files": 5,
+          "index_bytes": 1560
+        },
+        "written_files": 5,
+        "written_bytes": 1560
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 36798464,
+          "user": 206407000,
+          "system": 110668000,
+          "wall": 710203092
+        },
+        "self": {
+          "max_rss": 24006656,
+          "user": 5279000,
+          "system": 11854000
+        },
+        "children": {
+          "max_rss": 36798464,
+          "user": 201128000,
+          "system": 97526000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 78950,
+          "parts": 2,
+          "counts": {
+            "document × prepared": 1,
+            "unrouted × no processor yet": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/file-attachment.pdf",
+              "size": 78950,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 1,
+              "at": 147693229
+            }
+          ],
+          "elapsed": 147793026,
+          "peak_disk": 78950,
+          "disk_samples": 15,
+          "index_files": 5,
+          "index_bytes": 1560
+        },
+        "written_files": 5,
+        "written_bytes": 1560
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35184640,
+          "user": 214545000,
+          "system": 97909000,
+          "wall": 690984656
+        },
+        "self": {
+          "max_rss": 18284544,
+          "user": 5604000,
+          "system": 9748000
+        },
+        "children": {
+          "max_rss": 35184640,
+          "user": 208940000,
+          "system": 87315000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 78950,
+          "parts": 2,
+          "counts": {
+            "document × prepared": 1,
+            "unrouted × no processor yet": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/file-attachment.pdf",
+              "size": 78950,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 1,
+              "at": 147394753
+            }
+          ],
+          "elapsed": 147499085,
+          "peak_disk": 78950,
+          "disk_samples": 15,
+          "index_files": 5,
+          "index_bytes": 1560
+        },
+        "written_files": 5,
+        "written_bytes": 1560
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/attachments/file-attachment-annotation.pdf",
+    "path": "/home/jaime/docs/pdf/edge/attachments/file-attachment-annotation.pdf",
+    "size": 57855,
+    "floor": {
+      "max_rss": 15339520,
+      "user": 2191000,
+      "system": 1096000,
+      "wall": 3091315
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 37208064,
+          "user": 234005000,
+          "system": 84322000,
+          "wall": 691939175
+        },
+        "self": {
+          "max_rss": 18755584,
+          "user": 7350000,
+          "system": 7399000
+        },
+        "children": {
+          "max_rss": 37208064,
+          "user": 226654000,
+          "system": 76122000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 57855,
+          "parts": 2,
+          "counts": {
+            "document × prepared": 1,
+            "unrouted × no processor yet": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/file-attachment-annotation.pdf",
+              "size": 57855,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 1,
+              "at": 154111183
+            }
+          ],
+          "elapsed": 154404323,
+          "peak_disk": 57855,
+          "disk_samples": 16,
+          "index_files": 5,
+          "index_bytes": 1471
+        },
+        "written_files": 5,
+        "written_bytes": 1471
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35205120,
+          "user": 233113000,
+          "system": 87170000,
+          "wall": 709720569
+        },
+        "self": {
+          "max_rss": 17649664,
+          "user": 8881000,
+          "system": 5663000
+        },
+        "children": {
+          "max_rss": 35205120,
+          "user": 223436000,
+          "system": 80999000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 57855,
+          "parts": 2,
+          "counts": {
+            "document × prepared": 1,
+            "unrouted × no processor yet": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/file-attachment-annotation.pdf",
+              "size": 57855,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 1,
+              "at": 158475913
+            }
+          ],
+          "elapsed": 158573526,
+          "peak_disk": 57855,
+          "disk_samples": 16,
+          "index_files": 5,
+          "index_bytes": 1471
+        },
+        "written_files": 5,
+        "written_bytes": 1471
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 35033088,
+          "user": 231074000,
+          "system": 85298000,
+          "wall": 687235147
+        },
+        "self": {
+          "max_rss": 17707008,
+          "user": 8185000,
+          "system": 7016000
+        },
+        "children": {
+          "max_rss": 35033088,
+          "user": 222229000,
+          "system": 77715000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 57855,
+          "parts": 2,
+          "counts": {
+            "document × prepared": 1,
+            "unrouted × no processor yet": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/file-attachment-annotation.pdf",
+              "size": 57855,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 1,
+              "at": 156071586
+            }
+          ],
+          "elapsed": 156168189,
+          "peak_disk": 57855,
+          "disk_samples": 16,
+          "index_files": 5,
+          "index_bytes": 1471
+        },
+        "written_files": 5,
+        "written_bytes": 1471
+      }
+    ]
+  },
+  {
+    "input": "~/docs/pdf/edge/attachments/embedded-video-avi.pdf",
+    "path": "/home/jaime/docs/pdf/edge/attachments/embedded-video-avi.pdf",
+    "size": 2053552,
+    "floor": {
+      "max_rss": 15650816,
+      "user": 0,
+      "system": 3056000,
+      "wall": 2908171
+    },
+    "runs": [
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34885632,
+          "user": 256812000,
+          "system": 98959000,
+          "wall": 749588893
+        },
+        "self": {
+          "max_rss": 16801792,
+          "user": 8178000,
+          "system": 10458000
+        },
+        "children": {
+          "max_rss": 34885632,
+          "user": 248599000,
+          "system": 87704000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2053552,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/embedded-video-avi.pdf",
+              "size": 2053552,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 177135496
+            }
+          ],
+          "elapsed": 177242315,
+          "peak_disk": 2053552,
+          "disk_samples": 18,
+          "index_files": 3,
+          "index_bytes": 1045
+        },
+        "written_files": 3,
+        "written_bytes": 1045
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34938880,
+          "user": 243259000,
+          "system": 93017000,
+          "wall": 714477702
+        },
+        "self": {
+          "max_rss": 16633856,
+          "user": 8829000,
+          "system": 9635000
+        },
+        "children": {
+          "max_rss": 34938880,
+          "user": 234252000,
+          "system": 82364000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2053552,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/embedded-video-avi.pdf",
+              "size": 2053552,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 165503644
+            }
+          ],
+          "elapsed": 165614089,
+          "peak_disk": 2053552,
+          "disk_samples": 17,
+          "index_files": 3,
+          "index_bytes": 1045
+        },
+        "written_files": 3,
+        "written_bytes": 1045
+      },
+      {
+        "way": "dispatch",
+        "launched": {
+          "max_rss": 34926592,
+          "user": 229021000,
+          "system": 100991000,
+          "wall": 713053715
+        },
+        "self": {
+          "max_rss": 19374080,
+          "user": 9498000,
+          "system": 6922000
+        },
+        "children": {
+          "max_rss": 34926592,
+          "user": 219286000,
+          "system": 93010000
+        },
+        "survey": {
+          "workers": 0,
+          "input_bytes": 2053552,
+          "parts": 1,
+          "counts": {
+            "document × prepared": 1
+          },
+          "seen_inputs": 0,
+          "seen_parts": 0,
+          "messages": 0,
+          "seen_messages": 0,
+          "outputs": 2,
+          "tops": [
+            {
+              "input": "/home/jaime/docs/pdf/edge/attachments/embedded-video-avi.pdf",
+              "size": 2053552,
+              "outcome": "prepared",
+              "outputs": 2,
+              "children": 0,
+              "at": 168958096
+            }
+          ],
+          "elapsed": 169113135,
+          "peak_disk": 2053552,
+          "disk_samples": 17,
+          "index_files": 3,
+          "index_bytes": 1045
+        },
+        "written_files": 3,
+        "written_bytes": 1045
+      }
+    ]
+  }
+]

@@ -1,9 +1,10 @@
-// Package dispatch walks an input and every part found in it to the stages that prepare them,
-// on the standard library and this module's route and inspect packages, and, for the format
-// packages' adapters, which build on Linux only, on document, office, picture, email, onenote,
-// audio, media, and tool. It never calls a model: it reports what each part is and what its stage
-// prepared, for a layer above to send on. The stages are the caller's, registered by route; the
-// format packages' adapters are stages.
+// Package dispatch walks an input and every part found in it to the stages that prepare them, on
+// the standard library and this module's route and inspect packages and sevenzip's types,
+// golang.org/x/text for the text stage's decoding, and, for the format packages' adapters, which
+// build on Linux only, on document, office, picture, email, onenote, audio, media, and tool. It
+// never calls a model: it reports what each part is and what its stage prepared, for a layer above
+// to send on. The stages are the caller's, registered by route; the format packages' adapters are
+// stages.
 //
 // [Dispatcher.Dispatch] takes an [Input], a file the caller owns and the dispatcher never
 // removes, and yields [Event]s, depth-first, in each stage's own order: each output a stage
@@ -45,7 +46,9 @@
 //   - [Cycle]: its SHA-256 is an ancestor's; it is neither inspected, prepared, nor recursed
 //     into.
 //   - [Quarantined]: its inspection's verdict quarantines it, its flags holding the evidence: no
-//     stage runs, and its file is kept.
+//     stage runs, and its file is kept. A stage may quarantine it too, ending with a
+//     [QuarantineError] on what it read before preparing any of it, such as an archive's listing:
+//     its flags are added to the part's, and its file is kept.
 //   - [Encrypted]: its stage ended with [ErrEncrypted], or failed on content whose flags mark it
 //     encrypted, a /Encrypt PDF, an encrypted ZIP entry, or an encrypted OOXML package; Err holds
 //     the stage's error.
@@ -76,13 +79,23 @@
 //
 //   - [DocumentStage], for route.Document: a PDF's pages through document's Preparer, each
 //     page's text layer a text output and its image a PNG, under the request the caller gives.
+//     Given qpdf, through its [QPDF], a PDF that needs a password ends with [ErrEncrypted],
+//     nothing rendered, one restricted only by its permissions rendering as any other, and a PDF
+//     whose AcroForm has fields yields a "forms" record of them, a document.Form, before its
+//     pages. Given pdfdetach, through its [PDFDetach], each embedded file, the name tree's and
+//     the file attachment annotations', is written under its SHA-256, never its stored name, and
+//     found "attachment <name>", the bomb rule enforced on the bytes written, as the archive
+//     stage enforces it, its check inspect.PDFAttachmentBomb; the media behind a Screen or
+//     Rendition annotation isn't extracted.
 //   - [OfficeStage], for route.Office: office's Markdown, and each medium office wrote, a
-//     converted picture as its PNG, found as a part. ODF, RTF, WordPerfect, an Excel binary
-//     workbook, and a legacy document without LibreOffice have no processor yet; an encrypted
-//     OOXML package, which office refuses, ends with [ErrEncrypted].
-//   - [PictureStage], for route.VisionConverted: a TIFF, EMF, WMF, or SVG to a PNG through
-//     picture's Converter. HEIC, WebP, and AVIF, and a picture whose tool the Converter lacks,
-//     have no processor yet.
+//     converted picture as its PNG, found as a part, an RTF converted to docx first, as a legacy
+//     document is. ODF, WordPerfect, an Excel binary workbook, and a legacy document or an RTF
+//     without LibreOffice have no processor yet; an encrypted OOXML package, which office
+//     refuses, ends with [ErrEncrypted].
+//   - [PictureStage], for route.VisionConverted: a TIFF to a PNG per page, "page N", its Meta
+//     naming the page and the count, and an EMF, WMF, SVG, HEIC, WebP, or AVIF to one PNG,
+//     through picture's Converter. A picture whose tool the Converter lacks, or a HEIC, WebP, or
+//     AVIF whose reader its magick lacks, has no processor yet.
 //   - [VisionStage], for route.Vision: a PNG, JPEG, GIF, or BMP passed through as an image
 //     output, so every picture reaches a layer above as one.
 //   - [EmailStage], for route.Nested: mail's records, each a record output, and each
@@ -90,7 +103,8 @@
 //     attachments come first, each found part dispatched whole, then its record, then its
 //     Markdown body, which the record's Meta "markdown" says follows; an embedded message mail
 //     gives no file for is prepared inline, in its place among the attachments, its own
-//     attachments found below it, at any depth.
+//     attachments found below it, at any depth. A message of a conversation class is a
+//     conversation record, email's Conversation, then its transcript's Markdown, as a message is.
 //   - [OneNoteStage], for route.OneNote: onenote's records, a page's record followed by its
 //     Markdown, and each of its media found as a part, "page <id>, <where>"; a medium onenote
 //     wrote no content for is a record.
@@ -118,28 +132,68 @@
 // Where a stage yields a record and its Markdown, per message or page, the record comes first,
 // then the Markdown of the same name.
 //
-// [ZipStage], for route.Archive, is no format package's adapter: it reads a ZIP through
-// archive/zip, on any platform, one entry at a time, each file entry written into the part's
-// directory under its content's SHA-256 and found as a part, named by its stored name, "zip
-// entry <name>"; the stored name is never a path. A directory's entry is no part. An encrypted
-// entry is a record, recorded encrypted, and the ZIP, once its other entries are dispatched,
-// [Encrypted]. The stage enforces inspect's zip bomb rule again on the bytes it writes, under the
-// thresholds of the inspect.Options its [ZipConfig] is given, which should be the dispatcher's:
-// an entry past both is stopped, its partial file removed, and recorded quarantined, with its
-// evidence, whatever its central directory declared. A tar, gzip, zstd, or 7z archive, or a cabinet, has no
-// processor yet. Its identity is "zip", this package's version of it, and a hash of its
-// thresholds. A ZIP with a traversing, absolute, or drive letter name, or a symbolic link, is
-// quarantined by inspect before the stage runs; under a policy that lets it proceed, the stage
-// still writes each entry by its hash, inside the part's directory.
+// [ArchiveStage], for route.Archive, is no format package's adapter: it reads a ZIP, a tar, and
+// a gzip stream on the standard library, on any platform, and, given 7-Zip through its
+// [ArchiveConfig]'s [SevenZip], a sevenzip.Reader, a zstd stream, a 7z archive, a cabinet not
+// named .onepkg, and a ZIP entry of a method archive/zip doesn't read. A ZIP is read through
+// archive/zip, one entry at a time, each file entry written into the part's directory under its
+// content's SHA-256 and found as a part, named by its stored name, "zip entry <name>"; the stored
+// name is never a path. A directory's entry is no part. A stored, deflated, or bzip2 entry is
+// decompressed by the standard library, bzip2 through compress/bzip2; an entry of another method,
+// such as Deflate64, implode, LZMA, xz, zstd, or PPMd, is extracted alone through 7zz's standard
+// output, under the same rules. An encrypted entry is a record, recorded encrypted, and the ZIP,
+// once its other entries are dispatched, [Encrypted]. A tar is read through archive/tar the same
+// way, each regular file found "tar entry <name>", a directory no part, and a link, a device, or a
+// FIFO a record, no link or node made. A gzip stream is decompressed through compress/gzip into
+// one part, named by its header's name, else by the stream's own name without its .gz, or with a
+// .tgz's .tar, found "gzip content <name>" and routed again, so a .tar.gz is a gzip part holding a
+// tar part; a zstd stream, through 7zz, the same way, named by its own name without its .zst, or
+// with a .tzst's .tar, found "zstd content <name>". A 7z's and a cabinet's files are extracted one
+// at a time through 7zz, found "7z entry <name>" and "cabinet entry <name>"; 7zz writes only to
+// its standard output, never to a path.
 //
-// A skipped record, a medium or attachment with no content, a ZIP entry the zip stage can't
-// write, and a CLI's warnings are each a record output, never dropped. The email and onenote
-// stages place each file they find in a directory of its own, a hard link to the file the CLI
-// wrote, since the CLI writes each distinct content once, named by its SHA-256, for every record
-// that names it, and the dispatcher removes a found part's file once its event is done. Each such
-// part carries that SHA-256 and a release, as [Found] says, which removes the CLI's original once
-// the dispatcher has settled its content; a later record naming it is then found with no file,
-// and seen from the index.
+// Before anything of a 7z, a cabinet, or a zstd stream is extracted, 7-Zip's listing is checked
+// by inspect.CheckListing against the rules inspect holds a tar to, a traversing, absolute, or
+// drive letter name, a link, a device, and an entry past both bomb thresholds by its declared
+// size, and a verdict to quarantine, under the policy of the inspect.Options its [ArchiveConfig]
+// is given, ends the stage with a [QuarantineError]: the part is [Quarantined], the listing's
+// flags its evidence, as inspect would have quarantined it. An encrypted 7z entry is a record and
+// the 7z [Encrypted] once its other entries are dispatched, and a 7z whose headers are encrypted
+// is Encrypted at once.
+//
+// The stage enforces inspect's bomb rule again on the bytes it writes, or reads from 7zz, under
+// the thresholds of those inspect.Options, which should be the dispatcher's: an entry or stream
+// past both is stopped, its partial file removed, and recorded quarantined, with its evidence,
+// whatever its header or listing declared; the ratio is a ZIP entry's against its compressed
+// size, a tar, 7z, or cabinet entry's against the whole archive's, and a gzip or zstd stream's
+// against the stream's. With no 7-Zip, a zstd stream, a 7z archive, or a cabinet has no processor
+// yet, and a ZIP entry 7-Zip would read is a record. Its identity is "archive", this package's
+// version of it, and a hash of its thresholds and its 7-Zip's version. A ZIP or tar with a
+// traversing, absolute, or drive letter name, a ZIP's symbolic link, or a tar's link or device,
+// is quarantined by inspect before the stage runs; under a policy that lets it proceed, the stage
+// still writes each entry by its hash, inside the part's directory, as it does a 7z's or a
+// cabinet's.
+//
+// [TextStage], for route.Text, is no format package's adapter either, and runs no tool, on any
+// platform: it yields one [TextOutput], "text", UTF-8, its line endings as stored. Its encoding
+// is decided, never detected: a byte order mark, UTF-8's, UTF-32's, or UTF-16's, either byte
+// order, which the output drops; else UTF-8, when the whole part is valid UTF-8; else
+// windows-1252, as a fallback, with a warning. It decodes through golang.org/x/text. Its Meta
+// "encoding" names the encoding and how it was decided, as "utf-8 (byte order mark)", "utf-8", or
+// "windows-1252 (fallback)"; bytes the encoding can't decode become U+FFFD, which its Meta
+// "warnings" counts. Valid UTF-8 without a mark is passed through, the output's Path the part's
+// own file; other text is decoded, streamed, into a file in the part's directory. It sets no cap
+// of its own: a large part is held to the dispatcher's [Limits].
+//
+// A skipped record, a medium or attachment with no content, an archive's entry or a gzip or zstd
+// stream's content the archive stage can't write, a PDF's embedded file the document stage can't
+// write, and a CLI's warnings are each a record output, never dropped.
+// The email and onenote stages place each file they find in a directory of its own, a hard link to
+// the file the CLI wrote, since the CLI writes each distinct content once, named by its SHA-256,
+// for every record that names it, and the dispatcher removes a found part's file once its event is
+// done. Each such part carries that SHA-256 and a release, as [Found] says, which removes the CLI's
+// original once the dispatcher has settled its content; a later record naming it is then found with
+// no file, and seen from the index.
 //
 // # The index
 //
@@ -247,7 +301,10 @@
 // persists the message's outputs as they come and feeds the Threader the message's record,
 // decoded into an email.Message; at the message's last output the message is done, and its id is
 // the cursor. A message record whose Meta has "embedded_in" is an inline message's, part of its
-// parent's, and is fed to no Threader.
+// parent's, and is fed to no Threader. A conversation record, "conversation <id>", is a message's
+// for the cursor, its Meta "id" the message's store id, which mail's --after takes as any other;
+// it is fed to no Threader, since a conversation has no threading fields and the Threader takes
+// messages alone.
 //
 // The caller saves the cursor and the Threader together every N messages, or on a timer, not at
 // every message: each save marshals every message's keys so far, so saving at every message grows
@@ -278,16 +335,20 @@
 //   - [Stage], its [Identity], and [HashConfig] for an identity's configuration hash; a stage
 //     yields [Item]s, made by [OutputItem] and [PartItem], each an [Output] of an [OutputKind],
 //     [TextOutput], [MarkdownOutput], [ImageOutput], [RecordOutput], or [AudioOutput], or a
-//     [Found] part, and ends with [ErrNoProcessor] or [ErrEncrypted] to name its outcome.
+//     [Found] part, and ends with [ErrNoProcessor], [ErrEncrypted], or [ErrQuarantined], through
+//     a [QuarantineError], to name its outcome.
 //   - The adapters, on Linux: [DocumentStage], [OfficeStage], [PictureStage], [EmailStage],
 //     [OneNoteStage], [AudioStage], and [VideoStage], made by [NewDocumentStage], [NewOfficeStage],
 //     [NewPictureStage], [NewEmailStage], [NewOneNoteStage], [NewAudioStage], and [NewVideoStage]
 //     over a [DocumentConfig], [OfficeConfig], [PictureConfig], [EmailConfig], [OneNoteConfig],
-//     [AudioConfig], and [VideoConfig]; the audio stage's plan record an [AudioPlan] of
-//     [AudioWindow]s and [AudioSpan]s, and the video stage's a [VideoPlan] of its [VideoWindowing]
-//     and [VideoSampling]; [VisionStage], made by [NewVisionStage]; and [Versions], a stage's
-//     tools' version.
-//   - [ZipStage], made by [NewZipStage] over a [ZipConfig], on any platform.
+//     [AudioConfig], and [VideoConfig]; the document stage reading a PDF's structure through its
+//     [QPDF] and its embedded files through its [PDFDetach]; the audio stage's plan record an
+//     [AudioPlan] of [AudioWindow]s and [AudioSpan]s, and the video stage's a [VideoPlan] of its
+//     [VideoWindowing] and [VideoSampling]; [VisionStage], made by [NewVisionStage]; and
+//     [Versions], a stage's tools' version.
+//   - [ArchiveStage], made by [NewArchiveStage] over an [ArchiveConfig], on any platform, reading
+//     7-Zip's kinds through its [SevenZip].
+//   - [TextStage], made by [NewTextStage], on any platform.
 //   - [Index], keyed by a [Key], holding [Entry]s, each counting its outputs and its [Child]ren,
 //     both appended under a claim and read back streamed; the shipped
 //     ones are [MemoryIndex], made by [NewMemoryIndex], and [FileIndex], made by

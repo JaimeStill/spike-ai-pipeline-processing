@@ -261,17 +261,22 @@ func sofficeStandin(args []string) int {
 	return 0
 }
 
-// magickStandin is the stand-in magick. With -version alone it prints the version line the real
-// one prints first. Otherwise it takes its first argument as its input, with any format prefix
-// and frame suffix, "tiff:path[0]", and its last as its output, "png:path". It appends its
-// working directory, arguments, and its input's content to the log file; exits with
-// magickExitEnv's code, having written magickOutputEnv's value to stderr, when it is set; and
-// else writes PNG's signature, convertedPrefix, and its input, less any PNG signature it begins
-// with, to the output, without the signature when magickRawEnv is set. A metafile's PNG, which
-// soffice and then magick wrote, holds convertedPrefix twice.
+// magickStandin is the stand-in magick. With -version alone it prints the version line the real one
+// prints first, and with -list format a listing of no formats, which the picture package's
+// Converter reads when it is built; neither is logged. Otherwise it takes its first argument as its
+// input, with any format prefix and frame suffix, "tiff:path[0]", and its last as its output,
+// "png:path". It appends its working directory, arguments, and its input's content to the log file;
+// exits with magickExitEnv's code, having written magickOutputEnv's value to stderr, when it is
+// set; and else writes PNG's signature, convertedPrefix, and its input, less any PNG signature it
+// begins with, to the output, without the signature when magickRawEnv is set. A metafile's PNG,
+// which soffice and then magick wrote, holds convertedPrefix twice.
 func magickStandin(args []string) int {
 	if len(args) == 1 && args[0] == "-version" {
 		fmt.Printf("Version: ImageMagick %s Q16-HDRI x86_64 https://imagemagick.org\n", os.Getenv(magickVersionEnv))
+		return 0
+	}
+	if len(args) == 2 && args[0] == "-list" && args[1] == "format" {
+		fmt.Println("   Format  Module    Mode  Description")
 		return 0
 	}
 	if len(args) < 2 {
@@ -403,7 +408,7 @@ func standinConverter(t *testing.T) (*office.Converter, func() []standinRun) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	c, err := office.NewConverter(office.Config{Office: tl})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: tl})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -424,7 +429,7 @@ func legacyConverter(t *testing.T) (*office.Converter, func() []standinRun) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	c, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: o, LibreOffice: lo})
 	if err != nil {
 		t.Fatal(err)
 	}

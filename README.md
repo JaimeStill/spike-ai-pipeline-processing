@@ -7,17 +7,20 @@ through vision, whether the payload is a whole blob or a stream.
 Go builds only what the layer must own. Mature system tools do the specialized work behind the
 tool contract this layer defines in its `tool` package, as herald's processing layer did: an exec
 runner for binaries and scripts, and a container runner for pinned images. The tools the layer's
-adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
+adapters run are Ghostscript for PDF pages (chosen by bake-off), qpdf and poppler's pdfdetach for
+a PDF's password check, form fields, and embedded files, ImageMagick for images and image
 correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
-office documents, LibreOffice in a container for legacy office formats only,
-spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages, and
-spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages.
+office documents, LibreOffice in a container for legacy office formats and RTF only,
+spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages,
+spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages, and 7-Zip's 7zz for
+the archives the standard library doesn't read.
 
 Its packages, each below in turn: `tool`, the contract every program runs behind; `route`, which
 names the stage content goes to by its signature; `inspect`, which inspects every part before its
 stage; `dispatch`, which walks an input and every part found in it to the stages, with the
 format packages' adapters, an index, and a pool; the format packages, `picture`, `document`,
-`office`, `email`, and `onenote`, each pre-inference preparation of its formats; `audio`, which
+`office`, `email`, and `onenote`, each pre-inference preparation of its formats; `sevenzip`, which
+lists and extracts the archives the standard library doesn't read through 7zz; `audio`, which
 cuts speech into windows a model's audio input takes whole and joins their transcripts; and
 `media`, which reads a live or recorded source's audio and video through one ffmpeg run and
 streams its windows and frames as they arrive.
@@ -25,13 +28,14 @@ streams its windows and frames as they arrive.
 
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
-whose first capture group is the version, the minimum version, and `KillAfter`, the KillAfter
-period: how long a cancelled run has after SIGTERM before SIGKILL. A runner's constructor builds
-a `Tool` bound to that one program; it finds the program and checks its version, so a missing or
-outdated tool fails at startup, and the Tool reports its `Name` and the `Version` found.
-`Tool.Run` runs one `Invocation`, its arguments, a working directory the caller owns, and optional
-stdin, stdout, and stderr, under the caller's context. An Invocation names nothing about the
-runner, so an adapter written against Tool runs the same code whichever runner built it.
+whose first capture group is the version, the minimum version, `VersionExit`, the exit code of a
+version command that exits nonzero having printed it, as pdfdetach's `-v` exits 99, and `KillAfter`,
+the KillAfter period: how long a cancelled run has after SIGTERM before SIGKILL. A runner's
+constructor builds a `Tool` bound to that one program; it finds the program and checks its version,
+so a missing or outdated tool fails at startup, and the Tool reports its `Name` and the `Version`
+found. `Tool.Run` runs one `Invocation`, its arguments, a working directory the caller owns, and
+optional stdin, stdout, and stderr, under the caller's context. An Invocation names nothing about
+the runner, so an adapter written against Tool runs the same code whichever runner built it.
 
 ```go
 spec := tool.Spec{
@@ -134,8 +138,9 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 .eml, a .pst, or an mbox; `OneNote`; `Archive`, ZIP, tar, gzip, zstd, 7z, and a cabinet; `Audio`;
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
-that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, archives other
-than ZIP, or text yet.
+that doesn't exist: no stage takes ODF, WordPerfect, or .xlsb yet, nor an RTF or a legacy
+document without LibreOffice, nor a zstd stream, a 7z archive, or a cabinet without 7-Zip, nor a
+HEIC, WebP, or AVIF without magick's reader.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -145,24 +150,32 @@ if err != nil {
 // r == route.Document, why == "PDF signature"
 ```
 
-`inspect` inspects every part before its stage, on the standard library and `route` alone, and
-says whether it may go on. The safety standard is that unsafe means unsafe to read. `Inspect`
-reads the file at a path, with its name, streaming, its memory bounded whatever the file's size,
-and returns a `Report`: the part's `route.Kind`, its `Flag`s, each a `Check`, a `Class`, and its
-evidence, and a `Verdict`. A flag of class `Active` is content that could act, or that a reader
-can't see into, and the part proceeds by default, since no stage executes it: a signature that
-disagrees with the extension, a polyglot, executable content or an executable or double
-extension, an OOXML package's VBA project, macro sheet, ActiveX controls, OLE objects, and
-external relationships other than hyperlinks, the PDF names pdfid counts, hex-escaped forms
-included, an SVG's scripts, event handlers, external hrefs, and foreignObjects, and encrypted
-content, which is only unreadable. A flag of class `Unsafe` quarantines the part by default: no
-stage runs, its content is kept, and it is reported with its evidence. Those are a ZIP entry with
-a ".." element, an absolute path, or a drive letter, a symbolic link entry, an entry past both
-1,000:1 and 1 GiB expanded by its central directory's declared sizes, the thresholds `Options`
-sets, and a central directory that can't be read. `Options.Policy` overrides any check's action.
-The report is a function of the bytes and the name, so an index may record it by SHA-256. A
-container's members are inspected as parts of their own once a stage extracts them, and the ZIP
-stage enforces the bomb rule again on the bytes it writes, since a declared size may lie.
+`inspect` inspects every part before its stage, on the standard library and `route` alone, and says
+whether it may go on. The safety standard is that unsafe means unsafe to read. `Inspect` reads the
+file at a path, with its name, streaming, its memory bounded whatever the file's size, and returns a
+`Report`: the part's `route.Kind`, its `Flag`s, each a `Check`, a `Class`, and its evidence, and a
+`Verdict`. A flag of class `Active` is content that could act, or that a reader can't see into, and
+the part proceeds by default, since no stage executes it: a signature that disagrees with the
+extension, a polyglot, executable content or an executable or double extension, an OOXML package's
+VBA project, macro sheet, ActiveX controls, OLE objects, and external relationships other than
+hyperlinks, the PDF names pdfid counts, hex-escaped forms included, an SVG's scripts, event
+handlers, external hrefs, and foreignObjects, and encrypted content, which is only unreadable. A
+flag of class `Unsafe` quarantines the part by default: no stage runs, its content is kept, and it
+is reported with its evidence. Those are a ZIP entry with a ".." element, an absolute path, or a
+drive letter, a symbolic link entry, an entry past both 1,000:1 and 1 GiB expanded by its central
+directory's declared sizes, the thresholds `Options` sets, and a central directory that can't be
+read; and a tar entry, read from its headers as a ZIP's is from its central directory, with a ".."
+element, an absolute path, or a drive letter, a symbolic or hard link, a device or a FIFO, an entry
+past both thresholds by the size its header declares against the whole tar's, as only a sparse entry
+or a lying header can be, and headers that can't all be read. `CheckListing` holds a 7z's, a
+cabinet's, or a zstd stream's listing, as 7-Zip lists it, to the same rules, by the same name
+checks: `Inspect` runs no program, so the archive stage lists such an archive through 7-Zip and
+calls it before extracting anything, a 7z's encrypted entry active as a ZIP's is. `Options.Policy`
+overrides any check's action. The report is a function of the bytes and the name, so an index may
+record it by SHA-256. A container's members are inspected as parts of their own once a stage
+extracts them, so a .tar.gz's tar is inspected once the archive stage decompresses it, and that
+stage enforces the bomb rule again on the bytes it writes, since a declared size may lie, a gzip
+stream's among them, which declares its expanded size only modulo 4 GiB.
 
 ```go
 rep, err := inspect.Inspect(ctx, path, "invoice.pdf.exe", inspect.Options{})
@@ -175,7 +188,8 @@ if rep.Verdict == inspect.Quarantine {
 ```
 
 `dispatch` walks an input and every part found in it to the stages that prepare them, on the
-standard library, `route`, and `inspect`, and never calls a model. A caller registers a `Stage` per
+standard library, `route`, and `inspect`, and, for the text stage's decoding, golang.org/x/text,
+and never calls a model. A caller registers a `Stage` per
 route; each names its `Identity`, its name, tool version, and configuration hash, and yields the
 `Output`s it prepares, text, Markdown, an image, or a record, in a file or inline, and the parts it
 finds. `Dispatcher.Dispatch` hashes each part, SHA-256, streamed, before any stage runs, routes and
@@ -220,56 +234,106 @@ error yielded last.
 
 `Input.After` resumes a .pst or an mbox after a message, its node id or ordinal: the email stage
 passes it to mail as `--after`, mail 0.3.0 or later, and the store yields its store and folder
-records and only the messages after it, with their attachments found. A resumed input's own entry
-is never recorded, its outputs being the tail alone. For each message, the email stage yields its
+records and only the messages after it, with their attachments found. A resumed input's own entry is
+never recorded, its outputs being the tail alone. For each message, the email stage yields its
 attachments first, each found part dispatched whole, then its record, its Meta `id` the message's,
 then its Markdown, which the record's Meta `markdown: follows` announces, so the message's last
-output is the last of everything it holds. A caller resuming after a crash keeps a `FileIndex`
-that outlives the process, so the attachments recorded before the crash are seen; the cursor, the
-id of the last message whose outputs it has persisted, moved at each message's last output; and
-an `email.Threader`, fed each message record of the store's own, decoded. Every N messages, or on a
-timer, at a message's last output, it saves the cursor and the Threader, by `MarshalBinary`,
-together: a checkpoint. Not at every message: each save marshals every message's keys so far,
-3.5 ms at 25,000 messages in the onenote finding, so saving at every message grows with the
-square of the store. It restores the Threader by `UnmarshalBinary`, dispatches with `After` set
-to the checkpoint's cursor, and feeds the Threader the rest, whose threads are then the whole
-store's; every message past the checkpoint comes again, and it overwrites what it had of them. A
-dead process's claims and pending outputs wait out `FileOptions.Stale` before the resumed
-dispatch takes them over.
+output is the last of everything it holds. A message of a conversation class is a conversation
+record, `conversation <id>`, an `email.Conversation`, then its transcript's Markdown, the Meta of
+both naming its topic and `missed`; it moves the cursor as a message does, and feeds no Threader. A
+caller resuming after a crash keeps a `FileIndex` that outlives the process, so the attachments
+recorded before the crash are seen; the cursor, the id of the last message whose outputs it has
+persisted, moved at each message's last output; and an `email.Threader`, fed each message record of
+the store's own, decoded. Every N messages, or on a timer, at a message's last output, it saves the
+cursor and the Threader, by `MarshalBinary`, together: a checkpoint. Not at every message: each save
+marshals every message's keys so far, 3.5 ms at 25,000 messages in the onenote finding, so saving at
+every message grows with the square of the store. It restores the Threader by `UnmarshalBinary`,
+dispatches with `After` set to the checkpoint's cursor, and feeds the Threader the rest, whose
+threads are then the whole store's; every message past the checkpoint comes again, and it overwrites
+what it had of them. A dead process's claims and pending outputs wait out `FileOptions.Stale` before
+the resumed dispatch takes them over.
 
-The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader
-or converter the caller already built and the version of its Tools, which `dispatch.Versions`
-names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeStage`, office's
-Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF, EMF, WMF, or SVG to
-PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
-mail's records, each message's attachments found as parts, then its record, then its Markdown,
-an embedded message mail gives no file for prepared inline in its attachment's place;
-`OneNoteStage`, onenote's records, each page's record then its Markdown, and each of its media
-found as a part; `AudioStage`, an audio part's plan as a record, then each of its windows in
-plan order as an audio output, a 16 kHz mono WAV whose Meta carries its index, span, cut, and
-seams, for a layer above to transcribe and join with `audio.Join`; and `VideoStage`, an MP4,
-Matroska, WebM, or AVI read by one unpaced run of media's `Streamer`, which yields a plan record
-of its settings, then each frame as a PNG image output and each window as an audio output, with
-the threshold it was cut under, interleaved as the run completes them. A found part's `Where`
-names its place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is
-dispatched again, so a PDF attached to a message reaches the document stage and a page's ink
-becomes a PNG. Kinds no adapter reads yet, ODF, RTF, WordPerfect, xlsb, HEIC, WebP, and AVIF, are
-no processor yet, as are audio and video when the caller has no ffmpeg and registers no audio or
-video stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with
-no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields frames only when it
-has no audio stream and windows only when it has no video stream; one with neither fails, its
-error wrapping `media.ErrNoMedia`.
+The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader or
+converter the caller already built and the version of its Tools, which `dispatch.Versions` names:
+`DocumentStage`, a PDF's pages, each its text layer and a PNG, and, given qpdf and pdfdetach through
+`DocumentConfig.QPDF` and `DocumentConfig.PDFDetach`, a PDF that needs a password encrypted with
+nothing rendered, its AcroForm's fields as a `forms` record before its pages, and each embedded file
+found as a part, `attachment <name>`, written under its SHA-256 with the bomb rule enforced on the
+bytes pdfdetach writes; `OfficeStage`, office's Markdown, each medium office wrote found as a part;
+`PictureStage`, a TIFF to a PNG per page, "page N", its Meta naming the page and the count, and an
+EMF, WMF, SVG, HEIC, WebP, or AVIF to one PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed
+through as an image output; `EmailStage`, mail's records, each message's attachments found as parts,
+then its record, then its Markdown, an embedded message mail gives no file for prepared inline in
+its attachment's place; `OneNoteStage`, onenote's records, each page's record then its Markdown, and
+each of its media found as a part; `AudioStage`, an audio part's plan as a record, then each of its
+windows in plan order as an audio output, a 16 kHz mono WAV whose Meta carries its index, span, cut,
+and seams, for a layer above to transcribe and join with `audio.Join`; and `VideoStage`, an MP4,
+Matroska, WebM, or AVI read by one unpaced run of media's `Streamer`, which yields a plan record of
+its settings, then each frame as a PNG image output and each window as an audio output, with the
+threshold it was cut under, interleaved as the run completes them. A found part's `Where` names its
+place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is dispatched
+again, so a PDF attached to a message reaches the document stage and a page's ink becomes a PNG.
+Kinds no adapter reads yet, ODF, WordPerfect, and xlsb, are no processor yet, as are an RTF and a
+legacy document when the caller's Converter has no LibreOffice, a HEIC, WebP, or AVIF whose reader
+the caller's magick lacks, and audio and video when the caller has no ffmpeg and registers no audio
+or video stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with
+no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields frames only when it has
+no audio stream and windows only when it has no video stream; one with neither fails, its error
+wrapping `media.ErrNoMedia`.
 
-`ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry at a
-time: each file entry is written into the part's directory under its content's SHA-256 and found as
-a part, `zip entry <name>`, its stored name only ever a name, so a nested ZIP is dispatched again
-and its entries below it. A directory is no part. An encrypted entry is a record, recorded
-encrypted, and the ZIP encrypted once its other entries are dispatched. The stage enforces the zip
-bomb rule again on the bytes it writes, under `ZipConfig.Inspect`, the dispatcher's
-`inspect.Options`: an entry past both thresholds as written, whatever its central directory
-declares, is stopped, its partial file removed, and recorded quarantined with its evidence. A ZIP
-with an unsafe name or a symbolic link is quarantined by `inspect` before the stage runs. A tar,
-gzip, zstd, or 7z archive, or a cabinet, is no processor yet.
+`ArchiveStage`, for the archive route, on any platform, reads a ZIP, a tar, and a gzip stream on
+the standard library, and, given 7-Zip, a zstd stream, a 7z archive, a cabinet not named .onepkg,
+and a ZIP entry of a method `archive/zip` doesn't read. It reads a ZIP through `archive/zip` one
+entry at a time: each file entry is written into the part's directory under its content's SHA-256
+and found as a part, `zip entry <name>`, its stored name only ever a name, so a nested ZIP is
+dispatched again and its entries below it. A directory is no part. A stored, deflated, or bzip2
+entry is decompressed by the standard library, bzip2 through `compress/bzip2`; any other method's
+entry, such as Deflate64, implode, LZMA, xz, zstd, or PPMd, is extracted alone through 7zz under the
+same rules. An encrypted entry is a record, recorded encrypted, and the ZIP encrypted once its other
+entries are dispatched. It reads a tar through `archive/tar` the same way, each regular file found
+`tar entry <name>`, a directory no part, and a link, a device, or a FIFO a record, with no link or
+node made. It decompresses a gzip stream through `compress/gzip` into one part, named by its
+header's name, else by the stream's own name without its .gz, or with a .tgz's .tar, found `gzip
+content <name>` and routed again, so a .tar.gz is a gzip part holding a tar part; a zstd stream
+the same way through 7zz, named by its own name without its .zst, or with a .tzst's .tar, found
+`zstd content <name>`. A 7z's and a cabinet's files are extracted one at a time through 7zz, found
+`7z entry <name>` and `cabinet entry <name>`, 7zz writing only to its standard output. Before
+anything of a 7z, a cabinet, or a zstd stream is extracted, 7-Zip's listing is checked by
+`inspect.CheckListing`, and a traversing, absolute, or drive letter name, a link, a device, or a
+declared bomb quarantines the archive, the stage ending with a `QuarantineError` whose flags are its
+evidence. An encrypted 7z entry is a record and the 7z encrypted once its other entries are
+dispatched, and a 7z whose headers are encrypted is encrypted at once. The stage enforces the bomb
+rule again on the bytes it writes, or reads from 7zz, under `ArchiveConfig.Inspect`, the
+dispatcher's `inspect.Options`: an entry or stream past both thresholds as written, the ratio
+against a ZIP entry's compressed size, the whole archive's size for a tar, 7z, or cabinet, or the
+stream's, whatever its header or listing declares, is stopped, its partial file removed, and
+recorded quarantined with its evidence. A ZIP or tar with an unsafe name, a link, or a device is
+quarantined by `inspect` before the stage runs. With no 7-Zip, a zstd stream, a 7z archive, or a
+cabinet is no processor yet, and a ZIP entry 7-Zip would read is a record.
+
+`TextStage`, for the text route, on any platform, runs no tool: it yields one text output, "text",
+UTF-8, its line endings as stored. It decides the encoding, never detects it: a byte order mark,
+UTF-8's, UTF-32's, or UTF-16's, either byte order, which the output drops; else UTF-8, when the
+whole part is valid UTF-8, ASCII among it; else windows-1252, as a fallback, with a warning that the
+text may be in another encoding. It decodes through golang.org/x/text. Its Meta `encoding` names
+the encoding and how it was decided, such as `utf-8 (byte order mark)`, `utf-16le (byte order
+mark)`, `utf-8`, or `windows-1252 (fallback)`; bytes the encoding can't decode become U+FFFD, and
+its Meta `warnings` counts them, a line each with the fallback's. Valid UTF-8 without a mark is
+passed through, the output's file the part's own, as the vision stage passes a picture; other
+text is decoded, streamed, into a file in the part's directory, never held in memory, and a large
+part is held to the dispatcher's `Limits` alone. Over ~/docs' encodings, the fallback's text is the
+truth for windows-1252 and ISO-8859-1, and garbled, the stage's known limit, for UTF-16 without a
+mark and for KOI8-R, EUC-JP, Shift_JIS, and windows-1256.
+
+`sevenzip` lists and extracts through 7-Zip's 7zz, minimum 24.01, which mise pins from its GitHub
+release. `NewReader` builds a `Reader` over a `Config` of the Tool, refusing a missing or older one.
+`Reader.List` reads an archive's technical listing, `-slt`, into a `Listing` of `Entry` items, each
+its stored name, declared size and CRC-32, encryption, method, Unix mode, and link; a zstd stream's
+one item takes the content size its frame header declares. `Reader.Extract` writes one item's
+content to the caller's writer, 7zz writing to its standard output alone, `-so`, never to a path,
+the item named whole, never a wildcard (`-spd`) or a list file (`-i!`). Every run is told its
+format (`-t`) and given an empty password (`-p`), so it never prompts: encrypted headers or an
+encrypted item fail with `ErrEncrypted`, and a file that isn't the format with `ErrNotArchive`.
 
 ```go
 render, err := document.NewGhostscript(gs)
@@ -280,8 +344,17 @@ prep, err := document.NewPreparer(render, nil)
 if err != nil {
 	return err
 }
+q, err := document.NewQPDF(qp)
+if err != nil {
+	return err
+}
+detach, err := document.NewDetacher(pd)
+if err != nil {
+	return err
+}
 docs, err := dispatch.NewDocumentStage(dispatch.DocumentConfig{
-	Preparer: prep, Version: dispatch.Versions(gs), Request: document.ImagesRequest{Text: true},
+	Preparer: prep, Version: dispatch.Versions(gs, qp, pd), Request: document.ImagesRequest{Text: true},
+	QPDF: q, PDFDetach: detach, Inspect: opts,
 })
 if err != nil {
 	return err
@@ -314,8 +387,12 @@ videos, err := dispatch.NewVideoStage(dispatch.VideoConfig{Streamer: st, Version
 if err != nil {
 	return err
 }
-// The zip stage enforces the bomb rule as written under the dispatcher's inspect.Options.
-archives, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: opts})
+// The archive stage enforces the bomb rule as written, and checks a 7-Zip listing, under the
+// dispatcher's inspect.Options; it reads 7z, zstd, cabinets, and ZIP's other methods through zr,
+// a sevenzip.Reader over sz, the 7zz Tool.
+archives, err := dispatch.NewArchiveStage(dispatch.ArchiveConfig{
+	Inspect: opts, SevenZip: zr, Version: dispatch.Versions(sz),
+})
 if err != nil {
 	return err
 }
@@ -324,6 +401,7 @@ d, err := dispatch.New(dispatch.Config{
 		route.Document: docs, route.Office: offices, route.VisionConverted: pictures,
 		route.Vision: dispatch.NewVisionStage(), route.Nested: mail, route.OneNote: notes,
 		route.Archive: archives, route.Audio: speech, route.Video: videos,
+		route.Text: dispatch.NewTextStage(),
 	},
 	Index: dispatch.NewMemoryIndex(), Dir: work, Inspect: opts,
 })
@@ -362,16 +440,32 @@ recorded at commit `96797c6`, before an encrypted OOXML package was routed to of
 has `encrypted.xlsx` unrouted. The scale store's dispatch, removal on and off, is a later run at
 `fdbdab0`.
 
+[docs/findings/formats.md](docs/findings/formats.md) holds the archive, picture, text, RTF, PDF,
+and conversation routes to their truth over their fixtures and ~/docs: the archive kinds, with and
+without 7-Zip and under a lowered bomb rule, ~/docs' mixed bundle routing the same 7 parts the
+same way as .zip, .tar.gz, .tar.zst, and .7z; the TIFFs' pages, HEIC's primary image, and WebP's
+and AVIF's first frame; ~/docs' 11 encodings, 6 decoded right and 5 garbled under the windows-1252
+fallback, the text limit; RTF; a PDF's password, forms, and attachments; and the conversation
+records, every field equal to mail's hand truth, with their limits. Any one ~/docs input
+dispatches in under 1.2 s. The run results it cites are in `docs/findings/formats-results/`.
+
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
 `NewConverter` over a `Config` of a magick Tool that `MagickSpec` declares, minimum
 `MagickMinimum`, 7.1, and a LibreOffice Tool that `LibreOfficeSpec` declares, minimum
 `LibreOfficeMinimum`, 24.2, run through the container runner in `LibreOfficeImage`, converts the
-pictures `route.VisionConverted` names that it knows, TIFF, EMF, WMF, and SVG, told by their
+pictures `route.VisionConverted` names, TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF, told by their
 signature. `Converter.Convert` converts one, such as a mail attachment, to a PNG in the `Request`'s
-working directory named by the picture's SHA-256; `Converter.ConvertBatch` converts several, the
-EMFs and WMFs in one soffice run, as office converts a document's pictures. Either Tool may be
-nil, and a picture that needs it is refused, with `ErrNoMagick` or `ErrNoLibreOffice`.
+working directory named by the picture's SHA-256, a TIFF's first image alone;
+`Converter.ConvertPages` converts one as Convert does, but a TIFF to a PNG per page, in page order,
+in one magick run, each named by the TIFF's SHA-256, `-page`, its number from 1, and `.png`;
+`Converter.ConvertBatch` converts several, the EMFs and WMFs in one soffice run, as office converts
+a document's pictures. A HEIC's primary image, never a thumbnail or another image, and an animated
+WebP's or AVIF's first frame are read through the kind's own coder and turned upright by their
+stored orientation. Either Tool may be nil, and a picture that needs it is refused, with
+`ErrNoMagick` or `ErrNoLibreOffice`. `NewConverter` runs magick's format listing,
+`magick -list format`, once under its context, and a HEIC, WebP, or AVIF whose reader the listing
+doesn't mark readable is refused with `ErrNoReader`.
 
 ```go
 mg, err := tool.NewExec(ctx, picture.MagickSpec())
@@ -382,11 +476,11 @@ lo, err := tool.NewContainer(ctx, "", tool.Image{Ref: picture.LibreOfficeImage},
 if err != nil {
 	return err
 }
-pics, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+pics, err := picture.NewConverter(ctx, picture.Config{Magick: mg, LibreOffice: lo})
 if err != nil {
 	return err
 }
-png, err := pics.Convert(ctx, picture.Request{Dir: dir, Path: attachment})
+pngs, err := pics.ConvertPages(ctx, picture.Request{Dir: dir, Path: attachment})
 ```
 
 The corrections stage, a `Corrector` built by `NewCorrector` over the magick Tool, runs a page
@@ -449,13 +543,34 @@ for page, err := range prep.Images(ctx, pdf, document.ImagesRequest{Dir: dir, Sk
 }
 ```
 
+`QPDF`, built by `NewQPDF` over a qpdf Tool that `QPDFSpec` declares, minimum `QPDFMinimum`, 11.0,
+the first whose JSON is version 2, reads what a PDF's structure says before it is rendered.
+`QPDF.RequiresPassword` asks `qpdf --requires-password`: exit 0 means the PDF needs a password, 2
+that it isn't encrypted, and 3 that it is encrypted but opens without one, as a PDF restricted
+only by its permissions does; an exit 2 whose stderr holds qpdf's error, not only warnings, is a
+file qpdf can't open, and fails. `QPDF.Form` reads `qpdf --json=2 --json-key=acroform` into a
+`Form` of `FormField`s, in the AcroForm's order, a radio group's widgets as one field: each
+field's full name, its type (`TextField`, `CheckboxField`, `RadioField`, `ChoiceField`,
+`PushbuttonField`, `SignatureField`, or the PDF's own type), and its value, decoded from qpdf's
+string and name encodings; a checkbox's or radio group's `Checked`, its state other than `Off`;
+and a choice's `Options`, by their display text, and `Selected`, by their export values. A PDF
+with no AcroForm has no fields.
+
+A `Detacher`, built by `NewDetacher` over a pdfdetach Tool that `PDFDetachSpec` declares, minimum
+`PDFDetachMinimum`, 22.02, reads a PDF's embedded files, the name tree's and the file attachment
+annotations', not the media behind a Screen or Rendition annotation, which pdfdetach doesn't
+read. `Detacher.List` reads `pdfdetach -list -enc UTF-8` into `Attachment`s, each its number and
+stored name; `Detacher.Save` writes one file to the caller's writer through `pdfdetach -save N -o
+/dev/stdout`, so pdfdetach writes no file and a stored name is only ever a name, and a write that
+fails stops it. A number the PDF has no file of is `ErrNoAttachment`.
+
 [docs/findings/documents.md](docs/findings/documents.md) records what the measurements behind
 these choices found: which renderer, whether to reason while transcribing, whether corrections
 help, where the instructions go, whether the staged two-pass flow pays, and what a page costs in
 image tokens. The run results it cites are in `docs/findings/documents-results/`.
 
-`office` prepares office documents, docx, xlsx, and pptx, and the legacy doc, xls, and ppt, for a
-model, on Linux, the standard library, `tool`, `route`, and `picture`. It runs
+`office` prepares office documents, docx, xlsx, and pptx, the legacy doc, xls, and ppt, and RTF,
+for a model, on Linux, the standard library, `tool`, `route`, and `picture`. It runs
 spike-ai-pipeline-office's Open XML CLI and provides pre-inference preparation only. A `Converter`,
 built by `NewConverter` over a `Config` of Tools the caller built, needs an office Tool that
 `OfficeSpec` declares, minimum `OfficeMinimum`, 0.1.0; a LibreOffice Tool and a magick Tool are
@@ -463,7 +578,7 @@ optional. `Converter.Convert` spools a document read from an `io.Reader` into th
 the `Request` names, runs office once with a media directory there, and returns a `Result`: office's
 JSON model decoded into typed Go values that mirror its schema "1" (`JSON`, the default), or
 office's Markdown (`Markdown`), with the media list, office's stderr warnings, and, for a legacy
-document, the format it was converted from. A model of another schema is an error matching
+document or an RTF, the format it was converted from. A model of another schema is an error matching
 `ErrSchema`; a block kind the package doesn't know is kept with its raw JSON. office's exit codes 1
 to 4 are an `*ExitError` that matches `ErrMediaNotWritten`, `ErrUsage`, `ErrRefused`, or
 `ErrFailed`.
@@ -481,7 +596,7 @@ mg, err := tool.NewExec(ctx, picture.MagickSpec())
 if err != nil {
 	return err
 }
-conv, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
+conv, err := office.NewConverter(ctx, office.Config{Office: o, LibreOffice: lo, Magick: mg})
 if err != nil {
 	return err
 }
@@ -502,37 +617,48 @@ on every conversion. In a Markdown result, each link to a converted picture is r
 PNG by swapping the exact stored name; no Markdown is parsed.
 
 A legacy document is one with the OLE2 compound-file signature and a legacy extension in
-`Request.Name`: .doc and .dot become docx, .xls and .xlt xlsx, and .ppt, .pps, and .pot pptx.
-Given a LibreOffice Tool, `Convert` converts it to that OOXML format through soffice headless,
-then runs office on the result; without one it is refused with `ErrNoLibreOffice` before anything
-runs. `picture.LibreOfficeSpec` declares soffice, minimum `picture.LibreOfficeMinimum`, 24.2, and
-`picture.LibreOfficeImage` is the default image a caller may replace:
-gotenberg/gotenberg:9.0.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest, which
-`mise run currency` scans. soffice runs in it under
-the container runner's full lockdown, with its user profile inside the mounted working directory.
+`Request.Name`: .doc and .dot become docx, .xls and .xlt xlsx, and .ppt, .pps, and .pot pptx. Given
+a LibreOffice Tool, `Convert` converts it to that OOXML format through soffice headless, then runs
+office on the result; without one it is refused with `ErrNoLibreOffice` before anything runs. An
+RTF, known by its signature whatever its name, is converted the same way to docx, through Writer's
+docx export filter as a .doc is, and `ConvertedFrom` is "rtf"; without a LibreOffice Tool it too is
+refused with `ErrNoLibreOffice`. `picture.LibreOfficeSpec` declares soffice, minimum
+`picture.LibreOfficeMinimum`, 24.2, and `picture.LibreOfficeImage` is the default image a caller may
+replace: gotenberg/gotenberg:9.1.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest, which `mise
+run currency` scans. soffice runs in it under the container runner's full lockdown, with its user
+profile inside the mounted working directory.
 
 [docs/findings/office.md](docs/findings/office.md) records what the legacy round trip loses, per
 element kind and format, the container's footprint, the picture conversions, and each picture's
 vision time and image tokens. The run results it cites are in `docs/findings/office-results/`.
 
-`email` reads mail stores, Outlook .pst stores and .msg messages, and MIME messages, .eml and
-mbox files, for a model, on Linux, the standard library, `tool`, and `route`. It runs
+`email` reads mail stores, Outlook .pst stores and .msg messages, and MIME messages, .eml and mbox
+files, for a model, on Linux, the standard library, `tool`, and `route`. It runs
 spike-ai-pipeline-mail's CLI and provides pre-inference preparation only. A `Reader`, built by
 `NewReader` over a `Config` holding a mail Tool that `MailSpec` declares, minimum `MailMinimum`,
-0.2.0, reads one input per `Request`. `Reader.Read`
-returns a `Stream`, or refuses an invalid `Request`, one with no input or a path that can't be
-made absolute, with an error matching `ErrRequest` before anything runs. A `Request`'s `After`
-resumes a .pst's or an mbox's read after the message whose id it is, through mail's `--after`: the
-store, its folders, and only the messages after it, the whole read's tail byte for byte. It needs
-mail `MailAfterMinimum`, 0.3.0, which `Read` checks only when `After` is set, refusing an older one
-with an error matching `ErrRequest` and `tool.ErrTooOld`. Ranging over
-`Stream.Records` runs mail once and yields each line it writes while it runs,
-decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
+0.2.0, reads one input per `Request`. `Reader.Read` returns a `Stream`, or refuses an invalid
+`Request`, one with no input or a path that can't be made absolute, with an error matching
+`ErrRequest` before anything runs. A `Request`'s `After` resumes a .pst's or an mbox's read after
+the message whose id it is, through mail's `--after`: the store, its folders, and only the messages
+after it, the whole read's tail byte for byte. It needs mail `MailAfterMinimum`, 0.3.0, which `Read`
+checks only when `After` is set, refusing an older one with an error matching `ErrRequest` and
+`tool.ErrTooOld`. Ranging over `Stream.Records` runs mail once and yields each line it writes while
+it runs, decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
 `Store` first, then for a .pst each `Folder` before its `Message`s, and a `Skipped` record wherever
 mail couldn't read one; for a .msg or an .eml its message, an embedded message nested under its
 attachment; for an mbox each message in the file's order. Memory follows the record being read,
-never the store. mail's warnings are the Stream's `Warnings`, and its exit codes 1 to 4 are an
-`*ExitError` that matches `ErrNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`.
+never the store. A message of a conversation class, `email.ConversationClass`
+(IPM.Note.Microsoft.Conversation) or `email.MissedClass` (IPM.Note.Microsoft.Missed), which a Skype
+for Business client saves its instant-message history under in Conversation History, is a
+`Conversation` in its place: its participants, the sender then the recipients; its start and end,
+the submit and delivery times; its topic, the conversation topic, else the subject; whether it was
+missed, by its class; and its transcript as mail's Markdown and as the stored HTML. The class
+decides, not the folder, and every other class, the Voice classes among them, is a `Message` as
+before; `Message.Conversation` reads a decoded `Message` the same way. It is one record per item: no
+turn is parsed from the transcript. The tests hold every item of mail's generated
+`conversations.pst` to the hand truth in mail's `truth.json`. mail's warnings are the Stream's
+`Warnings`, and its exit codes 1 to 4 are an `*ExitError` that matches `ErrNotWritten`, `ErrUsage`,
+`ErrRefused`, or `ErrFailed`.
 
 ```go
 m, err := tool.NewExec(ctx, email.MailSpec())
@@ -867,8 +993,13 @@ ffmpeg having no exit contract; and a window names no route, since a speech mode
 stage; `media` is a streamer, not a reader: its `Request` names the media directory, its `Dir`; a
 file source is read in place rather than spooled; ffmpeg's failures are the Tool's
 `*tool.ExitError`; and a window or frame names no route, since a speech model takes windows and a
-vision model frames; and `route` and `inspect` are pure functions, with no Tool, Config, or
-Request, which run before a part's stage rather than as one.
+vision model frames; `sevenzip` lists and extracts rather than reading parts: its `ListRequest` and
+`ExtractRequest` name no media directory, since 7zz writes only to the caller's writer, never to a
+path; the archive is read in place rather than spooled; 7zz's failures wrap the Tool's
+`*tool.ExitError`, matching `ErrEncrypted` or `ErrNotArchive` by 7zz's message, 7zz having no exit
+contract; it has no warnings, a run 7zz ends with a warning having succeeded; and an item names no
+route, since the archive stage hands each one to the dispatcher; and `route` and `inspect` are pure
+functions, with no Tool, Config, or Request, which run before a part's stage rather than as one.
 
 Known limits:
 
@@ -934,6 +1065,14 @@ Known limits:
   audio, and one that ends early in a long silence waits up to 30 s.
 - ffmpeg stops pacing a file once its video stream ends, so a paced file's audio past its video
   arrives at once.
+- The archive stage extracts a 7z's or a cabinet's entries one 7zz run at a time, so an entry of a
+  solid block decodes the block from its start: an archive's entries read one at a time cost more
+  than one extraction of them all.
+- 7-Zip names an entry as it lists it, and the stage extracts it by that name: a ZIP entry 7zz
+  reads, whose name archive/zip and 7-Zip decode differently, such as a non-UTF-8 name, or a
+  stored name with a line break, isn't matched, and is a record of 0 bytes written.
+- A zstd stream's content size is checked before it is decompressed only when its first frame's
+  header declares one; otherwise the bomb rule holds it as written.
 
 The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
 under the race detector, and lint, the integration, bakeoff, and findings tags included. `mise run
@@ -980,25 +1119,33 @@ findings-streams` measures `media` on ~/docs' videos read at real time, each win
 E4B and each frame to Gemma 4 26B-A4B as it arrives, beside audio's file path and a cancellation
 midway; its paced runs take about 75 minutes, and a run keeps its results only in the directory
 `STREAMS_FINDINGS_RESULTS` names ([docs/findings/streams.md](docs/findings/streams.md),
-"Rerunning").
+"Rerunning"). `mise run findings-formats` holds the archive, picture, text, RTF, PDF, and
+conversation routes to their truth over the fixtures and ~/docs, each checked against the corpus
+manifest, and times the dispatcher on each ~/docs input; it calls no model, and a run keeps its
+results only in the directory `FORMATS_FINDINGS_RESULTS` names
+([docs/findings/formats.md](docs/findings/formats.md), "Rerunning").
 
 The tests' vision and speech harnesses, the bake-offs, the staged flow, and the findings tier are
 test code, not released.
 
-Host prerequisites: gs 10.0 or later on PATH for `document`; ImageMagick's magick 7.1 or later on
-PATH for `picture`, its conversions and its corrections, and so for `document`'s corrections; and
-docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
+Host prerequisites: gs 10.0 or later on PATH for `document`, and, for its password check, forms, and
+embedded files, qpdf 11.0 or later and poppler's pdfdetach 22.02 or later, each optional;
+ImageMagick's magick 7.1 or later on PATH for `picture`, its conversions and its corrections, and so
+for `document`'s corrections, with libheif, an AV1 decoder, and libwebp for HEIC, AVIF, and WebP;
+and docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice in
 the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the metafile
 trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a read, which
-mise pins, at 0.3.0, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
-0.1.0 or later, which mise pins from its GitHub release for the tests. For `audio` and `media`:
+mise pins, at 0.3.1, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
+0.1.0 or later, which mise pins from its GitHub release for the tests. For `sevenzip` and the
+archive stage's 7z, zstd, cabinets, and ZIP's other methods: 7-Zip's 7zz 24.01 or later, which mise
+pins, at 26.05, from its GitHub release for the tests. For `audio` and `media`:
 ffmpeg and ffprobe 9.0 or later on PATH, or docker, which runs them in `audio.FFmpegImage`; a URL
-source through docker needs the image to name a docker network. `mise run fixtures:streams`
-rebuilds `audio/testdata`'s streams fixtures through the host's ffmpeg. The renderer
-bake-off also runs poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to
-regenerate the fixtures in `document/testdata`, and .NET, which mise installs, only to rebuild
-`email/testdata`'s built .msg, as their READMEs say.
+source through docker needs the image to name a docker network. `mise run fixtures:streams` rebuilds
+`audio/testdata`'s streams fixtures through the host's ffmpeg. The renderer bake-off also runs
+poppler's pdftoppm and pdftocairo and libvips. Regenerating the fixtures in `document/testdata`
+needs typst and qpdf, and rebuilding `email/testdata`'s built .msg needs .NET, which mise installs,
+as their READMEs say.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision and speech
 harnesses the integration, bake-off, and findings tiers run on; no released package imports it.

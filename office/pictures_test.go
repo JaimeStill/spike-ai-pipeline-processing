@@ -38,7 +38,7 @@ func pictureConverter(t *testing.T, libreoffice, magick bool) (*office.Converter
 			t.Fatal(err)
 		}
 	}
-	c, err := office.NewConverter(cfg)
+	c, err := office.NewConverter(t.Context(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -392,7 +392,7 @@ func TestNewConverterMagick(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = office.NewConverter(office.Config{Office: o, Magick: old})
+	_, err = office.NewConverter(t.Context(), office.Config{Office: o, Magick: old})
 	var verr *tool.VersionError
 	if !errors.As(err, &verr) || !errors.Is(err, tool.ErrTooOld) {
 		t.Fatalf("NewConverter over 6.9.13: got %v, want a VersionError wrapping ErrTooOld", err)

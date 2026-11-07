@@ -276,9 +276,9 @@ func TestConvertRefused(t *testing.T) {
 		is                  error
 		want                string
 	}{
-		{"a PNG", true, true, pngData, nil, nil, "isn't a TIFF, EMF, WMF, or SVG picture"},
-		{"empty content", true, true, "", nil, nil, "isn't a TIFF, EMF, WMF, or SVG picture"},
-		{"html with an inline svg", true, true, "<html><svg/></html>", nil, nil, "isn't a TIFF, EMF, WMF, or SVG picture"},
+		{"a PNG", true, true, pngData, nil, nil, "isn't a TIFF, EMF, WMF, SVG, HEIC, WebP, or AVIF picture"},
+		{"empty content", true, true, "", nil, nil, "isn't a TIFF, EMF, WMF, SVG, HEIC, WebP, or AVIF picture"},
+		{"html with an inline svg", true, true, "<html><svg/></html>", nil, nil, "isn't a TIFF, EMF, WMF, SVG, HEIC, WebP, or AVIF picture"},
 		{"a TIFF without magick", true, false, tiffLE, nil, picture.ErrNoMagick, "is a TIFF picture: no magick converter"},
 		{"an SVG without magick", true, false, svgData, nil, picture.ErrNoMagick, "is an SVG picture: no magick converter"},
 		{"an EMF without libreoffice", false, true, emfData(), nil, picture.ErrNoLibreOffice, "is an EMF picture: no LibreOffice converter"},
@@ -566,7 +566,7 @@ func TestNewConverterVersion(t *testing.T) {
 		t.Fatal(err)
 	}
 	var verr *tool.VersionError
-	if _, err := picture.NewConverter(picture.Config{Magick: mg}); !errors.As(err, &verr) || verr.Minimum != picture.MagickMinimum || !errors.Is(err, tool.ErrTooOld) {
+	if _, err := picture.NewConverter(t.Context(), picture.Config{Magick: mg}); !errors.As(err, &verr) || verr.Minimum != picture.MagickMinimum || !errors.Is(err, tool.ErrTooOld) {
 		t.Errorf("NewConverter over magick 7.0.11-14 returned %v, want a VersionError of minimum %s", err, picture.MagickMinimum)
 	}
 	t.Setenv(sofficeVersionEnv, "7.6.4.1")
@@ -576,10 +576,10 @@ func TestNewConverterVersion(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := picture.NewConverter(picture.Config{LibreOffice: so}); !errors.As(err, &verr) || verr.Minimum != picture.LibreOfficeMinimum || !errors.Is(err, tool.ErrTooOld) {
+	if _, err := picture.NewConverter(t.Context(), picture.Config{LibreOffice: so}); !errors.As(err, &verr) || verr.Minimum != picture.LibreOfficeMinimum || !errors.Is(err, tool.ErrTooOld) {
 		t.Errorf("NewConverter over soffice 7.6.4.1 returned %v, want a VersionError of minimum %s", err, picture.LibreOfficeMinimum)
 	}
-	c, err := picture.NewConverter(picture.Config{})
+	c, err := picture.NewConverter(t.Context(), picture.Config{})
 	if err != nil {
 		t.Fatal(err)
 	}

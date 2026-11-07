@@ -29,6 +29,7 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/email"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/onenote"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
@@ -262,7 +263,7 @@ func launchReport(ctx context.Context, child string, args []string, survey any) 
 // office mise pins, LibreOffice through the container runner in its pinned image, and magick;
 // the picture stage over magick and LibreOffice; the vision stage, which passes a picture
 // through; the email stage over the mail mise pins; the onenote stage over the onenote mise
-// pins; and the zip stage under the default thresholds.
+// pins; the archive stage under the default thresholds; and the text stage, which runs no tool.
 func findingStages(ctx context.Context) (dispatch.Stages, error) {
 	execs := map[string]*tool.Tool{}
 	for name, spec := range map[string]tool.Spec{
@@ -294,7 +295,7 @@ func findingStages(ctx context.Context) (dispatch.Stages, error) {
 	if err != nil {
 		return nil, err
 	}
-	oc, err := office.NewConverter(office.Config{Office: of, LibreOffice: lo, Magick: mg})
+	oc, err := office.NewConverter(ctx, office.Config{Office: of, LibreOffice: lo, Magick: mg})
 	if err != nil {
 		return nil, err
 	}
@@ -302,7 +303,7 @@ func findingStages(ctx context.Context) (dispatch.Stages, error) {
 	if err != nil {
 		return nil, err
 	}
-	pc, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+	pc, err := picture.NewConverter(ctx, picture.Config{Magick: mg, LibreOffice: lo})
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +327,7 @@ func findingStages(ctx context.Context) (dispatch.Stages, error) {
 	if err != nil {
 		return nil, err
 	}
-	zips, err := dispatch.NewZipStage(dispatch.ZipConfig{})
+	zips, err := dispatch.NewArchiveStage(dispatch.ArchiveConfig{})
 	if err != nil {
 		return nil, err
 	}
@@ -338,6 +339,7 @@ func findingStages(ctx context.Context) (dispatch.Stages, error) {
 		route.Nested:          mails,
 		route.OneNote:         notes,
 		route.Archive:         zips,
+		route.Text:            dispatch.NewTextStage(),
 	}, nil
 }
 
@@ -432,13 +434,15 @@ func (s *diskSampler) end() (int64, int64, error) {
 // dispatchJob is what a dispatching process dispatches: its inputs, over Workers workers, or, at
 // 0, the one input by Dispatch alone, in Work, a working directory, over a file index in Index.
 // Keep, removal off, has its caller call [dispatch.Event.Keep] on every event, so the dispatcher
-// removes none of the files it writes.
+// removes none of the files it writes. Formats dispatches over formatStages, with 7-Zip, qpdf,
+// and pdfdetach, in place of findingStages.
 type dispatchJob struct {
 	Inputs  []string `json:"inputs"`
 	Workers int      `json:"workers"`
 	Work    string   `json:"work"`
 	Index   string   `json:"index"`
 	Keep    bool     `json:"keep,omitzero"`
+	Formats bool     `json:"formats,omitzero"`
 }
 
 // inputDone is one input's own event, as a dispatch survey records it: its outcome, its outputs
@@ -544,7 +548,11 @@ func dispatchJobOf(ctx context.Context, args []string) (dispatchSurvey, error) {
 		}
 		s.InputBytes += info.Size()
 	}
-	stages, err := findingStages(ctx)
+	build := findingStages
+	if job.Formats {
+		build = func(ctx context.Context) (dispatch.Stages, error) { return formatStages(ctx, true, inspect.Options{}) }
+	}
+	stages, err := build(ctx)
 	if err != nil {
 		return s, err
 	}
@@ -717,13 +725,19 @@ func readOneNote(ctx context.Context, args []string) (readSurvey, error) {
 // findingsRuns returns ONENOTE_FINDINGS_RUNS, 3 when unset.
 func findingsRuns(t *testing.T) int {
 	t.Helper()
-	v := os.Getenv(runsEnv)
+	return runsFrom(t, runsEnv)
+}
+
+// runsFrom returns the timed runs the environment variable env names, 3 when unset.
+func runsFrom(t *testing.T, env string) int {
+	t.Helper()
+	v := os.Getenv(env)
 	if v == "" {
 		return 3
 	}
 	n, err := strconv.Atoi(v)
 	if err != nil || n < 1 {
-		t.Fatalf("%s %q: want a positive number", runsEnv, v)
+		t.Fatalf("%s %q: want a positive number", env, v)
 	}
 	return n
 }
@@ -731,7 +745,14 @@ func findingsRuns(t *testing.T) int {
 // saveFindings writes v as JSON to name in ONENOTE_FINDINGS_RESULTS, when it is set.
 func saveFindings(t *testing.T, name string, v any) {
 	t.Helper()
-	dir := os.Getenv(resultsEnv)
+	saveResults(t, resultsEnv, name, v)
+}
+
+// saveResults writes v as JSON to name in the directory the environment variable env names, when
+// it is set.
+func saveResults(t *testing.T, env, name string, v any) {
+	t.Helper()
+	dir := os.Getenv(env)
 	if dir == "" {
 		return
 	}
@@ -944,9 +965,14 @@ func scaleStore(t *testing.T) (string, any) {
 // working directory and over a fresh file index, both in the run's directory, its caller keeping
 // every event's files when keep is set.
 func dispatchWay(ctx context.Context, name string, workers int, keep bool, inputs []string) way {
+	return jobWay(ctx, name, dispatchJob{Inputs: inputs, Workers: workers, Keep: keep})
+}
+
+// jobWay dispatches job in a dispatching process, its working directory and a fresh file index
+// both in the run's directory.
+func jobWay(ctx context.Context, name string, job dispatchJob) way {
 	return way{name, func(dir string) (timedRun, error) {
-		job := dispatchJob{Inputs: inputs, Workers: workers, Keep: keep,
-			Work: filepath.Join(dir, "work"), Index: filepath.Join(dir, "index")}
+		job.Work, job.Index = filepath.Join(dir, "work"), filepath.Join(dir, "index")
 		if err := os.Mkdir(job.Work, 0o700); err != nil {
 			return timedRun{}, err
 		}

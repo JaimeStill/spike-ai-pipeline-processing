@@ -4,6 +4,7 @@ package document_test
 
 import (
 	"bufio"
+	"cmp"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"testing"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
@@ -19,7 +21,8 @@ import (
 )
 
 // standinEnv marks a process as a stand-in tool: the test binary, re-executed through a link
-// named magick or gs, acting on its arguments as that program instead of running the tests.
+// named magick, gs, qpdf, or pdfdetach, acting on its arguments as that program instead of
+// running the tests.
 const standinEnv = "DOCUMENT_TEST_STANDIN"
 
 // The stand-in's settings, which it reads from the environment it inherits.
@@ -35,8 +38,12 @@ const (
 	// stdoutEnv, when set, is what the stand-in writes to stdout for a run in place of its own:
 	// gs's page count or its page, or magick's copy of its stdin.
 	stdoutEnv = "DOCUMENT_TEST_STANDIN_STDOUT"
-	// stderrEnv, when set, is what the stand-in gs writes to stderr for a run that succeeds.
+	// stderrEnv, when set, is what the stand-in gs writes to stderr for a run that succeeds, and
+	// what the stand-in qpdf or pdfdetach writes to stderr for any run.
 	stderrEnv = "DOCUMENT_TEST_STANDIN_STDERR"
+	// exitEnv, when set, is the code the stand-in qpdf or pdfdetach exits with, once it has
+	// written its stdout and stderr; 0 when unset.
+	exitEnv = "DOCUMENT_TEST_STANDIN_EXIT"
 )
 
 func TestMain(m *testing.M) {
@@ -46,6 +53,10 @@ func TestMain(m *testing.M) {
 			os.Exit(magick(os.Args[1:]))
 		case "gs":
 			os.Exit(gs(os.Args[1:]))
+		case "qpdf":
+			os.Exit(qpdf(os.Args[1:]))
+		case "pdfdetach":
+			os.Exit(pdfdetach(os.Args[1:]))
 		default:
 			fmt.Fprintf(os.Stderr, "stand-in: no tool named %s\n", name)
 			os.Exit(2)
@@ -134,6 +145,58 @@ func gs(args []string) int {
 		return 2
 	}
 	return 0
+}
+
+// qpdf is the stand-in qpdf. With --version alone it prints qpdf's two lines, its version and
+// its license's. Otherwise it acts as scripted does.
+func qpdf(args []string) int {
+	if len(args) == 1 && args[0] == "--version" {
+		fmt.Printf("qpdf version %s\nRun qpdf --copyright to see copyright and license information.\n", os.Getenv(versionEnv))
+		return 0
+	}
+	return scripted(args)
+}
+
+// pdfdetach is the stand-in pdfdetach. With -v alone it prints its version and copyright to
+// stderr and exits 99, as pdfdetach does. Otherwise it acts as scripted does.
+func pdfdetach(args []string) int {
+	if len(args) == 1 && args[0] == "-v" {
+		fmt.Fprintf(os.Stderr, "pdfdetach version %s\nCopyright 2005-2026 The Poppler Developers - http://poppler.freedesktop.org\n", os.Getenv(versionEnv))
+		return 99
+	}
+	return scripted(args)
+}
+
+// scripted is a stand-in run that does what the environment says: it appends its working
+// directory and arguments to the log file, writes stdoutEnv's value to stdout and stderrEnv's to
+// stderr, and exits with exitEnv's code. A -o argument names the file the stand-in writes its
+// stdout's value to in place of stdout, as pdfdetach -save does.
+func scripted(args []string) int {
+	if err := appendLog(os.Getenv(logEnv), args); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	out := os.Stdout
+	if i := slices.Index(args, "-o"); i >= 0 && i+1 < len(args) {
+		f, err := os.OpenFile(args[i+1], os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 2
+		}
+		defer func() { _ = f.Close() }()
+		out = f
+	}
+	if _, err := out.WriteString(os.Getenv(stdoutEnv)); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	fmt.Fprint(os.Stderr, os.Getenv(stderrEnv))
+	code, err := strconv.Atoi(cmp.Or(os.Getenv(exitEnv), "0"))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 2
+	}
+	return code
 }
 
 // standinRun is one logged run of a stand-in: its working directory and arguments.

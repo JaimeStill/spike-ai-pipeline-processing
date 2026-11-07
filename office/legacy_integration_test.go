@@ -38,7 +38,7 @@ func containerConverter(t *testing.T) *office.Converter {
 		t.Fatal(err)
 	}
 	t.Logf("soffice %s in %s", lo.Version(), picture.LibreOfficeImage)
-	c, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: o, LibreOffice: lo})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -2,8 +2,8 @@
 # tests/golden, in golden/, at the tag, copied byte for byte by mise run fixtures:mail,
 # which reports any drift against this manifest. Each file's SHA-256 is below.
 repository https://github.com/JaimeStill/spike-ai-pipeline-mail
-tag v0.3.0
-commit eb734073a960f2e8c15c8c120dd6a2e5d7b0624d
+tag v0.3.1
+commit 9cbbdd3e469233d3b04bbba54a3a3ebe9b0114e7
 80da257c69449439eb725769e562d9714bff4d5cc2ed5e97b7150ddae0b707f7  fixtures/generated/eml/01-plain.eml
 64391ec0f9866d2859eff23fed4507350d2a5bfd5443db21ac2d8beb8f0982d6  fixtures/generated/eml/02-reply-latin1.eml
 78db74762bc8f90de0fa83ae3b54502d0d80e35eac1dd070c27e4eb751ae759b  fixtures/generated/eml/03-html-inline-image.eml
@@ -12,8 +12,13 @@ commit eb734073a960f2e8c15c8c120dd6a2e5d7b0624d
 b6daa80a54c2c41d8155048840064957ca6609eab58096345a7ebf0c1421dac4  fixtures/generated/eml/06-chinese.eml
 b6eca4cbfb17acf18d49075613ce1a97fd644a2599cbf9758154158977fb0349  fixtures/generated/eml/07-html-only-bcc.eml
 0a0fc37a3bb97a9a17d25950aeea7540d2d280ff0cfee7ef2e6f4ffe21adf8b8  fixtures/generated/eml/08-forward-attached-message.eml
-8162aab127bcfd672dc8fe54467abda8dfa2f8647557c2177404372380fc33cb  fixtures/generated/layout.json
-339c03f1666f6566b284cab93a754d8c4a33940f41979af6336eaf948c430ceb  fixtures/generated/manifest.json
+3bf2f43e1dc294b7f158bc82ff46fc9c489432a1b95ebd3e4f58b9053cf1543d  fixtures/generated/items/01-chat-one-to-one.json
+f2ce5c2551b7a1497860a808194c62081aeb75af3bb5c48797abaa1bb38ad0fb  fixtures/generated/items/02-chat-multi-party.json
+95ae946ef72ba9778226a1d3b5ab1b28b0009edeba65ce58945c9b482abcdc26  fixtures/generated/items/03-chat-incoming.json
+b530aed326afcadf8e2196380cefbb4e0291ddbad168d20d943518626f1dd4a0  fixtures/generated/items/04-missed.json
+32337b3724849d5a3f374ae151e08fdb03e4afb92fe70a268369fb80187623c2  fixtures/generated/items/05-note.json
+c943796a5e62b44e3e7870afc25e680c3ea61b6a0d31b8b95c55632cd9273e7a  fixtures/generated/layout.json
+b371a6fb27b183c84dba36a95b838b1aa9b44111747667b9fdb5b701ef0f95f2  fixtures/generated/manifest.json
 bc2fab033800d2dcde568a646a941be006ba018e7bdbd6d18546e1f57dedf47e  fixtures/generated/msg/01-plain.msg
 2174528013a0c6e813485624fcf9fd4f07c390a528781e685c50564cf0e5d1f4  fixtures/generated/msg/02-reply-latin1.msg
 79ef3a474d52fdbf69b2f93aa9adfee579a0dd6f0924906b72239954b2057ca8  fixtures/generated/msg/03-html-inline-image.msg
@@ -22,8 +27,9 @@ bf2f6d69fb57090da2586a4f347417947c4ade501f6794372319306358f80dd2  fixtures/gener
 ed4d916f718b1c185b86943b6d399cce5dfab17624cc46818892319462d45100  fixtures/generated/msg/06-chinese.msg
 ceedbf6ac52fe4d47144149089024efb9bd7a3920d2366bd222a345842978ab4  fixtures/generated/msg/07-html-only-bcc.msg
 a7c1b4ede2080d0a64e894e2c7d2454b82c56578944bba907347024c94da0464  fixtures/generated/msg/08-forward-attached-message.msg
+fa5cd60ec65375abd6a497e2e2b65e5889f72822dd0df22d270207b306e9479a  fixtures/generated/pst/conversations.pst
 771e8d0c603c1f4f20785778e5be99b0fc7811d6b80c9fde2609ea87cc5c7fa6  fixtures/generated/pst/mailbox.pst
-92f67d4cd835fbe01042124f65482a3490d65c5d46af3dd41dd3f66b5d9e35cd  fixtures/generated/truth.json
+78f339f673f1bc8afad413adc233e0ef7af0074885d53810126460549ab4bbb9  fixtures/generated/truth.json
 0bd5fd0a0f23a9b26158c13da173d596e39651afb1d0cd8bb2cd7ec2a7f1b7da  fixtures/mime/eml/09-threading.eml
 4f6a021e567c8fcf46773500346223179d2b59537bcf9deb71adc6513af886bf  fixtures/mime/nine.mboxrd
 f76f44f15a87ca8593787f37d85381cf19091f5f99bef389496c925b1f2fa726  fixtures/mime/rlug/LICENSE
@@ -71,6 +77,7 @@ f2a6b1d2cad00f574e3d1c1211c4b1c854d6526caea77213adc3da92b7813ae3  fixtures/pst/t
 d1b110b21b8dccc19cc39306b34f849a0296bb4b36e1412b8d3a9ee36739a077  golden/generated/msg/06-chinese.jsonl
 ebd942a0f7058c338b3e2f4113d7f4bc95785a76e595c7879a21637e1be4e6e2  golden/generated/msg/07-html-only-bcc.jsonl
 593ca5927c25f57b3d903927bf3cecffd93f7aa6d21e0c41fb38d7d7f4ce9cb6  golden/generated/msg/08-forward-attached-message.jsonl
+c74d28a1b771166d4e3b7313fc79348d73778fce7b8c6ebc520e143b234e4f0a  golden/generated/pst/conversations.jsonl
 c52991691421c7c8397a5b935caea3011377b95d0dbd2983dfa6c1df2fec9b17  golden/generated/pst/mailbox.jsonl
 26f8caded7f09644bb5ea130a6331f726b3d72bb8f69cfb31e6c8bea0971ddc2  golden/msg/poi-ASCII_UTF-8_CP1252_LCID1031_HTML.jsonl
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  golden/msg/poi-ASCII_UTF-8_CP1252_LCID1031_HTML.stderr

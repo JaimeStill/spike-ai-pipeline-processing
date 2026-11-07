@@ -311,10 +311,10 @@ func TestAudioStage(t *testing.T) {
 	}
 }
 
-// TestAudioStageInArchive: a FLAC in a ZIP is found by the zip stage and prepared by the audio
+// TestAudioStageInArchive: a FLAC in a ZIP is found by the archive stage and prepared by the audio
 // stage, as any part is.
 func TestAudioStageInArchive(t *testing.T) {
-	zs, err := dispatch.NewZipStage(dispatch.ZipConfig{})
+	zs, err := dispatch.NewArchiveStage(dispatch.ArchiveConfig{})
 	if err != nil {
 		t.Fatal(err)
 	}

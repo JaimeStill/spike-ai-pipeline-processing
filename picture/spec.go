@@ -33,12 +33,12 @@ func MagickSpec() tool.Spec {
 const LibreOfficeMinimum = "24.2"
 
 // LibreOfficeImage is the default image soffice runs in through the container runner:
-// Gotenberg's 9.0.0 LibreOffice image, which carries LibreOffice 26.8.2.2, pinned by its
+// Gotenberg's 9.1.0 LibreOffice image, which carries LibreOffice 26.8.2.2, pinned by its
 // multi-arch index digest. soffice runs in it under the runner's full lockdown, with no
 // relaxation, so tool.Image{Ref: LibreOfficeImage} is the whole of it. A caller may run another
 // image, or soffice on the host through the exec runner.
-const LibreOfficeImage = "gotenberg/gotenberg:9.0.0-libreoffice@sha256:" +
-	"7f8d54f6ec37e95b68f9297f726213e200dd99439b4ae41241dbdca1d0474270"
+const LibreOfficeImage = "gotenberg/gotenberg:9.1.0-libreoffice@sha256:" +
+	"4ff340bb7b0753e7d037ceb75a08b09c3a9aebd0e6484df9516ec29ec31074ff"
 
 // LibreOfficeSpec declares LibreOffice's soffice, minimum 24.2, for either runner's constructor;
 // the container runner makes it the entrypoint in place of the image's own. soffice --version

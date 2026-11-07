@@ -427,10 +427,10 @@ func TestVideoCancel(t *testing.T) {
 	wantClean(t, work, path)
 }
 
-// TestVideoStageInArchive: an AVI in a ZIP is found by the zip stage and prepared by the video
+// TestVideoStageInArchive: an AVI in a ZIP is found by the archive stage and prepared by the video
 // stage, as any part is; ffmpeg reads a link to the entry in the AVI's own directory.
 func TestVideoStageInArchive(t *testing.T) {
-	zs, err := dispatch.NewZipStage(dispatch.ZipConfig{})
+	zs, err := dispatch.NewArchiveStage(dispatch.ArchiveConfig{})
 	if err != nil {
 		t.Fatal(err)
 	}

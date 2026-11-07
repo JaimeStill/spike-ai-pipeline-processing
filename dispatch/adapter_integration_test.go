@@ -13,6 +13,7 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/media"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
@@ -23,10 +24,11 @@ import (
 // builtMSG is email's built .msg, attaching a docx, a legacy xls, a TIFF, an EMF, and a .msg.
 var builtMSG = filepath.Join("..", "email", "testdata", "built", "msg", "office-attachments.msg")
 
-// allStages returns every adapter, over this machine's gs, magick, ffmpeg, and ffprobe,
-// LibreOffice through the container runner in its pinned image, and the office, mail, and onenote
-// mise pins (the last two through emailStage and onenoteStage), as a composition root wires them:
-// the document stage reading each page's text layer.
+// allStages returns every adapter, over this machine's gs, qpdf, pdfdetach, magick, ffmpeg, and
+// ffprobe, LibreOffice through the container runner in its pinned image, and the office, mail,
+// and onenote mise pins (the last two through emailStage and onenoteStage), as a composition root
+// wires them: the document stage reading each page's text layer, and the text stage, which runs
+// no tool.
 func allStages(t *testing.T) dispatch.Stages {
 	t.Helper()
 	gs := pinned(t, document.GhostscriptSpec())
@@ -45,13 +47,8 @@ func allStages(t *testing.T) dispatch.Stages {
 	if err != nil {
 		t.Fatal(err)
 	}
-	docs, err := dispatch.NewDocumentStage(dispatch.DocumentConfig{
-		Preparer: prep, Version: dispatch.Versions(gs), Request: document.ImagesRequest{Text: true},
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	oc, err := office.NewConverter(office.Config{Office: of, LibreOffice: lo, Magick: mg})
+	docs := pdfStage(t, prep, gs, inspect.Options{})
+	oc, err := office.NewConverter(t.Context(), office.Config{Office: of, LibreOffice: lo, Magick: mg})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +56,7 @@ func allStages(t *testing.T) dispatch.Stages {
 	if err != nil {
 		t.Fatal(err)
 	}
-	pc, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+	pc, err := picture.NewConverter(t.Context(), picture.Config{Magick: mg, LibreOffice: lo})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -93,7 +90,32 @@ func allStages(t *testing.T) dispatch.Stages {
 		route.OneNote:         onenoteStage(t),
 		route.Audio:           audios,
 		route.Video:           videos,
+		route.Text:            dispatch.NewTextStage(),
 	}
+}
+
+// pdfStage returns the document stage over prep, whose renderer runs gs, as a composition root
+// wires it: reading each page's text layer, and with this machine's qpdf and pdfdetach, its
+// embedded files held to opts's bomb thresholds.
+func pdfStage(t *testing.T, prep *document.Preparer, gs *tool.Tool, opts inspect.Options) *dispatch.DocumentStage {
+	t.Helper()
+	qt, dt := pinned(t, document.QPDFSpec()), pinned(t, document.PDFDetachSpec())
+	q, err := document.NewQPDF(qt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	detach, err := document.NewDetacher(dt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s, err := dispatch.NewDocumentStage(dispatch.DocumentConfig{
+		Preparer: prep, Version: dispatch.Versions(gs, qt, dt), Request: document.ImagesRequest{Text: true},
+		QPDF: q, PDFDetach: detach, Inspect: opts,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return s
 }
 
 // wantPNG fails the test unless the image output o is a PNG file.
@@ -150,17 +172,55 @@ func TestOfficeStageReal(t *testing.T) {
 	}
 }
 
-// TestPictureStageReal: an SVG converts to a PNG.
+// TestOfficeStageRTFReal: an RTF, through LibreOffice in its pinned image to docx and then
+// office, is one Markdown document converted from "rtf", holding the RTF's heading and table.
+func TestOfficeStageRTFReal(t *testing.T) {
+	d := newDispatcher(t, allStages(t), dispatch.NewMemoryIndex())
+	events := dispatchAll(t, d, filepath.Join("..", "office", "testdata", "rtf", "memo.rtf"), nil)
+	wantSteps(t, events, []step{{"memo.rtf", 0, dispatch.Prepared}})
+	if ev := events[0]; ev.Part.Route != route.Office || ev.Part.Kind != route.RTF {
+		t.Errorf("memo.rtf: %s %s", ev.Part.Route, ev.Part.Kind)
+	}
+	md := outputNamed(t, events[0], dispatch.MarkdownOutput, "document")
+	if md.Meta["converted_from"] != "rtf" {
+		t.Errorf("converted from %q, want rtf", md.Meta["converted_from"])
+	}
+	for _, want := range []string{"# Harbor memo", "| North | 12 m |", "Next survey: Thursday."} {
+		if !bytes.Contains(md.Value, []byte(want)) {
+			t.Errorf("no %q in the Markdown:\n%s", want, md.Value)
+		}
+	}
+}
+
+// TestPictureStageReal: an SVG, a HEIC, a WebP, and an AVIF each convert to one PNG, and a TIFF
+// of three pages to three, in page order, each naming its page and the count.
 func TestPictureStageReal(t *testing.T) {
 	d := newDispatcher(t, allStages(t), dispatch.NewMemoryIndex())
-	events := dispatchAll(t, d, filepath.Join("..", "picture", "testdata", "shapes.svg"), func(ev *dispatch.Event) {
+	for name, kind := range map[string]route.Kind{
+		"shapes.svg": route.SVG, "two-images.heic": route.HEIC, "animated.webp": route.WebP, "animated.avif": route.AVIF,
+	} {
+		events := dispatchAll(t, d, filepath.Join("..", "picture", "testdata", name), func(ev *dispatch.Event) {
+			if ev.Output != nil {
+				wantPNG(t, *ev.Output)
+			}
+		})
+		wantSteps(t, events, []step{{name, 0, dispatch.Prepared}})
+		if o := events[0].Outputs; len(o) != 1 || o[0].Name != "picture" || o[0].Meta["from"] != string(kind) {
+			t.Errorf("%s: outputs %+v", name, o)
+		}
+	}
+	events := dispatchAll(t, d, filepath.Join("..", "picture", "testdata", "pages.tiff"), func(ev *dispatch.Event) {
 		if ev.Output != nil {
 			wantPNG(t, *ev.Output)
 		}
 	})
-	wantSteps(t, events, []step{{"shapes.svg", 0, dispatch.Prepared}})
-	if o := events[0].Outputs; len(o) != 1 || o[0].Meta["from"] != string(route.SVG) {
-		t.Errorf("outputs %+v", o)
+	wantSteps(t, events, []step{{"pages.tiff", 0, dispatch.Prepared}})
+	var got []string
+	for _, o := range events[0].Outputs {
+		got = append(got, o.Name+" "+o.Meta["page"]+"/"+o.Meta["count"]+" "+o.Meta["from"])
+	}
+	if want := []string{"page 1 1/3 tiff", "page 2 2/3 tiff", "page 3 3/3 tiff"}; !slices.Equal(got, want) {
+		t.Errorf("pages.tiff: outputs %q, want %q", got, want)
 	}
 }
 

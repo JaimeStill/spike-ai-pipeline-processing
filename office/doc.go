@@ -1,11 +1,11 @@
 //go:build linux
 
-// Package office prepares office documents, docx, xlsx, and pptx, and the legacy doc, xls, and
-// ppt, for a model through office, spike-ai-pipeline-office: a document in, office's JSON model or
+// Package office prepares office documents, docx, xlsx, and pptx, the legacy doc, xls, and ppt, and
+// RTF, for a model through office, spike-ai-pipeline-office: a document in, office's JSON model or
 // its Markdown out, with the pictures the document embeds. It provides pre-inference preparation
 // only; a layer above sends what it returns to a model. The package builds on Linux only, on the
-// standard library and this module's tool, route, and picture packages; every program it runs is
-// a tool.Tool the caller built.
+// standard library and this module's tool, route, and picture packages; every program it runs is a
+// tool.Tool the caller built.
 //
 // A Converter is built at the composition root over an office Tool, OfficeSpec declaring it.
 // NewConverter refuses one older than 0.1.0, and the Tool's own construction a missing one, so a
@@ -23,7 +23,10 @@
 // the Config, Convert converts it first, in the request's working directory, to the OOXML format
 // its extension names, and runs office on that; the Result's ConvertedFrom names the legacy format.
 // Without one, a legacy document is refused with ErrNoLibreOffice before anything runs. Any other
-// OLE2 file, such as an encrypted OOXML package, goes to office, which refuses it. The picture
+// OLE2 file, such as an encrypted OOXML package, goes to office, which refuses it. An RTF, found by
+// its signature whatever its name, is converted the same way to docx, through Writer's docx
+// export filter, as a .doc is, and ConvertedFrom is "rtf"; without LibreOffice it is refused with
+// ErrNoLibreOffice too. The picture
 // package's LibreOfficeSpec declares soffice, minimum 24.2, and its LibreOfficeImage is the default
 // image the container runner runs it in, under its full lockdown: no network, the caller's uid:gid,
 // every capability dropped. Each conversion gives soffice a user profile of its own inside the
@@ -89,9 +92,10 @@
 //
 //   - [OfficeSpec] declares office's spike-ai-pipeline-office for either runner's constructor.
 //   - [OfficeMinimum] is the oldest office the Converter accepts, 0.1.0.
-//   - [ErrNoLibreOffice] is the cause of a legacy document's refusal without a LibreOffice Tool.
-//   - [Config] is the Tools a Converter is built over: office, LibreOffice for legacy documents
-//     and, with magick, EMF and WMF pictures, and magick for TIFF pictures.
+//   - [ErrNoLibreOffice] is the cause of a legacy document's or an RTF's refusal without a
+//     LibreOffice Tool.
+//   - [Config] is the Tools a Converter is built over: office, LibreOffice for legacy documents,
+//     RTFs, and, with magick, EMF and WMF pictures, and magick for TIFF pictures.
 //   - [Converter] converts office documents through office.
 //   - [NewConverter] builds a Converter over a Config.
 //   - [Converter.Convert] converts one document as a Request says.
@@ -100,7 +104,7 @@
 //   - [Format] is a conversion's rendering: [JSON] or [Markdown].
 //   - [Format.String] returns a format's name, as office's --format takes it.
 //   - [Result] is one document's conversion: the model or the Markdown, the media directory, the
-//     media list, office's warnings, and the legacy format it was converted from.
+//     media list, office's warnings, and the legacy format or RTF it was converted from.
 //   - [MediaFile] is one file of the media list: its name, content type, the file handed onward,
 //     and whether it was converted.
 //   - [ContentType] returns a media file's content type by its extension.

@@ -601,6 +601,8 @@ func (r *run) staged(p Part, stage Stage, failed func(error) result) result {
 	switch {
 	case stageErr == nil:
 		ev.Outcome = Prepared
+	case errors.Is(stageErr, ErrQuarantined):
+		return r.stageQuarantined(ev, dir, stageErr)
 	case errors.Is(stageErr, ErrNoProcessor):
 		ev.Outcome, ev.Reason = NoProcessor, stageErr.Error()
 	case errors.Is(stageErr, ErrEncrypted), encrypted(p.Flags):
@@ -620,6 +622,26 @@ func (r *run) staged(p Part, stage Stage, failed func(error) result) result {
 		return true, nil
 	}
 	return r.emit(ev, dir, complete, record)
+}
+
+// stageQuarantined emits ev, the event of a part its stage quarantined, ending with stageErr,
+// which matches ErrQuarantined, before preparing any of it: a *QuarantineError's flags are added
+// to the part's, sorted by check, and recorded in the index, and the part is quarantined as its
+// inspection would have quarantined it. As for that part, no entry is recorded, so a later
+// dispatch reads the part again, and its file is kept.
+func (r *run) stageQuarantined(ev Event, dir string, stageErr error) result {
+	if qe, ok := errors.AsType[*QuarantineError](stageErr); ok && len(qe.Flags) > 0 {
+		flags := slices.Concat(ev.Part.Flags, qe.Flags)
+		slices.SortStableFunc(flags, func(a, b inspect.Flag) int { return strings.Compare(string(a.Check), string(b.Check)) })
+		ev.Part.Flags = flags
+		if err := r.d.cfg.Index.RecordFlags(r.ctx, ev.Part.SHA256, flags); err != nil {
+			_ = r.clean(dir)
+			return r.fatal(err)
+		}
+	}
+	q := quarantined(ev.Part)
+	ev.Outcome, ev.Reason = q.Outcome, q.Reason
+	return r.emit(ev, dir, true, nil)
 }
 
 // encrypted reports whether flags hold a check that marks content encrypted.

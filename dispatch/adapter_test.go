@@ -6,6 +6,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	jsonv2 "encoding/json/v2"
 	"errors"
 	"fmt"
 	"hash/crc32"
@@ -13,6 +14,7 @@ import (
 	"image/color"
 	"image/png"
 	"io"
+	"maps"
 	"os"
 	"path/filepath"
 	"slices"
@@ -54,7 +56,7 @@ func pinned(t *testing.T, spec tool.Spec) *tool.Tool {
 func officeStage(t *testing.T) *dispatch.OfficeStage {
 	t.Helper()
 	tl := pinned(t, office.OfficeSpec())
-	c, err := office.NewConverter(office.Config{Office: tl})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: tl})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,7 +101,7 @@ func onenoteStage(t *testing.T) *dispatch.OneNoteStage {
 // for any picture.
 func toollessPicture(t *testing.T) *dispatch.PictureStage {
 	t.Helper()
-	c, err := picture.NewConverter(picture.Config{})
+	c, err := picture.NewConverter(t.Context(), picture.Config{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -193,7 +195,7 @@ func TestAdapterIdentities(t *testing.T) {
 	if o.Name != "office" || o.Version != dispatch.Versions(officeTool) {
 		t.Errorf("office identity %v", o)
 	}
-	c, err := office.NewConverter(office.Config{Office: officeTool})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: officeTool})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -303,14 +305,14 @@ func TestDocumentStage(t *testing.T) {
 	}
 }
 
-// TestPictureNoProcessor: a WebP, a HEIC, and an AVIF have no processor yet, nor a TIFF or an EMF
-// for a Converter given no tool; each reason says why.
+// TestPictureNoProcessor: a Converter given no tool has no processor yet for a WebP, a HEIC, an
+// AVIF, a TIFF, or an EMF; each reason says why.
 func TestPictureNoProcessor(t *testing.T) {
 	d := newDispatcher(t, dispatch.Stages{route.VisionConverted: toollessPicture(t)}, dispatch.NewMemoryIndex())
 	for name, c := range map[string]struct{ content, reason string }{
-		"x.webp": {"RIFF\x10\x00\x00\x00WEBPVP8 ", "picture stage: no processor yet for a WebP picture"},
-		"x.heic": {"\x00\x00\x00\x18ftypheic\x00\x00\x00\x00mif1heic", "picture stage: no processor yet for a HEIC picture"},
-		"x.avif": {"\x00\x00\x00\x18ftypavif\x00\x00\x00\x00mif1avif", "picture stage: no processor yet for an AVIF picture"},
+		"x.webp": {"RIFF\x10\x00\x00\x00WEBPVP8 ", "is a WebP picture: no magick converter"},
+		"x.heic": {"\x00\x00\x00\x18ftypheic\x00\x00\x00\x00mif1heic", "is a HEIC picture: no magick converter"},
+		"x.avif": {"\x00\x00\x00\x18ftypavif\x00\x00\x00\x00mif1avif", "is an AVIF picture: no magick converter"},
 		"x.tif":  {"II*\x00\x08\x00\x00\x00", "no magick converter"},
 		"x.emf":  {"\x01\x00\x00\x00" + strings.Repeat("\x00", 36) + " EMF" + strings.Repeat("\x00", 40), "no LibreOffice converter"},
 	} {
@@ -346,13 +348,13 @@ func zipOf(t *testing.T, entries ...string) string {
 	return b.String()
 }
 
-// TestOfficeNoProcessor: an RTF, a WordPerfect document, an ODF package, and an Excel binary
-// workbook have no processor yet, nor a legacy document for a Converter with no LibreOffice;
+// TestOfficeNoProcessor: a WordPerfect document, an ODF package, and an Excel binary workbook
+// have no processor yet, nor a legacy document or an RTF for a Converter with no LibreOffice;
 // each reason names the kind.
 func TestOfficeNoProcessor(t *testing.T) {
 	d := newDispatcher(t, dispatch.Stages{route.Office: officeStage(t)}, dispatch.NewMemoryIndex())
 	for name, c := range map[string]struct{ content, reason string }{
-		"x.rtf":  {`{\rtf1\ansi hello}`, "office stage: no processor yet for an RTF document"},
+		"x.rtf":  {`{\rtf1\ansi hello}`, "x.rtf is an RTF document: no LibreOffice converter"},
 		"x.wpd":  {"\xffWPC\x10\x00\x00\x00\x01\x0a", "office stage: no processor yet for a WordPerfect document"},
 		"x.odt":  {zipOf(t, "mimetype", "application/vnd.oasis.opendocument.text", "content.xml", "<x/>"), "office stage: no processor yet for an ODF package"},
 		"x.xlsb": {zipOf(t, "[Content_Types].xml", "<x/>"), "office stage: no processor yet for an Excel binary workbook"},
@@ -629,6 +631,79 @@ func TestEmailEmbedded(t *testing.T) {
 	wantSteps(t, events, []step{{"note-g.txt", 1, dispatch.NoProcessor}, {"08-forward-attached-message.eml", 0, dispatch.Prepared}})
 	if m := outputNamed(t, events[1], dispatch.RecordOutput, "message, attachment 2").Meta; m["subject"] != "Notes on the engine (draft)" {
 		t.Errorf("the forwarded message's meta %v", m)
+	}
+}
+
+// TestEmailConversations dispatches mail's conversations.pst, whose Conversation History folder
+// holds three conversations, a missed one, and a note. Each conversation-class item is a
+// conversation record, "conversation <id>", the email package's Conversation, right before its
+// transcript's Markdown of the same name, the record saying one follows; the Meta of both names
+// its id, folder, topic, and whether it was missed. The note is a message record and Markdown, as
+// before. Each item's Markdown is its hand truth's, in truth.json, found by its subject.
+func TestEmailConversations(t *testing.T) {
+	d := newDispatcher(t, dispatch.Stages{route.Nested: emailStage(t)}, dispatch.NewMemoryIndex())
+	generated := filepath.Join(mailFixtures, "generated")
+	events := dispatchAll(t, d, filepath.Join(generated, "pst", "conversations.pst"), nil)
+	wantSteps(t, events, []step{{"conversations.pst", 0, dispatch.Prepared}})
+	data, err := os.ReadFile(filepath.Join(generated, "truth.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var truth struct {
+		Items map[string]struct {
+			Class    string `json:"class"`
+			Subject  string `json:"subject"`
+			Markdown string `json:"markdown"`
+		} `json:"items"`
+	}
+	if err := jsonv2.Unmarshal(data, &truth); err != nil {
+		t.Fatal(err)
+	}
+	markdownBy := map[string]string{}
+	for _, item := range truth.Items {
+		markdownBy[item.Subject] = item.Markdown
+	}
+	const folder = "Top of Personal Folders/Conversation History"
+	store := events[0]
+	var conversations, missed, messages int
+	for i, o := range store.Outputs {
+		if o.Kind != dispatch.RecordOutput {
+			continue
+		}
+		kind, id, _ := strings.Cut(o.Name, " ")
+		switch kind {
+		case "conversation":
+			var c email.Conversation
+			if err := jsonv2.Unmarshal(o.Value, &c); err != nil {
+				t.Fatalf("%s: %v", o.Name, err)
+			}
+			conversations++
+			if c.Missed {
+				missed++
+			}
+			want := map[string]string{
+				"id": id, "folder": folder, "topic": c.Topic, "missed": strconv.FormatBool(c.Missed),
+				"markdown": "follows",
+			}
+			if !maps.Equal(o.Meta, want) || strconv.FormatUint(c.ID, 10) != id || c.Topic == "" {
+				t.Errorf("%s: meta %v, want %v", o.Name, o.Meta, want)
+			}
+			recordThenMarkdown(t, store, o.Name)
+			md := store.Outputs[i+1]
+			delete(want, "markdown")
+			if string(md.Value) != c.Markdown || c.Markdown != markdownBy[c.Topic] || !maps.Equal(md.Meta, want) {
+				t.Errorf("%s: Markdown %q, meta %v; the record's %q, the truth's %q", o.Name, md.Value, md.Meta, c.Markdown, markdownBy[c.Topic])
+			}
+		case "message":
+			messages++
+			recordThenMarkdown(t, store, o.Name)
+			if md := store.Outputs[i+1]; o.Meta["folder"] != folder || string(md.Value) != markdownBy[o.Meta["subject"]] {
+				t.Errorf("%s: meta %v, Markdown %q", o.Name, o.Meta, md.Value)
+			}
+		}
+	}
+	if conversations != 4 || missed != 1 || messages != 1 {
+		t.Errorf("%d conversations, %d missed, %d messages; want 4, 1, and 1", conversations, missed, messages)
 	}
 }
 

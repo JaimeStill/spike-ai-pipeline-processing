@@ -40,10 +40,10 @@ type Config struct {
 	// required.
 	Office *tool.Tool
 	// LibreOffice is LibreOffice's soffice, typically built from picture.LibreOfficeSpec through
-	// the container runner in picture.LibreOfficeImage. It converts legacy documents to OOXML;
-	// nil leaves the Converter without one, and a legacy document is then refused with
-	// ErrNoLibreOffice. It renders EMF and WMF pictures to PNG too, through the picture package,
-	// with Magick; without either, they have no file handed onward.
+	// the container runner in picture.LibreOfficeImage. It converts legacy documents to OOXML, and
+	// RTFs to docx; nil leaves the Converter without one, and a legacy document or an RTF is then
+	// refused with ErrNoLibreOffice. It renders EMF and WMF pictures to PNG too, through the
+	// picture package, with Magick; without either, they have no file handed onward.
 	LibreOffice *tool.Tool
 	// Magick is ImageMagick's magick, typically built from picture.MagickSpec. It converts TIFF
 	// pictures to PNG, and trims an EMF or WMF picture's rendered page to the picture, through
@@ -66,15 +66,16 @@ type Converter struct {
 // LibreOffice and Magick. It refuses a nil Office, and an Office whose version is older than
 // OfficeMinimum, a LibreOffice older than picture.LibreOfficeMinimum, or a Magick older than
 // picture.MagickMinimum, whatever minimum the Tool's own Spec declared, with a *tool.VersionError
-// wrapping tool.ErrTooOld.
-func NewConverter(cfg Config) (*Converter, error) {
+// wrapping tool.ErrTooOld. Given a Magick, the picture package's Converter runs magick's format
+// listing under ctx, and its failure is an error.
+func NewConverter(ctx context.Context, cfg Config) (*Converter, error) {
 	if cfg.Office == nil {
 		return nil, errors.New("office: no office tool")
 	}
 	if err := atLeast(cfg.Office, OfficeMinimum); err != nil {
 		return nil, err
 	}
-	pictures, err := picture.NewConverter(picture.Config{Magick: cfg.Magick, LibreOffice: cfg.LibreOffice})
+	pictures, err := picture.NewConverter(ctx, picture.Config{Magick: cfg.Magick, LibreOffice: cfg.LibreOffice})
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +127,8 @@ type Request struct {
 	// Name is the document's file name, or a path ending in it; only its extension is read. A
 	// document with the OLE2 compound-file signature whose Name has a legacy extension, .doc or
 	// .dot, .xls or .xlt, .ppt, .pps, or .pot, in any case, is a legacy document, converted to
-	// docx, xlsx, or pptx before office runs. "" names no extension.
+	// docx, xlsx, or pptx before office runs. An RTF, found by its signature, is converted to
+	// docx whatever Name says. "" names no extension.
 	Name string
 	// MetafileScale is the scale the document's EMF and WMF pictures are rendered at, a multiple
 	// of their size at 96 dpi: zero is picture.DefaultMetafileScale, 3, and it may be at most
@@ -153,10 +155,10 @@ type Result struct {
 	// Warnings are office's warnings, one per line it wrote to stderr: what it skipped and
 	// converted the rest without. A conversion with warnings has still succeeded.
 	Warnings []string
-	// ConvertedFrom is the legacy format a legacy document was converted from to OOXML before
-	// office ran, its extension without the dot and lowercased, such as "doc"; "" when the
-	// document went to office as it was. Document.Format, for a JSON request, is the OOXML format
-	// it was converted to.
+	// ConvertedFrom is the format a legacy document or an RTF was converted from to OOXML before
+	// office ran: a legacy document's extension without the dot and lowercased, such as "doc", or
+	// "rtf"; "" when the document went to office as it was. Document.Format, for a JSON request, is
+	// the OOXML format it was converted to.
 	ConvertedFrom string
 }
 
@@ -214,6 +216,11 @@ const stderrLimit = 1 << 20
 // or run. Any other OLE2 file, such as an encrypted OOXML package, goes to office as it is, and
 // office refuses it.
 //
+// An RTF, as its signature says, whatever Request.Name's extension, is converted as a .doc is:
+// spooled as .rtf and converted to docx, through Writer's docx export filter, before office runs;
+// ConvertedFrom is "rtf". Without a LibreOffice converter it is an error matching
+// ErrNoLibreOffice, before anything is spooled or run.
+//
 // The media office wrote then follow the picture standard. A picture vision decodes, PNG, JPEG,
 // GIF, or BMP, is handed on as stored, as is any kind the standard names no converter for. EMF and
 // WMF are rendered to PNG at req.MetafileScale through the LibreOffice converter, all of a
@@ -254,14 +261,21 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 	br := bufio.NewReader(doc)
 	from, to := legacyFormat(br, req.Name)
 	if from != "" && c.libreoffice == nil {
-		return nil, fmt.Errorf("office: %s is a legacy %s document: %w", filepath.Base(req.Name), from, ErrNoLibreOffice)
+		name, what := filepath.Base(req.Name), "a legacy "+from+" document"
+		if from == "rtf" {
+			what = "an RTF document"
+		}
+		if req.Name == "" {
+			name = "the document"
+		}
+		return nil, fmt.Errorf("office: %s is %s: %w", name, what, ErrNoLibreOffice)
 	}
 	ext := ""
 	if from != "" {
 		ext = "." + from
 	}
 	// office tells the format from the content, so the spooled file has no extension but a
-	// legacy document's, which LibreOffice reads.
+	// legacy document's or an RTF's, which LibreOffice reads.
 	path, remove, err := cli.Spool(dir, br, ext)
 	if err != nil {
 		return nil, fmt.Errorf("office: %w", err)
@@ -279,10 +293,10 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 	return res, nil
 }
 
-// convertLegacy runs office on the document spooled at path, in dir, as convert does; for a
-// legacy document, from naming its format, it first converts the document to the OOXML format to
-// and runs office on that, removing the converted document and soffice's profile afterwards.
-// Metafiles are rendered at scale.
+// convertLegacy runs office on the document spooled at path, in dir, as convert does; for a legacy
+// document or an RTF, from naming its format, it first converts the document to the OOXML format
+// its extension names and runs office on that, removing the converted document and soffice's
+// profile afterwards. Metafiles are rendered at scale.
 func (c *Converter) convertLegacy(ctx context.Context, dir, path, from, to string, format Format, scale int) (*Result, error) {
 	if from == "" {
 		return c.convert(ctx, dir, path, format, scale)

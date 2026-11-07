@@ -18,28 +18,37 @@ import (
 // ole2 begins an OLE2 compound file, as a legacy document and an encrypted OOXML package do.
 const ole2 = "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
+// rtf begins an RTF document.
+const rtf = `{\rtf1\ansi `
+
 // TestConvertLegacy: a document with the OLE2 signature whose name has a legacy extension, in
 // any case, is spooled with that extension, lowercased, and converted by soffice to its OOXML
 // format, in the working directory, with a fresh profile and its output in a directory of its
 // own there; office then runs once on the converted document. The result records the legacy format,
-// and only the media directory is left.
+// and only the media directory is left. An RTF, by its signature, whatever its name says, is
+// spooled as .rtf and converted to docx by Writer's filter, as a .doc is, and recorded as "rtf".
 func TestConvertLegacy(t *testing.T) {
 	c, runs := legacyConverter(t)
 	for _, tc := range []struct {
-		name, from, to, filter string
+		desc, head, name, from, to, filter string
 	}{
-		{"report.doc", "doc", "docx", "MS Word 2007 XML"},
-		{"letter.DOT", "dot", "docx", "MS Word 2007 XML"},
-		{"/somewhere/else/budget.xls", "xls", "xlsx", "Calc MS Excel 2007 XML"},
-		{"budget.xlt", "xlt", "xlsx", "Calc MS Excel 2007 XML"},
-		{"deck.ppt", "ppt", "pptx", "Impress MS PowerPoint 2007 XML"},
-		{"deck.Pps", "pps", "pptx", "Impress MS PowerPoint 2007 XML"},
-		{"deck.pot", "pot", "pptx", "Impress MS PowerPoint 2007 XML"},
+		{"report.doc", ole2, "report.doc", "doc", "docx", "MS Word 2007 XML"},
+		{"letter.DOT", ole2, "letter.DOT", "dot", "docx", "MS Word 2007 XML"},
+		{"budget.xls", ole2, "/somewhere/else/budget.xls", "xls", "xlsx", "Calc MS Excel 2007 XML"},
+		{"budget.xlt", ole2, "budget.xlt", "xlt", "xlsx", "Calc MS Excel 2007 XML"},
+		{"deck.ppt", ole2, "deck.ppt", "ppt", "pptx", "Impress MS PowerPoint 2007 XML"},
+		{"deck.Pps", ole2, "deck.Pps", "pps", "pptx", "Impress MS PowerPoint 2007 XML"},
+		{"deck.pot", ole2, "deck.pot", "pot", "pptx", "Impress MS PowerPoint 2007 XML"},
+		{"memo.rtf", rtf, "memo.rtf", "rtf", "docx", "MS Word 2007 XML"},
+		{"MEMO.RTF", rtf, "MEMO.RTF", "rtf", "docx", "MS Word 2007 XML"},
+		{"rtf named .doc", rtf, "memo.doc", "rtf", "docx", "MS Word 2007 XML"},
+		{"rtf named .xls", rtf, "memo.xls", "rtf", "docx", "MS Word 2007 XML"},
+		{"rtf with no name", rtf, "", "rtf", "docx", "MS Word 2007 XML"},
 	} {
-		t.Run(tc.name, func(t *testing.T) {
+		t.Run(tc.desc, func(t *testing.T) {
 			dir := t.TempDir()
 			before := len(runs())
-			doc := ole2 + "the " + tc.from + " document"
+			doc := tc.head + "the " + tc.from + " document"
 			res, err := c.Convert(t.Context(), strings.NewReader(doc), office.Request{Dir: dir, Name: tc.name})
 			if err != nil {
 				t.Fatal(err)
@@ -104,29 +113,37 @@ func matchArgs(args, want []string) bool {
 	return true
 }
 
-// TestConvertLegacyNoConverter: without a LibreOffice converter, a legacy document is refused with
-// ErrNoLibreOffice, naming the file and its format, before anything is spooled or run.
+// TestConvertLegacyNoConverter: without a LibreOffice converter, a legacy document or an RTF is
+// refused with ErrNoLibreOffice, naming the file and its format, before anything is spooled or
+// run.
 func TestConvertLegacyNoConverter(t *testing.T) {
 	c, runs := standinConverter(t)
-	dir := t.TempDir()
-	_, err := c.Convert(t.Context(), strings.NewReader(ole2+"a doc"), office.Request{Dir: dir, Name: "/in/report.doc"})
-	if !errors.Is(err, office.ErrNoLibreOffice) {
-		t.Fatalf("got %v, want ErrNoLibreOffice", err)
-	}
-	if want := "office: report.doc is a legacy doc document: no LibreOffice converter"; err.Error() != want {
-		t.Errorf("error: got %q, want %q", err.Error(), want)
-	}
-	if n := len(runs()); n != 0 {
-		t.Errorf("%d runs, want none", n)
-	}
-	if got := entries(t, dir); len(got) != 0 {
-		t.Errorf("working directory holds %q, want nothing", got)
+	for _, tc := range []struct{ doc, name, want string }{
+		{ole2 + "a doc", "/in/report.doc", "office: report.doc is a legacy doc document: no LibreOffice converter"},
+		{rtf + "a memo}", "/in/memo.rtf", "office: memo.rtf is an RTF document: no LibreOffice converter"},
+		{rtf + "a memo}", "", "office: the document is an RTF document: no LibreOffice converter"},
+	} {
+		dir := t.TempDir()
+		_, err := c.Convert(t.Context(), strings.NewReader(tc.doc), office.Request{Dir: dir, Name: tc.name})
+		if !errors.Is(err, office.ErrNoLibreOffice) {
+			t.Fatalf("%q: got %v, want ErrNoLibreOffice", tc.name, err)
+		}
+		if err.Error() != tc.want {
+			t.Errorf("error: got %q, want %q", err.Error(), tc.want)
+		}
+		if n := len(runs()); n != 0 {
+			t.Errorf("%q: %d runs, want none", tc.name, n)
+		}
+		if got := entries(t, dir); len(got) != 0 {
+			t.Errorf("%q: working directory holds %q, want nothing", tc.name, got)
+		}
 	}
 }
 
 // TestConvertNotLegacy: an OLE2 file whose name has no legacy extension, such as an encrypted
-// OOXML package, and a legacy name on a file without the signature, go to office as they are,
-// and soffice never runs; office refusing the OLE2 file is office's refusal.
+// OOXML package, a legacy name on a file without the signature, and an .rtf without RTF's
+// signature, go to office as they are, and soffice never runs; office refusing the OLE2 file is
+// office's refusal.
 func TestConvertNotLegacy(t *testing.T) {
 	c, runs := legacyConverter(t)
 	for _, tc := range []struct{ desc, doc, name string }{
@@ -134,6 +151,7 @@ func TestConvertNotLegacy(t *testing.T) {
 		{"no name", ole2 + "a doc", ""},
 		{"no extension", ole2 + "a doc", "report"},
 		{"no signature", "PK\x03\x04 a docx", "renamed.doc"},
+		{"no rtf signature", "PK\x03\x04 a docx", "renamed.rtf"},
 		{"short", "\xd0\xcf", "short.doc"},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -246,7 +264,7 @@ func TestNewConverterLibreOffice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = office.NewConverter(office.Config{Office: o, LibreOffice: old})
+	_, err = office.NewConverter(t.Context(), office.Config{Office: o, LibreOffice: old})
 	var verr *tool.VersionError
 	if !errors.As(err, &verr) || !errors.Is(err, tool.ErrTooOld) {
 		t.Fatalf("NewConverter over 7.6.4.1: got %v, want a VersionError wrapping ErrTooOld", err)

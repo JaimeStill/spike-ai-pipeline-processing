@@ -55,11 +55,10 @@ func (in *inspection) zip(ctx context.Context) error {
 // on the bytes it writes, since a declared size may lie.
 func (in *inspection) zipEntry(f *zip.File) {
 	quoted := fmt.Sprintf("entry %q", f.Name)
-	elements := strings.FieldsFunc(f.Name, func(r rune) bool { return r == '/' || r == '\\' })
-	if slices.Contains(elements, "..") {
+	if traverses(f.Name) {
 		in.flag(ZIPTraversal, quoted)
 	}
-	if strings.HasPrefix(f.Name, "/") || strings.HasPrefix(f.Name, `\`) || driveLetter(f.Name) {
+	if absolute(f.Name) {
 		in.flag(ZIPAbsolutePath, quoted)
 	}
 	if f.Mode()&fs.ModeSymlink != 0 {
@@ -72,6 +71,18 @@ func (in *inspection) zipEntry(f *zip.File) {
 	if f.Flags&0x1 != 0 {
 		in.flag(ZIPEncrypted, quoted)
 	}
+}
+
+// traverses reports whether an entry's name has a ".." element, either separator dividing it.
+func traverses(name string) bool {
+	elements := strings.FieldsFunc(name, func(r rune) bool { return r == '/' || r == '\\' })
+	return slices.Contains(elements, "..")
+}
+
+// absolute reports whether an entry's name is absolute, by either separator, or begins with a
+// drive letter.
+func absolute(name string) bool {
+	return strings.HasPrefix(name, "/") || strings.HasPrefix(name, `\`) || driveLetter(name)
 }
 
 // driveLetter reports whether name begins with a drive letter and a colon, as "C:" does.
