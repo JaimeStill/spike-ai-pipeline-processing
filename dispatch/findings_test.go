@@ -262,7 +262,7 @@ func launchReport(ctx context.Context, child string, args []string, survey any) 
 // office mise pins, LibreOffice through the container runner in its pinned image, and magick;
 // the picture stage over magick and LibreOffice; the vision stage, which passes a picture
 // through; the email stage over the mail mise pins; the onenote stage over the onenote mise
-// pins; and the zip stage under the default thresholds.
+// pins; and the archive stage under the default thresholds.
 func findingStages(ctx context.Context) (dispatch.Stages, error) {
 	execs := map[string]*tool.Tool{}
 	for name, spec := range map[string]tool.Spec{
@@ -326,7 +326,7 @@ func findingStages(ctx context.Context) (dispatch.Stages, error) {
 	if err != nil {
 		return nil, err
 	}
-	zips, err := dispatch.NewZipStage(dispatch.ZipConfig{})
+	zips, err := dispatch.NewArchiveStage(dispatch.ArchiveConfig{})
 	if err != nil {
 		return nil, err
 	}

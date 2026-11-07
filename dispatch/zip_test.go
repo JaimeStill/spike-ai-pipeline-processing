@@ -100,11 +100,19 @@ func (c *counting) Prepare(ctx context.Context, p dispatch.Part, dir string) ite
 	return c.Stage.Prepare(ctx, p, dir)
 }
 
-// zipDispatcher returns a dispatcher whose archive route is a zip stage, counted, and whose vision
-// route is the vision stage, both under opts, in a working directory of its own, which it returns.
-func zipDispatcher(t *testing.T, opts inspect.Options) (*dispatch.Dispatcher, *counting, string) {
+// archiveDispatcher returns a dispatcher whose archive route is an archive stage with no 7-Zip,
+// counted, and whose vision route is the vision stage, both under opts, in a working directory of
+// its own, which it returns.
+func archiveDispatcher(t *testing.T, opts inspect.Options) (*dispatch.Dispatcher, *counting, string) {
 	t.Helper()
-	s, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: opts})
+	return archiveDispatcherWith(t, dispatch.ArchiveConfig{Inspect: opts})
+}
+
+// archiveDispatcherWith returns a dispatcher as archiveDispatcher does, its archive stage built
+// over cfg, the dispatcher's inspection under cfg.Inspect.
+func archiveDispatcherWith(t *testing.T, cfg dispatch.ArchiveConfig) (*dispatch.Dispatcher, *counting, string) {
+	t.Helper()
+	s, err := dispatch.NewArchiveStage(cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -114,7 +122,7 @@ func zipDispatcher(t *testing.T, opts inspect.Options) (*dispatch.Dispatcher, *c
 		Stages:  dispatch.Stages{route.Archive: zs, route.Vision: dispatch.NewVisionStage()},
 		Index:   dispatch.NewMemoryIndex(),
 		Dir:     work,
-		Inspect: opts,
+		Inspect: cfg.Inspect,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -153,7 +161,7 @@ func inside(dir, path string) bool {
 }
 
 // TestZipStage dispatches a ZIP holding a ZIP, a picture, a Unicode-named text, a directory,
-// and the picture again under the directory: the inner ZIP is routed to the zip stage again and
+// and the picture again under the directory: the inner ZIP is routed to the archive stage again and
 // its entries dispatched below it; each entry is named by its stored name, found "zip entry
 // <name>", and written under its SHA-256 inside the working directory; the directory is no part;
 // the picture met again is seen; and nothing is left once the dispatch is done.
@@ -166,7 +174,7 @@ func TestZipStage(t *testing.T) {
 		zent{name: "pictures/", mode: fs.ModeDir | 0o755},
 		zent{name: "pictures/again.png", body: pngBytes},
 	)
-	d, zs, work := zipDispatcher(t, inspect.Options{})
+	d, zs, work := archiveDispatcher(t, inspect.Options{})
 	events := dispatchAll(t, d, input(t, "bundle.zip", outer), func(ev *dispatch.Event) {
 		if ev.Part.Depth == 0 {
 			return
@@ -187,14 +195,14 @@ func TestZipStage(t *testing.T) {
 	if got := wheres(events); !slices.Equal(got, want) {
 		t.Errorf("wheres:\n got %q\nwant %q", got, want)
 	}
-	if ev := byName(t, events, "inner.zip"); ev.Part.Route != route.Archive || ev.Stage.Name != "zip" || ev.Children != 2 {
+	if ev := byName(t, events, "inner.zip"); ev.Part.Route != route.Archive || ev.Stage.Name != "archive" || ev.Children != 2 {
 		t.Errorf("inner.zip: %s by %v, %d children", ev.Part.Route, ev.Stage, ev.Children)
 	}
 	if ev := byName(t, events, unicode); ev.Part.Route != route.Text {
 		t.Errorf("%s routed %s, want text", unicode, ev.Part.Route)
 	}
 	if n := zs.calls.Load(); n != 2 {
-		t.Errorf("the zip stage prepared %d parts, want 2", n)
+		t.Errorf("the archive stage prepared %d parts, want 2", n)
 	}
 	wantEmpty(t, work)
 }
@@ -204,7 +212,7 @@ func TestZipStage(t *testing.T) {
 // record naming it, its outcome encrypted; and the ZIP is encrypted, its reason counting its
 // encrypted entries.
 func TestZipEncrypted(t *testing.T) {
-	d, _, work := zipDispatcher(t, inspect.Options{})
+	d, _, work := archiveDispatcher(t, inspect.Options{})
 	events := dispatchAll(t, d, filepath.Join(inspectFixtures, "encrypted.zip"), nil)
 	wantSteps(t, events, []step{{"notes.txt", 1, dispatch.NoProcessor}, {"encrypted.zip", 0, dispatch.Encrypted}})
 	z := events[1]
@@ -230,7 +238,7 @@ func TestZipBombAsWritten(t *testing.T) {
 	lying := zipBytes(t, zent{name: "zeros.bin", body: string(make([]byte, 8<<20)), declared: 1024})
 	lowered := inspect.Options{BombSize: 1 << 20, BombRatio: 100}
 
-	d, _, work := zipDispatcher(t, lowered)
+	d, _, work := archiveDispatcher(t, lowered)
 	events := dispatchAll(t, d, input(t, "lying.zip", lying), func(ev *dispatch.Event) {
 		if left := files(t, work); len(left) > 0 {
 			t.Errorf("files at the ZIP's event: %q, want the partial file removed", left)
@@ -244,7 +252,7 @@ func TestZipBombAsWritten(t *testing.T) {
 	}
 	wantEmpty(t, work)
 
-	d, _, work = zipDispatcher(t, inspect.Options{})
+	d, _, work = archiveDispatcher(t, inspect.Options{})
 	events = dispatchAll(t, d, input(t, "lying.zip", lying), nil)
 	wantSteps(t, events, []step{{"lying.zip", 0, dispatch.Prepared}})
 	if m := outputNamed(t, events[0], dispatch.RecordOutput, "zip entry zeros.bin").Meta; m["reason"] != "8388608 bytes written, 1024 declared" || m["check"] != "" {
@@ -253,12 +261,12 @@ func TestZipBombAsWritten(t *testing.T) {
 	wantEmpty(t, work)
 
 	bomb := filepath.Join(inspectFixtures, "bomb.zip")
-	d, zs, _ := zipDispatcher(t, lowered)
+	d, zs, _ := archiveDispatcher(t, lowered)
 	if ev := dispatchAll(t, d, bomb, nil)[0]; ev.Outcome != dispatch.Quarantined || zs.calls.Load() != 0 {
 		t.Errorf("bomb.zip at lowered thresholds: %s, the stage called %d times", ev.Outcome, zs.calls.Load())
 	}
 	lowered.Policy = map[inspect.Check]inspect.Verdict{inspect.ZIPBomb: inspect.Proceed}
-	d, _, _ = zipDispatcher(t, lowered)
+	d, _, _ = archiveDispatcher(t, lowered)
 	ev := dispatchAll(t, d, bomb, nil)[0]
 	if m := outputNamed(t, ev, dispatch.RecordOutput, "zip entry zeros.bin").Meta; ev.Outcome != dispatch.Prepared || m["check"] != string(inspect.ZIPBomb) {
 		t.Errorf("bomb.zip let proceed: %s, meta %v", ev.Outcome, m)
@@ -266,7 +274,7 @@ func TestZipBombAsWritten(t *testing.T) {
 }
 
 // TestZipUnsafeNames: inspect quarantines a ZIP with a traversing, an absolute, or a drive
-// letter name, or a symbolic link, and the zip stage never sees it. Under a policy that lets them
+// letter name, or a symbolic link, and the archive stage never sees it. Under a policy that lets them
 // proceed, each entry is written by its SHA-256 inside the working directory, its stored name only
 // its name, no file lands outside, and the link is a file holding its target's text.
 func TestZipUnsafeNames(t *testing.T) {
@@ -282,7 +290,7 @@ func TestZipUnsafeNames(t *testing.T) {
 		{"symlink.zip", []string{"notes.txt", "passwd"}},
 	} {
 		path := filepath.Join(inspectFixtures, c.fixture)
-		d, zs, _ := zipDispatcher(t, inspect.Options{})
+		d, zs, _ := archiveDispatcher(t, inspect.Options{})
 		if ev := dispatchAll(t, d, path, nil)[0]; ev.Outcome != dispatch.Quarantined || zs.calls.Load() != 0 {
 			t.Errorf("%s: %s, the stage called %d times; want quarantined before the stage", c.fixture, ev.Outcome, zs.calls.Load())
 		}
@@ -292,7 +300,7 @@ func TestZipUnsafeNames(t *testing.T) {
 		if err := os.MkdirAll(work, 0o700); err != nil {
 			t.Fatal(err)
 		}
-		s, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: permissive})
+		s, err := dispatch.NewArchiveStage(dispatch.ArchiveConfig{Inspect: permissive})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -324,14 +332,14 @@ func TestZipUnsafeNames(t *testing.T) {
 	}
 }
 
-// TestZipNoProcessor: a zstd stream, a 7z archive, and a cabinet, the archive kinds the stage
-// doesn't read yet, have no processor, each reason naming the kind.
-func TestZipNoProcessor(t *testing.T) {
-	d, _, work := zipDispatcher(t, inspect.Options{})
+// TestArchiveNoSevenZip: with no 7-Zip, a zstd stream, a 7z archive, and a cabinet, the
+// archive kinds the stage reads through it, have no processor, each reason naming the kind.
+func TestArchiveNoSevenZip(t *testing.T) {
+	d, _, work := archiveDispatcher(t, inspect.Options{})
 	for name, c := range map[string]struct{ content, reason string }{
-		"a.tar.zst": {"\x28\xb5\x2f\xfd" + strings.Repeat("\x00", 32), "a zstd stream"},
-		"a.7z":      {"7z\xbc\xaf\x27\x1c" + strings.Repeat("\x00", 32), "a 7z archive"},
-		"a.cab":     {"MSCF" + strings.Repeat("\x00", 32), "a cabinet"},
+		"a.tar.zst": {"\x28\xb5\x2f\xfd" + strings.Repeat("\x00", 32), "a zstd stream without 7-Zip"},
+		"a.7z":      {"7z\xbc\xaf\x27\x1c" + strings.Repeat("\x00", 32), "a 7z archive without 7-Zip"},
+		"a.cab":     {"MSCF" + strings.Repeat("\x00", 32), "a cabinet without 7-Zip"},
 	} {
 		ev := dispatchAll(t, d, input(t, name, c.content), nil)[0]
 		if ev.Part.Route != route.Archive || ev.Outcome != dispatch.NoProcessor || !strings.Contains(ev.Reason, c.reason) {
@@ -341,33 +349,50 @@ func TestZipNoProcessor(t *testing.T) {
 	wantEmpty(t, work)
 }
 
-// TestZipIdentity: the zip stage names itself and this package's version, 2 since it reads tar
-// and gzip, hashes its bomb
-// thresholds, inspect's defaults alike whether given or zero, and refuses a negative ratio.
-func TestZipIdentity(t *testing.T) {
-	id := func(opts inspect.Options) dispatch.Identity {
+// TestArchiveIdentity: the archive stage names itself and this package's version, 3 since it
+// reads 7-Zip's kinds, hashes its bomb thresholds, inspect's defaults alike whether given or zero,
+// and its 7-Zip's version, but not the policy, and refuses a negative ratio, a policy inspect
+// refuses, and a 7-Zip with no version.
+func TestArchiveIdentity(t *testing.T) {
+	id := func(cfg dispatch.ArchiveConfig) dispatch.Identity {
 		t.Helper()
-		s, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: opts})
+		s, err := dispatch.NewArchiveStage(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
 		return s.Identity()
 	}
-	base := id(inspect.Options{})
-	if base.Name != "zip" || base.Version != "2" || len(base.Config) != 64 {
-		t.Errorf("zip identity %v", base)
+	base := id(dispatch.ArchiveConfig{})
+	if base.Name != "archive" || base.Version != "3" || len(base.Config) != 64 {
+		t.Errorf("archive identity %v", base)
 	}
-	if id(inspect.Options{BombRatio: inspect.DefaultBombRatio, BombSize: inspect.DefaultBombSize}) != base {
-		t.Error("inspect's defaults, given, changed the zip identity")
+	if id(dispatch.ArchiveConfig{Inspect: inspect.Options{BombRatio: inspect.DefaultBombRatio, BombSize: inspect.DefaultBombSize}}) != base {
+		t.Error("inspect's defaults, given, changed the archive identity")
 	}
-	if id(inspect.Options{Policy: map[inspect.Check]inspect.Verdict{inspect.ZIPBomb: inspect.Proceed}}) != base {
-		t.Error("a policy, the dispatcher's, changed the zip identity")
+	policy := inspect.Options{Policy: map[inspect.Check]inspect.Verdict{inspect.ZIPBomb: inspect.Proceed}}
+	if id(dispatch.ArchiveConfig{Inspect: policy}) != base {
+		t.Error("a policy, the dispatcher's, changed the archive identity")
 	}
-	if id(inspect.Options{BombSize: 1 << 20}).Config == base.Config || id(inspect.Options{BombRatio: 10}).Config == base.Config {
-		t.Error("a bomb threshold left the zip identity's config unchanged")
+	if id(dispatch.ArchiveConfig{Inspect: inspect.Options{BombSize: 1 << 20}}).Config == base.Config ||
+		id(dispatch.ArchiveConfig{Inspect: inspect.Options{BombRatio: 10}}).Config == base.Config {
+		t.Error("a bomb threshold left the archive identity's config unchanged")
 	}
-	if _, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: inspect.Options{BombRatio: -1}}); err == nil {
-		t.Error("a zip stage with a negative bomb ratio was built")
+	sz := &fakeSevenZip{}
+	with := id(dispatch.ArchiveConfig{SevenZip: sz, Version: "7zz 26.05"})
+	if with.Config == base.Config || id(dispatch.ArchiveConfig{SevenZip: sz, Version: "7zz 24.01"}).Config == with.Config {
+		t.Error("7-Zip's version left the archive identity's config unchanged")
+	}
+	if id(dispatch.ArchiveConfig{Version: "7zz 26.05"}) != base {
+		t.Error("a version with no 7-Zip changed the archive identity")
+	}
+	for name, cfg := range map[string]dispatch.ArchiveConfig{
+		"a negative bomb ratio": {Inspect: inspect.Options{BombRatio: -1}},
+		"a policy of no check":  {Inspect: inspect.Options{Policy: map[inspect.Check]inspect.Verdict{"no-such-check": inspect.Proceed}}},
+		"7-Zip with no version": {SevenZip: sz},
+	} {
+		if _, err := dispatch.NewArchiveStage(cfg); err == nil {
+			t.Errorf("an archive stage with %s was built", name)
+		}
 	}
 }
 
@@ -392,7 +417,7 @@ func docsArchive(t *testing.T, name string) string {
 // entries are each routed by their names, its directories no parts.
 func TestZipDocs(t *testing.T) {
 	t.Run("zip-in-zip", func(t *testing.T) {
-		d, _, work := zipDispatcher(t, inspect.Options{})
+		d, _, work := archiveDispatcher(t, inspect.Options{})
 		events := dispatchAll(t, d, docsArchive(t, "zip-in-zip.zip"), nil)
 		inner := byName(t, events, "inner.zip")
 		if inner.Outcome != dispatch.Prepared || inner.Part.Depth != 1 || inner.Children != 6 {
@@ -407,12 +432,12 @@ func TestZipDocs(t *testing.T) {
 		wantEmpty(t, work)
 	})
 	t.Run("unicode-filenames", func(t *testing.T) {
-		d, _, _ := zipDispatcher(t, inspect.Options{})
+		d, _, _ := archiveDispatcher(t, inspect.Options{})
 		events := dispatchAll(t, d, docsArchive(t, "unicode-filenames.zip"), nil)
 		wantSteps(t, events, []step{{"résumé 日本 שלום.txt", 1, dispatch.NoProcessor}, {"unicode-filenames.zip", 0, dispatch.Prepared}})
 	})
 	t.Run("password-protected", func(t *testing.T) {
-		d, _, _ := zipDispatcher(t, inspect.Options{})
+		d, _, _ := archiveDispatcher(t, inspect.Options{})
 		events := dispatchAll(t, d, docsArchive(t, "password-protected.zip"), nil)
 		wantSteps(t, events, []step{{"password-protected.zip", 0, dispatch.Encrypted}})
 		for _, name := range []string{"meeting-notes.txt", "docs/mgrs-field-report.pdf"} {
@@ -425,7 +450,7 @@ func TestZipDocs(t *testing.T) {
 		}
 	})
 	t.Run("mixed-bundle", func(t *testing.T) {
-		d, _, work := zipDispatcher(t, inspect.Options{})
+		d, _, work := archiveDispatcher(t, inspect.Options{})
 		events := dispatchAll(t, d, docsArchive(t, "mixed-bundle.zip"), nil)
 		got := map[string]route.Route{}
 		for _, ev := range events[:len(events)-1] {
@@ -451,12 +476,12 @@ func TestZipDocs(t *testing.T) {
 // it is prepared, its entry's 200 MB written, then removed once the caller is done with it.
 func TestZipDocsBomb(t *testing.T) {
 	path := docsArchive(t, "high-ratio-200mb.zip")
-	d, zs, _ := zipDispatcher(t, inspect.Options{BombSize: 100 << 20})
+	d, zs, _ := archiveDispatcher(t, inspect.Options{BombSize: 100 << 20})
 	if ev := dispatchAll(t, d, path, nil)[0]; ev.Outcome != dispatch.Quarantined || zs.calls.Load() != 0 {
 		t.Errorf("at 100 MiB: %s, the stage called %d times", ev.Outcome, zs.calls.Load())
 	}
 
-	d, _, work := zipDispatcher(t, inspect.Options{})
+	d, _, work := archiveDispatcher(t, inspect.Options{})
 	var written int64
 	events := dispatchAll(t, d, path, func(ev *dispatch.Event) {
 		if ev.Part.Name == "zeros.bin" {

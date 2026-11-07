@@ -131,6 +131,42 @@ const (
 	GzipBomb Check = "gzip-bomb"
 )
 
+// The checks of a listing, which [CheckListing] raises, and [Inspect] never: an archive only a
+// program reads, such as 7-Zip, is listed by the stage that runs it, before anything is
+// extracted. Each is of class [Unsafe] but SevenZipEncrypted, of class [Active].
+const (
+	// SevenZipTraversal is a 7z entry whose name has a ".." element.
+	SevenZipTraversal Check = "7z-traversal"
+	// SevenZipAbsolutePath is a 7z entry whose name is absolute or begins with a drive letter.
+	SevenZipAbsolutePath Check = "7z-absolute-path"
+	// SevenZipSymlink is a 7z entry that is a symbolic link, by the Unix mode its attributes
+	// carry.
+	SevenZipSymlink Check = "7z-symlink"
+	// SevenZipHardlink is a 7z entry its listing names a hard link.
+	SevenZipHardlink Check = "7z-hardlink"
+	// SevenZipDevice is a 7z entry that is a character or block device, a FIFO, or a socket, by
+	// the Unix mode its attributes carry.
+	SevenZipDevice Check = "7z-device"
+	// SevenZipBomb is a 7z entry past both the expansion ratio, against the whole archive's
+	// size, and the expanded size its [Options] allow, by the size its listing declares, or as
+	// the stage writes it.
+	SevenZipBomb Check = "7z-bomb"
+	// SevenZipEncrypted is a 7z entry its listing reports encrypted.
+	SevenZipEncrypted Check = "7z-encrypted"
+	// CabTraversal is a cabinet entry whose name has a ".." element.
+	CabTraversal Check = "cab-traversal"
+	// CabAbsolutePath is a cabinet entry whose name is absolute or begins with a drive letter.
+	CabAbsolutePath Check = "cab-absolute-path"
+	// CabBomb is a cabinet entry past both the expansion ratio, against the whole cabinet's
+	// size, and the expanded size its [Options] allow, by the size its listing declares, or as
+	// the stage writes it.
+	CabBomb Check = "cab-bomb"
+	// ZstdBomb is a zstd stream past both the expansion ratio and the expanded size its
+	// [Options] allow, by the content size its frame header declares, when it declares one, or
+	// by the bytes it decompresses to.
+	ZstdBomb Check = "zstd-bomb"
+)
+
 // classes are every check's class.
 var classes = map[Check]Class{
 	SignatureMismatch: Active, Polyglot: Active, Executable: Active,
@@ -145,6 +181,9 @@ var classes = map[Check]Class{
 	ZIPUnreadable: Unsafe,
 	TarTraversal:  Unsafe, TarAbsolutePath: Unsafe, TarSymlink: Unsafe, TarHardlink: Unsafe,
 	TarDevice: Unsafe, TarBomb: Unsafe, TarUnreadable: Unsafe, GzipBomb: Unsafe,
+	SevenZipTraversal: Unsafe, SevenZipAbsolutePath: Unsafe, SevenZipSymlink: Unsafe,
+	SevenZipHardlink: Unsafe, SevenZipDevice: Unsafe, SevenZipBomb: Unsafe, SevenZipEncrypted: Active,
+	CabTraversal: Unsafe, CabAbsolutePath: Unsafe, CabBomb: Unsafe, ZstdBomb: Unsafe,
 }
 
 // Checks returns every check, sorted.
@@ -182,7 +221,7 @@ func (r Report) Has(c Check) bool {
 	return slices.ContainsFunc(r.Flags, func(f Flag) bool { return f.Check == c })
 }
 
-// The bomb rule's defaults, a ZIP's, a tar's, and a gzip stream's: an entry is a bomb past both.
+// The bomb rule's defaults, every archive's and stream's: an entry is a bomb past both.
 const (
 	// DefaultBombRatio is the expansion ratio, expanded to compressed size, past which an
 	// entry may be a bomb.
@@ -197,11 +236,11 @@ type Options struct {
 	// Policy overrides the default action of the checks it names, Proceed or Quarantine, so a
 	// caller may quarantine an active finding, such as a macro, or let an unsafe one proceed.
 	Policy map[Check]Verdict
-	// BombRatio is the expansion ratio past which a ZIP or tar entry, or a gzip stream, may be a
-	// bomb; [DefaultBombRatio] when zero.
+	// BombRatio is the expansion ratio past which an archive's entry, or a gzip or zstd stream,
+	// may be a bomb; [DefaultBombRatio] when zero.
 	BombRatio float64
-	// BombSize is the expanded size in bytes past which a ZIP or tar entry, or a gzip stream,
-	// may be a bomb; [DefaultBombSize] when zero.
+	// BombSize is the expanded size in bytes past which an archive's entry, or a gzip or zstd
+	// stream, may be a bomb; [DefaultBombSize] when zero.
 	BombSize uint64
 }
 

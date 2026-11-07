@@ -8,13 +8,53 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- `dispatch.ZipStage` reads a tar through `archive/tar`, one entry at a time: each regular file,
+- The `sevenzip` package, the adapter over 7-Zip's 7zz, minimum 24.01 (`SevenZipSpec`,
+  `SevenZipMinimum`), which mise pins at 26.05 from ip7z/7zip's GitHub release, its digest checked.
+  `NewReader` builds a `Reader` over a `Config` of the Tool, refusing a missing one with
+  `ErrNoSevenZip` and an older one with a `*tool.VersionError`. `Reader.List` parses an archive's
+  technical listing, `-slt`, into a `Listing` of `Entry` items, a zstd stream's one item sized by
+  the content size its frame header declares; `Reader.Extract` writes one item, named whole, never
+  as a wildcard or a list file, to the caller's writer through 7zz's standard output alone. Every
+  run names its `Format`, 7z, zstd, cab, or zip, and an empty password, so 7zz never prompts:
+  encrypted headers or items fail with `ErrEncrypted`, a file that isn't the format with
+  `ErrNotArchive`. Its types build on any platform; the Reader on Linux.
+- `dispatch.ArchiveStage` reads, given 7-Zip through `ArchiveConfig.SevenZip` and its `Version`, a
+  7z archive's and a cabinet's files, each extracted alone and found `7z entry <name>` or `cabinet
+  entry <name>`; a zstd stream's content as one part, found `zstd content <name>`, named by the
+  stream's stem (.zst dropped, .tzst to .tar), and routed again; and a ZIP entry of a method
+  `archive/zip` doesn't read, such as Deflate64, implode, LZMA, xz, zstd, or PPMd, under the zip
+  rules unchanged. Before anything of a 7z, a cabinet, or a zstd stream is extracted, the listing is
+  checked by `inspect.CheckListing`; a verdict to quarantine ends the stage with a
+  `dispatch.QuarantineError`. The bomb rule is enforced on the bytes read from 7zz, against the
+  whole archive's size, or the stream's. An encrypted 7z entry is a record, `inspect.SevenZipEncrypted`,
+  and the 7z encrypted after its readable entries; a 7z whose headers are encrypted is encrypted at
+  once. With no 7-Zip these kinds have no processor yet, and ZIP's stored and deflated entries are
+  unaffected.
+- `dispatch.ArchiveStage` reads a ZIP's bzip2 entries through `compress/bzip2`, an `archive/zip`
+  decompressor of the stage's own, without 7-Zip.
+- `dispatch.ErrQuarantined` and `dispatch.QuarantineError`: a stage that quarantines a part on what
+  it read before preparing any of it ends with a QuarantineError holding its flags, and the
+  dispatcher adds them to the part's, records them in the index, and reports the part quarantined,
+  its file kept, as an inspection's quarantine is.
+- `inspect.CheckListing` checks an archive's listing, its `Listed` entries, each of an `EntryType`,
+  against the rules a tar's headers are held to, by the same name checks, and returns its report:
+  `SevenZipTraversal`, `SevenZipAbsolutePath`, `SevenZipSymlink`, `SevenZipHardlink`,
+  `SevenZipDevice`, and `SevenZipBomb`; `CabTraversal`, `CabAbsolutePath`, and `CabBomb`; and
+  `ZstdBomb`, each of class Unsafe; and `SevenZipEncrypted`, of class Active.
+- sevenzip's fixtures: commons-compress's `lorem-ipsum-deflate64.zip`, `lorem-ipsum-implode.zip`,
+  `bzip2-zip.zip`, `test-method-xz.zip`, and `bla.deflate64.7z` (Apache-2.0); libarchive's LZMA,
+  PPMd, and zstd ZIPs, decoded from its .uu files (BSD-2-Clause); and generated 7z, zstd, and
+  cabinet archives, clean, traversing, absolute, linked, a FIFO, bombs, and encrypted, the cabinet
+  a OneNote package's shape named .cab, each with its source, license, and SHA-256 in the testdata
+  README. The integration tier dispatches each, and ~/docs' `mixed-bundle.7z` and
+  `mixed-bundle.tar.zst` when the machine has them.
+- `dispatch.ArchiveStage` reads a tar through `archive/tar`, one entry at a time: each regular file,
   a sparse one among them, is written under its SHA-256 and found as a part, `tar entry <name>`,
   its stored name never a path. A directory is no part, and a link, a device, or a FIFO, under a
   policy that lets the tar proceed, is a record, no link or node made. The bomb rule is enforced on
   the bytes written, the ratio against the whole tar's size, so only a sparse entry's holes can
   pass it, recorded quarantined with `inspect.TarBomb`'s evidence.
-- `dispatch.ZipStage` decompresses a gzip stream through `compress/gzip` into one part, named by
+- `dispatch.ArchiveStage` decompresses a gzip stream through `compress/gzip` into one part, named by
   its header's name, else by the stream's name without its .gz, or with a .tgz's .tar, found
   `gzip content <name>` and routed again, so a .tar.gz is a gzip part holding a tar part. The bomb
   rule is enforced on the decompressed bytes, the ratio against the stream's size, recorded
@@ -35,9 +75,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- `dispatch.ZipStage`'s identity version is 2: version 1 recorded tar and gzip parts as no
-  processor yet, and an index holding those entries prepares them again. A zstd stream, a 7z
-  archive, and a cabinet still have no processor yet.
+- `dispatch.ZipStage` is `dispatch.ArchiveStage`, built by `NewArchiveStage` over an
+  `ArchiveConfig`, since it reads every archive kind; its identity is "archive", version 3, its
+  configuration's hash naming its 7-Zip's version. Version 1 recorded tar and gzip parts, and
+  version 2 zstd, 7z, cabinet parts and ZIP entries of other methods, as no processor yet, and an
+  index holding those entries prepares them again. Its errors begin "archive stage:".
+- A ZIP entry of a method the stage reads neither itself nor, without 7-Zip, through 7zz is a
+  record whose reason says "has no processor yet without 7-Zip".
 - The default LibreOffice image, `picture.LibreOfficeImage`, moves to
   gotenberg/gotenberg:9.1.0-libreoffice, pinned by digest. It carries the same LibreOffice,
   26.8.2.2, and soffice runs in it headless as before, through the container runner's lockdown,

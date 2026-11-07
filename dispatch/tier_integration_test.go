@@ -17,6 +17,7 @@ import (
 
 	"github.com/JaimeStill/spike-ai-pipeline-client/protocol"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/internal/visiontest"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 )
@@ -25,9 +26,9 @@ import (
 // over the office CLI, LibreOffice in its pinned image for the legacy formats, and magick; the
 // document stage over gs; the email stage over mail; the onenote stage over onenote; the picture
 // stage over magick and LibreOffice; the vision stage; the audio stage over ffmpeg and ffprobe;
-// and the zip stage. Each route is held to testdata/tier-routes.tsv, the hand route truth, and a
-// sample of the image outputs is sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL names,
-// which set A loads.
+// and the archive stage over 7zz. Each route is held to testdata/tier-routes.tsv, the hand route
+// truth, and a sample of the image outputs is sent to Gemma 4 26B-A4B on the router
+// SPIKE_ROUTER_URL names, which set A loads.
 
 const (
 	// tierRoutes is the hand route truth, as its header says.
@@ -47,7 +48,7 @@ const (
 // tierInputs are the committed fixture inputs, as globs under the repository's root, in the
 // order the tier dispatches them, each glob's matches sorted, but for a README.md or a Go file,
 // which is no fixture: every input the format packages' fixtures hold, the inspect package's
-// hazards, and the tool package's WAV. A notebook is its .onetoc2, which onenote reads with the
+// hazards, the sevenzip package's archives, and the tool package's WAV. A notebook is its .onetoc2, which onenote reads with the
 // sections beside it.
 var tierInputs = []string{
 	"document/testdata/*.pdf",
@@ -71,6 +72,10 @@ var tierInputs = []string{
 	"onenote/testdata/onenote/fixtures/onenote-rs/*.one*",
 	"onenote/testdata/onenote/fixtures/onenote-rs/*/*.one*",
 	"inspect/testdata/*",
+	"sevenzip/testdata/commons-compress/*.zip",
+	"sevenzip/testdata/commons-compress/*.7z",
+	"sevenzip/testdata/libarchive/*.zipx",
+	"sevenzip/testdata/generated/*",
 	"tool/testdata/*.wav",
 }
 
@@ -213,7 +218,7 @@ func sampleable(data []byte) bool {
 func TestTierRoutes(t *testing.T) {
 	truth := readTruth(t)
 	stages := allStages(t)
-	zs, err := dispatch.NewZipStage(dispatch.ZipConfig{})
+	zs, err := dispatch.NewArchiveStage(sevenZipConfig(t, inspect.Options{}))
 	if err != nil {
 		t.Fatal(err)
 	}

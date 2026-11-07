@@ -13,6 +13,9 @@ shellcheck = "0.11.0"
 # onenote, from its GitHub release, for the onenote package's tests that run the real binary;
 # mise checks the archive against the release's digest.
 "github:JaimeStill/spike-ai-pipeline-onenote" = "0.1.0"
+# 7-Zip's 7zz, from its GitHub release, for the sevenzip package and the archive stage's 7z, zstd,
+# cabinet, and other ZIP methods; mise checks the archive against the release's digest.
+"github:ip7z/7zip" = { version = "26.05", asset_pattern = "7z*-linux-x64.tar.xz" }
 
 [env]
 # The repository's Go modules, as directories; tasks run in each one.
@@ -47,9 +50,9 @@ done
 '''
 
 # The integration tier runs the integration-tagged tests on this machine: real ffmpeg, ffprobe, gs,
-# and magick on PATH, the office and mail binaries mise pins, a reachable docker daemon, which pulls
-# the pinned ffmpeg and LibreOffice images when they aren't present, and, for the vision tests,
-# the router SPIKE_ROUTER_URL names. It never starts a server.
+# and magick on PATH, the office, mail, onenote, and 7zz binaries mise pins, a reachable docker
+# daemon, which pulls the pinned ffmpeg and LibreOffice images when they aren't present, and, for
+# the vision tests, the router SPIKE_ROUTER_URL names. It never starts a server.
 [tasks.integration]
 description = "Run the integration-tagged tests against this machine's tools and docker, and the router"
 run = '''

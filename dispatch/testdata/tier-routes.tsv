@@ -217,7 +217,7 @@ onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	-	
 onenote/testdata/onenote/fixtures/onenote-rs/object-revision/Open Notebook.onetoc2	-	*	onenote	prepared
 
 # inspect's hazards: a ZIP or a tar with an unsafe entry name, a link, a device, or a declared
-# bomb is quarantined; the 8 MiB bombs are under the default size, so the zip stage writes their
+# bomb is quarantined; the 8 MiB bombs are under the default size, so the archive stage writes their
 # zeros, which no stage takes, bomb.tar.gz's tar first; a gzip stream holding an unsafe tar is
 # prepared and the tar quarantined; clean.tar.gz's and unnamed.tgz's tar is clean.tar's bytes,
 # dispatched before them, so seen; the encrypted ZIP's readable entry is dispatched and the ZIP is
@@ -257,6 +257,57 @@ inspect/testdata/traversal.tar.gz	gzip content traversal.tar	traversal.tar	archi
 inspect/testdata/traversal.zip	-	*	archive	quarantined
 inspect/testdata/unnamed.tgz	-	*	archive	prepared
 inspect/testdata/unnamed.tgz	gzip content unnamed.tar	unnamed.tar	archive	seen
+
+# sevenzip's archives, through 7zz: each ZIP entry of a method archive/zip doesn't read (Deflate64,
+# implode, xz, LZMA, PPMd, zstd) and bzip2's, which compress/bzip2 reads, is extracted and routed
+# by its content and name, a name with no extension unrouted; a 7z's and a cabinet's files are
+# found below them. A 7z or cabinet whose listing names a traversing, absolute, or drive letter
+# entry, a link, or a FIFO, and a zstd stream whose header declares 4 GiB, is quarantined by the
+# stage before anything is extracted; the 8 MiB bombs are under the default size, so their zeros
+# are written, which no stage takes. clean.tar.zst holds inspect's clean.tar, and notebook.cab
+# onenote.rs's section and notebook, all dispatched before, so seen. encrypted.7z's clear entry is
+# dispatched and the 7z is encrypted; encrypted-headers.7z lists nothing, so it is encrypted at once.
+sevenzip/testdata/commons-compress/bzip2-zip.zip	-	*	archive	prepared
+sevenzip/testdata/commons-compress/bzip2-zip.zip	zip entry lots-of-as	lots-of-as	unrouted	no processor yet
+sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip	-	*	archive	prepared
+sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip	zip entry lorem-ipsum.txt	lorem-ipsum.txt	text	no processor yet
+sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip	-	*	archive	prepared
+sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip	zip entry LOREM.TXT	LOREM.TXT	text	no processor yet
+sevenzip/testdata/commons-compress/test-method-xz.zip	-	*	archive	prepared
+sevenzip/testdata/commons-compress/test-method-xz.zip	zip entry LICENSE.txt	LICENSE.txt	text	no processor yet
+sevenzip/testdata/commons-compress/bla.deflate64.7z	-	*	archive	prepared
+sevenzip/testdata/commons-compress/bla.deflate64.7z	7z entry test1.xml	test1.xml	text	no processor yet
+sevenzip/testdata/commons-compress/bla.deflate64.7z	7z entry test2.xml	test2.xml	text	no processor yet
+sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx	-	*	archive	prepared
+sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx	zip entry vimrc	vimrc	unrouted	no processor yet
+sevenzip/testdata/libarchive/test_read_format_zip_ppmd8.zipx	-	*	archive	prepared
+sevenzip/testdata/libarchive/test_read_format_zip_ppmd8.zipx	zip entry vimrc	vimrc	unrouted	no processor yet
+sevenzip/testdata/libarchive/test_read_format_zip_zstd.zipx	-	*	archive	prepared
+sevenzip/testdata/libarchive/test_read_format_zip_zstd.zipx	zip entry vimrc	vimrc	unrouted	no processor yet
+sevenzip/testdata/generated/absolute.7z	-	*	archive	quarantined
+sevenzip/testdata/generated/absolute.cab	-	*	archive	quarantined
+sevenzip/testdata/generated/bomb.7z	-	*	archive	prepared
+sevenzip/testdata/generated/bomb.7z	7z entry zeros.bin	zeros.bin	unrouted	no processor yet
+sevenzip/testdata/generated/bomb.cab	-	*	archive	prepared
+sevenzip/testdata/generated/bomb.cab	cabinet entry zeros.bin	zeros.bin	unrouted	no processor yet
+sevenzip/testdata/generated/bomb.zst	-	*	archive	prepared
+sevenzip/testdata/generated/bomb.zst	zstd content bomb	bomb	unrouted	no processor yet
+sevenzip/testdata/generated/clean.7z	-	*	archive	prepared
+sevenzip/testdata/generated/clean.7z	7z entry docs/notes.txt	docs/notes.txt	text	no processor yet
+sevenzip/testdata/generated/clean.7z	7z entry docs/pixel.png	docs/pixel.png	vision	prepared
+sevenzip/testdata/generated/clean.tar.zst	-	*	archive	prepared
+sevenzip/testdata/generated/clean.tar.zst	zstd content clean.tar	clean.tar	archive	seen
+sevenzip/testdata/generated/declared-bomb.zst	-	*	archive	quarantined
+sevenzip/testdata/generated/device.7z	-	*	archive	quarantined
+sevenzip/testdata/generated/encrypted-headers.7z	-	*	archive	encrypted
+sevenzip/testdata/generated/encrypted.7z	-	*	archive	encrypted
+sevenzip/testdata/generated/encrypted.7z	7z entry notes.txt	notes.txt	text	no processor yet
+sevenzip/testdata/generated/notebook.cab	-	*	archive	prepared
+sevenzip/testdata/generated/notebook.cab	cabinet entry Open Notebook.onetoc2	Open Notebook.onetoc2	onenote	seen
+sevenzip/testdata/generated/notebook.cab	cabinet entry New Section 1.one	New Section 1.one	onenote	seen
+sevenzip/testdata/generated/symlink.7z	-	*	archive	quarantined
+sevenzip/testdata/generated/traversal.7z	-	*	archive	quarantined
+sevenzip/testdata/generated/traversal.cab	-	*	archive	quarantined
 
 # tool: a WAV, audio, its plan and windows prepared through ffmpeg.
 tool/testdata/tone.wav	-	*	audio	prepared

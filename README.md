@@ -10,14 +10,16 @@ runner for binaries and scripts, and a container runner for pinned images. The t
 adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
 correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
 office documents, LibreOffice in a container for legacy office formats only,
-spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages, and
-spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages.
+spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages,
+spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages, and 7-Zip's 7zz for
+the archives the standard library doesn't read.
 
 Its packages, each below in turn: `tool`, the contract every program runs behind; `route`, which
 names the stage content goes to by its signature; `inspect`, which inspects every part before its
 stage; `dispatch`, which walks an input and every part found in it to the stages, with the
 format packages' adapters, an index, and a pool; the format packages, `picture`, `document`,
-`office`, `email`, and `onenote`, each pre-inference preparation of its formats; `audio`, which
+`office`, `email`, and `onenote`, each pre-inference preparation of its formats; `sevenzip`, which
+lists and extracts the archives the standard library doesn't read through 7zz; `audio`, which
 cuts speech into windows a model's audio input takes whole and joins their transcripts; and
 `media`, which reads a live or recorded source's audio and video through one ffmpeg run and
 streams its windows and frames as they arrive.
@@ -134,8 +136,8 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 .eml, a .pst, or an mbox; `OneNote`; `Archive`, ZIP, tar, gzip, zstd, 7z, and a cabinet; `Audio`;
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
-that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, archives other
-than ZIP, tar, and gzip, or text yet.
+that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, or text yet,
+nor a zstd stream, a 7z archive, or a cabinet without 7-Zip.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -162,8 +164,11 @@ directory's declared sizes, the thresholds `Options` sets, and a central directo
 read; and a tar entry, read from its headers as a ZIP's is from its central directory, with a ".."
 element, an absolute path, or a drive letter, a symbolic or hard link, a device or a FIFO, an entry
 past both thresholds by the size its header declares against the whole tar's, as only a sparse entry
-or a lying header can be, and headers that can't all be read. `Options.Policy` overrides any check's
-action. The report is a function of the bytes and the name, so an index may record it by SHA-256. A
+or a lying header can be, and headers that can't all be read. `CheckListing` holds a 7z's, a
+cabinet's, or a zstd stream's listing, as 7-Zip lists it, to the same rules, by the same name
+checks: `Inspect` runs no program, so the archive stage lists such an archive through 7-Zip and
+calls it before extracting anything, a 7z's encrypted entry active as a ZIP's is. `Options.Policy`
+overrides any check's action. The report is a function of the bytes and the name, so an index may record it by SHA-256. A
 container's members are inspected as parts of their own once a stage extracts them, so a .tar.gz's
 tar is inspected once the archive stage decompresses it, and that stage enforces the bomb rule again
 on the bytes it writes, since a declared size may lie, a gzip stream's among them, which declares
@@ -265,22 +270,45 @@ no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields fra
 has no audio stream and windows only when it has no video stream; one with neither fails, its
 error wrapping `media.ErrNoMedia`.
 
-`ZipStage`, for the archive route, on any platform, reads a ZIP, a tar, and a gzip stream on the
-standard library. It reads a ZIP through `archive/zip` one entry at a time: each file entry is
-written into the part's directory under its content's SHA-256 and found as a part, `zip entry
-<name>`, its stored name only ever a name, so a nested ZIP is dispatched again and its entries below
-it. A directory is no part. An encrypted entry is a record, recorded encrypted, and the ZIP
-encrypted once its other entries are dispatched. It reads a tar through `archive/tar` the same way,
-each regular file found `tar entry <name>`, a directory no part, and a link, a device, or a FIFO a
-record, with no link or node made. It decompresses a gzip stream through `compress/gzip` into one
-part, named by its header's name, else by the stream's own name without its .gz, or with a .tgz's
-.tar, found `gzip content <name>` and routed again, so a .tar.gz is a gzip part holding a tar part.
-The stage enforces the bomb rule again on the bytes it writes, under `ZipConfig.Inspect`, the
-dispatcher's `inspect.Options`: a ZIP entry, a tar entry, or a gzip stream past both thresholds as
-written, the ratio against a ZIP entry's compressed size, the whole tar's size, or the stream's,
-whatever its header declares, is stopped, its partial file removed, and recorded quarantined with
-its evidence. A ZIP or tar with an unsafe name, a link, or a device is quarantined by `inspect`
-before the stage runs. A zstd stream, a 7z archive, or a cabinet is no processor yet.
+`ArchiveStage`, for the archive route, on any platform, reads a ZIP, a tar, and a gzip stream on
+the standard library, and, given 7-Zip, a zstd stream, a 7z archive, a cabinet not named .onepkg,
+and a ZIP entry of a method `archive/zip` doesn't read. It reads a ZIP through `archive/zip` one
+entry at a time: each file entry is written into the part's directory under its content's SHA-256
+and found as a part, `zip entry <name>`, its stored name only ever a name, so a nested ZIP is
+dispatched again and its entries below it. A directory is no part. A stored, deflated, or bzip2
+entry is decompressed by the standard library, bzip2 through `compress/bzip2`; any other method's
+entry, such as Deflate64, implode, LZMA, xz, zstd, or PPMd, is extracted alone through 7zz under the
+same rules. An encrypted entry is a record, recorded encrypted, and the ZIP encrypted once its other
+entries are dispatched. It reads a tar through `archive/tar` the same way, each regular file found
+`tar entry <name>`, a directory no part, and a link, a device, or a FIFO a record, with no link or
+node made. It decompresses a gzip stream through `compress/gzip` into one part, named by its
+header's name, else by the stream's own name without its .gz, or with a .tgz's .tar, found `gzip
+content <name>` and routed again, so a .tar.gz is a gzip part holding a tar part; a zstd stream
+the same way through 7zz, named by its own name without its .zst, or with a .tzst's .tar, found
+`zstd content <name>`. A 7z's and a cabinet's files are extracted one at a time through 7zz, found
+`7z entry <name>` and `cabinet entry <name>`, 7zz writing only to its standard output. Before
+anything of a 7z, a cabinet, or a zstd stream is extracted, 7-Zip's listing is checked by
+`inspect.CheckListing`, and a traversing, absolute, or drive letter name, a link, a device, or a
+declared bomb quarantines the archive, the stage ending with a `QuarantineError` whose flags are its
+evidence. An encrypted 7z entry is a record and the 7z encrypted once its other entries are
+dispatched, and a 7z whose headers are encrypted is encrypted at once. The stage enforces the bomb
+rule again on the bytes it writes, or reads from 7zz, under `ArchiveConfig.Inspect`, the
+dispatcher's `inspect.Options`: an entry or stream past both thresholds as written, the ratio
+against a ZIP entry's compressed size, the whole archive's size for a tar, 7z, or cabinet, or the
+stream's, whatever its header or listing declares, is stopped, its partial file removed, and
+recorded quarantined with its evidence. A ZIP or tar with an unsafe name, a link, or a device is
+quarantined by `inspect` before the stage runs. With no 7-Zip, a zstd stream, a 7z archive, or a
+cabinet is no processor yet, and a ZIP entry 7-Zip would read is a record.
+
+`sevenzip` lists and extracts through 7-Zip's 7zz, minimum 24.01, which mise pins from its GitHub
+release. `NewReader` builds a `Reader` over a `Config` of the Tool, refusing a missing or older one.
+`Reader.List` reads an archive's technical listing, `-slt`, into a `Listing` of `Entry` items, each
+its stored name, declared size and CRC-32, encryption, method, Unix mode, and link; a zstd stream's
+one item takes the content size its frame header declares. `Reader.Extract` writes one item's
+content to the caller's writer, 7zz writing to its standard output alone, `-so`, never to a path,
+the item named whole, never a wildcard (`-spd`) or a list file (`-i!`). Every run is told its
+format (`-t`) and given an empty password (`-p`), so it never prompts: encrypted headers or an
+encrypted item fail with `ErrEncrypted`, and a file that isn't the format with `ErrNotArchive`.
 
 ```go
 render, err := document.NewGhostscript(gs)
@@ -325,8 +353,12 @@ videos, err := dispatch.NewVideoStage(dispatch.VideoConfig{Streamer: st, Version
 if err != nil {
 	return err
 }
-// The zip stage enforces the bomb rule as written under the dispatcher's inspect.Options.
-archives, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: opts})
+// The archive stage enforces the bomb rule as written, and checks a 7-Zip listing, under the
+// dispatcher's inspect.Options; it reads 7z, zstd, cabinets, and ZIP's other methods through zr,
+// a sevenzip.Reader over sz, the 7zz Tool.
+archives, err := dispatch.NewArchiveStage(dispatch.ArchiveConfig{
+	Inspect: opts, SevenZip: zr, Version: dispatch.Versions(sz),
+})
 if err != nil {
 	return err
 }
@@ -878,7 +910,13 @@ ffmpeg having no exit contract; and a window names no route, since a speech mode
 stage; `media` is a streamer, not a reader: its `Request` names the media directory, its `Dir`; a
 file source is read in place rather than spooled; ffmpeg's failures are the Tool's
 `*tool.ExitError`; and a window or frame names no route, since a speech model takes windows and a
-vision model frames; and `route` and `inspect` are pure functions, with no Tool, Config, or
+vision model frames; `sevenzip` lists and extracts rather than reading parts: its `ListRequest` and
+`ExtractRequest` name no media directory, since 7zz writes only to the caller's writer, never to a
+path; the archive is read in place rather than spooled; 7zz's failures wrap the Tool's
+`*tool.ExitError`, matching `ErrEncrypted` or `ErrNotArchive` by 7zz's message, 7zz having no exit
+contract; it has no warnings, a run 7zz ends with a warning having succeeded; and an item names no
+route, since the archive stage hands each one to the dispatcher; and `route` and `inspect` are pure
+functions, with no Tool, Config, or
 Request, which run before a part's stage rather than as one.
 
 Known limits:
@@ -945,6 +983,14 @@ Known limits:
   audio, and one that ends early in a long silence waits up to 30 s.
 - ffmpeg stops pacing a file once its video stream ends, so a paced file's audio past its video
   arrives at once.
+- The archive stage extracts a 7z's or a cabinet's entries one 7zz run at a time, so an entry of a
+  solid block decodes the block from its start: an archive's entries read one at a time cost more
+  than one extraction of them all.
+- 7-Zip names an entry as it lists it, and the stage extracts it by that name: a ZIP entry 7zz
+  reads, whose name archive/zip and 7-Zip decode differently, such as a non-UTF-8 name, or a
+  stored name with a line break, isn't matched, and is a record of 0 bytes written.
+- A zstd stream's content size is checked before it is decompressed only when its first frame's
+  header declares one; otherwise the bomb rule holds it as written.
 
 The tests run in tiers. `mise run check` is hermetic: build, vet, format, tidy, the unit tests
 under the race detector, and lint, the integration, bakeoff, and findings tags included. `mise run

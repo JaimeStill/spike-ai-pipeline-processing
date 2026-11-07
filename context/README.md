@@ -22,6 +22,8 @@ repository's `context/README.md`.
   pure functions of its bytes and name: active content flagged and let proceed, content unsafe to
   read (ZIP and tar traversal, absolute paths, links, a tar's devices, bombs by declared sizes)
   quarantined, a caller's policy over either; the dispatcher inspects every part before its stage.
+  CheckListing holds a 7z's, a cabinet's, or a zstd stream's 7-Zip listing to the tar's rules, for
+  the archive stage to call before it extracts anything, since inspect runs no program.
 - **pictures**: package picture, TIFF, EMF, WMF, and SVG converted to PNG, one picture or a batch,
   named by SHA-256, EMF and WMF through soffice in the default gotenberg image and trimmed by
   magick; and the corrections stage, ImageMagick corrections in a fixed order, their catalog for a
@@ -62,8 +64,9 @@ repository's `context/README.md`.
   onenote.rs sets and expectations, copied at its tag under a SHA-256 manifest; the real-binary
   tests hold every read to them.
 - **dispatch**: an input and every part found in it walked to the caller's stages by route, hashed,
-  routed, and inspected first, the format packages' adapters and the zip stage, which reads ZIP,
-  tar, and gzip, among them, under a content-addressed index, in memory or a directory, whose claims
+  routed, and inspected first, the format packages' adapters and the archive stage, which reads
+  ZIP, tar, and gzip on the standard library and, through sevenzip, zstd, 7z, cabinets, and ZIP's
+  other methods, quarantining an archive whose 7-Zip listing is unsafe, among them, under a content-addressed index, in memory or a directory, whose claims
   make one of concurrent dispatches prepare shared content; a pool over N workers sharing the index,
   its events merged onto the caller's goroutine, each worker held until the loop takes its event;
   and a store's read resumed after a message, Input.After, its entry not recorded, from a
@@ -72,6 +75,10 @@ repository's `context/README.md`.
   the tier's routes to hand truth, records inspection over ~/docs and vision's reading of OneNote
   ink, scored by internal/textscore as document's bake-offs are, and times the onenote adapter and
   the dispatcher, resumed and pooled, over mail's scale store.
+- **archives**: package sevenzip, the adapter over 7-Zip's 7zz, pinned by mise from its GitHub
+  release: an archive's technical listing parsed into typed entries, and one entry extracted to the
+  caller's writer through 7zz's standard output, never to a path; its fixtures are commons-compress's
+  and libarchive's, under their licenses, and generated 7z, zstd, and cabinet hazards.
 - **audio**: pre-inference preparation of speech. Package audio runs ffmpeg and ffprobe through
   either runner: it probes a source, plans windows of at most 30 s ending at the middle of
   silences, with 2 s seams, cuts them concurrently as 16 kHz mono WAV named by SHA-256, and joins

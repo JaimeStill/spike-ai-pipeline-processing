@@ -22,7 +22,7 @@ func inspectFixture(name string) string { return filepath.Join(inspectFixtures, 
 // SHA-256 inside the working directory, and routed by its content; and nothing is left once the
 // dispatch is done.
 func TestTarStage(t *testing.T) {
-	d, zs, work := zipDispatcher(t, inspect.Options{})
+	d, zs, work := archiveDispatcher(t, inspect.Options{})
 	events := dispatchAll(t, d, inspectFixture("clean.tar"), func(ev *dispatch.Event) {
 		if ev.Part.Depth == 0 {
 			return
@@ -39,14 +39,14 @@ func TestTarStage(t *testing.T) {
 	if got, want := wheres(events), []string{"tar entry docs/notes.txt", "tar entry docs/pixel.png"}; !slices.Equal(got, want) {
 		t.Errorf("wheres:\n got %q\nwant %q", got, want)
 	}
-	if ev := events[2]; ev.Part.Kind != route.Tar || ev.Stage.Name != "zip" || ev.Children != 2 || len(ev.Outputs) != 0 {
+	if ev := events[2]; ev.Part.Kind != route.Tar || ev.Stage.Name != "archive" || ev.Children != 2 || len(ev.Outputs) != 0 {
 		t.Errorf("clean.tar: %s by %v, %d children, %d outputs", ev.Part.Kind, ev.Stage, ev.Children, len(ev.Outputs))
 	}
 	if ev := events[0]; ev.Part.Route != route.Text {
 		t.Errorf("docs/notes.txt routed %s, want text", ev.Part.Route)
 	}
 	if n := zs.calls.Load(); n != 1 {
-		t.Errorf("the zip stage prepared %d parts, want 1", n)
+		t.Errorf("the archive stage prepared %d parts, want 1", n)
 	}
 	wantEmpty(t, work)
 }
@@ -61,7 +61,7 @@ func TestGzipStage(t *testing.T) {
 		{"clean.tar.gz", "clean.tar"},
 		{"unnamed.tgz", "unnamed.tar"},
 	} {
-		d, zs, work := zipDispatcher(t, inspect.Options{})
+		d, zs, work := archiveDispatcher(t, inspect.Options{})
 		events := dispatchAll(t, d, inspectFixture(c.fixture), nil)
 		wantSteps(t, events, []step{
 			{"docs/notes.txt", 2, dispatch.NoProcessor},
@@ -77,7 +77,7 @@ func TestGzipStage(t *testing.T) {
 			t.Errorf("%s: %s holding %s, %d children, %d outputs", c.fixture, gz.Part.Kind, tar.Part.Kind, gz.Children, len(gz.Outputs))
 		}
 		if n := zs.calls.Load(); n != 2 {
-			t.Errorf("%s: the zip stage prepared %d parts, want 2", c.fixture, n)
+			t.Errorf("%s: the archive stage prepared %d parts, want 2", c.fixture, n)
 		}
 		wantEmpty(t, work)
 	}
@@ -97,7 +97,7 @@ func TestGzipStem(t *testing.T) {
 		}
 		return b.String()
 	}
-	d, _, work := zipDispatcher(t, inspect.Options{})
+	d, _, work := archiveDispatcher(t, inspect.Options{})
 	for name, want := range map[string]string{
 		"notes.txt.gz": "notes.txt", "NOTES.TXT.GZ": "NOTES.TXT", "bundle.TGZ": "bundle.tar", "notes": "notes",
 	} {
@@ -110,7 +110,7 @@ func TestGzipStem(t *testing.T) {
 }
 
 // TestTarUnsafe: inspect quarantines a tar with a traversing, an absolute, or a drive letter
-// name, a symbolic or hard link, or a device or a FIFO, and the zip stage never sees it. Under a
+// name, a symbolic or hard link, or a device or a FIFO, and the archive stage never sees it. Under a
 // policy that lets them proceed, each regular entry is written by its SHA-256 inside the
 // working directory, its stored name only its name, no file lands outside, and each link,
 // device, and FIFO is a record naming its check, no link or node made.
@@ -132,7 +132,7 @@ func TestTarUnsafe(t *testing.T) {
 			"null": inspect.TarDevice, "sda": inspect.TarDevice, "pipe": inspect.TarDevice,
 		}},
 	} {
-		d, zs, _ := zipDispatcher(t, inspect.Options{})
+		d, zs, _ := archiveDispatcher(t, inspect.Options{})
 		if ev := dispatchAll(t, d, inspectFixture(c.fixture), nil)[0]; ev.Outcome != dispatch.Quarantined || zs.calls.Load() != 0 {
 			t.Errorf("%s: %s, the stage called %d times; want quarantined before the stage", c.fixture, ev.Outcome, zs.calls.Load())
 		}
@@ -142,7 +142,7 @@ func TestTarUnsafe(t *testing.T) {
 		if err := os.MkdirAll(work, 0o700); err != nil {
 			t.Fatal(err)
 		}
-		s, err := dispatch.NewZipStage(dispatch.ZipConfig{Inspect: permissive})
+		s, err := dispatch.NewArchiveStage(dispatch.ArchiveConfig{Inspect: permissive})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -188,14 +188,14 @@ func TestTarUnsafe(t *testing.T) {
 // TestTarGzipUnsafe: a gzip stream holding an unsafe tar is safe itself, so it is prepared, and
 // the tar it holds is quarantined once inspected, its entries never written, its content kept.
 func TestTarGzipUnsafe(t *testing.T) {
-	d, zs, work := zipDispatcher(t, inspect.Options{})
+	d, zs, work := archiveDispatcher(t, inspect.Options{})
 	events := dispatchAll(t, d, inspectFixture("traversal.tar.gz"), nil)
 	wantSteps(t, events, []step{{"traversal.tar", 1, dispatch.Quarantined}, {"traversal.tar.gz", 0, dispatch.Prepared}})
 	if ev := events[0]; !slices.ContainsFunc(ev.Part.Flags, func(f inspect.Flag) bool { return f.Check == inspect.TarTraversal }) {
 		t.Errorf("traversal.tar's flags %v", ev.Part.Flags)
 	}
 	if n := zs.calls.Load(); n != 1 {
-		t.Errorf("the zip stage prepared %d parts, want the gzip alone", n)
+		t.Errorf("the archive stage prepared %d parts, want the gzip alone", n)
 	}
 	// A quarantined part's content is kept, and nothing else.
 	if left := files(t, work); len(left) != 1 || filepath.Base(left[0]) != events[0].Part.SHA256 {
@@ -209,13 +209,13 @@ func TestTarGzipUnsafe(t *testing.T) {
 // pass both, removes the partial file, and records it quarantined with its evidence.
 func TestTarBombAsWritten(t *testing.T) {
 	lowered := inspect.Options{BombSize: 1 << 20, BombRatio: 100}
-	d, zs, _ := zipDispatcher(t, lowered)
+	d, zs, _ := archiveDispatcher(t, lowered)
 	if ev := dispatchAll(t, d, inspectFixture("sparse-bomb.tar"), nil)[0]; ev.Outcome != dispatch.Quarantined || zs.calls.Load() != 0 {
 		t.Errorf("sparse-bomb.tar: %s, the stage called %d times", ev.Outcome, zs.calls.Load())
 	}
 
 	lowered.Policy = map[inspect.Check]inspect.Verdict{inspect.TarBomb: inspect.Proceed}
-	d, _, work := zipDispatcher(t, lowered)
+	d, _, work := archiveDispatcher(t, lowered)
 	events := dispatchAll(t, d, inspectFixture("sparse-bomb.tar"), func(ev *dispatch.Event) {
 		if left := files(t, work); len(left) > 0 {
 			t.Errorf("files at the tar's event: %q, want the partial file removed", left)
@@ -237,7 +237,7 @@ func TestTarBombAsWritten(t *testing.T) {
 // size, its tar is written in full and dispatched, its entry no bomb, since a tar stores its
 // bytes as they are.
 func TestGzipBombAsWritten(t *testing.T) {
-	d, _, work := zipDispatcher(t, inspect.Options{BombSize: 1 << 20, BombRatio: 100})
+	d, _, work := archiveDispatcher(t, inspect.Options{BombSize: 1 << 20, BombRatio: 100})
 	events := dispatchAll(t, d, inspectFixture("bomb.tar.gz"), func(ev *dispatch.Event) {
 		if left := files(t, work); len(left) > 0 {
 			t.Errorf("files at the stream's event: %q, want the partial file removed", left)
@@ -252,7 +252,7 @@ func TestGzipBombAsWritten(t *testing.T) {
 	}
 	wantEmpty(t, work)
 
-	d, _, work = zipDispatcher(t, inspect.Options{})
+	d, _, work = archiveDispatcher(t, inspect.Options{})
 	events = dispatchAll(t, d, inspectFixture("bomb.tar.gz"), nil)
 	wantSteps(t, events, []step{
 		{"zeros.bin", 2, dispatch.NoProcessor},
@@ -274,7 +274,7 @@ func TestArchiveDamaged(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	d, _, work := zipDispatcher(t, inspect.Options{})
+	d, _, work := archiveDispatcher(t, inspect.Options{})
 	events := dispatchAll(t, d, input(t, "cut.tar.gz", string(gz[:len(gz)-20])), nil)
 	wantSteps(t, events, []step{{"cut.tar.gz", 0, dispatch.Prepared}})
 	if m := outputNamed(t, events[0], dispatch.RecordOutput, "gzip content clean.tar").Meta; !strings.HasPrefix(m["reason"], "doesn't decompress") {
@@ -291,7 +291,7 @@ func TestArchiveDamaged(t *testing.T) {
 		t.Fatal(err)
 	}
 	opts := inspect.Options{Policy: map[inspect.Check]inspect.Verdict{inspect.TarUnreadable: inspect.Proceed}}
-	d, _, work = zipDispatcher(t, opts)
+	d, _, work = archiveDispatcher(t, opts)
 	// clean.tar's docs/notes.txt has its header at 512 and its 18 bytes at 1024.
 	events = dispatchAll(t, d, input(t, "cut.tar", string(whole[:1030])), nil)
 	wantSteps(t, events, []step{{"cut.tar", 0, dispatch.Failed}})

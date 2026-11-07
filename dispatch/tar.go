@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
-	"strings"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 )
@@ -46,10 +44,10 @@ type tarEntry struct {
 // yielding each entry's item. A regular file, a sparse one among them, is written by its
 // SHA-256 and found; a directory or a global header is no part; any other entry is a record. A
 // header the reader can't read fails the part, after the entries before it.
-func (s *ZipStage) tar(ctx context.Context, p Part, dir string, yield func(Item, error) bool) {
+func (s *ArchiveStage) tar(ctx context.Context, p Part, dir string, yield func(Item, error) bool) {
 	f, err := os.Open(p.Path)
 	if err != nil {
-		yield(Item{}, fmt.Errorf("zip stage: %w", err))
+		yield(Item{}, fmt.Errorf("archive stage: %w", err))
 		return
 	}
 	defer func() { _ = f.Close() }() // read only: a close error loses nothing
@@ -65,7 +63,7 @@ func (s *ZipStage) tar(ctx context.Context, p Part, dir string, yield func(Item,
 			return
 		case err != nil && !errors.Is(err, tar.ErrInsecurePath):
 			// ErrInsecurePath comes with its header: the name is only ever a name here.
-			yield(Item{}, fmt.Errorf("zip stage: tar: %w", err))
+			yield(Item{}, fmt.Errorf("archive stage: tar: %w", err))
 			return
 		}
 		if h.Typeflag == tar.TypeDir || h.Typeflag == tar.TypeXGlobalHeader {
@@ -87,7 +85,7 @@ func (s *ZipStage) tar(ctx context.Context, p Part, dir string, yield func(Item,
 // since an entry's bytes come from no more than the whole tar: only a sparse entry's holes, read
 // as zeros, can pass it. An error is the stage's own, the directory unwritable or ctx ending; an
 // entry's content never fails it.
-func (s *ZipStage) tarEntry(ctx context.Context, h *tar.Header, r io.Reader, whole uint64, dir string) (Item, error) {
+func (s *ArchiveStage) tarEntry(ctx context.Context, h *tar.Header, r io.Reader, whole uint64, dir string) (Item, error) {
 	where := "tar entry " + h.Name
 	rec := tarEntry{Name: h.Name, Type: tarTypes[h.Typeflag], Link: h.Linkname, Declared: h.Size}
 	recorded := func(rec tarEntry) (Item, error) {
@@ -107,7 +105,7 @@ func (s *ZipStage) tarEntry(ctx context.Context, h *tar.Header, r io.Reader, who
 	}
 	rec.Type = "file"
 
-	path, written, why, err := s.extract(ctx, r, dir, whole, func(w *bombWriter, copyErr error) error {
+	path, written, why, err := s.extract(ctx, copyFrom(r), dir, whole, func(w *bombWriter, copyErr error) error {
 		switch {
 		case copyErr != nil:
 			return fmt.Errorf("doesn't read: %w", copyErr)
@@ -152,26 +150,26 @@ type gzipContent struct {
 // routes it again, so a .tar.gz's content is a tar, read by this stage below it. The bomb rule
 // weighs the bytes written against the stream's size. A stream whose header doesn't read fails
 // the part; content that doesn't decompress, or passes the bomb rule, is a record.
-func (s *ZipStage) gzip(ctx context.Context, p Part, dir string, yield func(Item, error) bool) {
+func (s *ArchiveStage) gzip(ctx context.Context, p Part, dir string, yield func(Item, error) bool) {
 	f, err := os.Open(p.Path)
 	if err != nil {
-		yield(Item{}, fmt.Errorf("zip stage: %w", err))
+		yield(Item{}, fmt.Errorf("archive stage: %w", err))
 		return
 	}
 	defer func() { _ = f.Close() }() // read only: a close error loses nothing
 	zr, err := gzip.NewReader(f)
 	if err != nil {
-		yield(Item{}, fmt.Errorf("zip stage: gzip: %w", err))
+		yield(Item{}, fmt.Errorf("archive stage: gzip: %w", err))
 		return
 	}
 	defer func() { _ = zr.Close() }() // a gzip reader's close reports nothing it hasn't
 	name := zr.Name
 	if name == "" {
-		name = gzipStem(p.Name)
+		name = streamStem(p.Name, ".gz", ".tgz")
 	}
 	where := "gzip content " + name
 	compressed := uint64(p.Size)
-	path, written, why, err := s.extract(ctx, zr, dir, compressed, func(_ *bombWriter, copyErr error) error {
+	path, written, why, err := s.extract(ctx, copyFrom(zr), dir, compressed, func(_ *bombWriter, copyErr error) error {
 		if copyErr != nil {
 			return fmt.Errorf("doesn't decompress: %w", copyErr)
 		}
@@ -193,20 +191,4 @@ func (s *ZipStage) gzip(ctx context.Context, p Part, dir string, yield func(Item
 		return
 	}
 	yield(unwritten(where, rec, name, rec.Reason, rec.Check, rec.Class, rec.Evidence))
-}
-
-// gzipStem returns the name a gzip stream's content takes when its header names none: the
-// stream's name without its .gz, or with a .tgz's .tar, as gzip -d names it; a name with
-// neither is kept.
-func gzipStem(name string) string {
-	ext := path.Ext(name)
-	switch strings.ToLower(ext) {
-	case ".gz":
-		if stem := strings.TrimSuffix(name, ext); stem != "" {
-			return stem
-		}
-	case ".tgz":
-		return strings.TrimSuffix(name, ext) + ".tar"
-	}
-	return name
 }
