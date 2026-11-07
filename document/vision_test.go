@@ -150,6 +150,9 @@ func (v *vision) pages(ctx context.Context, pdf io.Reader, req visionRequest) it
 		}()
 		slots := make(chan struct{}, max(req.Concurrency, 1))
 		queue := make(chan queued)
+		// cut records that the producer stopped because work ended, before it queued every
+		// page; closing queue publishes it to the consumer.
+		cut := false
 		wg.Go(func() {
 			defer close(queue)
 			for img, err := range v.prepare.Images(work, pdf, req.images()) {
@@ -160,6 +163,7 @@ func (v *vision) pages(ctx context.Context, pdf io.Reader, req visionRequest) it
 					select {
 					case slots <- struct{}{}:
 					case <-work.Done():
+						cut = true
 						return
 					}
 					wg.Go(func() {
@@ -171,6 +175,7 @@ func (v *vision) pages(ctx context.Context, pdf io.Reader, req visionRequest) it
 				select {
 				case queue <- queued{img.Number, img.Count, done}:
 				case <-work.Done():
+					cut = true
 					return
 				}
 			}
@@ -189,6 +194,12 @@ func (v *vision) pages(ctx context.Context, pdf io.Reader, req visionRequest) it
 			if !yield(visionPage{Number: q.number, Count: q.count, Response: s.resp, Attempts: s.attempts}, s.err) {
 				return
 			}
+		}
+		// When ctx ends, the producer's select may take work.Done over a ready queue and stop
+		// before queueing a page, so the stream would end yielding nothing: it yields ctx's
+		// error here instead.
+		if err := ctx.Err(); cut && err != nil {
+			yield(visionPage{}, err)
 		}
 	}
 }
