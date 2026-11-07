@@ -5,8 +5,12 @@ The email package's fixtures. They are committed and never generated or fetched 
 ## mail
 
 `mail/` is a copy of [spike-ai-pipeline-mail](https://github.com/JaimeStill/spike-ai-pipeline-mail)'s
-committed fixtures and goldens at its tag `v0.3.0` (commit
-`eb734073a960f2e8c15c8c120dd6a2e5d7b0624d`), byte for byte, the same files v0.2.0's were: its `tests/fixtures/` in
+committed fixtures and goldens at its tag `v0.3.1` (commit
+`9cbbdd3e469233d3b04bbba54a3a3ebe9b0114e7`), byte for byte: v0.3.0's files, which were v0.2.0's,
+and v0.3.1's conversation history store, `fixtures/generated/pst/conversations.pst`, with its item
+sources, `fixtures/generated/items/*.json`, its folder in `layout.json`, whose folders list
+`items` as well as `messages`, its hand truth under `truth.json`'s `items`, its entries in the
+generator's `manifest.json`, and its golden; v0.3.1 changes no other file. Its `tests/fixtures/` in
 `mail/fixtures/`, and its `tests/golden/`, mail's own stdout and stderr for each fixture, in
 `mail/golden/`. `mail/MANIFEST` pins the copy: the repository, the tag, the commit, and each file's
 SHA-256; the check verifies the copy against it offline. `mise run fixtures:mail` refreshes the copy
@@ -16,7 +20,10 @@ The fixtures' sources, licenses, and truth files are mail's, kept beside them as
 each directory's `sources.json` and `LICENSE` and `NOTICE` files give the public stores' and
 messages' provenance and licenses, and `fixtures/generated/manifest.json` the generated ones'.
 The real-binary tests read every `.pst` and `.msg` here and compare their records and warnings
-with the goldens. Mail ships no goldens for the `.eml` and mbox inputs, `generated/eml/`, `mime/`,
+with the goldens, a conversation record with its message line read as a conversation. They read
+`layout.json` for the folders that list items, and hold each item of `conversations.pst`, in the
+layout's order, to its hand truth in `truth.json`: each conversation and missed conversation's
+record, and the note's message. Mail ships no goldens for the `.eml` and mbox inputs, `generated/eml/`, `mime/`,
 and the built `.msg`'s `.eml` source: the tests compare each read with mail's own output from a
 run of the same input, and with each input's structure, written by hand from the input.
 

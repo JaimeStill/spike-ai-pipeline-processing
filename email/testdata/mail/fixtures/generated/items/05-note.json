@@ -1,0 +1,23 @@
+{
+  "class": "IPM.Note",
+  "subject": "Q1 inventory counts, Leeds",
+  "sender": {
+    "name": "Tomás Ferreira",
+    "address": "tomas.ferreira@example.com"
+  },
+  "to": [
+    {
+      "name": "Priya Raman",
+      "address": "priya.raman@example.com"
+    }
+  ],
+  "cc": [
+    {
+      "name": "Wen Okafor",
+      "address": "wen.okafor@example.com"
+    }
+  ],
+  "submit_time": "2026-03-13T08:15:00Z",
+  "delivery_time": "2026-03-13T08:15:02Z",
+  "html": "<html><body><p>Priya,</p><p>The Q1 counts for Leeds are in the shared sheet. Cold storage came in at <b>1,284</b> pallets.</p><p>Tomás</p></body></html>"
+}

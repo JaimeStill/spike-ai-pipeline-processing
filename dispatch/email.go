@@ -34,7 +34,11 @@ type EmailConfig struct {
 // derived Markdown body, when it has one, a [MarkdownOutput] of the same name, the Meta of both
 // naming its id, its folder's path, its subject, and its Message-ID, and an embedded one's the
 // message it is embedded in, and the record's Meta "markdown" saying "follows" when a Markdown
-// follows it; each skipped record, "skipped <kind>", its Meta naming its reason; and a record of a
+// follows it; each message of a conversation class, a Skype for Business conversation or missed
+// conversation, as email reads it, an email.Conversation record, "conversation <id>", or
+// "conversation" without one, then its transcript's Markdown, of the same name, in the same
+// order, with the same Meta less the subject and Message-ID and with its topic and "missed",
+// "true" or "false", an embedded one's too, since the class decides; each skipped record, "skipped <kind>", its Meta naming its reason; and a record of a
 // kind email doesn't know, by its kind. mail's warnings, when it gave any, are a last record,
 // "warnings", a JSON array.
 //
@@ -148,6 +152,12 @@ func (w *emailWalk) record(rec email.Record) error {
 			name += " " + strconv.FormatUint(r.ID, 10)
 		}
 		return w.message(r, name, "")
+	case *email.Conversation:
+		name := "conversation"
+		if r.ID != 0 {
+			name += " " + strconv.FormatUint(r.ID, 10)
+		}
+		return w.conversation(r, name, "")
 	case *email.Skipped:
 		return w.output(record("skipped "+r.Kind, r, map[string]string{"reason": r.Reason}))
 	case *email.UnknownRecord:
@@ -161,34 +171,57 @@ func (w *emailWalk) record(rec email.Record) error {
 // record. parent is the name of the message m is embedded in, "" for a message of the read's own.
 // Its own outputs come last, so a caller that has persisted them has had every part of m.
 func (w *emailWalk) message(m *email.Message, name, parent string) error {
-	for i := range m.Attachments {
-		a := &m.Attachments[i]
+	if err := w.attachments(m.Attachments, name); err != nil {
+		return err
+	}
+	meta := map[string]string{"subject": m.Subject}
+	if m.MessageID != "" {
+		meta["message_id"] = m.MessageID
+	}
+	return w.own(m, name, parent, m.ID, m.Folder, m.Body.Derived.Markdown, meta)
+}
+
+// conversation yields c's attachments, then its record and its transcript's Markdown, named name,
+// as message yields a message's; the Meta of both names its topic and whether it was missed.
+func (w *emailWalk) conversation(c *email.Conversation, name, parent string) error {
+	if err := w.attachments(c.Attachments, name); err != nil {
+		return err
+	}
+	meta := map[string]string{"topic": c.Topic, "missed": strconv.FormatBool(c.Missed)}
+	return w.own(c, name, parent, c.ID, c.Folder, c.Markdown, meta)
+}
+
+// attachments yields each of a message's attachments, in their order, the message named name.
+func (w *emailWalk) attachments(as []email.Attachment, name string) error {
+	for i := range as {
 		where := name + ", attachment " + strconv.Itoa(i+1)
-		if err := w.attachment(a, where, name); err != nil {
+		if err := w.attachment(&as[i], where, name); err != nil {
 			return err
 		}
 	}
-	meta := map[string]string{"subject": m.Subject}
-	if m.ID != 0 {
-		meta["id"] = strconv.FormatUint(m.ID, 10)
+	return nil
+}
+
+// own yields a message's own outputs, named name: v, its record, then md, its Markdown, when it
+// has one. meta gains its id, its folder's path, and parent, the message it is embedded in, when
+// it has each; the record's says "markdown" "follows" when a Markdown follows it, so a caller
+// knows which output is the message's last.
+func (w *emailWalk) own(v any, name, parent string, id, folder uint64, md string, meta map[string]string) error {
+	if id != 0 {
+		meta["id"] = strconv.FormatUint(id, 10)
 	}
-	if path, ok := w.folders[m.Folder]; ok && m.Folder != 0 {
+	if path, ok := w.folders[folder]; ok && folder != 0 {
 		meta["folder"] = strings.Join(path, "/")
-	}
-	if m.MessageID != "" {
-		meta["message_id"] = m.MessageID
 	}
 	if parent != "" {
 		meta["embedded_in"] = parent
 	}
-	md := m.Body.Derived.Markdown
 	recMeta := meta
 	if md != "" {
-		// The record says a Markdown follows it, so a caller knows which output is m's last.
 		recMeta = maps.Clone(meta)
 		recMeta["markdown"] = "follows"
 	}
-	if err := w.output(record(name, m, recMeta)); err != nil {
+	if err := w.output(record(name, v, recMeta)); err != nil {
 		return err
 	}
 	if md != "" {
@@ -214,6 +247,11 @@ func (w *emailWalk) attachment(a *email.Attachment, where, parent string) error 
 		}
 	}
 	if a.Message != nil && a.File == "" {
+		// The class decides, nested or not: an embedded message of a conversation class is read
+		// as the Stream reads one of the store's own.
+		if c, ok := a.Message.Conversation(); ok {
+			return w.conversation(c, where, parent)
+		}
 		return w.message(a.Message, where, parent)
 	}
 	_, why, err := a.Route()

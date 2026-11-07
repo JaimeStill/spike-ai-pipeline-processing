@@ -61,7 +61,11 @@ repository's `context/README.md`.
   exit codes as errors; attachment routes by route.File, by content signature, never the stored
   type, from the attachments directory mail writes; and threads by RFC 5256's REFERENCES algorithm
   plus conversation-index parents, from keys a Threader keeps while the stream is read and saves and
-  restores, so a read resumed through mail 0.3.0's --after, Request.After, threads whole. Its
+  restores, so a read resumed through mail 0.3.0's --after, Request.After, threads whole. A
+  Skype for Business conversation or missed conversation, by its message class, never its folder,
+  is a Conversation record, participants, start and end, topic, missed, and its transcript as
+  mail's Markdown and stored HTML, no turn parsed, which the email stage yields as "conversation
+  <id>" then its Markdown. Its
   fixtures are mail's, copied at its tag under a SHA-256 manifest, and a built .msg of this
   repository's office fixtures and, by value, one of mail's .msg fixtures. The integration tier
   carries each route to its real stage; the findings tier, whose results `docs/findings/email.md`

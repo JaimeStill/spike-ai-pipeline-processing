@@ -238,7 +238,9 @@ records and only the messages after it, with their attachments found. A resumed 
 is never recorded, its outputs being the tail alone. For each message, the email stage yields its
 attachments first, each found part dispatched whole, then its record, its Meta `id` the message's,
 then its Markdown, which the record's Meta `markdown: follows` announces, so the message's last
-output is the last of everything it holds. A caller resuming after a crash keeps a `FileIndex`
+output is the last of everything it holds. A message of a conversation class is a conversation
+record, `conversation <id>`, an `email.Conversation`, then its transcript's Markdown, the Meta of
+both naming its topic and `missed`; it moves the cursor as a message does, and feeds no Threader. A caller resuming after a crash keeps a `FileIndex`
 that outlives the process, so the attachments recorded before the crash are seen; the cursor, the
 id of the last message whose outputs it has persisted, moved at each message's last output; and
 an `email.Threader`, fed each message record of the store's own, decoded. Every N messages, or on a
@@ -637,7 +639,16 @@ decoded from a pipe one line at a time into typed Go values that mirror its sche
 `Store` first, then for a .pst each `Folder` before its `Message`s, and a `Skipped` record wherever
 mail couldn't read one; for a .msg or an .eml its message, an embedded message nested under its
 attachment; for an mbox each message in the file's order. Memory follows the record being read,
-never the store. mail's warnings are the Stream's `Warnings`, and its exit codes 1 to 4 are an
+never the store. A message of a conversation class, `email.ConversationClass`
+(IPM.Note.Microsoft.Conversation) or `email.MissedClass` (IPM.Note.Microsoft.Missed), which a
+Skype for Business client saves its instant-message history under in Conversation History, is a
+`Conversation` in its place: its participants, the sender then the recipients; its start and end,
+the submit and delivery times; its topic, the conversation topic, else the subject; whether it was
+missed, by its class; and its transcript as mail's Markdown and as the stored HTML. The class
+decides, not the folder, and every other class, the Voice classes among them, is a `Message` as
+before; `Message.Conversation` reads a decoded `Message` the same way. It is one record per item:
+no turn is parsed from the transcript. The tests hold every item of mail's generated
+`conversations.pst` to the hand truth in mail's `truth.json`. mail's warnings are the Stream's `Warnings`, and its exit codes 1 to 4 are an
 `*ExitError` that matches `ErrNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`.
 
 ```go
@@ -1113,7 +1124,7 @@ docker, server 20.10 or later, for the container runner. For `office`: spike-ai-
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice in
 the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the metafile
 trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a read, which
-mise pins, at 0.3.0, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
+mise pins, at 0.3.1, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
 0.1.0 or later, which mise pins from its GitHub release for the tests. For `audio` and `media`:
 ffmpeg and ffprobe 9.0 or later on PATH, or docker, which runs them in `audio.FFmpegImage`; a URL
 source through docker needs the image to name a docker network. `mise run fixtures:streams`

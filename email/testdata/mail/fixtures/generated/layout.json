@@ -10,6 +10,22 @@
         { "path": ["Archive", "Empty"], "messages": [] },
         { "path": ["Sent Items"], "messages": ["07-html-only-bcc.eml", "08-forward-attached-message.eml"] }
       ]
+    },
+    {
+      "file": "pst/conversations.pst",
+      "display_name": "Generated conversations",
+      "folders": [
+        {
+          "path": ["Conversation History"],
+          "items": [
+            "01-chat-one-to-one.json",
+            "02-chat-multi-party.json",
+            "03-chat-incoming.json",
+            "04-missed.json",
+            "05-note.json"
+          ]
+        }
+      ]
     }
   ],
   "msg": [

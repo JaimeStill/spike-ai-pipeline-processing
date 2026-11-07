@@ -7,6 +7,7 @@ import (
 	"encoding/json/v2"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -20,12 +21,14 @@ const Schema = "1"
 var ErrSchema = errors.New("unsupported schema")
 
 // Record is one line of mail's output, by its kind: *Store, *Folder, *Message, or *Skipped, and
-// *UnknownRecord for a kind schema "1" adds later. Line returns the line's "line" field.
+// *UnknownRecord for a kind schema "1" adds later. Line returns the line's "line" field. A
+// message line of a conversation class, ConversationClass or MissedClass, is a *Conversation
+// instead, whose Line is "conversation": the package's reading of the message, not mail's line.
 //
-// Each record type mirrors its line: a field the line leaves out is the zero value, which means
-// none, as mail's model means it; an optional number whose zero is meaningful is a pointer, nil
-// for none. Each marshals back, through encoding/json/v2, to its line's fields less "line" and
-// any false boolean.
+// Each record type but Conversation mirrors its line: a field the line leaves out is the zero
+// value, which means none, as mail's model means it; an optional number whose zero is meaningful
+// is a pointer, nil for none. Each marshals back, through encoding/json/v2, to its line's fields
+// less "line" and any false boolean.
 type Record interface {
 	Line() string
 	record()
@@ -106,6 +109,85 @@ type Message struct {
 	Body Body `json:"body,omitzero"`
 	// Attachments are its attachment records, in the attachment table's order.
 	Attachments []Attachment `json:"attachments,omitzero"`
+}
+
+// The message classes a Skype for Business client stores its conversation history under, in the
+// Conversation History folder: an instant-message conversation, and one its user missed. Each such
+// message is read as a Conversation. Their Voice subclasses, a call's, read as any other class.
+const (
+	ConversationClass = "IPM.Note.Microsoft.Conversation"
+	MissedClass       = "IPM.Note.Microsoft.Missed"
+)
+
+// Conversation is a message of a conversation class, ConversationClass or MissedClass, read as one
+// conversation: who took part, when it ran, its topic, whether it was missed, and its transcript,
+// as mail's Markdown and as the HTML stored. The class decides, matched without regard to case as
+// message classes are, never the folder: a message of any other class in the Conversation History
+// folder is a *Message. A Conversation is one record per stored item, never its turns: the
+// transcript's lines, each a speaker, a time, and a text, are only in its HTML and Markdown, and
+// the package parses neither.
+type Conversation struct {
+	// ID is the message's node id in a .pst, as Message.ID; mail's --after takes it, so a read
+	// resumes after a conversation as after any message.
+	ID uint64 `json:"id,omitzero"`
+	// Folder is, in a .pst, the node id of its folder.
+	Folder uint64 `json:"folder,omitzero"`
+	// Class is the message class, ConversationClass or MissedClass as stored.
+	Class string `json:"class,omitzero"`
+	// Topic is the conversation topic as stored, else, when there is none, the subject.
+	Topic string `json:"topic,omitzero"`
+	// Participants are the sender, when there is one, then the recipients, To, CC, and BCC, each in
+	// the recipient table's order, each as stored.
+	Participants []Address `json:"participants,omitzero"`
+	// Start is when the conversation began, the message's submit time; End is when it ended, its
+	// delivery time, when its history was saved. Both are UTC, to the second.
+	Start time.Time `json:"start,omitzero"`
+	End   time.Time `json:"end,omitzero"`
+	// Missed is whether its user missed it: its class is MissedClass.
+	Missed bool `json:"missed,omitzero"`
+	// Markdown is the transcript as mail's derived Markdown.
+	Markdown string `json:"markdown,omitzero"`
+	// HTML is the transcript as the stored HTML body, as Body.HTML holds it.
+	HTML string `json:"html,omitzero"`
+	// Attachments are its attachment records, as a Message's.
+	Attachments []Attachment `json:"attachments,omitzero"`
+}
+
+// IsConversation reports whether class is a conversation class, ConversationClass or MissedClass,
+// without regard to case.
+func IsConversation(class string) bool {
+	return strings.EqualFold(class, ConversationClass) || strings.EqualFold(class, MissedClass)
+}
+
+// Conversation returns m read as a Conversation, and true, when its class is a conversation class;
+// nil and false otherwise. It is how the Stream reads such a message line, so a caller holding a
+// message decoded from mail's line, or from a stored record, reads it the same way.
+func (m *Message) Conversation() (*Conversation, bool) {
+	if !IsConversation(m.Class) {
+		return nil, false
+	}
+	c := &Conversation{
+		ID:          m.ID,
+		Folder:      m.Folder,
+		Class:       m.Class,
+		Topic:       m.ConversationTopic,
+		Start:       m.SubmitTime,
+		End:         m.DeliveryTime,
+		Missed:      strings.EqualFold(m.Class, MissedClass),
+		Markdown:    m.Body.Derived.Markdown,
+		HTML:        m.Body.HTML,
+		Attachments: m.Attachments,
+	}
+	if c.Topic == "" {
+		c.Topic = m.Subject
+	}
+	if m.Sender != (Address{}) {
+		c.Participants = append(c.Participants, m.Sender)
+	}
+	c.Participants = append(c.Participants, m.To...)
+	c.Participants = append(c.Participants, m.CC...)
+	c.Participants = append(c.Participants, m.BCC...)
+	return c, true
 }
 
 // Address is a sender's or recipient's address, each field as stored.
@@ -208,6 +290,9 @@ func (*Folder) Line() string { return "folder" }
 // Line returns "message".
 func (*Message) Line() string { return "message" }
 
+// Line returns "conversation".
+func (*Conversation) Line() string { return "conversation" }
+
 // Line returns "skipped".
 func (*Skipped) Line() string { return "skipped" }
 
@@ -217,6 +302,7 @@ func (r *UnknownRecord) Line() string { return r.Kind }
 func (*Store) record()         {}
 func (*Folder) record()        {}
 func (*Message) record()       {}
+func (*Conversation) record()  {}
 func (*Skipped) record()       {}
 func (*UnknownRecord) record() {}
 
@@ -266,6 +352,11 @@ func decodeLine(raw jsontext.Value, first bool) (Record, error) {
 	}
 	if err := json.Unmarshal(raw, rec); err != nil {
 		return nil, fmt.Errorf("email: decoding a %s line: %w", kind, err)
+	}
+	if m, ok := rec.(*Message); ok {
+		if c, ok := m.Conversation(); ok {
+			return c, nil
+		}
 	}
 	return rec, nil
 }

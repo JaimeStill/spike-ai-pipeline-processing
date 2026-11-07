@@ -102,7 +102,8 @@
 //     attachments come first, each found part dispatched whole, then its record, then its
 //     Markdown body, which the record's Meta "markdown" says follows; an embedded message mail
 //     gives no file for is prepared inline, in its place among the attachments, its own
-//     attachments found below it, at any depth.
+//     attachments found below it, at any depth. A message of a conversation class is a
+//     conversation record, email's Conversation, then its transcript's Markdown, as a message is.
 //   - [OneNoteStage], for route.OneNote: onenote's records, a page's record followed by its
 //     Markdown, and each of its media found as a part, "page <id>, <where>"; a medium onenote
 //     wrote no content for is a record.
@@ -299,7 +300,10 @@
 // persists the message's outputs as they come and feeds the Threader the message's record,
 // decoded into an email.Message; at the message's last output the message is done, and its id is
 // the cursor. A message record whose Meta has "embedded_in" is an inline message's, part of its
-// parent's, and is fed to no Threader.
+// parent's, and is fed to no Threader. A conversation record, "conversation <id>", is a message's
+// for the cursor, its Meta "id" the message's store id, which mail's --after takes as any other;
+// it is fed to no Threader, since a conversation has no threading fields and the Threader takes
+// messages alone.
 //
 // The caller saves the cursor and the Threader together every N messages, or on a timer, not at
 // every message: each save marshals every message's keys so far, so saving at every message grows

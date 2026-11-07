@@ -1,0 +1,17 @@
+{
+  "class": "IPM.Note.Microsoft.Missed",
+  "subject": "Missed conversation with Tomás Ferreira",
+  "sender": {
+    "name": "Tomás Ferreira",
+    "address": "tomas.ferreira@example.com"
+  },
+  "to": [
+    {
+      "name": "Priya Raman",
+      "address": "priya.raman@example.com"
+    }
+  ],
+  "submit_time": "2026-03-12T17:48:20Z",
+  "delivery_time": "2026-03-12T17:53:20Z",
+  "html": "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body><div style=\"font-family:Segoe UI;font-size:10pt\"><div><span style=\"color:#5f5f5f\">Tomás Ferreira</span> <span style=\"color:#8a8a8a\">(5:48 PM)</span>: <span>Are the cold storage counts needed before the go/no-go?</span></div></div></body></html>"
+}

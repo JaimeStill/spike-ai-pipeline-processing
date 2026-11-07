@@ -120,6 +120,10 @@ email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	m
 email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	отчёт.csv	text	seen
 email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	note-g.txt	text	seen
 
+# email, mail v0.3.1's conversation history store: three conversations, a missed one, and a
+# note, none with an attachment, so the store alone.
+email/testdata/mail/fixtures/generated/pst/conversations.pst	-	*	nested	prepared
+
 # email, the MIME inputs: an .eml, an mboxrd, and the rlug mbox. mbox.rlug-0 to -4 are its
 # messages one a file, each beginning with its header, no "From " line, and named with no .eml
 # extension: route takes a bare message as one only by that extension or a stored message type,

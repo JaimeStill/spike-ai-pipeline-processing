@@ -142,8 +142,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   ~/docs' encodings and their truth when the machine has them: correct for UTF-8 with and without a
   mark, UTF-16LE with one, windows-1252, with CRLF too, and ISO-8859-1; garbled, the known limit,
   for UTF-16BE without a mark, KOI8-R, EUC-JP, Shift_JIS, and windows-1256.
+- `email.Conversation`, a record of the Stream's in place of the `Message` of a conversation
+  class, `email.ConversationClass` (IPM.Note.Microsoft.Conversation) or `email.MissedClass`
+  (IPM.Note.Microsoft.Missed), a Skype for Business conversation history item: its participants,
+  the sender then To, CC, and BCC; its start and end, the submit and delivery times; its topic,
+  the conversation topic, else the subject; `Missed`, by its class; its transcript as mail's
+  Markdown and as the stored HTML; and its id, folder, class, and attachments. Its `Line` is
+  "conversation". The class decides, without regard to case, never the folder: every other class,
+  the note beside them in Conversation History and the Voice classes among them, is a `Message` as
+  before. No turn is parsed from the transcript. `email.IsConversation` reports whether a class is
+  one, and `Message.Conversation` reads a `Message` as the Stream does.
+- `dispatch.EmailStage` yields a conversation as its record, `conversation <id>`, then its
+  transcript's Markdown of the same name, as it yields a message, its attachments before both; the
+  Meta of both names its id, folder, topic, and `missed`, and an inline one's `embedded_in`. A
+  conversation record moves a resuming caller's cursor as a message's does, and feeds no Threader.
+- mail v0.3.1's fixtures in `email/testdata/mail`: its generated `conversations.pst`, a
+  Conversation History folder of three conversations, a missed one, and a note, built from item
+  sources, `layout.json`'s folders listing `items`, and hand truth under `truth.json`'s `items`.
+  The tests hold every item to the truth, read from `truth.json`, through the email Reader and the
+  email stage.
 
 ### Changed
+
+- mise pins mail at 0.3.1, and `mise run fixtures:mail` copies its tag; every fixture but the
+  conversation history store's is unchanged. `dispatch.adapterVersion` stays 4: the email stage's
+  identity names mail's version, which moves with the pin, so an index prepares a store again, and
+  this release's bump from 2 already prepares every adapter's parts again.
 
 - `office.Converter.Convert` converts an RTF, known by its signature whatever `Request.Name`'s
   extension, through LibreOffice to docx with Writer's docx export filter, as a .doc, then runs

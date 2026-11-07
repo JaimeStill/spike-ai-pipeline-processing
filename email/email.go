@@ -196,7 +196,8 @@ const stderrLimit = 1 << 20
 
 // Records runs mail once on the input and yields each line it writes as a Record while it runs:
 // the store first, then, for a .pst, folders, messages, and skipped records in mail's order, or,
-// for a .msg, its message and skipped records. mail's stdout passes through a pipe and is decoded
+// for a .msg, its message and skipped records. A message of a conversation class is yielded as a
+// *Conversation in its place, as Message.Conversation reads it. mail's stdout passes through a pipe and is decoded
 // one line at a time, so memory follows the record being read, never the store; a slow consumer
 // holds mail back rather than buffering its output.
 //
@@ -291,8 +292,13 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 			return err
 		}
 		first = false
-		if m, ok := rec.(*Message); ok && dir != "" {
-			setPaths(m, dir)
+		if dir != "" {
+			switch m := rec.(type) {
+			case *Message:
+				setPaths(m.Attachments, dir)
+			case *Conversation:
+				setPaths(m.Attachments, dir)
+			}
 		}
 		if !yield(rec, nil) {
 			_ = stop()
@@ -310,17 +316,17 @@ func (s *Stream) read(yield func(Record, error) bool) error {
 	return nil
 }
 
-// setPaths sets the Path of each of m's attachments with a File, those of its nested messages
+// setPaths sets the Path of each of attachments with a File, those of their nested messages
 // included, to the File's path in dir, the read's attachments directory. A File that isn't a
 // bare name, which mail never writes, is given no Path, so no Path leaves dir.
-func setPaths(m *Message, dir string) {
-	for i := range m.Attachments {
-		a := &m.Attachments[i]
+func setPaths(attachments []Attachment, dir string) {
+	for i := range attachments {
+		a := &attachments[i]
 		if a.File != "" && filepath.IsLocal(a.File) && filepath.Base(a.File) == a.File {
 			a.Path = filepath.Join(dir, a.File)
 		}
 		if a.Message != nil {
-			setPaths(a.Message, dir)
+			setPaths(a.Message.Attachments, dir)
 		}
 	}
 }

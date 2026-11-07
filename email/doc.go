@@ -26,7 +26,19 @@
 // store. Each line is decoded through encoding/json/v2 into the typed value of its kind, Store,
 // Folder, Message, or Skipped, which mirror schema "1": addresses, times, the bodies stored and
 // derived, and attachment records. A line of a kind the package doesn't know is kept as an
-// UnknownRecord, never an error. A store line of any other schema is an error matching ErrSchema
+// UnknownRecord, never an error.
+//
+// A message of a conversation class, IPM.Note.Microsoft.Conversation or IPM.Note.Microsoft.Missed,
+// the classes a Skype for Business client saves its instant-message history under in a store's
+// Conversation History folder, is read as one Conversation record instead of a Message: its
+// participants, the sender then the recipients; its start and end, the submit and delivery times;
+// its topic, the stored conversation topic, else the subject; whether it was missed, by its class;
+// and its transcript as mail's Markdown and as the HTML stored. The class decides, never the
+// folder, so a note in Conversation History is a Message, and every other class, a call's Voice
+// classes among them, reads as a Message. A Conversation is one record per stored item: the
+// package parses no turn from the transcript, each speaker, time, and text staying in its HTML
+// and Markdown. Message.Conversation reads a Message so, for a caller holding one decoded from a
+// stored record. A store line of any other schema is an error matching ErrSchema
 // that names the schema. A loop that stops early stops mail.
 //
 // Each line mail writes to stderr as a warning is one of the Stream's Warnings, its prefix taken
@@ -68,7 +80,9 @@
 // Known limits: a by-value .eml whose header isn't a message's shape is unrouted, unless it begins
 // with an mbox's "From " line, which makes it an mbox, and header-shaped content neither named .eml
 // nor stored as a message isn't nested; an .ost is refused by mail, and unrouted; in a .pst, an
-// embedded message is nested without its content, which mail can't read; a by-reference attachment
+// embedded message is nested without its content, which mail can't read; a conversation is a record
+// per item, its turns unparsed, and the only conversation history its tests read is mail's
+// generated store, whose items are text chats; a by-reference attachment
 // has no content file, so it is unrouted; and the stores mail's generator writes, its fixtures and
 // its scale store, carry no threading fields, so they thread by subject alone. mail's own limits
 // reach MIME input: it reads every mbox as an mboxrd, so an mboxcl's Content-Length is ignored and
@@ -95,7 +109,10 @@
 //   - [Schema] is the version of mail's JSON Lines the package decodes, "1".
 //   - [ErrSchema] is the cause of a store line of another schema.
 //   - [Record] is one of mail's lines, its Line the line's kind: [Store], [Folder], [Message],
-//     [Skipped], or [UnknownRecord].
+//     [Conversation], [Skipped], or [UnknownRecord].
+//   - [Conversation] is a message of a conversation class, [ConversationClass] or [MissedClass],
+//     read as one conversation; [IsConversation] reports whether a class is one, and
+//     [Message.Conversation] reads a Message as one.
 //   - [Address], [Body], [Derived], and [Attachment] are a message's addresses, bodies, and
 //     attachment records; an Attachment's Path names its content's file in the attachments
 //     directory.

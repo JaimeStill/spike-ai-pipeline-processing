@@ -1,0 +1,25 @@
+{
+  "class": "IPM.Note.Microsoft.Conversation",
+  "subject": "Release checklist for build 4.2",
+  "sender": {
+    "name": "Wen Okafor",
+    "address": "wen.okafor@example.com"
+  },
+  "to": [
+    {
+      "name": "Priya Raman",
+      "address": "priya.raman@example.com"
+    },
+    {
+      "name": "Tomás Ferreira",
+      "address": "tomas.ferreira@example.com"
+    },
+    {
+      "name": "Dana Kowalski",
+      "address": "dana.kowalski@example.com"
+    }
+  ],
+  "submit_time": "2026-03-11T09:30:04Z",
+  "delivery_time": "2026-03-11T09:41:52Z",
+  "html": "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body><div style=\"font-family:Segoe UI;font-size:10pt\"><div><span style=\"color:#5f5f5f\">Wen Okafor</span> <span style=\"color:#8a8a8a\">(9:30 AM)</span>: <span>Morning all. Release checklist for build 4.2: who has what?</span></div><div><span style=\"color:#5f5f5f\">Dana Kowalski</span> <span style=\"color:#8a8a8a\">(9:31 AM)</span>: <span>I have the installer sign-off.</span></div><div><span style=\"color:#5f5f5f\">Tomás Ferreira</span> <span style=\"color:#8a8a8a\">(9:33 AM)</span>: <span>Migration scripts are mine; tested against a copy of staging.</span></div><div><span style=\"color:#5f5f5f\">Priya Raman</span> <span style=\"color:#8a8a8a\">(9:36 AM)</span>: <span>Release notes are drafted. I’ll circulate them after lunch.</span></div><div><span style=\"color:#5f5f5f\">Wen Okafor</span> <span style=\"color:#8a8a8a\">(9:41 AM)</span>: <span>Thanks. Go/no-go at 4 PM.</span></div></div></body></html>"
+}
