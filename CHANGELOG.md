@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v0.9.0] - 2026-11-06
+
 ### Added
 
 - The formats finding, `docs/findings/formats.md`, and its run's results in
@@ -841,7 +843,8 @@ Every move is without an alias: a caller on v0.5.0 renames as listed.
 - The CI pair: a check workflow on every pull request into and push to main, and a release
   workflow that publishes a pushed `v*` tag's section of this changelog.
 
-[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/JaimeStill/spike-ai-pipeline-processing/compare/v0.9.0...HEAD
+[v0.9.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.9.0
 [v0.8.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.8.0
 [v0.7.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.7.0
 [v0.6.0]: https://github.com/JaimeStill/spike-ai-pipeline-processing/releases/tag/v0.6.0
