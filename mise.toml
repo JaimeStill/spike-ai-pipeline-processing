@@ -324,3 +324,17 @@ run = "GOWORK=off go test -tags findings -count=1 -timeout 1h -v -run '^TestFind
 [tasks.findings-streams]
 description = "Run the streams finding on ~/docs' videos at real time against the router SPIKE_ROUTER_URL names; keeps results only in STREAMS_FINDINGS_RESULTS"
 run = "scripts/findings-streams.sh"
+
+# Task formats' finding, in the unit, integration, and findings tiers: the tests that hold the new
+# routes, the archive kinds through the standard library and 7zz, a TIFF's pages and HEIC, WebP,
+# and AVIF through magick, text, RTF through LibreOffice, a PDF's password, forms, and
+# attachments through qpdf and pdfdetach, and the conversation records, to their truth; then the
+# findings-tagged tests in package dispatch, which dispatch every route's fixtures and ~/docs
+# inputs (DOCS names another root), each checked by its SHA-256 against the corpus manifest,
+# record each part against the truth, and time the dispatcher on each ~/docs input with its peak
+# memory. FORMATS_FINDINGS_RUNS (3) sets the timed runs. It calls no model, and none of ~/docs is
+# committed. A FORMATS_FINDINGS_RESULTS the shell sets keeps the run's results there; unset, the
+# run keeps nothing. It isn't CI.
+[tasks.findings-formats]
+description = "Run the formats finding: the new routes over the fixtures and ~/docs against their truth, and the dispatcher's cost; keeps results only in FORMATS_FINDINGS_RESULTS"
+run = "scripts/findings-formats.sh"
