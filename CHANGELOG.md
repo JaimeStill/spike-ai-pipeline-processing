@@ -40,7 +40,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   a file past it a record with `inspect.PDFAttachmentBomb`'s evidence, quarantined. The media
   behind a Screen or Rendition annotation isn't extracted, and XFA is flagged only, as before. A
   qpdf or pdfdetach failure fails the PDF once its pages are prepared. Without either tool the
-  stage is as before, its identity unchanged; each given changes its configuration's hash.
+  stage is as before, and the bomb thresholds leave its identity alone; each tool given changes
+  its configuration's hash.
 - `inspect.PDFAttachmentBomb`, of class Unsafe, which the document stage raises on an embedded
   file's written bytes, as the archive stage raises `GzipBomb`.
 - `tool.Spec.VersionExit`, the exit code of a version command that exits nonzero having printed
@@ -68,10 +69,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   rules unchanged. Before anything of a 7z, a cabinet, or a zstd stream is extracted, the listing is
   checked by `inspect.CheckListing`; a verdict to quarantine ends the stage with a
   `dispatch.QuarantineError`. The bomb rule is enforced on the bytes read from 7zz, against the
-  whole archive's size, or the stream's. An encrypted 7z entry is a record, `inspect.SevenZipEncrypted`,
-  and the 7z encrypted after its readable entries; a 7z whose headers are encrypted is encrypted at
-  once. With no 7-Zip these kinds have no processor yet, and ZIP's stored and deflated entries are
-  unaffected.
+  whole archive's size, or the stream's. An encrypted 7z entry is a record,
+  `inspect.SevenZipEncrypted`, and the 7z encrypted after its readable entries; a 7z whose headers
+  are encrypted is encrypted at once. With no 7-Zip these kinds have no processor yet, and ZIP's
+  stored and deflated entries are unaffected.
 - `dispatch.ArchiveStage` reads a ZIP's bzip2 entries through `compress/bzip2`, an `archive/zip`
   decompressor of the stage's own, without 7-Zip.
 - `dispatch.ErrQuarantined` and `dispatch.QuarantineError`: a stage that quarantines a part on what
@@ -174,9 +175,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - mise pins mail at 0.3.1, and `mise run fixtures:mail` copies its tag; every fixture but the
-  conversation history store's is unchanged. `dispatch.adapterVersion` stays 4: the email stage's
-  identity names mail's version, which moves with the pin, so an index prepares a store again, and
-  this release's bump from 2 already prepares every adapter's parts again.
+  conversation history store's is unchanged. The email stage's identity names mail's version,
+  which moves with the pin, so an index prepares a store again.
 
 - `office.Converter.Convert` converts an RTF, known by its signature whatever `Request.Name`'s
   extension, through LibreOffice to docx with Writer's docx export filter, as a .doc, then runs
@@ -184,10 +184,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `ErrNoLibreOffice`, as a legacy document is, before anything runs. `dispatch.OfficeStage` takes
   an RTF so, yielding its Markdown and media as for a legacy document, its Meta's `converted_from`
   "rtf"; without LibreOffice its reason names the missing converter. ODF, WordPerfect, and .xlsb
-  are still no processor yet. `adapterVersion` is 4, since the index recorded an RTF as no
-  processor yet under the office stage's identity, so an index prepares every adapter's parts
-  again. The integration tier converts the hand-written `office/testdata/rtf/memo.rtf` and
-  `~/docs`'s `test-rtf.rtf`, and its route truth has the RTF prepared.
+  are still no processor yet. The integration tier converts the hand-written
+  `office/testdata/rtf/memo.rtf` and `~/docs`'s `test-rtf.rtf`, and its route truth has the RTF
+  prepared.
 
 - The integration tier registers the text stage, so its route truth has the text parts it held as
   no processor yet prepared, or seen where an earlier fixture holds the same bytes.
@@ -195,8 +194,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `picture.NewConverter` and `office.NewConverter` take a `context.Context`, under which the picture
   Converter runs magick's format listing when it is given magick; a listing that fails is an error.
 - `dispatch.PictureStage` converts through `ConvertPages`: a standalone TIFF of one page is now
-  named by its SHA-256 and `-page1.png`, its output "page 1". `adapterVersion` is 3, so an index
-  prepares a picture stage's parts, and every adapter's, again.
+  named by its SHA-256 and `-page1.png`, its output "page 1".
+- `dispatch.adapterVersion` is 3, bumped once for the release: an index recorded an RTF as no
+  processor yet under the office stage's identity, and a standalone TIFF as one picture under the
+  picture stage's, so an index prepares every adapter's parts again.
 
 - `dispatch.ZipStage` is `dispatch.ArchiveStage`, built by `NewArchiveStage` over an
   `ArchiveConfig`, since it reads every archive kind; its identity is "archive", version 3, its

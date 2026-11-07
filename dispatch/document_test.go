@@ -299,9 +299,8 @@ func TestDocumentStageAttachmentBomb(t *testing.T) {
 	wantEmpty(t, work)
 }
 
-// TestDocumentIdentity: with neither qpdf nor pdfdetach, the stage's identity is the one it had
-// before it had either; qpdf changes it, and pdfdetach, with its bomb thresholds, which change
-// nothing without it.
+// TestDocumentIdentity: bomb thresholds leave the identity of a stage with no pdfdetach alone;
+// qpdf changes it, and pdfdetach, and pdfdetach's thresholds.
 func TestDocumentIdentity(t *testing.T) {
 	prep, err := document.NewPreparer(&pages{n: 1}, nil)
 	if err != nil {
@@ -316,26 +315,7 @@ func TestDocumentIdentity(t *testing.T) {
 		}
 		return s.Identity().Config
 	}
-	// The configuration's hash as the stage had it before qpdf and pdfdetach: adapterVersion's
-	// "4", and the default request's fields.
-	type request struct {
-		DPI         int              `json:"dpi"`
-		Corrections []string         `json:"corrections"`
-		Text        bool             `json:"text"`
-		SkipText    bool             `json:"skip_text"`
-		Region      *document.Region `json:"region"`
-	}
-	before, err := dispatch.HashConfig(struct {
-		Adapter string  `json:"adapter"`
-		Config  request `json:"config"`
-	}{"4", request{DPI: 150, Corrections: []string{}}})
-	if err != nil {
-		t.Fatal(err)
-	}
 	base := id(dispatch.DocumentConfig{})
-	if base != before {
-		t.Errorf("no qpdf or pdfdetach: config %s, want %s, as before either", base, before)
-	}
 	if id(dispatch.DocumentConfig{Inspect: inspect.Options{BombSize: 1}}) != base {
 		t.Error("bomb thresholds changed the identity of a stage with no pdfdetach")
 	}
