@@ -200,10 +200,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   picture stage's, so an index prepares every adapter's parts again.
 
 - `dispatch.ZipStage` is `dispatch.ArchiveStage`, built by `NewArchiveStage` over an
-  `ArchiveConfig`, since it reads every archive kind; its identity is "archive", version 3, its
-  configuration's hash naming its 7-Zip's version. Version 1 recorded tar and gzip parts, and
-  version 2 zstd, 7z, cabinet parts and ZIP entries of other methods, as no processor yet, and an
-  index holding those entries prepares them again. Its errors begin "archive stage:".
+  `ArchiveConfig`, since it reads every archive kind; its identity is "archive", version 2, its
+  configuration's hash naming its 7-Zip's version. The zip stage recorded tar, gzip, zstd, 7z, and
+  cabinet parts and ZIP entries of other methods as no processor yet, and an index holding those
+  entries prepares them again. Its errors begin "archive stage:".
 - A ZIP entry of a method the stage reads neither itself nor, without 7-Zip, through 7zz is a
   record whose reason says "has no processor yet without 7-Zip".
 - The default LibreOffice image, `picture.LibreOfficeImage`, moves to

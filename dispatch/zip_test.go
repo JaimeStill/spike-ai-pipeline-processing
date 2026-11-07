@@ -363,7 +363,7 @@ func TestArchiveIdentity(t *testing.T) {
 		return s.Identity()
 	}
 	base := id(dispatch.ArchiveConfig{})
-	if base.Name != "archive" || base.Version != "3" || len(base.Config) != 64 {
+	if base.Name != "archive" || base.Version != "2" || len(base.Config) != 64 {
 		t.Errorf("archive identity %v", base)
 	}
 	if id(dispatch.ArchiveConfig{Inspect: inspect.Options{BombRatio: inspect.DefaultBombRatio, BombSize: inspect.DefaultBombSize}}) != base {

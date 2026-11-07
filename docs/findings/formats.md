@@ -27,7 +27,7 @@ The packages release pre-inference preparation only; the finding's tests are tes
 |---|---|
 | Do the new archive kinds read? | **Yes.** 34 archive fixtures, 65 parts: tar, gzip, 7z, zstd, cabinets, and ZIP's Deflate64, implode, xz, LZMA, PPMd, zstd, and bzip2 entries each extracted and routed again. Every unsafe case is quarantined, 14 of them, before anything is extracted; the encrypted 7z is encrypted after its readable entry, and the one with encrypted headers at once. |
 | Is ~/docs' mixed bundle the same in all four forms? | **Yes.** `.zip`, `.tar.gz`, `.tar.zst`, and `.7z` give the same 7 parts below their entries, each with the same SHA-256, route, and outcome. |
-| What happens without 7-Zip? | **Today's behavior, as the brief asks.** 16 of the 34 fixtures, every 7z, zstd stream, and cabinet, are no processor yet; a ZIP's six entries of other methods are records naming their method; tar, gzip, bzip2, and ZIP's stored and deflated entries are unchanged. The bundle's `.zip` and `.tar.gz` read whole; its `.tar.zst` and `.7z` are no processor yet. |
+| What happens without 7-Zip? | **No processor yet for 7-Zip's kinds; the rest unchanged.** 16 of the 34 fixtures, every 7z, zstd stream, and cabinet, are no processor yet; a ZIP's six entries of other methods are records naming their method; tar, gzip, bzip2, and ZIP's stored and deflated entries are unchanged. The bundle's `.zip` and `.tar.gz` read whole; its `.tar.zst` and `.7z` are no processor yet. |
 | Do the bombs fire? | **Yes, under 1 MiB and 100:1**: the 7z and cabinet by their listings' declared sizes (5958:1 and 572:1), the gzip and the zstd stream on the bytes written (131:1 and 4127:1), each stopped at 1,081,344 bytes. Under the defaults, 1 GiB and both thresholds, their 8 MiB of zeros are read. |
 | Pictures? | **Every page and picture.** ~/docs' TIFFs give 3, 3, 1, and 1 pages, their counts; HEIC's primary image, never its thumbnail; WebP's and AVIF's first frame; stored orientation applied. 16 inputs, 22 images. |
 | Text? | **6 of ~/docs' 11 encodings correct, 5 garbled**: UTF-8 with and without a mark, UTF-16LE with one, windows-1252, with CRLF too, and ISO-8859-1 decode to the truth; UTF-16BE without a mark, KOI8-R, EUC-JP, Shift_JIS, and windows-1256 are decoded as windows-1252, the text limit, by decision. |
@@ -192,15 +192,14 @@ decoded as windows-1252, which may not be the text's encoding", and the two that
 windows-1252 leaves undefined count their U+FFFD in Meta's warnings; the other three garble with no
 replacement at all, since every byte decodes to something.
 
-**This is the text limit, and it is by decision.** The stage detects no encoding: a byte order
-mark, else valid UTF-8, else windows-1252, whose 256 code points always decode. Text with no mark
+**This is the text limit, and it is by decision.** The stage detects no encoding: a byte order mark,
+else valid UTF-8, else windows-1252, under which every byte decodes to something. Text with no mark
 that isn't UTF-8 is windows-1252 to the stage, so the legacy Cyrillic, Japanese, and Arabic files,
-and UTF-16 written without its mark, come out as Latin mojibake under a warning that says so. The
-brief left encoding detection, such as uchardet, out of the task. What would change it: a
-detector, which guesses from byte statistics and can itself be wrong on short text; a caller's
-hint, the code page a share or a site is known to use, given to the stage in place of the
-fallback; or, for UTF-16 alone, the NUL bytes every other byte of Latin text carries, a narrow
-check that needs no statistics. Each is a change to the stage; none is in it.
+and UTF-16 written without its mark, come out as Latin mojibake under a warning that says so. What
+would change it: a detector, such as uchardet, which guesses from byte statistics and can itself be
+wrong on short text; a caller's hint, the code page a share or a site is known to use, given to the
+stage in place of the fallback; or, for UTF-16 alone, the NUL bytes every other byte of Latin text
+carries, a narrow check that needs no statistics. Each is a change to the stage; none is in it.
 
 ## RTF
 
@@ -289,9 +288,8 @@ The dispatch took 3 ms, 14 outputs from the one store.
 
 - **The fixture is generated.** No real Skype for Business sample was available, so mail's
   generator writes the store, and the HTML shape of each transcript, each line a speaker, a time,
-  and the text, is invented. The records hold
-  whatever HTML the store holds, so a real transcript of another shape still reads; only the shape
-  isn't proven against a real one.
+  and the text, is invented. The records hold whatever HTML the store holds, so a real transcript
+  of another shape still reads; only the shape isn't proven against a real one.
 - **A record is an item, not a turn.** The transcript is kept as the stored HTML and mail's
   Markdown; no speaker, time, or message is parsed out of it, by decision.
 - **Text chats only.** An item of a Voice class is a message as before, and Teams isn't read.

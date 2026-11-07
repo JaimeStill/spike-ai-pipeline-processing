@@ -22,11 +22,11 @@ import (
 )
 
 // archiveVersion is the version of the archive stage: this package's, with the version of the
-// 7-Zip it is given, if any, in its configuration's hash. Version 2 read tar and gzip, which
-// version 1 recorded as no processor yet; version 3 reads, through 7-Zip, the zstd streams, 7z
-// archives, cabinets, and ZIP entries of other methods version 2 recorded as no processor yet,
-// and ZIP's bzip2 entries.
-const archiveVersion = "3"
+// 7-Zip it is given, if any, in its configuration's hash. Version 2 reads tar and gzip through
+// the standard library and, through 7-Zip, the zstd streams, 7z archives, cabinets, and ZIP
+// entries of other methods that version 1, the released zip stage, recorded as no processor yet,
+// and ZIP's bzip2 entries; one bump for the release.
+const archiveVersion = "2"
 
 // SevenZip is what an [ArchiveStage] reads 7-Zip's kinds through: sevenzip's Reader, which lists
 // an archive and extracts one item to a writer, through 7zz's standard output alone.

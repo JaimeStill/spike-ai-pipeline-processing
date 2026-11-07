@@ -6,6 +6,11 @@ recorded by setting `FORMATS_FINDINGS_RESULTS=docs/findings/formats-results`, at
 `d50f5a4` (`d50f5a4ad9fa7d049e55d608915dc5f8d4f60db5`) on branch `formats`, the commit that adds
 the finding's tests, script, and task. No model was called.
 
+A second run at commit `a6b71fd`, after four commits (`adapterVersion` set to 3, sevenzip's
+listing tests restructured, the tar entry types merged into one map, and comments rewrapped),
+passed every step and held the same 86 truth checks. It isn't committed;
+these files are the run at `d50f5a4`.
+
 The host is the laptop: Intel Core Ultra 9 185H, 22 logical CPUs, 30 GiB; Linux 7.2.15 x86_64;
 go 1.27.3; docker server 29.9.2. The tools:
 

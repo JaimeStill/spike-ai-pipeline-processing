@@ -23,13 +23,13 @@ repository's `context/README.md`.
   pure functions of its bytes and name: active content flagged and let proceed, content unsafe to
   read (ZIP and tar traversal, absolute paths, links, a tar's devices, bombs by declared sizes)
   quarantined, a caller's policy over either; the dispatcher inspects every part before its stage.
-  A PDF's embedded file past the bomb thresholds as pdfdetach writes it is the document stage's
-  check, pdf-attachment-bomb, raised as a gzip's is, since inspect runs no program.
-  CheckListing holds a 7z's, a cabinet's, or a zstd stream's 7-Zip listing to the tar's rules, for
-  the archive stage to call before it extracts anything, since inspect runs no program.
+  inspect runs no program, so the stages that run one call its checks: the archive stage lists a
+  7z, a cabinet, or a zstd stream through 7-Zip and holds the listing to the tar's rules through
+  CheckListing before it extracts anything, and the document stage raises pdf-attachment-bomb on an
+  embedded file's bytes as pdfdetach writes them, as the archive stage raises a gzip's bomb.
 - **pictures**: package picture, TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF converted to PNG, one
-  picture or a batch, named by SHA-256, a standalone TIFF page by page, EMF and WMF through soffice
-  in the default gotenberg image and trimmed by magick, HEIC, WebP, and AVIF through the readers
+  picture or a batch, named by SHA-256, a standalone TIFF page by page; EMF and WMF through soffice
+  in the default gotenberg image and trimmed by magick; HEIC, WebP, and AVIF through the readers
   magick's format listing names; and the corrections stage, ImageMagick corrections in a fixed
   order, their catalog for a prompt, and Assess's measures.
 - **cli contract**: package internal/cli, the exit codes 1 to 4 as one set of errors that office's,
@@ -38,39 +38,36 @@ repository's `context/README.md`.
   package follows.
 - **documents**: pre-inference preparation of a PDF's pages: Ghostscript, the renderer bake-off's
   winner, for page counts, pages and regions as PNG, and text layers; picture's corrections; and
-  Preparer.Images, the lazy, ordered, concurrent page stream over them. qpdf, through QPDF, says
-  whether a PDF needs a password (`--requires-password`, exit 0, 2, or 3) and reads its AcroForm
-  (`--json=2 --json-key=acroform`) into typed fields; poppler's pdfdetach, through Detacher, lists
-  a PDF's embedded files and saves one to a writer through `-o /dev/stdout`, never the stored name.
-  The dispatcher's document stage, given them, ends a PDF that needs a password encrypted with
+  Preparer.Images, the lazy, ordered, concurrent page stream over them. QPDF tells through qpdf
+  whether a PDF needs a password and reads its AcroForm into typed fields; Detacher lists a PDF's
+  embedded files through poppler's pdfdetach and saves one to a writer, never to its stored name.
+  The dispatcher's document stage, given either, ends a PDF that needs a password encrypted with
   nothing rendered, yields a forms record before the pages, and finds each embedded file as a part,
-  "attachment <name>", by its SHA-256 under the bomb rule; each is optional, and without it the
-  stage is as before, its identity unchanged. Inference is test code: the
-  vision harness and the bake-off tier, whose results `docs/findings/documents.md` records.
+  "attachment <name>", under the bomb rule; without them it renders pages as before. Inference is
+  test code: the vision harness and the bake-off tier, whose results `docs/findings/documents.md`
+  records.
 - **office**: the adapter over spike-ai-pipeline-office's CLI, its JSON model decoded into typed
   schema "1" values or its Markdown, with the media list and office's exit codes as errors; legacy
-  doc, xls, and ppt converted to OOXML, and RTF, known by its signature, to docx, through soffice
-  in the default gotenberg image, locked down;
-  and the picture standard, a document's pictures converted in one batch by picture, PNG named by
-  the original's SHA-256, the Markdown's links rewritten. Vision over the pictures is test code in
-  the integration tier, whose results `docs/findings/office.md` records with the legacy round trip's
-  loss and the container's footprint. One picture outside a document, for route.VisionConverted, is
-  picture's Converter.Convert.
+  doc, xls, and ppt converted to OOXML, and RTF, known by its signature, to docx, through soffice in
+  the default gotenberg image, locked down; and the picture standard, a document's pictures
+  converted in one batch by picture, PNG named by the original's SHA-256, the Markdown's links
+  rewritten. Vision over the pictures is test code in the integration tier, whose results
+  `docs/findings/office.md` records with the legacy round trip's loss and the container's footprint.
+  One picture outside a document, for route.VisionConverted, is picture's Converter.Convert.
 - **email**: the adapter over spike-ai-pipeline-mail's CLI, its JSON Lines streamed from a pipe into
   typed schema "1" records, a .pst's, a .msg's, an .eml's, or an mbox's, with mail's warnings and
   exit codes as errors; attachment routes by route.File, by content signature, never the stored
   type, from the attachments directory mail writes; and threads by RFC 5256's REFERENCES algorithm
   plus conversation-index parents, from keys a Threader keeps while the stream is read and saves and
-  restores, so a read resumed through mail 0.3.0's --after, Request.After, threads whole. A
-  Skype for Business conversation or missed conversation, by its message class, never its folder,
-  is a Conversation record, participants, start and end, topic, missed, and its transcript as
-  mail's Markdown and stored HTML, no turn parsed, which the email stage yields as "conversation
-  <id>" then its Markdown. Its
-  fixtures are mail's, copied at its tag under a SHA-256 manifest, and a built .msg of this
-  repository's office fixtures and, by value, one of mail's .msg fixtures. The integration tier
-  carries each route to its real stage; the findings tier, whose results `docs/findings/email.md`
-  records, scores threads and routes against hand truth and times the adapter on plaso's store and
-  mail's generated scale store, neither committed.
+  restores, so a read resumed through mail 0.3.0's --after, Request.After, threads whole. A Skype
+  for Business conversation or missed conversation, told by its message class, never its folder, is
+  a Conversation record: its participants, start and end, topic, missed flag, and transcript as
+  mail's Markdown and the stored HTML, with no turn parsed. The email stage yields it as
+  "conversation <id>", then its Markdown. Its fixtures are mail's, copied at its tag under a SHA-256
+  manifest, and a built .msg of this repository's office fixtures and, by value, one of mail's .msg
+  fixtures. The integration tier carries each route to its real stage; the findings tier, whose
+  results `docs/findings/email.md` records, scores threads and routes against hand truth and times
+  the adapter on plaso's store and mail's generated scale store, neither committed.
 - **onenote**: the adapter over spike-ai-pipeline-onenote's CLI, its JSON Lines streamed from a pipe
   into typed schema "1" records, a section's, a notebook's, or a package's: notebook, section
   groups, sections, and pages, every element of their content typed, each record marshalling back to
@@ -80,22 +77,22 @@ repository's `context/README.md`.
   onenote.rs sets and expectations, copied at its tag under a SHA-256 manifest; the real-binary
   tests hold every read to them.
 - **dispatch**: an input and every part found in it walked to the caller's stages by route, hashed,
-  routed, and inspected first, the format packages' adapters and the archive stage, which reads ZIP,
-  tar, and gzip on the standard library and, through sevenzip, zstd, 7z, cabinets, and ZIP's other
-  methods, quarantining an archive whose 7-Zip listing is unsafe, and the text stage, which decides
-  a text part's encoding by a byte order mark, else UTF-8, else windows-1252 as a fallback, and
-  decodes it to UTF-8 through golang.org/x/text, detecting none, among them, under a
-  content-addressed index, in memory or a directory, whose claims make one of concurrent dispatches
-  prepare shared content; a pool over N workers sharing the index, its events merged onto the
-  caller's goroutine, each worker held until the loop takes its event; and a store's read resumed
-  after a message, Input.After, its entry not recorded, from a checkpoint, the cursor and the
-  Threader saved together every N messages, since a save at every message is quadratic. The findings
-  tier, whose results `docs/findings/onenote.md` records, holds the tier's routes to hand truth,
-  records inspection over ~/docs and vision's reading of OneNote ink, scored by internal/textscore
-  as document's bake-offs are, and times the onenote adapter and the dispatcher, resumed and pooled,
-  over mail's scale store. `docs/findings/formats.md` records the routes task formats added,
-  archives, pictures, text, RTF, PDFs, and conversation records, over the fixtures and ~/docs
-  against their truth, and the dispatcher's time and peak memory on each ~/docs input.
+  routed, and inspected first, the format packages' adapters, the archive stage, and the text stage
+  among them, under a content-addressed index, in memory or a directory, whose claims make one of
+  concurrent dispatches prepare shared content; a pool over N workers sharing the index, its events
+  merged onto the caller's goroutine, each worker held until the loop takes its event; and a store's
+  read resumed after a message, Input.After, its entry not recorded, from a checkpoint, the cursor
+  and the Threader saved together every N messages, since a save at every message is quadratic. The
+  archive stage reads ZIP, tar, and gzip on the standard library and zstd, 7z, cabinets, and ZIP's
+  other methods through sevenzip, and quarantines an archive whose 7-Zip listing is unsafe. The text
+  stage decides a part's encoding without detecting it, by a byte order mark, else UTF-8, else
+  windows-1252 as a fallback, and decodes it to UTF-8 through golang.org/x/text. The findings tier,
+  whose results `docs/findings/onenote.md` records, holds the tier's routes to hand truth, records
+  inspection over ~/docs and vision's reading of OneNote ink, scored by internal/textscore as
+  document's bake-offs are, and times the onenote adapter and the dispatcher, resumed and pooled,
+  over mail's scale store. `docs/findings/formats.md` holds the archive, picture, text, RTF, PDF,
+  and conversation routes to their truth over the fixtures and ~/docs, and records the dispatcher's
+  time and peak memory on each ~/docs input.
 - **archives**: package sevenzip, the adapter over 7-Zip's 7zz, pinned by mise from its GitHub
   release: an archive's technical listing parsed into typed entries, and one entry extracted to the
   caller's writer through 7zz's standard output, never to a path; its fixtures are

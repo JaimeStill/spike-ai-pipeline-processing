@@ -139,8 +139,8 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
 that doesn't exist: no stage takes ODF, WordPerfect, or .xlsb yet, nor an RTF or a legacy
-document without LibreOffice, nor a zstd stream, a
-7z archive, or a cabinet without 7-Zip, nor a HEIC, WebP, or AVIF without magick's reader.
+document without LibreOffice, nor a zstd stream, a 7z archive, or a cabinet without 7-Zip, nor a
+HEIC, WebP, or AVIF without magick's reader.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -440,14 +440,14 @@ recorded at commit `96797c6`, before an encrypted OOXML package was routed to of
 has `encrypted.xlsx` unrouted. The scale store's dispatch, removal on and off, is a later run at
 `fdbdab0`.
 
-[docs/findings/formats.md](docs/findings/formats.md) records every route task formats added over
-its fixtures and ~/docs against their truth: the archive kinds, with and without 7-Zip and under a
-lowered bomb rule, ~/docs' mixed bundle routing the same 7 parts the same way as .zip, .tar.gz,
-.tar.zst, and .7z; the TIFFs' pages, HEIC's primary image, and WebP's and AVIF's first frame;
-~/docs' 11 encodings, 6 decoded right and 5 garbled under the windows-1252 fallback, the text
-limit; RTF; a PDF's password, forms, and attachments; and the conversation records, every field
-equal to mail's hand truth, with their limits. Any one ~/docs input dispatched in under 1.2 s. The
-run results it cites are in `docs/findings/formats-results/`.
+[docs/findings/formats.md](docs/findings/formats.md) holds the archive, picture, text, RTF, PDF,
+and conversation routes to their truth over their fixtures and ~/docs: the archive kinds, with and
+without 7-Zip and under a lowered bomb rule, ~/docs' mixed bundle routing the same 7 parts the
+same way as .zip, .tar.gz, .tar.zst, and .7z; the TIFFs' pages, HEIC's primary image, and WebP's
+and AVIF's first frame; ~/docs' 11 encodings, 6 decoded right and 5 garbled under the windows-1252
+fallback, the text limit; RTF; a PDF's password, forms, and attachments; and the conversation
+records, every field equal to mail's hand truth, with their limits. Any one ~/docs input
+dispatches in under 1.2 s. The run results it cites are in `docs/findings/formats-results/`.
 
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
@@ -999,8 +999,7 @@ path; the archive is read in place rather than spooled; 7zz's failures wrap the 
 `*tool.ExitError`, matching `ErrEncrypted` or `ErrNotArchive` by 7zz's message, 7zz having no exit
 contract; it has no warnings, a run 7zz ends with a warning having succeeded; and an item names no
 route, since the archive stage hands each one to the dispatcher; and `route` and `inspect` are pure
-functions, with no Tool, Config, or
-Request, which run before a part's stage rather than as one.
+functions, with no Tool, Config, or Request, which run before a part's stage rather than as one.
 
 Known limits:
 
@@ -1120,11 +1119,11 @@ findings-streams` measures `media` on ~/docs' videos read at real time, each win
 E4B and each frame to Gemma 4 26B-A4B as it arrives, beside audio's file path and a cancellation
 midway; its paced runs take about 75 minutes, and a run keeps its results only in the directory
 `STREAMS_FINDINGS_RESULTS` names ([docs/findings/streams.md](docs/findings/streams.md),
-"Rerunning"). `mise run findings-formats` holds the routes task formats added to their truth
-over the fixtures and ~/docs, each checked against the corpus manifest, and times the dispatcher on
-each ~/docs input; it calls no model, and a run keeps its results only in the directory
-`FORMATS_FINDINGS_RESULTS` names ([docs/findings/formats.md](docs/findings/formats.md),
-"Rerunning").
+"Rerunning"). `mise run findings-formats` holds the archive, picture, text, RTF, PDF, and
+conversation routes to their truth over the fixtures and ~/docs, each checked against the corpus
+manifest, and times the dispatcher on each ~/docs input; it calls no model, and a run keeps its
+results only in the directory `FORMATS_FINDINGS_RESULTS` names
+([docs/findings/formats.md](docs/findings/formats.md), "Rerunning").
 
 The tests' vision and speech harnesses, the bake-offs, the staged flow, and the findings tier are
 test code, not released.
@@ -1138,13 +1137,15 @@ and docker, server 20.10 or later, for the container runner. For `office`: spike
 the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the metafile
 trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a read, which
 mise pins, at 0.3.1, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
-0.1.0 or later, which mise pins from its GitHub release for the tests. For `audio` and `media`:
+0.1.0 or later, which mise pins from its GitHub release for the tests. For `sevenzip` and the
+archive stage's 7z, zstd, cabinets, and ZIP's other methods: 7-Zip's 7zz 24.01 or later, which mise
+pins, at 26.05, from its GitHub release for the tests. For `audio` and `media`:
 ffmpeg and ffprobe 9.0 or later on PATH, or docker, which runs them in `audio.FFmpegImage`; a URL
 source through docker needs the image to name a docker network. `mise run fixtures:streams` rebuilds
 `audio/testdata`'s streams fixtures through the host's ffmpeg. The renderer bake-off also runs
-poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to regenerate the
-fixtures in `document/testdata`, and .NET, which mise installs, only to rebuild `email/testdata`'s
-built .msg, as their READMEs say.
+poppler's pdftoppm and pdftocairo and libvips. Regenerating the fixtures in `document/testdata`
+needs typst and qpdf, and rebuilding `email/testdata`'s built .msg needs .NET, which mise installs,
+as their READMEs say.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision and speech
 harnesses the integration, bake-off, and findings tiers run on; no released package imports it.
