@@ -39,7 +39,8 @@ repository's `context/README.md`.
   vision harness and the bake-off tier, whose results `docs/findings/documents.md` records.
 - **office**: the adapter over spike-ai-pipeline-office's CLI, its JSON model decoded into typed
   schema "1" values or its Markdown, with the media list and office's exit codes as errors; legacy
-  doc, xls, and ppt converted to OOXML through soffice in the default gotenberg image, locked down;
+  doc, xls, and ppt converted to OOXML, and RTF, known by its signature, to docx, through soffice
+  in the default gotenberg image, locked down;
   and the picture standard, a document's pictures converted in one batch by picture, PNG named by
   the original's SHA-256, the Markdown's links rewritten. Vision over the pictures is test code in
   the integration tier, whose results `docs/findings/office.md` records with the legacy round trip's

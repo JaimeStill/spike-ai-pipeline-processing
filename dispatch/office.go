@@ -29,15 +29,16 @@ type OfficeConfig struct {
 }
 
 // OfficeStage prepares an office document, route.Office's parts, through office's Converter:
-// office's Markdown as a [MarkdownOutput] named "document", its Meta naming the legacy format a
-// legacy document was converted from and office's warnings, a line each; and each file office
+// office's Markdown as a [MarkdownOutput] named "document", its Meta naming the format a legacy
+// document or an RTF was converted from, "rtf" for an RTF, and office's warnings, a line each; and each file office
 // wrote in its media directory as a [Found] part, the dispatcher's to route and inspect again:
 // a picture converted to PNG as its PNG, any other as stored, a picture whose converter the
 // Converter wasn't given among them, so its own stage may convert it. A part's Where names the
 // medium by office's name for it, "media <SHA-256>.<ext>", and ", as PNG" for a converted one.
 //
-// It has no processor yet for an ODF package, an RTF, a WordPerfect document, or an Excel binary
-// workbook, which LibreOffice would convert, nor for a legacy document when the Converter has no
+// An RTF is office's to convert through LibreOffice to docx, as a .doc is. The stage has no
+// processor yet for an ODF package, a WordPerfect document, or an Excel binary workbook, which
+// LibreOffice would convert, nor for a legacy document or an RTF when the Converter has no
 // LibreOffice converter: each ends with [ErrNoProcessor], its reason naming the kind. office's
 // refusal of an encrypted package ends it with [ErrEncrypted].
 //
@@ -71,7 +72,6 @@ func (s *OfficeStage) Identity() Identity { return s.id }
 // unread names the office kinds the stage has no processor for yet, each with its article.
 var unread = map[route.Kind]string{
 	route.ODF:         "an ODF package",
-	route.RTF:         "an RTF document",
 	route.WordPerfect: "a WordPerfect document",
 }
 
@@ -130,7 +130,7 @@ func (s *OfficeStage) Prepare(ctx context.Context, p Part, dir string) iter.Seq2
 	}
 }
 
-// officeError returns err, a conversion's, as the stage's: a legacy document without a
+// officeError returns err, a conversion's, as the stage's: a legacy document or an RTF without a
 // LibreOffice converter matches ErrNoProcessor, and office's refusal of an encrypted package
 // ErrEncrypted.
 func officeError(err error) error {

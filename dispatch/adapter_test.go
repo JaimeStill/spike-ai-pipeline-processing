@@ -346,13 +346,13 @@ func zipOf(t *testing.T, entries ...string) string {
 	return b.String()
 }
 
-// TestOfficeNoProcessor: an RTF, a WordPerfect document, an ODF package, and an Excel binary
-// workbook have no processor yet, nor a legacy document for a Converter with no LibreOffice;
+// TestOfficeNoProcessor: a WordPerfect document, an ODF package, and an Excel binary workbook
+// have no processor yet, nor a legacy document or an RTF for a Converter with no LibreOffice;
 // each reason names the kind.
 func TestOfficeNoProcessor(t *testing.T) {
 	d := newDispatcher(t, dispatch.Stages{route.Office: officeStage(t)}, dispatch.NewMemoryIndex())
 	for name, c := range map[string]struct{ content, reason string }{
-		"x.rtf":  {`{\rtf1\ansi hello}`, "office stage: no processor yet for an RTF document"},
+		"x.rtf":  {`{\rtf1\ansi hello}`, "x.rtf is an RTF document: no LibreOffice converter"},
 		"x.wpd":  {"\xffWPC\x10\x00\x00\x00\x01\x0a", "office stage: no processor yet for a WordPerfect document"},
 		"x.odt":  {zipOf(t, "mimetype", "application/vnd.oasis.opendocument.text", "content.xml", "<x/>"), "office stage: no processor yet for an ODF package"},
 		"x.xlsb": {zipOf(t, "[Content_Types].xml", "<x/>"), "office stage: no processor yet for an Excel binary workbook"},

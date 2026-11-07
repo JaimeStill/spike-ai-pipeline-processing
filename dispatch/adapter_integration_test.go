@@ -151,6 +151,26 @@ func TestOfficeStageReal(t *testing.T) {
 	}
 }
 
+// TestOfficeStageRTFReal: an RTF, through LibreOffice in its pinned image to docx and then
+// office, is one Markdown document converted from "rtf", holding the RTF's heading and table.
+func TestOfficeStageRTFReal(t *testing.T) {
+	d := newDispatcher(t, allStages(t), dispatch.NewMemoryIndex())
+	events := dispatchAll(t, d, filepath.Join("..", "office", "testdata", "rtf", "memo.rtf"), nil)
+	wantSteps(t, events, []step{{"memo.rtf", 0, dispatch.Prepared}})
+	if ev := events[0]; ev.Part.Route != route.Office || ev.Part.Kind != route.RTF {
+		t.Errorf("memo.rtf: %s %s", ev.Part.Route, ev.Part.Kind)
+	}
+	md := outputNamed(t, events[0], dispatch.MarkdownOutput, "document")
+	if md.Meta["converted_from"] != "rtf" {
+		t.Errorf("converted from %q, want rtf", md.Meta["converted_from"])
+	}
+	for _, want := range []string{"# Harbor memo", "| North | 12 m |", "Next survey: Thursday."} {
+		if !bytes.Contains(md.Value, []byte(want)) {
+			t.Errorf("no %q in the Markdown:\n%s", want, md.Value)
+		}
+	}
+}
+
 // TestPictureStageReal: an SVG, a HEIC, a WebP, and an AVIF each convert to one PNG, and a TIFF
 // of three pages to three, in page order, each naming its page and the count.
 func TestPictureStageReal(t *testing.T) {

@@ -79,9 +79,10 @@
 //   - [DocumentStage], for route.Document: a PDF's pages through document's Preparer, each
 //     page's text layer a text output and its image a PNG, under the request the caller gives.
 //   - [OfficeStage], for route.Office: office's Markdown, and each medium office wrote, a
-//     converted picture as its PNG, found as a part. ODF, RTF, WordPerfect, an Excel binary
-//     workbook, and a legacy document without LibreOffice have no processor yet; an encrypted
-//     OOXML package, which office refuses, ends with [ErrEncrypted].
+//     converted picture as its PNG, found as a part, an RTF converted to docx first, as a legacy
+//     document is. ODF, WordPerfect, an Excel binary workbook, and a legacy document or an RTF
+//     without LibreOffice have no processor yet; an encrypted OOXML package, which office
+//     refuses, ends with [ErrEncrypted].
 //   - [PictureStage], for route.VisionConverted: a TIFF to a PNG per page, "page N", its Meta
 //     naming the page and the count, and an EMF, WMF, SVG, HEIC, WebP, or AVIF to one PNG,
 //     through picture's Converter. A picture whose tool the Converter lacks, or a HEIC, WebP, or

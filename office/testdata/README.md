@@ -126,6 +126,22 @@ What they hold:
 - `basic_test_ppt_file.ppt`: two slides, a title and a two-line subtitle, then a title and three
   bulleted lines, each slide with a line of speaker notes.
 
+## RTF
+
+`rtf/memo.rtf` is an RTF written by hand for this repository, plain text with LF line endings, no
+generator: a heading in a `heading 1` style at outline level 0, a paragraph with a bold run and a
+windows-1252 `é` (`\'e9`), a table of three rows and two columns, and a last paragraph. Its text
+is the truth the integration tier's `TestRTFRoundTrip` asserts the Markdown against, line by line;
+no golden Markdown is recorded. It is this repository's, Apache-2.0.
+
+| File | Source | License | Bytes | SHA-256 |
+| --- | --- | --- | --- | --- |
+| `memo.rtf` | written by hand | Apache-2.0 | 561 | `e5a71af577f53dc33d399a62804f830c750585e00da144081a95ed89c245727c` |
+
+The tier also converts `~/docs`'s `office/rtf/test-rtf.rtf`, when it is there, and asserts its
+paragraph, one sentence eleven times. Its centered title is a `\tc` table-of-contents entry, text
+RTF hides, and the Markdown holds none of it.
+
 ## Golden sums
 
 `golden/pictures.sha256` holds the SHA-256 of every picture `TestGoldenPictures`, in the

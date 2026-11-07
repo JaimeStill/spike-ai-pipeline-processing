@@ -9,7 +9,7 @@ tool contract this layer defines in its `tool` package, as herald's processing l
 runner for binaries and scripts, and a container runner for pinned images. The tools the layer's
 adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
 correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
-office documents, LibreOffice in a container for legacy office formats only,
+office documents, LibreOffice in a container for legacy office formats and RTF only,
 spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages,
 spike-ai-pipeline-onenote's CLI for OneNote sections, notebooks, and packages, and 7-Zip's 7zz for
 the archives the standard library doesn't read.
@@ -136,7 +136,8 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 .eml, a .pst, or an mbox; `OneNote`; `Archive`, ZIP, tar, gzip, zstd, 7z, and a cabinet; `Audio`;
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
-that doesn't exist: no stage takes ODF, RTF, WordPerfect, or .xlsb yet, nor a zstd stream, a
+that doesn't exist: no stage takes ODF, WordPerfect, or .xlsb yet, nor an RTF or a legacy
+document without LibreOffice, nor a zstd stream, a
 7z archive, or a cabinet without 7-Zip, nor a HEIC, WebP, or AVIF without magick's reader.
 
 ```go
@@ -265,8 +266,8 @@ of its settings, then each frame as a PNG image output and each window as an aud
 the threshold it was cut under, interleaved as the run completes them. A found part's `Where`
 names its place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is
 dispatched again, so a PDF attached to a message reaches the document stage and a page's ink
-becomes a PNG. Kinds no adapter reads yet, ODF, RTF, WordPerfect, and xlsb, are no processor yet,
-as are a HEIC, WebP, or AVIF whose reader the caller's magick lacks, and audio and video when the caller has no ffmpeg and registers no audio or
+becomes a PNG. Kinds no adapter reads yet, ODF, WordPerfect, and xlsb, are no processor yet, as
+are an RTF and a legacy document when the caller's Converter has no LibreOffice, a HEIC, WebP, or AVIF whose reader the caller's magick lacks, and audio and video when the caller has no ffmpeg and registers no audio or
 video stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with
 no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields frames only when it
 has no audio stream and windows only when it has no video stream; one with neither fails, its
@@ -521,8 +522,8 @@ these choices found: which renderer, whether to reason while transcribing, wheth
 help, where the instructions go, whether the staged two-pass flow pays, and what a page costs in
 image tokens. The run results it cites are in `docs/findings/documents-results/`.
 
-`office` prepares office documents, docx, xlsx, and pptx, and the legacy doc, xls, and ppt, for a
-model, on Linux, the standard library, `tool`, `route`, and `picture`. It runs
+`office` prepares office documents, docx, xlsx, and pptx, the legacy doc, xls, and ppt, and RTF,
+for a model, on Linux, the standard library, `tool`, `route`, and `picture`. It runs
 spike-ai-pipeline-office's Open XML CLI and provides pre-inference preparation only. A `Converter`,
 built by `NewConverter` over a `Config` of Tools the caller built, needs an office Tool that
 `OfficeSpec` declares, minimum `OfficeMinimum`, 0.1.0; a LibreOffice Tool and a magick Tool are
@@ -530,7 +531,7 @@ optional. `Converter.Convert` spools a document read from an `io.Reader` into th
 the `Request` names, runs office once with a media directory there, and returns a `Result`: office's
 JSON model decoded into typed Go values that mirror its schema "1" (`JSON`, the default), or
 office's Markdown (`Markdown`), with the media list, office's stderr warnings, and, for a legacy
-document, the format it was converted from. A model of another schema is an error matching
+document or an RTF, the format it was converted from. A model of another schema is an error matching
 `ErrSchema`; a block kind the package doesn't know is kept with its raw JSON. office's exit codes 1
 to 4 are an `*ExitError` that matches `ErrMediaNotWritten`, `ErrUsage`, `ErrRefused`, or
 `ErrFailed`.
@@ -572,7 +573,9 @@ A legacy document is one with the OLE2 compound-file signature and a legacy exte
 `Request.Name`: .doc and .dot become docx, .xls and .xlt xlsx, and .ppt, .pps, and .pot pptx.
 Given a LibreOffice Tool, `Convert` converts it to that OOXML format through soffice headless,
 then runs office on the result; without one it is refused with `ErrNoLibreOffice` before anything
-runs. `picture.LibreOfficeSpec` declares soffice, minimum `picture.LibreOfficeMinimum`, 24.2, and
+runs. An RTF, known by its signature whatever its name, is converted the same way to docx,
+through Writer's docx export filter as a .doc is, and `ConvertedFrom` is "rtf"; without a
+LibreOffice Tool it too is refused with `ErrNoLibreOffice`. `picture.LibreOfficeSpec` declares soffice, minimum `picture.LibreOfficeMinimum`, 24.2, and
 `picture.LibreOfficeImage` is the default image a caller may replace:
 gotenberg/gotenberg:9.1.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest, which
 `mise run currency` scans. soffice runs in it under

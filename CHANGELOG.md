@@ -112,6 +112,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- `office.Converter.Convert` converts an RTF, known by its signature whatever `Request.Name`'s
+  extension, through LibreOffice to docx with Writer's docx export filter, as a .doc, then runs
+  office on it; `Result.ConvertedFrom` is "rtf". Without a LibreOffice Tool an RTF is refused with
+  `ErrNoLibreOffice`, as a legacy document is, before anything runs. `dispatch.OfficeStage` takes
+  an RTF so, yielding its Markdown and media as for a legacy document, its Meta's `converted_from`
+  "rtf"; without LibreOffice its reason names the missing converter. ODF, WordPerfect, and .xlsb
+  are still no processor yet. `adapterVersion` is 4, since the index recorded an RTF as no
+  processor yet under the office stage's identity, so an index prepares every adapter's parts
+  again. The integration tier converts the hand-written `office/testdata/rtf/memo.rtf` and
+  `~/docs`'s `test-rtf.rtf`, and its route truth has the RTF prepared.
+
 - The integration tier registers the text stage, so its route truth has the text parts it held as
   no processor yet prepared, or seen where an earlier fixture holds the same bytes.
 

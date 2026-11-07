@@ -23,7 +23,7 @@ import (
 )
 
 // The integration tier's run of every fixture through Dispatch against the real stages: office
-// over the office CLI, LibreOffice in its pinned image for the legacy formats, and magick; the
+// over the office CLI, LibreOffice in its pinned image for the legacy formats and RTF, and magick; the
 // document stage over gs; the email stage over mail; the onenote stage over onenote; the picture
 // stage over magick and LibreOffice; the vision stage; the audio stage over ffmpeg and ffprobe;
 // and the archive stage over 7zz. Each route is held to testdata/tier-routes.tsv, the hand route
@@ -56,6 +56,7 @@ var tierInputs = []string{
 	"office/testdata/legacy/generated/*.*.*",
 	"office/testdata/legacy/real/*.???",
 	"office/testdata/pictures/*.docx",
+	"office/testdata/rtf/*.rtf",
 	"picture/testdata/*.svg",
 	"email/testdata/mail/fixtures/generated/eml/*.eml",
 	"email/testdata/mail/fixtures/generated/msg/*.msg",

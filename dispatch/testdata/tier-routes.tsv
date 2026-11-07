@@ -76,6 +76,9 @@ office/testdata/legacy/real/simple-table.doc	-	*	office	prepared
 office/testdata/pictures/tiff.docx	-	*	office	prepared
 office/testdata/pictures/tiff.docx	media *.tiff, as PNG	*.png	vision	prepared
 
+# office, RTF: LibreOffice in its pinned image converts it to docx, as a .doc.
+office/testdata/rtf/memo.rtf	-	*	office	prepared
+
 # picture: each SVG to its PNG through magick; the script-bearing one's flags are active, which
 # proceed by default.
 picture/testdata/ink.svg	-	*	vision-converted	prepared
