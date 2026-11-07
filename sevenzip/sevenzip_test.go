@@ -20,14 +20,20 @@ import (
 )
 
 // standinEnv marks a process as the stand-in: the test binary, re-executed through a link named
-// 7zz, printing the banner of the version standinVersionEnv names instead of running the tests.
+// 7zz, printing the banner of the version standinVersionEnv names instead of running the tests,
+// or, for a listing, its l command, the listing standinListingEnv holds.
 const (
 	standinEnv        = "SEVENZIP_TEST_STANDIN"
 	standinVersionEnv = "SEVENZIP_TEST_STANDIN_VERSION"
+	standinListingEnv = "SEVENZIP_TEST_STANDIN_LISTING"
 )
 
 func TestMain(m *testing.M) {
 	if os.Getenv(standinEnv) == "1" && filepath.Base(os.Args[0]) == "7zz" {
+		if len(os.Args) > 1 && os.Args[1] == "l" {
+			fmt.Print(os.Getenv(standinListingEnv))
+			os.Exit(0)
+		}
 		fmt.Printf("\n7-Zip (z) %s (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-10-21\n", os.Getenv(standinVersionEnv))
 		os.Exit(0)
 	}

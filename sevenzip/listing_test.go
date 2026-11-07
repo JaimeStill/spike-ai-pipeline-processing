@@ -8,6 +8,18 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/sevenzip"
 )
 
+// listed lists an archive in format through a stand-in 7zz that prints out as its listing, so the
+// listing is one no fixture gives.
+func listed(t *testing.T, format sevenzip.Format, out string) (sevenzip.Listing, error) {
+	t.Helper()
+	r, err := sevenzip.NewReader(sevenzip.Config{SevenZip: standin(t, "26.05")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv(standinListingEnv, out)
+	return r.List(t.Context(), sevenzip.ListRequest{Path: "t." + string(format), Format: format})
+}
+
 // slt is a technical listing as 7zz writes one, its banner, archive properties, and items: a
 // directory, a file, a symbolic link, a FIFO, an encrypted file, and an item with no Unix mode.
 const slt = `
@@ -76,11 +88,11 @@ Attributes = A
 Method = MSZip
 `
 
-// TestParseListing: the archive's type, size, and method, and each item's name, size, CRC-32,
+// TestListParses: the archive's type, size, and method, and each item's name, size, CRC-32,
 // encryption, method, and Unix mode, a directory by its attributes, are read; an item with no
 // Unix mode has none, and an empty value is no value.
-func TestParseListing(t *testing.T) {
-	l, err := sevenzip.ParseListing([]byte(slt))
+func TestListParses(t *testing.T) {
+	l, err := listed(t, sevenzip.SevenZ, slt)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -105,9 +117,9 @@ func TestParseListing(t *testing.T) {
 	}
 }
 
-// TestParseListingErrors: a listing with no items section, an item line that isn't a property,
+// TestListParseErrors: a listing with no items section, an item line that isn't a property,
 // and a size that isn't a number are refused, with sevenzip.ErrListing.
-func TestParseListingErrors(t *testing.T) {
+func TestListParseErrors(t *testing.T) {
 	for name, out := range map[string]string{
 		"no items":    "--\nPath = a.7z\nType = 7z\n",
 		"not a pair":  "--\nType = 7z\n----------\nPath = a\nnot a property\n",
@@ -115,29 +127,35 @@ func TestParseListingErrors(t *testing.T) {
 		"bad CRC":     "--\nType = 7z\n----------\nPath = a\nCRC = XYZ\n",
 		"bad packing": "--\nType = 7z\n----------\nPath = a\nPacked Size = -1\n",
 	} {
-		if _, err := sevenzip.ParseListing([]byte(out)); !errors.Is(err, sevenzip.ErrListing) {
+		if _, err := listed(t, sevenzip.SevenZ, out); !errors.Is(err, sevenzip.ErrListing) {
 			t.Errorf("%s: %v, want sevenzip.ErrListing", name, err)
 		}
 	}
 }
 
-// TestZstdSize: a zstd stream's unsized item takes the content size its Method reports, and an
+// TestListZstdSize: a zstd stream's unsized item takes the content size its Method reports, and an
 // item with a size, or a Method with none, is left as it is.
-func TestZstdSize(t *testing.T) {
+func TestListZstdSize(t *testing.T) {
+	zstd := func(method, size string) sevenzip.Entry {
+		t.Helper()
+		out := "--\nPath = t.zst\nType = zstd\nMethod = " + method + "\n----------\nPath = t\nSize = " + size + "\n"
+		l, err := listed(t, sevenzip.Zstd, out)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(l.Entries) != 1 {
+			t.Fatalf("%d entries, want 1", len(l.Entries))
+		}
+		return l.Entries[0]
+	}
 	declared := "header-open-only: NO-XXH64 wnd-desc-log-MAX:17 wnd-MAX:128KiB content-size-frame-max:4294967296 content-size-total:4294967296"
-	l := sevenzip.Listing{Method: declared, Entries: []sevenzip.Entry{{}}}
-	sevenzip.ZstdSize(&l)
-	if e := l.Entries[0]; !e.Sized || e.Size != 4<<30 {
+	if e := zstd(declared, ""); !e.Sized || e.Size != 4<<30 {
 		t.Errorf("declared: %+v", e)
 	}
-	l = sevenzip.Listing{Method: "header-open-only: XXH64 wnd-desc-log-MAX:21 wnd-MAX:2MiB unknown-content-size", Entries: []sevenzip.Entry{{}}}
-	sevenzip.ZstdSize(&l)
-	if l.Entries[0].Sized {
-		t.Errorf("unknown size: %+v", l.Entries[0])
+	if e := zstd("header-open-only: XXH64 wnd-desc-log-MAX:21 wnd-MAX:2MiB unknown-content-size", ""); e.Sized {
+		t.Errorf("unknown size: %+v", e)
 	}
-	l = sevenzip.Listing{Method: declared, Entries: []sevenzip.Entry{{Size: 7, Sized: true}}}
-	sevenzip.ZstdSize(&l)
-	if l.Entries[0].Size != 7 {
-		t.Errorf("listed size replaced: %+v", l.Entries[0])
+	if e := zstd(declared, "7"); e.Size != 7 {
+		t.Errorf("listed size replaced: %+v", e)
 	}
 }
