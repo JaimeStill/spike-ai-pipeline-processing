@@ -1,12 +1,10 @@
 package dispatch_test
 
 import (
-	"archive/tar"
 	"archive/zip"
 	"bytes"
 	"cmp"
 	"compress/flate"
-	"compress/gzip"
 	"context"
 	"hash/crc32"
 	"io/fs"
@@ -326,32 +324,11 @@ func TestZipUnsafeNames(t *testing.T) {
 	}
 }
 
-// TestZipNoProcessor: a tar, a gzip stream, a zstd stream, a 7z archive, and a cabinet, route.
-// Archive's other kinds, have no processor yet, each reason naming the kind.
+// TestZipNoProcessor: a zstd stream, a 7z archive, and a cabinet, the archive kinds the stage
+// doesn't read yet, have no processor, each reason naming the kind.
 func TestZipNoProcessor(t *testing.T) {
-	var tb bytes.Buffer
-	tw := tar.NewWriter(&tb)
-	if err := tw.WriteHeader(&tar.Header{Name: "a.txt", Mode: 0o644, Size: 2}); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := tw.Write([]byte("a\n")); err != nil {
-		t.Fatal(err)
-	}
-	if err := tw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	var gb bytes.Buffer
-	gw := gzip.NewWriter(&gb)
-	if _, err := gw.Write(tb.Bytes()); err != nil {
-		t.Fatal(err)
-	}
-	if err := gw.Close(); err != nil {
-		t.Fatal(err)
-	}
 	d, _, work := zipDispatcher(t, inspect.Options{})
 	for name, c := range map[string]struct{ content, reason string }{
-		"a.tar":     {tb.String(), "a tar archive"},
-		"a.tar.gz":  {gb.String(), "a gzip stream"},
 		"a.tar.zst": {"\x28\xb5\x2f\xfd" + strings.Repeat("\x00", 32), "a zstd stream"},
 		"a.7z":      {"7z\xbc\xaf\x27\x1c" + strings.Repeat("\x00", 32), "a 7z archive"},
 		"a.cab":     {"MSCF" + strings.Repeat("\x00", 32), "a cabinet"},
@@ -364,7 +341,8 @@ func TestZipNoProcessor(t *testing.T) {
 	wantEmpty(t, work)
 }
 
-// TestZipIdentity: the zip stage names itself and this package's version, hashes its bomb
+// TestZipIdentity: the zip stage names itself and this package's version, 2 since it reads tar
+// and gzip, hashes its bomb
 // thresholds, inspect's defaults alike whether given or zero, and refuses a negative ratio.
 func TestZipIdentity(t *testing.T) {
 	id := func(opts inspect.Options) dispatch.Identity {
@@ -376,7 +354,7 @@ func TestZipIdentity(t *testing.T) {
 		return s.Identity()
 	}
 	base := id(inspect.Options{})
-	if base.Name != "zip" || base.Version != "1" || len(base.Config) != 64 {
+	if base.Name != "zip" || base.Version != "2" || len(base.Config) != 64 {
 		t.Errorf("zip identity %v", base)
 	}
 	if id(inspect.Options{BombRatio: inspect.DefaultBombRatio, BombSize: inspect.DefaultBombSize}) != base {

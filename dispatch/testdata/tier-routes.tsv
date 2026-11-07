@@ -216,17 +216,30 @@ onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/New Section 3.one	-	*	on
 onenote/testdata/onenote/fixtures/onenote-rs/non-legacy/Open Notebook.onetoc2	-	*	onenote	prepared
 onenote/testdata/onenote/fixtures/onenote-rs/object-revision/Open Notebook.onetoc2	-	*	onenote	prepared
 
-# inspect's hazards: a ZIP with an unsafe entry name, a symbolic link, or a declared bomb is
-# quarantined; the 8 MiB bomb is under the default size, so the zip stage writes its zeros, which
-# no stage takes; the encrypted ZIP's readable entry is dispatched and the ZIP is encrypted; the
-# other hazards' flags are active, which proceed to their stages.
+# inspect's hazards: a ZIP or a tar with an unsafe entry name, a link, a device, or a declared
+# bomb is quarantined; the 8 MiB bombs are under the default size, so the zip stage writes their
+# zeros, which no stage takes, bomb.tar.gz's tar first; a gzip stream holding an unsafe tar is
+# prepared and the tar quarantined; clean.tar.gz's and unnamed.tgz's tar is clean.tar's bytes,
+# dispatched before them, so seen; the encrypted ZIP's readable entry is dispatched and the ZIP is
+# encrypted; the other hazards' flags are active, which proceed to their stages.
+inspect/testdata/absolute.tar	-	*	archive	quarantined
 inspect/testdata/absolute.zip	-	*	archive	quarantined
+inspect/testdata/bomb.tar.gz	-	*	archive	prepared
+inspect/testdata/bomb.tar.gz	gzip content bomb.tar	bomb.tar	archive	prepared
+inspect/testdata/bomb.tar.gz	gzip content bomb.tar > tar entry zeros.bin	zeros.bin	unrouted	no processor yet
 inspect/testdata/bomb.zip	-	*	archive	prepared
 inspect/testdata/bomb.zip	zip entry zeros.bin	zeros.bin	unrouted	no processor yet
+inspect/testdata/clean.tar	-	*	archive	prepared
+inspect/testdata/clean.tar	tar entry docs/notes.txt	docs/notes.txt	text	no processor yet
+inspect/testdata/clean.tar	tar entry docs/pixel.png	docs/pixel.png	vision	prepared
+inspect/testdata/clean.tar.gz	-	*	archive	prepared
+inspect/testdata/clean.tar.gz	gzip content clean.tar	clean.tar	archive	seen
 inspect/testdata/declared-bomb.zip	-	*	archive	quarantined
+inspect/testdata/device.tar	-	*	archive	quarantined
 inspect/testdata/encrypted.xlsx	-	*	office	encrypted
 inspect/testdata/encrypted.zip	-	*	archive	encrypted
 inspect/testdata/encrypted.zip	zip entry notes.txt	notes.txt	text	no processor yet
+inspect/testdata/hardlink.tar	-	*	archive	quarantined
 inspect/testdata/hyperlink.docx	-	*	office	prepared
 inspect/testdata/invoice.pdf.exe	-	*	unrouted	no processor yet
 inspect/testdata/javascript.pdf	-	*	document	prepared
@@ -235,8 +248,15 @@ inspect/testdata/mismatch.pdf	-	*	vision	prepared
 inspect/testdata/polyglot.jpg	-	*	vision	prepared
 inspect/testdata/polyglot.png	-	*	vision	prepared
 inspect/testdata/script.svg	-	*	vision-converted	prepared
+inspect/testdata/sparse-bomb.tar	-	*	archive	quarantined
+inspect/testdata/symlink.tar	-	*	archive	quarantined
 inspect/testdata/symlink.zip	-	*	archive	quarantined
+inspect/testdata/traversal.tar	-	*	archive	quarantined
+inspect/testdata/traversal.tar.gz	-	*	archive	prepared
+inspect/testdata/traversal.tar.gz	gzip content traversal.tar	traversal.tar	archive	quarantined
 inspect/testdata/traversal.zip	-	*	archive	quarantined
+inspect/testdata/unnamed.tgz	-	*	archive	prepared
+inspect/testdata/unnamed.tgz	gzip content unnamed.tar	unnamed.tar	archive	seen
 
 # tool: a WAV, audio, its plan and windows prepared through ffmpeg.
 tool/testdata/tone.wav	-	*	audio	prepared

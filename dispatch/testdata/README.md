@@ -10,11 +10,11 @@ the findings tier's ink truth.
 READMEs, and the expectations the format CLIs ship beside them (mail's goldens and truth files,
 onenote's `sections.json`, `notebooks.json`, and `content.json`), not generated from a dispatch's
 output. It gives the route and outcome `TestTierRoutes` expects of every committed fixture input,
-dispatched in the order the test lists them over one file index, and of the found parts that
-matter: each attachment kind, each office medium kind, each OneNote medium, and the ZIP entries.
-Its header gives its columns. Content an input shares with one dispatched before it is seen, and
-the comments above each group say which content repeats and why. A new fixture input needs a row
-here before the tier passes.
+dispatched in the order the test lists them over one file index, and of the found parts that matter:
+each attachment kind, each office medium kind, each OneNote medium, the ZIP and tar entries, and the
+gzip streams' content. Its header gives its columns. Content an input shares with one dispatched
+before it is seen, and the comments above each group say which content repeats and why. A new
+fixture input needs a row here before the tier passes.
 
 ## handwriting-truth.txt
 

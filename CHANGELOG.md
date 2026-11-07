@@ -6,8 +6,38 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `dispatch.ZipStage` reads a tar through `archive/tar`, one entry at a time: each regular file,
+  a sparse one among them, is written under its SHA-256 and found as a part, `tar entry <name>`,
+  its stored name never a path. A directory is no part, and a link, a device, or a FIFO, under a
+  policy that lets the tar proceed, is a record, no link or node made. The bomb rule is enforced on
+  the bytes written, the ratio against the whole tar's size, so only a sparse entry's holes can
+  pass it, recorded quarantined with `inspect.TarBomb`'s evidence.
+- `dispatch.ZipStage` decompresses a gzip stream through `compress/gzip` into one part, named by
+  its header's name, else by the stream's name without its .gz, or with a .tgz's .tar, found
+  `gzip content <name>` and routed again, so a .tar.gz is a gzip part holding a tar part. The bomb
+  rule is enforced on the decompressed bytes, the ratio against the stream's size, recorded
+  quarantined with `inspect.GzipBomb`'s evidence; content that doesn't decompress is a record.
+- `inspect` reads a tar's headers, as it reads a ZIP's central directory, extracting no entry, and
+  quarantines a tar with an entry whose name has a ".." element, `TarTraversal`, is absolute or
+  begins with a drive letter, `TarAbsolutePath`, is a symbolic link, `TarSymlink`, a hard link,
+  `TarHardlink`, or a character or block device or a FIFO, `TarDevice`; an entry past both bomb
+  thresholds by the size its header declares, against the whole tar's size, `TarBomb`; or headers
+  that can't all be read, `TarUnreadable`. `GzipBomb`, of class Unsafe, is the archive stage's,
+  raised on the bytes it writes; `Inspect` raises it for no part, since a gzip declares its
+  expanded size only modulo 4 GiB.
+- inspect's generated tar fixtures: `clean.tar`, `clean.tar.gz`, `unnamed.tgz`, `traversal.tar`,
+  `traversal.tar.gz`, `absolute.tar`, `symlink.tar`, `hardlink.tar`, `device.tar`,
+  `sparse-bomb.tar`, an old GNU sparse entry written by hand, and `bomb.tar.gz`, written by
+  `generate.go` with their SHA-256 in the testdata README. The integration tier dispatches each,
+  and ~/docs' `mixed-bundle.tar.gz` when the machine has it.
+
 ### Changed
 
+- `dispatch.ZipStage`'s identity version is 2: version 1 recorded tar and gzip parts as no
+  processor yet, and an index holding those entries prepares them again. A zstd stream, a 7z
+  archive, and a cabinet still have no processor yet.
 - The default LibreOffice image, `picture.LibreOfficeImage`, moves to
   gotenberg/gotenberg:9.1.0-libreoffice, pinned by digest. It carries the same LibreOffice,
   26.8.2.2, and soffice runs in it headless as before, through the container runner's lockdown,

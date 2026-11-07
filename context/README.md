@@ -20,8 +20,8 @@ repository's `context/README.md`.
   not text.
 - **inspection**: package inspect, every part inspected before its stage on the standard library,
   pure functions of its bytes and name: active content flagged and let proceed, content unsafe to
-  read (ZIP traversal, absolute paths, symlinks, bombs by declared sizes) quarantined, a caller's
-  policy over either; the dispatcher inspects every part before its stage.
+  read (ZIP and tar traversal, absolute paths, links, a tar's devices, bombs by declared sizes)
+  quarantined, a caller's policy over either; the dispatcher inspects every part before its stage.
 - **pictures**: package picture, TIFF, EMF, WMF, and SVG converted to PNG, one picture or a batch,
   named by SHA-256, EMF and WMF through soffice in the default gotenberg image and trimmed by
   magick; and the corrections stage, ImageMagick corrections in a fixed order, their catalog for a
@@ -62,16 +62,16 @@ repository's `context/README.md`.
   onenote.rs sets and expectations, copied at its tag under a SHA-256 manifest; the real-binary
   tests hold every read to them.
 - **dispatch**: an input and every part found in it walked to the caller's stages by route, hashed,
-  routed, and inspected first, the format packages' adapters and the zip stage among them, under a
-  content-addressed index, in memory or a directory, whose claims make one of concurrent dispatches
-  prepare shared content; a pool over N workers sharing the index, its events merged onto the
-  caller's goroutine, each worker held until the loop takes its event; and a store's read resumed
-  after a message, Input.After, its entry not recorded, from a checkpoint, the cursor and the
-  Threader saved together every N messages, since a save at every message is quadratic. The findings
-  tier, whose results `docs/findings/onenote.md` records, holds the tier's routes to hand truth,
-  records inspection over ~/docs and vision's reading of OneNote ink, scored by internal/textscore
-  as document's bake-offs are, and times the onenote adapter and the dispatcher, resumed and pooled,
-  over mail's scale store.
+  routed, and inspected first, the format packages' adapters and the zip stage, which reads ZIP,
+  tar, and gzip, among them, under a content-addressed index, in memory or a directory, whose claims
+  make one of concurrent dispatches prepare shared content; a pool over N workers sharing the index,
+  its events merged onto the caller's goroutine, each worker held until the loop takes its event;
+  and a store's read resumed after a message, Input.After, its entry not recorded, from a
+  checkpoint, the cursor and the Threader saved together every N messages, since a save at every
+  message is quadratic. The findings tier, whose results `docs/findings/onenote.md` records, holds
+  the tier's routes to hand truth, records inspection over ~/docs and vision's reading of OneNote
+  ink, scored by internal/textscore as document's bake-offs are, and times the onenote adapter and
+  the dispatcher, resumed and pooled, over mail's scale store.
 - **audio**: pre-inference preparation of speech. Package audio runs ffmpeg and ffprobe through
   either runner: it probes a source, plans windows of at most 30 s ending at the middle of
   silences, with 2 s seams, cuts them concurrently as 16 kHz mono WAV named by SHA-256, and joins

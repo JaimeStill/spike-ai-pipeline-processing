@@ -118,28 +118,36 @@
 // Where a stage yields a record and its Markdown, per message or page, the record comes first,
 // then the Markdown of the same name.
 //
-// [ZipStage], for route.Archive, is no format package's adapter: it reads a ZIP through
-// archive/zip, on any platform, one entry at a time, each file entry written into the part's
-// directory under its content's SHA-256 and found as a part, named by its stored name, "zip
-// entry <name>"; the stored name is never a path. A directory's entry is no part. An encrypted
-// entry is a record, recorded encrypted, and the ZIP, once its other entries are dispatched,
-// [Encrypted]. The stage enforces inspect's zip bomb rule again on the bytes it writes, under the
-// thresholds of the inspect.Options its [ZipConfig] is given, which should be the dispatcher's:
-// an entry past both is stopped, its partial file removed, and recorded quarantined, with its
-// evidence, whatever its central directory declared. A tar, gzip, zstd, or 7z archive, or a cabinet, has no
+// [ZipStage], for route.Archive, is no format package's adapter: it reads a ZIP, a tar, and a
+// gzip stream on the standard library, on any platform. A ZIP is read through archive/zip, one
+// entry at a time, each file entry written into the part's directory under its content's SHA-256
+// and found as a part, named by its stored name, "zip entry <name>"; the stored name is never a
+// path. A directory's entry is no part. An encrypted entry is a record, recorded encrypted, and
+// the ZIP, once its other entries are dispatched, [Encrypted]. A tar is read through archive/tar
+// the same way, each regular file found "tar entry <name>", a directory no part, and a link, a
+// device, or a FIFO a record, no link or node made. A gzip stream is decompressed through
+// compress/gzip into one part, named by its header's name, else by the stream's own name without
+// its .gz, or with a .tgz's .tar, found "gzip content <name>" and routed again, so a .tar.gz is
+// a gzip part holding a tar part. The stage enforces inspect's bomb rule again on the bytes it
+// writes, under the thresholds of the inspect.Options its [ZipConfig] is given, which should be
+// the dispatcher's: a ZIP entry, a tar entry, or a gzip stream past both is stopped, its partial
+// file removed, and recorded quarantined, with its evidence, whatever its header declared; the
+// ratio is a ZIP entry's against its compressed size, a tar entry's against the whole tar's, and
+// a gzip stream's against the stream's. A zstd stream, a 7z archive, or a cabinet has no
 // processor yet. Its identity is "zip", this package's version of it, and a hash of its
-// thresholds. A ZIP with a traversing, absolute, or drive letter name, or a symbolic link, is
-// quarantined by inspect before the stage runs; under a policy that lets it proceed, the stage
-// still writes each entry by its hash, inside the part's directory.
+// thresholds. A ZIP or tar with a traversing, absolute, or drive letter name, a ZIP's symbolic
+// link, or a tar's link or device, is quarantined by inspect before the stage runs; under a
+// policy that lets it proceed, the stage still writes each entry by its hash, inside the part's
+// directory.
 //
-// A skipped record, a medium or attachment with no content, a ZIP entry the zip stage can't
-// write, and a CLI's warnings are each a record output, never dropped. The email and onenote
-// stages place each file they find in a directory of its own, a hard link to the file the CLI
-// wrote, since the CLI writes each distinct content once, named by its SHA-256, for every record
-// that names it, and the dispatcher removes a found part's file once its event is done. Each such
-// part carries that SHA-256 and a release, as [Found] says, which removes the CLI's original once
-// the dispatcher has settled its content; a later record naming it is then found with no file,
-// and seen from the index.
+// A skipped record, a medium or attachment with no content, a ZIP or tar entry or a gzip stream's
+// content the zip stage can't write, and a CLI's warnings are each a record output, never dropped.
+// The email and onenote stages place each file they find in a directory of its own, a hard link to
+// the file the CLI wrote, since the CLI writes each distinct content once, named by its SHA-256,
+// for every record that names it, and the dispatcher removes a found part's file once its event is
+// done. Each such part carries that SHA-256 and a release, as [Found] says, which removes the CLI's
+// original once the dispatcher has settled its content; a later record naming it is then found with
+// no file, and seen from the index.
 //
 // # The index
 //

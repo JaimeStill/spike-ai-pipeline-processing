@@ -135,7 +135,7 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
 that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, archives other
-than ZIP, or text yet.
+than ZIP, tar, and gzip, or text yet.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -145,24 +145,29 @@ if err != nil {
 // r == route.Document, why == "PDF signature"
 ```
 
-`inspect` inspects every part before its stage, on the standard library and `route` alone, and
-says whether it may go on. The safety standard is that unsafe means unsafe to read. `Inspect`
-reads the file at a path, with its name, streaming, its memory bounded whatever the file's size,
-and returns a `Report`: the part's `route.Kind`, its `Flag`s, each a `Check`, a `Class`, and its
-evidence, and a `Verdict`. A flag of class `Active` is content that could act, or that a reader
-can't see into, and the part proceeds by default, since no stage executes it: a signature that
-disagrees with the extension, a polyglot, executable content or an executable or double
-extension, an OOXML package's VBA project, macro sheet, ActiveX controls, OLE objects, and
-external relationships other than hyperlinks, the PDF names pdfid counts, hex-escaped forms
-included, an SVG's scripts, event handlers, external hrefs, and foreignObjects, and encrypted
-content, which is only unreadable. A flag of class `Unsafe` quarantines the part by default: no
-stage runs, its content is kept, and it is reported with its evidence. Those are a ZIP entry with
-a ".." element, an absolute path, or a drive letter, a symbolic link entry, an entry past both
-1,000:1 and 1 GiB expanded by its central directory's declared sizes, the thresholds `Options`
-sets, and a central directory that can't be read. `Options.Policy` overrides any check's action.
-The report is a function of the bytes and the name, so an index may record it by SHA-256. A
-container's members are inspected as parts of their own once a stage extracts them, and the ZIP
-stage enforces the bomb rule again on the bytes it writes, since a declared size may lie.
+`inspect` inspects every part before its stage, on the standard library and `route` alone, and says
+whether it may go on. The safety standard is that unsafe means unsafe to read. `Inspect` reads the
+file at a path, with its name, streaming, its memory bounded whatever the file's size, and returns a
+`Report`: the part's `route.Kind`, its `Flag`s, each a `Check`, a `Class`, and its evidence, and a
+`Verdict`. A flag of class `Active` is content that could act, or that a reader can't see into, and
+the part proceeds by default, since no stage executes it: a signature that disagrees with the
+extension, a polyglot, executable content or an executable or double extension, an OOXML package's
+VBA project, macro sheet, ActiveX controls, OLE objects, and external relationships other than
+hyperlinks, the PDF names pdfid counts, hex-escaped forms included, an SVG's scripts, event
+handlers, external hrefs, and foreignObjects, and encrypted content, which is only unreadable. A
+flag of class `Unsafe` quarantines the part by default: no stage runs, its content is kept, and it
+is reported with its evidence. Those are a ZIP entry with a ".." element, an absolute path, or a
+drive letter, a symbolic link entry, an entry past both 1,000:1 and 1 GiB expanded by its central
+directory's declared sizes, the thresholds `Options` sets, and a central directory that can't be
+read; and a tar entry, read from its headers as a ZIP's is from its central directory, with a ".."
+element, an absolute path, or a drive letter, a symbolic or hard link, a device or a FIFO, an entry
+past both thresholds by the size its header declares against the whole tar's, as only a sparse entry
+or a lying header can be, and headers that can't all be read. `Options.Policy` overrides any check's
+action. The report is a function of the bytes and the name, so an index may record it by SHA-256. A
+container's members are inspected as parts of their own once a stage extracts them, so a .tar.gz's
+tar is inspected once the archive stage decompresses it, and that stage enforces the bomb rule again
+on the bytes it writes, since a declared size may lie, a gzip stream's among them, which declares
+its expanded size only modulo 4 GiB.
 
 ```go
 rep, err := inspect.Inspect(ctx, path, "invoice.pdf.exe", inspect.Options{})
@@ -260,16 +265,22 @@ no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields fra
 has no audio stream and windows only when it has no video stream; one with neither fails, its
 error wrapping `media.ErrNoMedia`.
 
-`ZipStage`, for the archive route, on any platform, reads a ZIP through `archive/zip` one entry at a
-time: each file entry is written into the part's directory under its content's SHA-256 and found as
-a part, `zip entry <name>`, its stored name only ever a name, so a nested ZIP is dispatched again
-and its entries below it. A directory is no part. An encrypted entry is a record, recorded
-encrypted, and the ZIP encrypted once its other entries are dispatched. The stage enforces the zip
-bomb rule again on the bytes it writes, under `ZipConfig.Inspect`, the dispatcher's
-`inspect.Options`: an entry past both thresholds as written, whatever its central directory
-declares, is stopped, its partial file removed, and recorded quarantined with its evidence. A ZIP
-with an unsafe name or a symbolic link is quarantined by `inspect` before the stage runs. A tar,
-gzip, zstd, or 7z archive, or a cabinet, is no processor yet.
+`ZipStage`, for the archive route, on any platform, reads a ZIP, a tar, and a gzip stream on the
+standard library. It reads a ZIP through `archive/zip` one entry at a time: each file entry is
+written into the part's directory under its content's SHA-256 and found as a part, `zip entry
+<name>`, its stored name only ever a name, so a nested ZIP is dispatched again and its entries below
+it. A directory is no part. An encrypted entry is a record, recorded encrypted, and the ZIP
+encrypted once its other entries are dispatched. It reads a tar through `archive/tar` the same way,
+each regular file found `tar entry <name>`, a directory no part, and a link, a device, or a FIFO a
+record, with no link or node made. It decompresses a gzip stream through `compress/gzip` into one
+part, named by its header's name, else by the stream's own name without its .gz, or with a .tgz's
+.tar, found `gzip content <name>` and routed again, so a .tar.gz is a gzip part holding a tar part.
+The stage enforces the bomb rule again on the bytes it writes, under `ZipConfig.Inspect`, the
+dispatcher's `inspect.Options`: a ZIP entry, a tar entry, or a gzip stream past both thresholds as
+written, the ratio against a ZIP entry's compressed size, the whole tar's size, or the stream's,
+whatever its header declares, is stopped, its partial file removed, and recorded quarantined with
+its evidence. A ZIP or tar with an unsafe name, a link, or a device is quarantined by `inspect`
+before the stage runs. A zstd stream, a 7z archive, or a cabinet is no processor yet.
 
 ```go
 render, err := document.NewGhostscript(gs)

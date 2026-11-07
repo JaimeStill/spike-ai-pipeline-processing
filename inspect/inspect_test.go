@@ -86,6 +86,21 @@ var synthesized = []struct {
 	{"polyglot.jpg", map[inspect.Check]string{inspect.Polyglot: "ZIP end-of-central-directory record at offset 168 in a jpeg"}, inspect.Proceed},
 	{"polyglot.png", map[inspect.Check]string{inspect.Polyglot: "PDF header at offset 33 after a png signature"}, inspect.Proceed},
 	{"encrypted.xlsx", map[inspect.Check]string{inspect.OOXMLEncrypted: "EncryptedPackage"}, inspect.Proceed},
+	// The tars, by their headers, as the ZIPs are by their central directories. A directory is
+	// no hazard, and a gzip stream, which declares its expanded size only modulo 4 GiB, is
+	// checked as a gzip no further: the tar it holds is inspected once the stage decompresses
+	// it.
+	{"clean.tar", nil, inspect.Proceed},
+	{"clean.tar.gz", nil, inspect.Proceed},
+	{"unnamed.tgz", nil, inspect.Proceed},
+	{"traversal.tar.gz", nil, inspect.Proceed},
+	{"bomb.tar.gz", nil, inspect.Proceed},
+	{"traversal.tar", map[inspect.Check]string{inspect.TarTraversal: `entry "docs/../../evil.txt"`}, inspect.Quarantine},
+	{"absolute.tar", map[inspect.Check]string{inspect.TarAbsolutePath: `entry "/tmp/evil.txt", and 1 more`}, inspect.Quarantine},
+	{"symlink.tar", map[inspect.Check]string{inspect.TarSymlink: `entry "passwd" to "/etc/passwd"`}, inspect.Quarantine},
+	{"hardlink.tar", map[inspect.Check]string{inspect.TarHardlink: `entry "shadow" to "/etc/shadow"`}, inspect.Quarantine},
+	{"device.tar", map[inspect.Check]string{inspect.TarDevice: `character device entry "null", 1:3, and 2 more`}, inspect.Quarantine},
+	{"sparse-bomb.tar", map[inspect.Check]string{inspect.TarBomb: `entry "zeros.bin": 4294967296 bytes declared in a 2048-byte tar`}, inspect.Quarantine},
 }
 
 // TestSynthesized inspects each synthesized hazard fixture: each yields exactly its checks,
@@ -266,6 +281,33 @@ func TestExecutableContent(t *testing.T) {
 	}
 }
 
+// TestUnreadableTar: a tar cut short inside an entry's content is quarantined, its headers
+// unreadable past the cut, whatever the entries before it.
+func TestUnreadableTar(t *testing.T) {
+	whole, err := os.ReadFile(filepath.Join("testdata", "clean.tar"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	// clean.tar's second entry, docs/notes.txt, has its header at 512 and its content at 1024.
+	r := mustInspect(t, write(t, "cut.tar", whole[:1030]), "cut.tar", inspect.Options{})
+	if !r.Has(inspect.TarUnreadable) || r.Verdict != inspect.Quarantine {
+		t.Errorf("%+v, want tar-unreadable, quarantined", r)
+	}
+}
+
+// TestTarBombThresholds: sparse-bomb.tar's entry declares 4 GiB in 2 KiB, a bomb at the
+// defaults; it is none once the size is raised over it, nor once the ratio is raised over its
+// 2,097,152:1, since an entry must be past both.
+func TestTarBombThresholds(t *testing.T) {
+	path := filepath.Join("testdata", "sparse-bomb.tar")
+	if r := mustInspect(t, path, "sparse-bomb.tar", inspect.Options{BombSize: 8 << 30}); r.Has(inspect.TarBomb) {
+		t.Errorf("size raised to 8 GiB: %+v, want no tar-bomb flag", r)
+	}
+	if r := mustInspect(t, path, "sparse-bomb.tar", inspect.Options{BombRatio: 4 << 20}); r.Has(inspect.TarBomb) {
+		t.Errorf("ratio raised to 4,194,304:1: %+v, want no tar-bomb flag", r)
+	}
+}
+
 // TestUnreadableZIP: content with a ZIP signature and no central directory is quarantined.
 func TestUnreadableZIP(t *testing.T) {
 	r := mustInspect(t, write(t, "a.zip", []byte("PK\x03\x04 and nothing after")), "a.zip", inspect.Options{})
@@ -296,8 +338,8 @@ func TestCancelled(t *testing.T) {
 	}
 }
 
-// TestClasses: every check has a class, active or unsafe, and the unsafe ones are the five
-// ZIP checks the safety standard names unsafe to read.
+// TestClasses: every check has a class, active or unsafe, and the unsafe ones are the ZIP, tar,
+// and gzip checks the safety standard names unsafe to read.
 func TestClasses(t *testing.T) {
 	var unsafe []inspect.Check
 	for _, c := range inspect.Checks() {
@@ -309,7 +351,12 @@ func TestClasses(t *testing.T) {
 			t.Errorf("%s: class %q", c, inspect.ClassOf(c))
 		}
 	}
-	want := []inspect.Check{inspect.ZIPAbsolutePath, inspect.ZIPBomb, inspect.ZIPSymlink, inspect.ZIPTraversal, inspect.ZIPUnreadable}
+	want := []inspect.Check{
+		inspect.GzipBomb,
+		inspect.TarAbsolutePath, inspect.TarBomb, inspect.TarDevice, inspect.TarHardlink, inspect.TarSymlink,
+		inspect.TarTraversal, inspect.TarUnreadable,
+		inspect.ZIPAbsolutePath, inspect.ZIPBomb, inspect.ZIPSymlink, inspect.ZIPTraversal, inspect.ZIPUnreadable,
+	}
 	if !slices.Equal(unsafe, want) {
 		t.Errorf("unsafe checks %v, want %v", unsafe, want)
 	}

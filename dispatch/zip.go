@@ -21,21 +21,24 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 )
 
-// zipVersion is the version of the zip stage, which runs no tool but archive/zip: this
-// package's.
-const zipVersion = "1"
+// zipVersion is the version of the zip stage, which runs no tool but the standard library's
+// archive and compression readers: this package's. Version 2 reads tar and gzip, which version 1
+// recorded as no processor yet.
+const zipVersion = "2"
 
-// ZipConfig is what a [ZipStage] is built over: the inspection options whose zip bomb
-// thresholds it enforces on the bytes it writes.
+// ZipConfig is what a [ZipStage] is built over: the inspection options whose bomb thresholds it
+// enforces on the bytes it writes.
 type ZipConfig struct {
 	// Inspect is the dispatcher's Config.Inspect: its BombRatio and BombSize, inspect's
-	// defaults when zero, are the thresholds an entry's written bytes may not pass both of. Its
-	// Policy is the dispatcher's, not the stage's.
+	// defaults when zero, are the thresholds a ZIP or tar entry's, or a gzip stream's, written
+	// bytes may not pass both of. Its Policy is the dispatcher's, not the stage's.
 	Inspect inspect.Options
 }
 
-// ZipStage prepares a ZIP that is neither an office document nor an ODF package, route.Archive's
-// ZIP parts, through archive/zip, one entry at a time, in the central directory's order. Each
+// ZipStage prepares route.Archive's parts: a ZIP that is neither an office document nor an ODF
+// package, a tar, and a gzip stream, on the standard library alone.
+//
+// A ZIP is read through archive/zip, one entry at a time, in the central directory's order. Each
 // file entry is written into the part's directory under its content's SHA-256, streamed into a
 // temporary file while it is hashed, then renamed, and is a [Found] part, the dispatcher's to
 // route and inspect again, named by its stored name and found "zip entry <name>". The stored name
@@ -59,8 +62,27 @@ type ZipConfig struct {
 //
 // A ZIP with an encrypted entry ends, once every other entry is dispatched, with [ErrEncrypted],
 // naming how many of its entries are encrypted, so its outcome is [Encrypted], its event holding
-// the record of each encrypted entry and its readable entries' parts. A tar, gzip, zstd, or 7z
-// archive, or a cabinet, route.Archive's other kinds, has no processor yet.
+// the record of each encrypted entry and its readable entries' parts.
+//
+// A tar is read through archive/tar, one entry at a time, in the tar's order, its headers as
+// inspect reads them. Each regular file, a sparse one among them, is written as a ZIP's file
+// entry is and found "tar entry <name>", named by its stored name, which is never a path. A
+// directory is no part. A symbolic or hard link, a device, or a FIFO, which inspect quarantines
+// the tar for, is a record under a policy that lets the tar proceed, its Meta's check inspect's,
+// and no link or node is made. An entry whose written bytes pass both thresholds, the ratio
+// against the whole tar's size, since an entry's bytes come from no more than the tar, as only a
+// sparse entry's holes can, is stopped and recorded as a ZIP's is, its check "tar-bomb". An
+// entry of another type, or whose content doesn't read, is a record, and a header that can't be
+// read fails the tar once the entries before it are dispatched.
+//
+// A gzip stream is decompressed through compress/gzip into one part, written by its SHA-256 and
+// found "gzip content <name>", named by its header's name, else by the stream's own name without
+// its .gz, or with a .tgz's .tar. The dispatcher routes it again, so a .tar.gz is a gzip part
+// holding a tar part. Content whose written bytes pass both thresholds, the ratio against the
+// stream's size, is stopped and recorded as a ZIP entry's is, its check "gzip-bomb", and content
+// that doesn't decompress is a record; a header that doesn't read fails the part.
+//
+// A zstd stream, a 7z archive, or a cabinet, route.Archive's other kinds, has no processor yet.
 type ZipStage struct {
 	ratio float64
 	size  uint64
@@ -94,57 +116,67 @@ func NewZipStage(cfg ZipConfig) (*ZipStage, error) {
 // bomb thresholds.
 func (s *ZipStage) Identity() Identity { return s.id }
 
-// unarchived names the archive kinds the stage has no processor for yet, the formats task's.
+// unarchived names the archive kinds the stage has no processor for yet, which 7-Zip is to read.
 var unarchived = map[route.Kind]string{
-	route.Tar:      "a tar archive",
-	route.Gzip:     "a gzip stream",
 	route.Zstd:     "a zstd stream",
 	route.SevenZip: "a 7z archive",
 	route.MSCF:     "a cabinet",
 }
 
-// Prepare reads the ZIP at p.Path, as the type's doc says.
+// Prepare reads the archive at p.Path by its kind, as the type's doc says.
 func (s *ZipStage) Prepare(ctx context.Context, p Part, dir string) iter.Seq2[Item, error] {
 	return func(yield func(Item, error) bool) {
-		if p.Kind != route.ZIP {
+		// Each kind the stage reads has its reader here; the kinds in unarchived have none yet.
+		switch p.Kind {
+		case route.ZIP:
+			s.zip(ctx, p, dir, yield)
+		case route.Tar:
+			s.tar(ctx, p, dir, yield)
+		case route.Gzip:
+			s.gzip(ctx, p, dir, yield)
+		default:
 			what := unarchived[p.Kind]
 			if what == "" {
 				what = "content of kind " + string(p.Kind)
 			}
 			yield(Item{}, fmt.Errorf("zip stage: %s: %w", what, ErrNoProcessor))
+		}
+	}
+}
+
+// zip reads the ZIP at p.Path through archive/zip, one entry at a time, yielding each entry's
+// item.
+func (s *ZipStage) zip(ctx context.Context, p Part, dir string, yield func(Item, error) bool) {
+	zr, err := zip.OpenReader(p.Path)
+	if err != nil && !errors.Is(err, zip.ErrInsecurePath) {
+		yield(Item{}, fmt.Errorf("zip stage: %w", err))
+		return
+	}
+	defer func() { _ = zr.Close() }() // read only: a close error loses nothing
+	files, encrypted := 0, 0
+	for _, f := range zr.File {
+		if err := ctx.Err(); err != nil {
+			yield(Item{}, err)
 			return
 		}
-		zr, err := zip.OpenReader(p.Path)
-		if err != nil && !errors.Is(err, zip.ErrInsecurePath) {
-			yield(Item{}, fmt.Errorf("zip stage: %w", err))
+		if f.Mode().IsDir() || strings.HasSuffix(f.Name, "/") {
+			continue
+		}
+		files++
+		if f.Flags&0x1 != 0 {
+			encrypted++
+		}
+		item, err := s.entry(ctx, f, dir)
+		if err != nil {
+			yield(Item{}, err)
 			return
 		}
-		defer func() { _ = zr.Close() }() // read only: a close error loses nothing
-		files, encrypted := 0, 0
-		for _, f := range zr.File {
-			if err := ctx.Err(); err != nil {
-				yield(Item{}, err)
-				return
-			}
-			if f.Mode().IsDir() || strings.HasSuffix(f.Name, "/") {
-				continue
-			}
-			files++
-			if f.Flags&0x1 != 0 {
-				encrypted++
-			}
-			item, err := s.entry(ctx, f, dir)
-			if err != nil {
-				yield(Item{}, err)
-				return
-			}
-			if !yield(item, nil) {
-				return
-			}
+		if !yield(item, nil) {
+			return
 		}
-		if encrypted > 0 {
-			yield(Item{}, fmt.Errorf("zip stage: %d of %d entries: %w", encrypted, files, ErrEncrypted))
-		}
+	}
+	if encrypted > 0 {
+		yield(Item{}, fmt.Errorf("zip stage: %d of %d entries: %w", encrypted, files, ErrEncrypted))
 	}
 }
 
@@ -170,18 +202,7 @@ func (s *ZipStage) entry(ctx context.Context, f *zip.File, dir string) (Item, er
 	where := "zip entry " + f.Name
 	rec := zipEntry{Name: f.Name, Method: f.Method, Compressed: f.CompressedSize64, Declared: f.UncompressedSize64}
 	recorded := func(rec zipEntry) (Item, error) {
-		meta := map[string]string{"name": f.Name, "reason": rec.Reason}
-		if rec.Check != "" {
-			meta["check"], meta["class"], meta["evidence"] = rec.Check, rec.Class, rec.Evidence
-		}
-		switch rec.Check {
-		case string(inspect.ZIPBomb):
-			meta["outcome"] = string(Quarantined)
-		case string(inspect.ZIPEncrypted):
-			meta["outcome"] = string(Encrypted)
-		}
-		o, err := record(where, rec, meta)
-		return OutputItem(o), err
+		return unwritten(where, rec, f.Name, rec.Reason, rec.Check, rec.Class, rec.Evidence)
 	}
 	quoted := fmt.Sprintf("entry %q", f.Name)
 	switch {
@@ -211,13 +232,32 @@ func (s *ZipStage) entry(ctx context.Context, f *zip.File, dir string) (Item, er
 	return PartItem(Found{Path: path, Name: f.Name, Where: where}), nil
 }
 
+// unwritten returns the record of an entry the stage wrote no part for, rec, named by its place,
+// where: its Meta names the entry, by name, and why, and, when a check names it, the check, its
+// class, and its evidence, with the outcome a bomb, quarantined, or an encrypted entry,
+// encrypted, comes to.
+func unwritten(where string, rec any, name, reason, check, class, evidence string) (Item, error) {
+	meta := map[string]string{"name": name, "reason": reason}
+	if check != "" {
+		meta["check"], meta["class"], meta["evidence"] = check, class, evidence
+	}
+	switch inspect.Check(check) {
+	case inspect.ZIPBomb, inspect.TarBomb, inspect.GzipBomb:
+		meta["outcome"] = string(Quarantined)
+	case inspect.ZIPEncrypted:
+		meta["outcome"] = string(Encrypted)
+	}
+	o, err := record(where, rec, meta)
+	return OutputItem(o), err
+}
+
 // errBomb is a written entry's word that its bytes passed both bomb thresholds.
 var errBomb = errors.New("past the bomb thresholds")
 
-// write writes f's content into dir, streamed into a temporary file while its SHA-256 and CRC-32
-// are taken, then renamed to its SHA-256, and returns its path and the bytes written. why is the
-// reason the content has no file, errBomb or a mismatch with the central directory, its partial
-// file removed; err is the stage's own failure.
+// write writes f's content into dir by extract, its compressed bytes decompressed, and holds
+// the bytes written to the central directory's size and CRC-32. why is the reason the content
+// has no file, errBomb, a mismatch with the central directory, or content that doesn't
+// decompress, its partial file removed; err is the stage's own failure.
 func (s *ZipStage) write(ctx context.Context, f *zip.File, dir string) (path string, written uint64, why, err error) {
 	raw, err := f.OpenRaw()
 	if err != nil {
@@ -229,6 +269,29 @@ func (s *ZipStage) write(ctx context.Context, f *zip.File, dir string) (path str
 		defer func() { _ = fr.Close() }() // a flate reader's close frees it; it reports nothing
 		r = fr
 	}
+	return s.extract(ctx, r, dir, f.CompressedSize64, func(w *bombWriter, copyErr error) error {
+		switch {
+		case copyErr != nil:
+			return fmt.Errorf("doesn't decompress: %w", copyErr)
+		case w.n != f.UncompressedSize64:
+			return fmt.Errorf("%d bytes written, %d declared", w.n, f.UncompressedSize64)
+		case f.CRC32 != 0 && w.crc.Sum32() != f.CRC32:
+			// archive/zip checks a CRC-32 the central directory declares, none when it declares 0.
+			return fmt.Errorf("CRC-32 %08x, %08x declared", w.crc.Sum32(), f.CRC32)
+		}
+		return nil
+	})
+}
+
+// extract writes r's bytes into dir, streamed into a temporary file while their SHA-256 and
+// CRC-32 are taken, then renamed to their SHA-256, and returns the path and the bytes written.
+// The bomb rule weighs the bytes written against compressed, the bytes they come from. whole,
+// given the writer and the copy's error once the bytes are written, says why they aren't the
+// content whole, or nil when they are. why is the reason the content has no file, errBomb or
+// whole's word, its partial file removed; err is the stage's own failure.
+func (s *ZipStage) extract(ctx context.Context, r io.Reader, dir string, compressed uint64,
+	whole func(w *bombWriter, copyErr error) error,
+) (path string, written uint64, why, err error) {
 	tmp, err := os.CreateTemp(dir, "entry-*")
 	if err != nil {
 		return "", 0, nil, fmt.Errorf("zip stage: %w", err)
@@ -241,7 +304,7 @@ func (s *ZipStage) write(ctx context.Context, f *zip.File, dir string) (path str
 	}()
 	w := &bombWriter{
 		ctx: ctx, w: tmp, sum: sha256.New(), crc: crc32.NewIEEE(),
-		compressed: max(f.CompressedSize64, 1), ratio: s.ratio, size: s.size,
+		compressed: max(compressed, 1), ratio: s.ratio, size: s.size,
 	}
 	_, copyErr := io.Copy(w, r)
 	if err := tmp.Close(); err != nil {
@@ -254,17 +317,13 @@ func (s *ZipStage) write(ctx context.Context, f *zip.File, dir string) (path str
 		return "", w.n, errBomb, nil
 	case w.writeErr != nil:
 		return "", w.n, nil, fmt.Errorf("zip stage: %w", w.writeErr)
-	case copyErr != nil:
-		return "", w.n, fmt.Errorf("doesn't decompress: %w", copyErr), nil
-	case w.n != f.UncompressedSize64:
-		return "", w.n, fmt.Errorf("%d bytes written, %d declared", w.n, f.UncompressedSize64), nil
-	case f.CRC32 != 0 && w.crc.Sum32() != f.CRC32:
-		// archive/zip checks a CRC-32 the central directory declares, none when it declares 0.
-		return "", w.n, fmt.Errorf("CRC-32 %08x, %08x declared", w.crc.Sum32(), f.CRC32), nil
+	}
+	if why := whole(w, copyErr); why != nil {
+		return "", w.n, why, nil
 	}
 	path = filepath.Join(dir, hex.EncodeToString(w.sum.Sum(nil)))
-	// The same content met earlier in this ZIP may still be at path, kept by the caller: its
-	// bytes are these, so it is found again rather than replaced.
+	// The same content met earlier in this archive may still be at path, kept by the caller:
+	// its bytes are these, so it is found again rather than replaced.
 	if _, err := os.Lstat(path); err == nil {
 		return path, w.n, nil, nil
 	} else if !errors.Is(err, fs.ErrNotExist) {
@@ -278,8 +337,8 @@ func (s *ZipStage) write(ctx context.Context, f *zip.File, dir string) (path str
 }
 
 // bombWriter writes an entry's bytes to w while hashing them, and stops with errBomb once they
-// pass both the bomb size and the bomb ratio against the entry's compressed size, or with ctx's
-// error once it ends. writeErr is w's own failure.
+// pass both the bomb size and the bomb ratio against compressed, the bytes they come from, or
+// with ctx's error once it ends. writeErr is w's own failure.
 type bombWriter struct {
 	ctx        context.Context
 	w          io.Writer

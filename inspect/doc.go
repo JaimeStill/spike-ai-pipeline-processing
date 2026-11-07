@@ -8,7 +8,8 @@
 // evidence, and the [Verdict] they come to. The report is a function of the file's bytes and
 // name alone, with the [Options], so the same content gives the same report on every run and an
 // index may record it by the content's SHA-256. Inspect streams: its memory is bounded whatever
-// the file's size, and a ZIP is read by its central directory, no entry extracted.
+// the file's size, and a ZIP is read by its central directory and a tar by its headers, no entry
+// extracted.
 //
 // Its two classes:
 //
@@ -31,7 +32,13 @@
 //     has a ".." element, is absolute, or begins with a drive letter; a ZIP entry that is a
 //     symbolic link by its Unix mode; a ZIP entry past both the expansion ratio and the
 //     expanded size the Options allow, 1,000:1 and 1 GiB by default, by the sizes its central
-//     directory declares; and a ZIP whose central directory can't be read.
+//     directory declares; and a ZIP whose central directory can't be read. A tar entry whose name
+//     has a ".." element, is absolute, or begins with a drive letter; a tar entry that is a
+//     symbolic or hard link, a character or block device, or a FIFO; a tar entry past both the
+//     ratio, against the whole tar's size, and the size, by the size its header declares, as only
+//     a sparse entry or a lying header can be; and a tar whose headers can't all be read, as a
+//     truncated tar's can't. A gzip stream past both by the bytes it decompresses to, which a
+//     stage raises, not Inspect: a gzip declares its expanded size only modulo 4 GiB.
 //
 // A policy, [Options.Policy], overrides any check's default action, so a caller may quarantine
 // a macro or let an unsafe finding proceed.
@@ -39,8 +46,10 @@
 // The checks read what pdfid and a careful reader read, not everything: a PDF name inside a
 // compressed object stream is unseen, as it is by pdfid; legacy OLE2 documents' macros and ODF
 // packages' scripts aren't checked; and a container's members are not inspected here, but as
-// parts of their own once the stage that extracts them yields them, the dispatcher's ZIP stage
-// enforcing the bomb rule on the bytes it writes, since a declared size may lie.
+// parts of their own once the stage that extracts them yields them, the dispatcher's archive
+// stage enforcing the bomb rule on the bytes it writes, since a declared size may lie. A gzip
+// stream is checked as a gzip no further: the tar a .tar.gz holds is inspected once the stage
+// decompresses it.
 //
 // Its exported identifiers:
 //
@@ -56,6 +65,8 @@
 //     [PDFJavaScript], [PDFJS], [PDFOpenAction], [PDFAA], [PDFLaunch], [PDFEmbeddedFile],
 //     [PDFRichMedia], [PDFXFA], and [PDFEncrypt]; and [SVGScript], [SVGEventHandler],
 //     [SVGExternalHref], and [SVGForeignObject]. Of class Unsafe: [ZIPTraversal],
-//     [ZIPAbsolutePath], [ZIPSymlink], [ZIPBomb], and [ZIPUnreadable]. [Checks] lists them, and
-//     [ClassOf] returns a check's class.
+//     [ZIPAbsolutePath], [ZIPSymlink], [ZIPBomb], and [ZIPUnreadable]; [TarTraversal],
+//     [TarAbsolutePath], [TarSymlink], [TarHardlink], [TarDevice], [TarBomb], and
+//     [TarUnreadable]; and [GzipBomb]. [Checks] lists them, and [ClassOf] returns a check's
+//     class.
 package inspect
