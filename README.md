@@ -440,6 +440,15 @@ recorded at commit `96797c6`, before an encrypted OOXML package was routed to of
 has `encrypted.xlsx` unrouted. The scale store's dispatch, removal on and off, is a later run at
 `fdbdab0`.
 
+[docs/findings/formats.md](docs/findings/formats.md) records every route task formats added over
+its fixtures and ~/docs against their truth: the archive kinds, with and without 7-Zip and under a
+lowered bomb rule, ~/docs' mixed bundle routing the same 7 parts the same way as .zip, .tar.gz,
+.tar.zst, and .7z; the TIFFs' pages, HEIC's primary image, and WebP's and AVIF's first frame;
+~/docs' 11 encodings, 6 decoded right and 5 garbled under the windows-1252 fallback, the text
+limit; RTF; a PDF's password, forms, and attachments; and the conversation records, every field
+equal to mail's hand truth, with their limits. Any one ~/docs input dispatched in under 1.2 s. The
+run results it cites are in `docs/findings/formats-results/`.
+
 `picture` converts pictures to PNG for a model's vision and corrects page images for scan
 defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, built by
 `NewConverter` over a `Config` of a magick Tool that `MagickSpec` declares, minimum
@@ -1111,6 +1120,10 @@ findings-streams` measures `media` on ~/docs' videos read at real time, each win
 E4B and each frame to Gemma 4 26B-A4B as it arrives, beside audio's file path and a cancellation
 midway; its paced runs take about 75 minutes, and a run keeps its results only in the directory
 `STREAMS_FINDINGS_RESULTS` names ([docs/findings/streams.md](docs/findings/streams.md),
+"Rerunning"). `mise run findings-formats` holds the routes task formats added to their truth
+over the fixtures and ~/docs, each checked against the corpus manifest, and times the dispatcher on
+each ~/docs input; it calls no model, and a run keeps its results only in the directory
+`FORMATS_FINDINGS_RESULTS` names ([docs/findings/formats.md](docs/findings/formats.md),
 "Rerunning").
 
 The tests' vision and speech harnesses, the bake-offs, the staged flow, and the findings tier are

@@ -8,6 +8,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The formats finding, `docs/findings/formats.md`, and its run's results in
+  `docs/findings/formats-results/`: every route this release adds over its fixtures and ~/docs
+  against their truth, archives with and without 7-Zip and under a lowered bomb rule, ~/docs'
+  mixed bundle in four forms, pictures, the encodings table and the text limit, RTF, a PDF's
+  password, forms, and attachments, and the conversation records against mail's hand truth, with
+  the dispatcher's time and peak memory on each ~/docs input. `mise run findings-formats`
+  (`scripts/findings-formats.sh`) reruns it, in the findings tier, calling no model; dispatch's
+  findings-tagged `TestFindingsFormats` and `TestFindingsFormatsCost` are its tests.
+
 - `document.QPDF`, over qpdf, minimum 11.0 (`QPDFSpec`, `QPDFMinimum`), built by `NewQPDF`.
   `QPDF.RequiresPassword` asks `qpdf --requires-password`: exit 0 a password is needed, 2 not
   encrypted, 3 encrypted but opening without one; an exit 2 with qpdf's error, a file it can't

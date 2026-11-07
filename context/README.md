@@ -92,7 +92,10 @@ repository's `context/README.md`.
   message is quadratic. The findings tier, whose results `docs/findings/onenote.md` records, holds
   the tier's routes to hand truth, records inspection over ~/docs and vision's reading of OneNote
   ink, scored by internal/textscore as document's bake-offs are, and times the onenote adapter and
-  the dispatcher, resumed and pooled, over mail's scale store.
+  the dispatcher, resumed and pooled, over mail's scale store. `docs/findings/formats.md` records
+  the routes task formats added, archives, pictures, text, RTF, PDFs, and conversation records,
+  over the fixtures and ~/docs against their truth, and the dispatcher's time and peak memory on
+  each ~/docs input.
 - **archives**: package sevenzip, the adapter over 7-Zip's 7zz, pinned by mise from its GitHub
   release: an archive's technical listing parsed into typed entries, and one entry extracted to the
   caller's writer through 7zz's standard output, never to a path; its fixtures are commons-compress's

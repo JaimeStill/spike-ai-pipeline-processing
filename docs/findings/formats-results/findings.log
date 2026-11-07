@@ -1,0 +1,984 @@
+# The formats finding: the tests that hold the new routes to their truth, then TestFindingsFormats
+# and TestFindingsFormatsCost, -v output verbatim, each step under a "# findings-formats:" line
+# Run: 2026-11-07, 02:55:03 to 02:57:41 UTC, from the laptop (Intel Core Ultra 9 185H, 22 logical
+# CPUs, 30 GiB; Linux 7.2.15 x86_64, go 1.27.3), at processing commit d50f5a4 on branch formats:
+#   FORMATS_FINDINGS_RESULTS=docs/findings/formats-results mise run findings-formats
+# 7-Zip 26.05, mail 0.3.1, office 0.1.0 (mise pins); qpdf 12.4.2, pdfdetach 26.10.0, Ghostscript
+# 10.08.0, ImageMagick 7.1.2-34 Q16-HDRI (host); LibreOffice in picture.LibreOfficeImage,
+# gotenberg/gotenberg:9.1.0-libreoffice by digest (docker 29.9.2); 3 timed runs of each input.
+# No model was called.
+# findings-formats: go test -tags integration -count=1 -timeout 30m -v -run ^(TestTar.*|TestGzip.*|TestArchiveDamaged|TestArchiveNoSevenZip|TestZipMethods|TestZipDocs|TestSevenZip.*|TestListingQuarantine|TestPictureStageReal|TestTextDocs|TestOfficeStageRTFReal|TestDocumentStage(Encrypted|Forms|Attachments|AttachmentBomb)Real|TestEmailConversations)$ ./dispatch/
+=== RUN   TestOfficeStageRTFReal
+--- PASS: TestOfficeStageRTFReal (1.32s)
+=== RUN   TestPictureStageReal
+--- PASS: TestPictureStageReal (0.68s)
+=== RUN   TestEmailConversations
+--- PASS: TestEmailConversations (0.00s)
+=== RUN   TestTarDocs
+--- PASS: TestTarDocs (0.00s)
+=== RUN   TestSevenZipDocs
+--- PASS: TestSevenZipDocs (0.02s)
+=== RUN   TestSevenZipStage
+--- PASS: TestSevenZipStage (0.01s)
+=== RUN   TestSevenZipStreams
+--- PASS: TestSevenZipStreams (0.02s)
+=== RUN   TestZipMethods
+--- PASS: TestZipMethods (0.02s)
+=== RUN   TestSevenZipUnsafe
+--- PASS: TestSevenZipUnsafe (0.05s)
+=== RUN   TestSevenZipQuarantineKept
+--- PASS: TestSevenZipQuarantineKept (0.00s)
+=== RUN   TestSevenZipBombs
+--- PASS: TestSevenZipBombs (0.04s)
+=== RUN   TestSevenZipEncrypted
+--- PASS: TestSevenZipEncrypted (0.01s)
+=== RUN   TestSevenZipDamaged
+--- PASS: TestSevenZipDamaged (0.01s)
+=== RUN   TestDocumentStageEncryptedReal
+--- PASS: TestDocumentStageEncryptedReal (0.98s)
+=== RUN   TestDocumentStageFormsReal
+    document_integration_test.go:108: forms/isartor-interactive-form.pdf: {"fields":[{"name":"field1","type":"text","value":"field"}]}
+    document_integration_test.go:108: forms/pdfa2b-interactive-form-pass.pdf: {"fields":[{"name":"Button","type":"pushbutton"}]}
+--- PASS: TestDocumentStageFormsReal (1.74s)
+=== RUN   TestDocumentStageAttachmentsReal
+    document_integration_test.go:144: file-attachment-annotation.pdf: PF.WK1,  by unrouted, no processor yet
+    document_integration_test.go:144: file-attachment.pdf: KSBASE.WQ2,  by unrouted, no processor yet
+--- PASS: TestDocumentStageAttachmentsReal (1.08s)
+=== RUN   TestDocumentStageAttachmentBombReal
+    document_integration_test.go:238: zeros.bin: attachment "zeros.bin": 1052672 bytes written from a 8762-byte PDF, 120:1; past 1048576 bytes and 100:1
+--- PASS: TestDocumentStageAttachmentBombReal (0.30s)
+=== RUN   TestListingQuarantine
+--- PASS: TestListingQuarantine (0.00s)
+=== RUN   TestTarStage
+--- PASS: TestTarStage (0.00s)
+=== RUN   TestGzipStage
+--- PASS: TestGzipStage (0.00s)
+=== RUN   TestGzipStem
+--- PASS: TestGzipStem (0.00s)
+=== RUN   TestTarUnsafe
+--- PASS: TestTarUnsafe (0.00s)
+=== RUN   TestTarGzipUnsafe
+--- PASS: TestTarGzipUnsafe (0.00s)
+=== RUN   TestTarBombAsWritten
+--- PASS: TestTarBombAsWritten (0.00s)
+=== RUN   TestGzipBombAsWritten
+--- PASS: TestGzipBombAsWritten (0.02s)
+=== RUN   TestArchiveDamaged
+--- PASS: TestArchiveDamaged (0.00s)
+=== RUN   TestTextDocs
+    text_test.go:230: crlf-windows-1252.txt (truth cp1252): decided "windows-1252 (fallback)", correct true, warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding"
+    text_test.go:230: euc-jp.txt (truth euc_jp): decided "windows-1252 (fallback)", correct false, warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding"
+    text_test.go:230: iso-8859-1.txt (truth latin-1): decided "windows-1252 (fallback)", correct true, warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding"
+    text_test.go:230: koi8-r.txt (truth koi8_r): decided "windows-1252 (fallback)", correct false, warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding"
+    text_test.go:230: shift-jis.txt (truth shift_jis): decided "windows-1252 (fallback)", correct false, warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding\n9 U+FFFD replacing what windows-1252 can't decode"
+    text_test.go:230: utf16be-nobom.txt (truth utf-16-be): decided "windows-1252 (fallback)", correct false, warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding\n2 U+FFFD replacing what windows-1252 can't decode"
+    text_test.go:230: utf16le-bom.txt (truth utf-16): decided "utf-16le (byte order mark)", correct true, warnings ""
+    text_test.go:230: utf8-bom.txt (truth utf-8-sig): decided "utf-8 (byte order mark)", correct true, warnings ""
+    text_test.go:230: utf8-nobom.txt (truth utf-8): decided "utf-8", correct true, warnings ""
+    text_test.go:230: windows-1252.txt (truth cp1252): decided "windows-1252 (fallback)", correct true, warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding"
+    text_test.go:230: windows-1256-arabic.txt (truth cp1256): decided "windows-1252 (fallback)", correct false, warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding"
+--- PASS: TestTextDocs (0.00s)
+=== RUN   TestArchiveNoSevenZip
+--- PASS: TestArchiveNoSevenZip (0.00s)
+=== RUN   TestZipDocs
+=== RUN   TestZipDocs/zip-in-zip
+=== RUN   TestZipDocs/unicode-filenames
+=== RUN   TestZipDocs/password-protected
+=== RUN   TestZipDocs/mixed-bundle
+--- PASS: TestZipDocs (0.00s)
+    --- PASS: TestZipDocs/zip-in-zip (0.00s)
+    --- PASS: TestZipDocs/unicode-filenames (0.00s)
+    --- PASS: TestZipDocs/password-protected (0.00s)
+    --- PASS: TestZipDocs/mixed-bundle (0.00s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/dispatch	6.316s
+# findings-formats: go test -tags integration -count=1 -v ./sevenzip/
+=== RUN   TestParseListing
+--- PASS: TestParseListing (0.00s)
+=== RUN   TestParseListingErrors
+--- PASS: TestParseListingErrors (0.00s)
+=== RUN   TestZstdSize
+--- PASS: TestZstdSize (0.00s)
+=== RUN   TestNewReader
+--- PASS: TestNewReader (0.01s)
+=== RUN   TestList
+--- PASS: TestList (0.02s)
+=== RUN   TestListRefused
+--- PASS: TestListRefused (0.01s)
+=== RUN   TestExtract
+--- PASS: TestExtract (0.05s)
+=== RUN   TestExtractStops
+--- PASS: TestExtractStops (0.02s)
+=== RUN   TestFixtureSums
+--- PASS: TestFixtureSums (0.00s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/sevenzip	0.093s
+# findings-formats: go test -tags integration -count=1 -v -run ^(TestCheckListing.*|TestTarBombThresholds|TestUnreadableTar)$ ./inspect/
+=== RUN   TestUnreadableTar
+--- PASS: TestUnreadableTar (0.00s)
+=== RUN   TestTarBombThresholds
+--- PASS: TestTarBombThresholds (0.00s)
+=== RUN   TestCheckListing
+--- PASS: TestCheckListing (0.00s)
+=== RUN   TestCheckListingOptions
+--- PASS: TestCheckListingOptions (0.00s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/inspect	0.003s
+# findings-formats: go test -tags integration -count=1 -v -run ^(TestConvertPages.*|TestConvertRaster.*|TestConvertNoReader)$ ./picture/
+=== RUN   TestConvertPagesTIFFHost
+--- PASS: TestConvertPagesTIFFHost (0.05s)
+=== RUN   TestConvertPagesTIFFDocs
+=== RUN   TestConvertPagesTIFFDocs/scanned-3page-g4.tif
+=== RUN   TestConvertPagesTIFFDocs/scanned-3page-lzw-gray.tif
+=== RUN   TestConvertPagesTIFFDocs/photo-deflate.tif
+=== RUN   TestConvertPagesTIFFDocs/old-style-jpeg-compression.tif
+--- PASS: TestConvertPagesTIFFDocs (4.47s)
+    --- PASS: TestConvertPagesTIFFDocs/scanned-3page-g4.tif (0.51s)
+    --- PASS: TestConvertPagesTIFFDocs/scanned-3page-lzw-gray.tif (1.75s)
+    --- PASS: TestConvertPagesTIFFDocs/photo-deflate.tif (0.38s)
+    --- PASS: TestConvertPagesTIFFDocs/old-style-jpeg-compression.tif (1.80s)
+=== RUN   TestConvertRasterHost
+=== RUN   TestConvertRasterHost/two-images.heic
+=== RUN   TestConvertRasterHost/oriented.webp
+=== RUN   TestConvertRasterHost/animated.webp
+=== RUN   TestConvertRasterHost/animated.avif
+--- PASS: TestConvertRasterHost (0.12s)
+    --- PASS: TestConvertRasterHost/two-images.heic (0.03s)
+    --- PASS: TestConvertRasterHost/oriented.webp (0.01s)
+    --- PASS: TestConvertRasterHost/animated.webp (0.01s)
+    --- PASS: TestConvertRasterHost/animated.avif (0.03s)
+=== RUN   TestConvertRasterDocs
+=== RUN   TestConvertRasterDocs/example.heic
+    pages_integration_test.go:230: recorded: example.heic's top quarter is bluer than red by 82.5
+=== RUN   TestConvertRasterDocs/photo.webp
+=== RUN   TestConvertRasterDocs/text-lossless.webp
+=== RUN   TestConvertRasterDocs/example.avif
+=== RUN   TestConvertRasterDocs/bbb-alpha-inverted.avif
+=== RUN   TestConvertRasterDocs/hdr-cosmos.avif
+=== RUN   TestConvertRasterDocs/monochrome.avif
+--- PASS: TestConvertRasterDocs (6.28s)
+    --- PASS: TestConvertRasterDocs/example.heic (0.59s)
+    --- PASS: TestConvertRasterDocs/photo.webp (1.63s)
+    --- PASS: TestConvertRasterDocs/text-lossless.webp (0.04s)
+    --- PASS: TestConvertRasterDocs/example.avif (0.21s)
+    --- PASS: TestConvertRasterDocs/bbb-alpha-inverted.avif (1.17s)
+    --- PASS: TestConvertRasterDocs/hdr-cosmos.avif (2.41s)
+    --- PASS: TestConvertRasterDocs/monochrome.avif (0.20s)
+=== RUN   TestConvertPagesTIFF
+=== RUN   TestConvertPagesTIFF/three_pages
+=== RUN   TestConvertPagesTIFF/one_page,_named_otherwise
+--- PASS: TestConvertPagesTIFF (0.01s)
+    --- PASS: TestConvertPagesTIFF/three_pages (0.01s)
+    --- PASS: TestConvertPagesTIFF/one_page,_named_otherwise (0.01s)
+=== RUN   TestConvertPagesOne
+--- PASS: TestConvertPagesOne (0.01s)
+=== RUN   TestConvertPagesFails
+=== RUN   TestConvertPagesFails/magick_exits_1
+=== RUN   TestConvertPagesFails/magick_writes_no_PNG
+=== RUN   TestConvertPagesFails/a_page_left_out
+=== RUN   TestConvertPagesFails/no_magick
+--- PASS: TestConvertPagesFails (0.02s)
+    --- PASS: TestConvertPagesFails/magick_exits_1 (0.01s)
+    --- PASS: TestConvertPagesFails/magick_writes_no_PNG (0.01s)
+    --- PASS: TestConvertPagesFails/a_page_left_out (0.01s)
+    --- PASS: TestConvertPagesFails/no_magick (0.00s)
+=== RUN   TestConvertRaster
+=== RUN   TestConvertRaster/heic
+=== RUN   TestConvertRaster/webp
+=== RUN   TestConvertRaster/avif
+--- PASS: TestConvertRaster (0.02s)
+    --- PASS: TestConvertRaster/heic (0.01s)
+    --- PASS: TestConvertRaster/webp (0.01s)
+    --- PASS: TestConvertRaster/avif (0.01s)
+=== RUN   TestConvertNoReader
+--- PASS: TestConvertNoReader (0.01s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/picture	10.997s
+# findings-formats: go test -tags integration -count=1 -timeout 30m -v -run ^TestRTFRoundTrip$ ./office/
+=== RUN   TestRTFRoundTrip
+    rtf_integration_test.go:24: soffice 26.8.2.2 in gotenberg/gotenberg:9.1.0-libreoffice@sha256:4ff340bb7b0753e7d037ceb75a08b09c3a9aebd0e6484df9516ec29ec31074ff
+=== RUN   TestRTFRoundTrip/memo.rtf
+=== RUN   TestRTFRoundTrip/test-rtf.rtf
+--- PASS: TestRTFRoundTrip (1.91s)
+    --- PASS: TestRTFRoundTrip/memo.rtf (0.73s)
+    --- PASS: TestRTFRoundTrip/test-rtf.rtf (0.73s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/office	1.917s
+# findings-formats: go test -tags integration -count=1 -v -run ^(TestFormReal|TestRequiresPasswordReal|TestDetacherReal)$ ./document/
+=== RUN   TestFormReal
+--- PASS: TestFormReal (0.02s)
+=== RUN   TestRequiresPasswordReal
+--- PASS: TestRequiresPasswordReal (0.04s)
+=== RUN   TestDetacherReal
+--- PASS: TestDetacherReal (0.06s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/document	0.116s
+# findings-formats: go test -count=1 -v -run ^(TestRealConversations|TestMessageConversation)$ ./email/
+=== RUN   TestRealConversations
+=== RUN   TestRealConversations/pst/conversations.pst
+--- PASS: TestRealConversations (0.00s)
+    --- PASS: TestRealConversations/pst/conversations.pst (0.00s)
+=== RUN   TestMessageConversation
+=== RUN   TestMessageConversation/conversation
+=== RUN   TestMessageConversation/missed,_its_class_in_another_case
+=== RUN   TestMessageConversation/no_topic,_no_sender
+=== RUN   TestMessageConversation/voice
+=== RUN   TestMessageConversation/missed_voice
+=== RUN   TestMessageConversation/note
+=== RUN   TestMessageConversation/no_class
+--- PASS: TestMessageConversation (0.00s)
+    --- PASS: TestMessageConversation/conversation (0.00s)
+    --- PASS: TestMessageConversation/missed,_its_class_in_another_case (0.00s)
+    --- PASS: TestMessageConversation/no_topic,_no_sender (0.00s)
+    --- PASS: TestMessageConversation/voice (0.00s)
+    --- PASS: TestMessageConversation/missed_voice (0.00s)
+    --- PASS: TestMessageConversation/note (0.00s)
+    --- PASS: TestMessageConversation/no_class (0.00s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/email	0.006s
+# findings-formats: go test -tags findings -count=1 -timeout 60m -v -run ^TestFindingsFormats ./dispatch/
+=== RUN   TestFindingsFormats
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/absolute.tar	-	absolute.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-absolute-path: entry "/tmp/evil.txt", and 1 more
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/absolute.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar	tar entry docs/notes.txt	docs/notes.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar	tar entry docs/pixel.png	docs/pixel.png	1	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar	-	clean.tar	0	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar: 3 parts, 1ms
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/device.tar	-	device.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-device: character device entry "null", 1:3, and 2 more
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/device.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/hardlink.tar	-	hardlink.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-hardlink: entry "shadow" to "/etc/shadow"
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/hardlink.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/sparse-bomb.tar	-	sparse-bomb.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-bomb: entry "zeros.bin": 4294967296 bytes declared in a 2048-byte tar, 2097152:1
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/sparse-bomb.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/symlink.tar	-	symlink.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-symlink: entry "passwd" to "/etc/passwd"
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/symlink.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/traversal.tar	-	traversal.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-traversal: entry "docs/../../evil.txt"
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/traversal.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/bomb.tar.gz	gzip content bomb.tar > tar entry zeros.bin	zeros.bin	2	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/bomb.tar.gz	gzip content bomb.tar	bomb.tar	1	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/bomb.tar.gz	-	bomb.tar.gz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/bomb.tar.gz: 3 parts, 24ms
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar.gz	gzip content clean.tar > tar entry docs/notes.txt	docs/notes.txt	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar.gz	gzip content clean.tar > tar entry docs/pixel.png	docs/pixel.png	2	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar.gz	gzip content clean.tar	clean.tar	1	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar.gz	-	clean.tar.gz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/clean.tar.gz: 4 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/traversal.tar.gz	gzip content traversal.tar	traversal.tar	1	archive	archive	quarantined	0 outputs	0 children	tar-traversal: entry "docs/../../evil.txt"
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/traversal.tar.gz	-	traversal.tar.gz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/traversal.tar.gz: 2 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/unnamed.tgz	gzip content unnamed.tar > tar entry docs/notes.txt	docs/notes.txt	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/unnamed.tgz	gzip content unnamed.tar > tar entry docs/pixel.png	docs/pixel.png	2	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/unnamed.tgz	gzip content unnamed.tar	unnamed.tar	1	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/unnamed.tgz	-	unnamed.tgz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures inspect/testdata/unnamed.tgz: 4 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/bzip2-zip.zip	zip entry lots-of-as	lots-of-as	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/bzip2-zip.zip	-	bzip2-zip.zip	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/bzip2-zip.zip: 2 parts, 1ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip	zip entry lorem-ipsum.txt	lorem-ipsum.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip	-	lorem-ipsum-deflate64.zip	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip: 2 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip	zip entry LOREM.TXT	LOREM.TXT	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip	-	lorem-ipsum-implode.zip	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip: 2 parts, 3ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/test-method-xz.zip	zip entry LICENSE.txt	LICENSE.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/test-method-xz.zip	-	test-method-xz.zip	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/test-method-xz.zip: 2 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/bla.deflate64.7z	7z entry test1.xml	test1.xml	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/bla.deflate64.7z	7z entry test2.xml	test2.xml	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/bla.deflate64.7z	-	bla.deflate64.7z	0	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/commons-compress/bla.deflate64.7z: 3 parts, 6ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx	zip entry vimrc	vimrc	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx	-	test_read_format_zip_lzma.zipx	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx: 2 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_ppmd8.zipx	zip entry vimrc	vimrc	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_ppmd8.zipx	-	test_read_format_zip_ppmd8.zipx	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_ppmd8.zipx: 2 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_zstd.zipx	zip entry vimrc	vimrc	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_zstd.zipx	-	test_read_format_zip_zstd.zipx	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/libarchive/test_read_format_zip_zstd.zipx: 2 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/absolute.7z	-	absolute.7z	0	archive	archive	quarantined	0 outputs	0 children	7z-absolute-path: entry "/tmp/evil.txt", and 1 more
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/absolute.7z: 1 parts, 1ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/absolute.cab	-	absolute.cab	0	archive	archive	quarantined	0 outputs	0 children	cab-absolute-path: entry "/tmp/evil.txt", and 1 more
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/absolute.cab: 1 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.7z	7z entry zeros.bin	zeros.bin	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.7z	-	bomb.7z	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.7z: 2 parts, 27ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.cab	cabinet entry zeros.bin	zeros.bin	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.cab	-	bomb.cab	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.cab: 2 parts, 19ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.zst	zstd content bomb	bomb	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.zst	-	bomb.zst	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/bomb.zst: 2 parts, 17ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.7z	7z entry docs/notes.txt	docs/notes.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.7z	7z entry docs/pixel.png	docs/pixel.png	1	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.7z	-	clean.7z	0	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.7z: 3 parts, 5ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.tar.zst	zstd content clean.tar > tar entry docs/notes.txt	docs/notes.txt	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.tar.zst	zstd content clean.tar > tar entry docs/pixel.png	docs/pixel.png	2	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.tar.zst	zstd content clean.tar	clean.tar	1	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.tar.zst	-	clean.tar.zst	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/clean.tar.zst: 4 parts, 4ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/declared-bomb.zst	-	declared-bomb.zst	0	archive	archive	quarantined	0 outputs	0 children	zstd-bomb: entry "declared-bomb": 4294967296 bytes declared in a 18-byte archive, 238609294:1
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/declared-bomb.zst: 1 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/device.7z	-	device.7z	0	archive	archive	quarantined	0 outputs	0 children	7z-device: entry "pipe"
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/device.7z: 1 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/encrypted-headers.7z	-	encrypted-headers.7z	0	archive	archive	encrypted	0 outputs	0 children	archive stage: a 7z archive whose headers are encrypted: encrypted: sevenzip: list encrypted-headers.7z: encrypted: ERROR: /home/jaime/experiments/spike-ai-pipeline-processing/sevenzip/testdata/generated/encrypted-headers.7z : Cannot open encrypted archive. Wrong password?; Headers Error: tool: 7zz: exit code 2
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/encrypted-headers.7z: 1 parts, 4ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/encrypted.7z	7z entry notes.txt	notes.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/encrypted.7z	-	record 7z entry secret.txt: 7z-encrypted encrypted: entry "secret.txt"
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/encrypted.7z	-	encrypted.7z	0	archive	archive	encrypted	1 outputs	1 children	archive stage: 1 of 2 entries: encrypted
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/encrypted.7z: 2 parts, 4ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/notebook.cab	cabinet entry Open Notebook.onetoc2	Open Notebook.onetoc2	1	onenote	onenote	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/notebook.cab	cabinet entry New Section 1.one	New Section 1.one	1	onenote	onenote	prepared	4 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/notebook.cab	-	notebook.cab	0	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/notebook.cab: 3 parts, 9ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/symlink.7z	-	symlink.7z	0	archive	archive	quarantined	0 outputs	0 children	7z-symlink: entry "passwd"
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/symlink.7z: 1 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/traversal.7z	-	traversal.7z	0	archive	archive	quarantined	0 outputs	0 children	7z-traversal: entry "docs/../../evil.txt"
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/traversal.7z: 1 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/traversal.cab	-	traversal.cab	0	archive	archive	quarantined	0 outputs	0 children	cab-traversal: entry "docs/../../evil.txt"
+    findings_formats_test.go:408: recorded: archives fixtures sevenzip/testdata/generated/traversal.cab: 1 parts, 2ms
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/pages.tiff	-	pages.tiff	0	vision-converted	picture	prepared	3 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/pages.tiff: 1 parts, 8ms
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/two-images.heic	-	two-images.heic	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/two-images.heic: 1 parts, 13ms
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/oriented.webp	-	oriented.webp	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/oriented.webp: 1 parts, 5ms
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/animated.webp	-	animated.webp	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/animated.webp: 1 parts, 4ms
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/animated.avif	-	animated.avif	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures fixtures picture/testdata/animated.avif: 1 parts, 19ms
+    findings_formats_test.go:408: recorded: rtf fixtures office/testdata/rtf/memo.rtf	-	memo.rtf	0	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: rtf fixtures office/testdata/rtf/memo.rtf: 1 parts, 738ms
+    findings_formats_test.go:408: recorded: pdfs fixtures document/testdata/forms/acroform.pdf	-	acroform.pdf	0	document	document	prepared	3 outputs	0 children	
+    findings_formats_test.go:408: recorded: pdfs fixtures document/testdata/forms/acroform.pdf: 1 parts, 221ms
+    findings_formats_test.go:408: recorded: pdfs fixtures document/testdata/clean.pdf	-	clean.pdf	0	document	document	prepared	12 outputs	0 children	
+    findings_formats_test.go:408: recorded: pdfs fixtures document/testdata/clean.pdf: 1 parts, 663ms
+    findings_formats_test.go:408: recorded: conversations fixtures email/testdata/mail/fixtures/generated/pst/conversations.pst	-	conversations.pst	0	nested	email	prepared	14 outputs	0 children	
+    findings_formats_test.go:408: recorded: conversations fixtures email/testdata/mail/fixtures/generated/pst/conversations.pst: 1 parts, 2ms
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip	zip entry meeting-notes.txt	meeting-notes.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip	zip entry mail/04-attachment-cyrillic.eml > message, attachment 1	отчёт.csv	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip	zip entry mail/04-attachment-cyrillic.eml	mail/04-attachment-cyrillic.eml	1	nested	email	prepared	3 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip	zip entry docs/shapes.png	docs/shapes.png	1	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip	zip entry docs/mgrs-field-report.pdf	docs/mgrs-field-report.pdf	1	document	document	prepared	6 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip	zip entry docs/SampleSS.xls	docs/SampleSS.xls	1	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip	zip entry docs/word-tables.docx	docs/word-tables.docx	1	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip	-	mixed-bundle.zip	0	archive	archive	prepared	0 outputs	6 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.zip: 8 parts, 1.169s
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./meeting-notes.txt	./meeting-notes.txt	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./docs/shapes.png	./docs/shapes.png	2	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./docs/mgrs-field-report.pdf	./docs/mgrs-field-report.pdf	2	document	document	prepared	6 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./docs/SampleSS.xls	./docs/SampleSS.xls	2	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./docs/word-tables.docx	./docs/word-tables.docx	2	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./mail/04-attachment-cyrillic.eml > message, attachment 1	отчёт.csv	3	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./mail/04-attachment-cyrillic.eml	./mail/04-attachment-cyrillic.eml	2	nested	email	prepared	3 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar	mixed-bundle.tar	1	archive	archive	prepared	0 outputs	6 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz	-	mixed-bundle.tar.gz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.gz: 9 parts, 1.145s
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	zstd content mixed-bundle.tar > tar entry ./meeting-notes.txt	./meeting-notes.txt	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	zstd content mixed-bundle.tar > tar entry ./docs/shapes.png	./docs/shapes.png	2	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	zstd content mixed-bundle.tar > tar entry ./docs/mgrs-field-report.pdf	./docs/mgrs-field-report.pdf	2	document	document	prepared	6 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	zstd content mixed-bundle.tar > tar entry ./docs/SampleSS.xls	./docs/SampleSS.xls	2	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	zstd content mixed-bundle.tar > tar entry ./docs/word-tables.docx	./docs/word-tables.docx	2	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	zstd content mixed-bundle.tar > tar entry ./mail/04-attachment-cyrillic.eml > message, attachment 1	отчёт.csv	3	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	zstd content mixed-bundle.tar > tar entry ./mail/04-attachment-cyrillic.eml	./mail/04-attachment-cyrillic.eml	2	nested	email	prepared	3 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	zstd content mixed-bundle.tar	mixed-bundle.tar	1	archive	archive	prepared	0 outputs	6 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst	-	mixed-bundle.tar.zst	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.tar.zst: 9 parts, 1.155s
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z	7z entry ./meeting-notes.txt	./meeting-notes.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z	7z entry ./docs/shapes.png	./docs/shapes.png	1	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z	7z entry ./docs/mgrs-field-report.pdf	./docs/mgrs-field-report.pdf	1	document	document	prepared	6 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z	7z entry ./docs/SampleSS.xls	./docs/SampleSS.xls	1	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z	7z entry ./docs/word-tables.docx	./docs/word-tables.docx	1	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z	7z entry ./mail/04-attachment-cyrillic.eml > message, attachment 1	отчёт.csv	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z	7z entry ./mail/04-attachment-cyrillic.eml	./mail/04-attachment-cyrillic.eml	1	nested	email	prepared	3 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z	-	mixed-bundle.7z	0	archive	archive	prepared	0 outputs	6 children	
+    findings_formats_test.go:408: recorded: archives docs ~/docs/archive/mixed-bundle.7z: 8 parts, 1.204s
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/tiff/scanned-3page-g4.tif	-	scanned-3page-g4.tif	0	vision-converted	picture	prepared	3 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/tiff/scanned-3page-g4.tif: 1 parts, 259ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif	-	scanned-3page-lzw-gray.tif	0	vision-converted	picture	prepared	3 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif: 1 parts, 842ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/tiff/photo-deflate.tif	-	photo-deflate.tif	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/tiff/photo-deflate.tif: 1 parts, 178ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/tiff/old-style-jpeg-compression.tif	-	old-style-jpeg-compression.tif	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/tiff/old-style-jpeg-compression.tif: 1 parts, 877ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/heic/example.heic	-	example.heic	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/heic/example.heic: 1 parts, 282ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/webp/photo.webp	-	photo.webp	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/webp/photo.webp: 1 parts, 776ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/webp/text-lossless.webp	-	text-lossless.webp	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/webp/text-lossless.webp: 1 parts, 16ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/avif/example.avif	-	example.avif	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/avif/example.avif: 1 parts, 102ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/avif/bbb-alpha-inverted.avif	-	bbb-alpha-inverted.avif	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/avif/bbb-alpha-inverted.avif: 1 parts, 567ms
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/avif/hdr-cosmos.avif	-	hdr-cosmos.avif	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/avif/hdr-cosmos.avif: 1 parts, 1.146s
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/avif/monochrome.avif	-	monochrome.avif	0	vision-converted	picture	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: pictures docs ~/docs/image/formats/avif/monochrome.avif: 1 parts, 104ms
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/utf8-nobom.txt	-	utf8-nobom.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/utf8-nobom.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/utf8-bom.txt	-	utf8-bom.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/utf8-bom.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/utf16le-bom.txt	-	utf16le-bom.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/utf16le-bom.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/windows-1252.txt	-	windows-1252.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/windows-1252.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/crlf-windows-1252.txt	-	crlf-windows-1252.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/crlf-windows-1252.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/iso-8859-1.txt	-	iso-8859-1.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/iso-8859-1.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/koi8-r.txt	-	koi8-r.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/koi8-r.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/euc-jp.txt	-	euc-jp.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/euc-jp.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/shift-jis.txt	-	shift-jis.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/shift-jis.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/windows-1256-arabic.txt	-	windows-1256-arabic.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/windows-1256-arabic.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/utf16be-nobom.txt	-	utf16be-nobom.txt	0	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: text docs ~/docs/text/encodings/utf16be-nobom.txt: 1 parts, 0s
+    findings_formats_test.go:408: recorded: rtf docs ~/docs/office/rtf/test-rtf.rtf	-	test-rtf.rtf	0	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: rtf docs ~/docs/office/rtf/test-rtf.rtf: 1 parts, 848ms
+    findings_formats_test.go:408: recorded: rtf docs ~/docs/office/rtf/lists.libreoffice.rtf	-	lists.libreoffice.rtf	0	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: rtf docs ~/docs/office/rtf/lists.libreoffice.rtf: 1 parts, 752ms
+    findings_formats_test.go:408: recorded: rtf docs ~/docs/office/rtf/tables.libreoffice.rtf	-	tables.libreoffice.rtf	0	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: rtf docs ~/docs/office/rtf/tables.libreoffice.rtf: 1 parts, 784ms
+    findings_formats_test.go:408: recorded: rtf docs ~/docs/office/rtf/lorem-ipsum-calibre.rtf	-	lorem-ipsum-calibre.rtf	0	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: rtf docs ~/docs/office/rtf/lorem-ipsum-calibre.rtf: 1 parts, 734ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf	-	encryption-openpassword.pdf	0	document	document	encrypted	0 outputs	0 children	document stage: the PDF needs a password: encrypted
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf: 1 parts, 6ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/simple-open-password.pdf	-	simple-open-password.pdf	0	document	document	encrypted	0 outputs	0 children	document stage: the PDF needs a password: encrypted
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/simple-open-password.pdf: 1 parts, 5ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf	-	unicode-password-corrigendum5.pdf	0	document	document	encrypted	0 outputs	0 children	document stage: the PDF needs a password: encrypted
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf: 1 parts, 5ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf	-	encryption-nocopy.pdf	0	document	document	prepared	2 outputs	0 children	
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf: 1 parts, 130ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf	-	encryption-notextaccess.pdf	0	document	document	prepared	2 outputs	0 children	
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf: 1 parts, 135ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf	-	unicode-password-baseline.pdf	0	document	document	prepared	2 outputs	0 children	
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf: 1 parts, 125ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/forms/isartor-interactive-form.pdf	-	isartor-interactive-form.pdf	0	document	document	prepared	3 outputs	0 children	
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/forms/isartor-interactive-form.pdf: 1 parts, 127ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf	-	pdfa2b-interactive-form-pass.pdf	0	document	document	prepared	2 outputs	0 children	
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf: 1 parts, 118ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/attachments/file-attachment.pdf	attachment KSBASE.WQ2	KSBASE.WQ2	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/attachments/file-attachment.pdf	-	file-attachment.pdf	0	document	document	prepared	2 outputs	1 children	
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/attachments/file-attachment.pdf: 2 parts, 140ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf	attachment PF.WK1	PF.WK1	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf	-	file-attachment-annotation.pdf	0	document	document	prepared	2 outputs	1 children	
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf: 2 parts, 163ms
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/attachments/embedded-video-avi.pdf	-	embedded-video-avi.pdf	0	document	document	prepared	2 outputs	0 children	
+    findings_formats_test.go:408: recorded: pdfs docs ~/docs/pdf/edge/attachments/embedded-video-avi.pdf: 1 parts, 177ms
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/absolute.tar	-	absolute.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-absolute-path: entry "/tmp/evil.txt", and 1 more
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/absolute.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar	tar entry docs/notes.txt	docs/notes.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar	tar entry docs/pixel.png	docs/pixel.png	1	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar	-	clean.tar	0	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar: 3 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/device.tar	-	device.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-device: character device entry "null", 1:3, and 2 more
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/device.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/hardlink.tar	-	hardlink.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-hardlink: entry "shadow" to "/etc/shadow"
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/hardlink.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/sparse-bomb.tar	-	sparse-bomb.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-bomb: entry "zeros.bin": 4294967296 bytes declared in a 2048-byte tar, 2097152:1
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/sparse-bomb.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/symlink.tar	-	symlink.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-symlink: entry "passwd" to "/etc/passwd"
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/symlink.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/traversal.tar	-	traversal.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-traversal: entry "docs/../../evil.txt"
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/traversal.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/bomb.tar.gz	gzip content bomb.tar > tar entry zeros.bin	zeros.bin	2	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/bomb.tar.gz	gzip content bomb.tar	bomb.tar	1	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/bomb.tar.gz	-	bomb.tar.gz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/bomb.tar.gz: 3 parts, 24ms
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar.gz	gzip content clean.tar > tar entry docs/notes.txt	docs/notes.txt	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar.gz	gzip content clean.tar > tar entry docs/pixel.png	docs/pixel.png	2	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar.gz	gzip content clean.tar	clean.tar	1	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar.gz	-	clean.tar.gz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/clean.tar.gz: 4 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/traversal.tar.gz	gzip content traversal.tar	traversal.tar	1	archive	archive	quarantined	0 outputs	0 children	tar-traversal: entry "docs/../../evil.txt"
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/traversal.tar.gz	-	traversal.tar.gz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/traversal.tar.gz: 2 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/unnamed.tgz	gzip content unnamed.tar > tar entry docs/notes.txt	docs/notes.txt	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/unnamed.tgz	gzip content unnamed.tar > tar entry docs/pixel.png	docs/pixel.png	2	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/unnamed.tgz	gzip content unnamed.tar	unnamed.tar	1	archive	archive	prepared	0 outputs	2 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/unnamed.tgz	-	unnamed.tgz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip inspect/testdata/unnamed.tgz: 4 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/bzip2-zip.zip	zip entry lots-of-as	lots-of-as	1	unrouted	-	no processor yet	0 outputs	0 children	no stage for route unrouted
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/bzip2-zip.zip	-	bzip2-zip.zip	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/bzip2-zip.zip: 2 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip	-	lorem-ipsum-deflate64.zip	0	archive	archive	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip	-	lorem-ipsum-implode.zip	0	archive	archive	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/test-method-xz.zip	-	test-method-xz.zip	0	archive	archive	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/test-method-xz.zip: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/bla.deflate64.7z	-	bla.deflate64.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/commons-compress/bla.deflate64.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx	-	test_read_format_zip_lzma.zipx	0	archive	archive	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/libarchive/test_read_format_zip_ppmd8.zipx	-	test_read_format_zip_ppmd8.zipx	0	archive	archive	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/libarchive/test_read_format_zip_ppmd8.zipx: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/libarchive/test_read_format_zip_zstd.zipx	-	test_read_format_zip_zstd.zipx	0	archive	archive	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/libarchive/test_read_format_zip_zstd.zipx: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/absolute.7z	-	absolute.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/absolute.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/absolute.cab	-	absolute.cab	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a cabinet without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/absolute.cab: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/bomb.7z	-	bomb.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/bomb.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/bomb.cab	-	bomb.cab	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a cabinet without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/bomb.cab: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/bomb.zst	-	bomb.zst	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a zstd stream without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/bomb.zst: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/clean.7z	-	clean.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/clean.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/clean.tar.zst	-	clean.tar.zst	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a zstd stream without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/clean.tar.zst: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/declared-bomb.zst	-	declared-bomb.zst	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a zstd stream without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/declared-bomb.zst: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/device.7z	-	device.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/device.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/encrypted-headers.7z	-	encrypted-headers.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/encrypted-headers.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/encrypted.7z	-	encrypted.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/encrypted.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/notebook.cab	-	notebook.cab	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a cabinet without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/notebook.cab: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/symlink.7z	-	symlink.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/symlink.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/traversal.7z	-	traversal.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/traversal.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/traversal.cab	-	traversal.cab	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a cabinet without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives fixtures, no 7-Zip sevenzip/testdata/generated/traversal.cab: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip	zip entry meeting-notes.txt	meeting-notes.txt	1	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip	zip entry mail/04-attachment-cyrillic.eml > message, attachment 1	отчёт.csv	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip	zip entry mail/04-attachment-cyrillic.eml	mail/04-attachment-cyrillic.eml	1	nested	email	prepared	3 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip	zip entry docs/shapes.png	docs/shapes.png	1	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip	zip entry docs/mgrs-field-report.pdf	docs/mgrs-field-report.pdf	1	document	document	prepared	6 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip	zip entry docs/SampleSS.xls	docs/SampleSS.xls	1	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip	zip entry docs/word-tables.docx	docs/word-tables.docx	1	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip	-	mixed-bundle.zip	0	archive	archive	prepared	0 outputs	6 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.zip: 8 parts, 1.145s
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./meeting-notes.txt	./meeting-notes.txt	2	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./docs/shapes.png	./docs/shapes.png	2	vision	vision	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./docs/mgrs-field-report.pdf	./docs/mgrs-field-report.pdf	2	document	document	prepared	6 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./docs/SampleSS.xls	./docs/SampleSS.xls	2	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./docs/word-tables.docx	./docs/word-tables.docx	2	office	office	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./mail/04-attachment-cyrillic.eml > message, attachment 1	отчёт.csv	3	text	text	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar > tar entry ./mail/04-attachment-cyrillic.eml	./mail/04-attachment-cyrillic.eml	2	nested	email	prepared	3 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	gzip content mixed-bundle.tar	mixed-bundle.tar	1	archive	archive	prepared	0 outputs	6 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz	-	mixed-bundle.tar.gz	0	archive	archive	prepared	0 outputs	1 children	
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.gz: 9 parts, 1.143s
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.zst	-	mixed-bundle.tar.zst	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a zstd stream without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.tar.zst: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.7z	-	mixed-bundle.7z	0	archive	archive	no processor yet	0 outputs	0 children	archive stage: a 7z archive without 7-Zip: no processor yet
+    findings_formats_test.go:408: recorded: archives docs, no 7-Zip ~/docs/archive/mixed-bundle.7z: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds inspect/testdata/bomb.tar.gz	-	record gzip content bomb.tar: gzip-bomb quarantined: content "bomb.tar": 1081344 bytes written from 8240, 131:1; past 1048576 bytes and 100:1
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds inspect/testdata/bomb.tar.gz	-	bomb.tar.gz	0	archive	archive	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds inspect/testdata/bomb.tar.gz: 1 parts, 1ms
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds inspect/testdata/sparse-bomb.tar	-	sparse-bomb.tar	0	archive	archive	quarantined	0 outputs	0 children	tar-bomb: entry "zeros.bin": 4294967296 bytes declared in a 2048-byte tar, 2097152:1
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds inspect/testdata/sparse-bomb.tar: 1 parts, 0s
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds sevenzip/testdata/generated/bomb.7z	-	bomb.7z	0	archive	archive	quarantined	0 outputs	0 children	7z-bomb: entry "zeros.bin": 8388608 bytes declared in a 1408-byte archive, 5958:1
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds sevenzip/testdata/generated/bomb.7z: 1 parts, 1ms
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds sevenzip/testdata/generated/bomb.cab	-	bomb.cab	0	archive	archive	quarantined	0 outputs	0 children	cab-bomb: entry "zeros.bin": 8388608 bytes declared in a 14662-byte archive, 572:1
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds sevenzip/testdata/generated/bomb.cab: 1 parts, 2ms
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds sevenzip/testdata/generated/bomb.zst	-	record zstd content bomb: zstd-bomb quarantined: content "bomb": 1081344 bytes written from 262, 4127:1; past 1048576 bytes and 100:1
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds sevenzip/testdata/generated/bomb.zst	-	bomb.zst	0	archive	archive	prepared	1 outputs	0 children	
+    findings_formats_test.go:408: recorded: archives fixtures, lowered thresholds sevenzip/testdata/generated/bomb.zst: 1 parts, 4ms
+    findings_formats_test.go:430: recorded: mixed-bundle.zip's parts below its entries: 7
+    findings_formats_test.go:430: recorded: mixed-bundle.zip	docs/SampleSS.xls	office prepared 53c9bd7337aa79fedf29cef8d81ec47fff39f80e25da9d74bc354cfdf1c43b73
+    findings_formats_test.go:430: recorded: mixed-bundle.zip	docs/mgrs-field-report.pdf	document prepared 83d43f959b42248316d7250ce5fe14ddbaf2169cd063c982f8a6ae397f8e8759
+    findings_formats_test.go:430: recorded: mixed-bundle.zip	docs/shapes.png	vision prepared c5a91802f08297d5af8e7b220d13619e03b8f48d05d07e9d0d27cc657e0957a0
+    findings_formats_test.go:430: recorded: mixed-bundle.zip	docs/word-tables.docx	office prepared 0d69a7ef0e1ba2b3142394ed708227b95cf37de037ee71f434853d30e3ca5a55
+    findings_formats_test.go:430: recorded: mixed-bundle.zip	mail/04-attachment-cyrillic.eml	nested prepared 9535f215889d3c8089eb6fd16c7bf6dce3b866c6d9bd2e530e2ea109ebbc0dd7
+    findings_formats_test.go:430: recorded: mixed-bundle.zip	mail/04-attachment-cyrillic.eml > message, attachment 1	text prepared 3cd92247aaf1de8fd37aca2f4f5e81268f17b0044db3fb757c5eb7168cba4a3e
+    findings_formats_test.go:430: recorded: mixed-bundle.zip	meeting-notes.txt	text prepared ba8c4363f2ff8362de620f5733d402a69d5d8714f76eb48872cdb420baece460
+    findings_formats_test.go:430: recorded: check ~/docs/archive/mixed-bundle.tar.gz: 7 parts below its entries: the same parts, routes, and outcomes as mixed-bundle.zip
+    findings_formats_test.go:430: recorded: check ~/docs/archive/mixed-bundle.tar.zst: 7 parts below its entries: the same parts, routes, and outcomes as mixed-bundle.zip
+    findings_formats_test.go:430: recorded: check ~/docs/archive/mixed-bundle.7z: 7 parts below its entries: the same parts, routes, and outcomes as mixed-bundle.zip
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/webp/photo.webp: images: 1
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/webp/text-lossless.webp: images: 1
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/avif/monochrome.avif: images: 1
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/avif/hdr-cosmos.avif: images: 1
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/tiff/old-style-jpeg-compression.tif: pages: 1
+    findings_formats_test.go:431: recorded: check picture/testdata/animated.webp: images: 1
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/heic/example.heic: images: 1
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/avif/bbb-alpha-inverted.avif: images: 1
+    findings_formats_test.go:431: recorded: check picture/testdata/animated.avif: images: 1
+    findings_formats_test.go:431: recorded: check picture/testdata/oriented.webp: images: 1
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif: pages: 3
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/tiff/scanned-3page-g4.tif: pages: 3
+    findings_formats_test.go:431: recorded: check picture/testdata/pages.tiff: pages: 3
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/tiff/photo-deflate.tif: pages: 1
+    findings_formats_test.go:431: recorded: check picture/testdata/two-images.heic: images: 1
+    findings_formats_test.go:431: recorded: check ~/docs/image/formats/avif/example.avif: images: 1
+    findings_formats_test.go:432: recorded: encoding crlf-windows-1252.txt: truth cp1252, decided "windows-1252 (fallback)", warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding", the truth's text
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/crlf-windows-1252.txt: text, truth cp1252, decided windows-1252 (fallback): the truth's text
+    findings_formats_test.go:432: recorded: encoding euc-jp.txt: truth euc_jp, decided "windows-1252 (fallback)", warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding", garbled
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/euc-jp.txt: text, truth euc_jp, decided windows-1252 (fallback): garbled
+    findings_formats_test.go:432: recorded: encoding iso-8859-1.txt: truth latin-1, decided "windows-1252 (fallback)", warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding", the truth's text
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/iso-8859-1.txt: text, truth latin-1, decided windows-1252 (fallback): the truth's text
+    findings_formats_test.go:432: recorded: encoding koi8-r.txt: truth koi8_r, decided "windows-1252 (fallback)", warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding", garbled
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/koi8-r.txt: text, truth koi8_r, decided windows-1252 (fallback): garbled
+    findings_formats_test.go:432: recorded: encoding shift-jis.txt: truth shift_jis, decided "windows-1252 (fallback)", warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding\n9 U+FFFD replacing what windows-1252 can't decode", garbled
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/shift-jis.txt: text, truth shift_jis, decided windows-1252 (fallback): garbled
+    findings_formats_test.go:432: recorded: encoding utf16be-nobom.txt: truth utf-16-be, decided "windows-1252 (fallback)", warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding\n2 U+FFFD replacing what windows-1252 can't decode", garbled
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/utf16be-nobom.txt: text, truth utf-16-be, decided windows-1252 (fallback): garbled
+    findings_formats_test.go:432: recorded: encoding utf16le-bom.txt: truth utf-16, decided "utf-16le (byte order mark)", warnings "", the truth's text
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/utf16le-bom.txt: text, truth utf-16, decided utf-16le (byte order mark): the truth's text
+    findings_formats_test.go:432: recorded: encoding utf8-bom.txt: truth utf-8-sig, decided "utf-8 (byte order mark)", warnings "", the truth's text
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/utf8-bom.txt: text, truth utf-8-sig, decided utf-8 (byte order mark): the truth's text
+    findings_formats_test.go:432: recorded: encoding utf8-nobom.txt: truth utf-8, decided "utf-8", warnings "", the truth's text
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/utf8-nobom.txt: text, truth utf-8, decided utf-8: the truth's text
+    findings_formats_test.go:432: recorded: encoding windows-1252.txt: truth cp1252, decided "windows-1252 (fallback)", warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding", the truth's text
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/windows-1252.txt: text, truth cp1252, decided windows-1252 (fallback): the truth's text
+    findings_formats_test.go:432: recorded: encoding windows-1256-arabic.txt: truth cp1256, decided "windows-1252 (fallback)", warnings "no byte order mark and not UTF-8: decoded as windows-1252, which may not be the text's encoding", garbled
+    findings_formats_test.go:432: recorded: check ~/docs/text/encodings/windows-1256-arabic.txt: text, truth cp1256, decided windows-1252 (fallback): garbled
+    findings_formats_test.go:433: recorded: check office/testdata/rtf/memo.rtf: converted from: rtf
+    findings_formats_test.go:433: recorded: check office/testdata/rtf/memo.rtf: a line # Harbor memo: present
+    findings_formats_test.go:433: recorded: check office/testdata/rtf/memo.rtf: a line | North | 12 m |: present
+    findings_formats_test.go:433: recorded: check ~/docs/office/rtf/test-rtf.rtf: converted from: rtf
+    findings_formats_test.go:433: recorded: check ~/docs/office/rtf/test-rtf.rtf: a line Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager. Sluwe Sjaantje sloeg de slome slager.: present
+    findings_formats_test.go:433: recorded: check ~/docs/office/rtf/test-rtf.rtf: the \tc title alone on a line: absent
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf: outcome: encrypted
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf: pages: nothing rendered
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/simple-open-password.pdf: outcome: encrypted
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/simple-open-password.pdf: pages: nothing rendered
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf: outcome: encrypted
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf: pages: nothing rendered
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf: outcome: prepared
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf: pages: rendered
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf: outcome: prepared
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf: pages: rendered
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf: outcome: prepared
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf: pages: rendered
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/forms/isartor-interactive-form.pdf: forms record's fields: 1
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf: forms record's fields: 1
+    findings_formats_test.go:434: recorded: check document/testdata/clean.pdf: forms record's fields: no forms record
+    findings_formats_test.go:434: recorded: check document/testdata/forms/acroform.pdf: forms record's fields: 7
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/attachments/file-attachment.pdf: attachments found: KSBASE.WQ2 at attachment KSBASE.WQ2, 
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf: attachments found: PF.WK1 at attachment PF.WK1, 
+    findings_formats_test.go:434: recorded: check ~/docs/pdf/edge/attachments/embedded-video-avi.pdf: attachments found: 
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 01-chat-one-to-one.json: class: IPM.Note.Microsoft.Conversation
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 01-chat-one-to-one.json: participants: Priya Raman <priya.raman@example.com>, Tomás Ferreira <tomas.ferreira@example.com>
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 01-chat-one-to-one.json: start, end: 2026-03-10 14:02:11 +0000 UTC, 2026-03-10 14:07:48 +0000 UTC
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 01-chat-one-to-one.json: missed: false
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 01-chat-one-to-one.json: HTML as stored: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 01-chat-one-to-one.json: record's Markdown: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 01-chat-one-to-one.json: Markdown output: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 02-chat-multi-party.json: class: IPM.Note.Microsoft.Conversation
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 02-chat-multi-party.json: participants: Wen Okafor <wen.okafor@example.com>, Priya Raman <priya.raman@example.com>, Tomás Ferreira <tomas.ferreira@example.com>, Dana Kowalski <dana.kowalski@example.com>
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 02-chat-multi-party.json: start, end: 2026-03-11 09:30:04 +0000 UTC, 2026-03-11 09:41:52 +0000 UTC
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 02-chat-multi-party.json: missed: false
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 02-chat-multi-party.json: HTML as stored: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 02-chat-multi-party.json: record's Markdown: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 02-chat-multi-party.json: Markdown output: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 03-chat-incoming.json: class: IPM.Note.Microsoft.Conversation
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 03-chat-incoming.json: participants: Dana Kowalski <dana.kowalski@example.com>, Priya Raman <priya.raman@example.com>
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 03-chat-incoming.json: start, end: 2026-03-11 15:12:40 +0000 UTC, 2026-03-11 15:14:05 +0000 UTC
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 03-chat-incoming.json: missed: false
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 03-chat-incoming.json: HTML as stored: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 03-chat-incoming.json: record's Markdown: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 03-chat-incoming.json: Markdown output: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 04-missed.json: class: IPM.Note.Microsoft.Missed
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 04-missed.json: participants: Tomás Ferreira <tomas.ferreira@example.com>, Priya Raman <priya.raman@example.com>
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 04-missed.json: start, end: 2026-03-12 17:48:20 +0000 UTC, 2026-03-12 17:53:20 +0000 UTC
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 04-missed.json: missed: true
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 04-missed.json: HTML as stored: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 04-missed.json: record's Markdown: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 04-missed.json: Markdown output: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 05-note.json: a message, class: IPM.Note
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: 05-note.json: Markdown output: the truth's
+    findings_formats_test.go:435: recorded: check email/testdata/mail/fixtures/generated/pst/conversations.pst: items matched: 5
+    findings_formats_test.go:444: recorded: count docs, no 7-Zip: archive × no processor yet	2
+    findings_formats_test.go:444: recorded: count docs, no 7-Zip: archive × prepared	3
+    findings_formats_test.go:444: recorded: count docs, no 7-Zip: document × prepared	2
+    findings_formats_test.go:444: recorded: count docs, no 7-Zip: nested × prepared	2
+    findings_formats_test.go:444: recorded: count docs, no 7-Zip: office × prepared	4
+    findings_formats_test.go:444: recorded: count docs, no 7-Zip: text × prepared	4
+    findings_formats_test.go:444: recorded: count docs, no 7-Zip: vision × prepared	2
+    findings_formats_test.go:444: recorded: count docs: archive × prepared	6
+    findings_formats_test.go:444: recorded: count docs: document × encrypted	3
+    findings_formats_test.go:444: recorded: count docs: document × prepared	12
+    findings_formats_test.go:444: recorded: count docs: nested × prepared	4
+    findings_formats_test.go:444: recorded: count docs: office × prepared	12
+    findings_formats_test.go:444: recorded: count docs: text × prepared	19
+    findings_formats_test.go:444: recorded: count docs: unrouted × no processor yet	2
+    findings_formats_test.go:444: recorded: count docs: vision × prepared	4
+    findings_formats_test.go:444: recorded: count docs: vision-converted × prepared	11
+    findings_formats_test.go:444: recorded: count fixtures, lowered thresholds: archive × prepared	2
+    findings_formats_test.go:444: recorded: count fixtures, lowered thresholds: archive × quarantined	3
+    findings_formats_test.go:444: recorded: count fixtures, no 7-Zip: archive × no processor yet	16
+    findings_formats_test.go:444: recorded: count fixtures, no 7-Zip: archive × prepared	15
+    findings_formats_test.go:444: recorded: count fixtures, no 7-Zip: archive × quarantined	7
+    findings_formats_test.go:444: recorded: count fixtures, no 7-Zip: text × prepared	3
+    findings_formats_test.go:444: recorded: count fixtures, no 7-Zip: unrouted × no processor yet	2
+    findings_formats_test.go:444: recorded: count fixtures, no 7-Zip: vision × prepared	3
+    findings_formats_test.go:444: recorded: count fixtures: archive × encrypted	2
+    findings_formats_test.go:444: recorded: count fixtures: archive × prepared	23
+    findings_formats_test.go:444: recorded: count fixtures: archive × quarantined	14
+    findings_formats_test.go:444: recorded: count fixtures: document × prepared	2
+    findings_formats_test.go:444: recorded: count fixtures: nested × prepared	1
+    findings_formats_test.go:444: recorded: count fixtures: office × prepared	1
+    findings_formats_test.go:444: recorded: count fixtures: onenote × prepared	2
+    findings_formats_test.go:444: recorded: count fixtures: text × prepared	11
+    findings_formats_test.go:444: recorded: count fixtures: unrouted × no processor yet	8
+    findings_formats_test.go:444: recorded: count fixtures: vision × prepared	5
+    findings_formats_test.go:444: recorded: count fixtures: vision-converted × prepared	5
+--- PASS: TestFindingsFormats (19.88s)
+=== RUN   TestFindingsFormatsCost
+    findings_formats_test.go:821: recorded: email/testdata/mail/fixtures/generated/pst/conversations.pst floor: maxrss 10.6 MiB
+    findings_formats_test.go:821: recorded: email/testdata/mail/fixtures/generated/pst/conversations.pst dispatch run 1: wall 550ms, user 101ms, system 63ms, maxrss 33.3 MiB; own maxrss 16.5 MiB, user 9ms, system 4ms; children's maxrss 33.3 MiB, user 92ms, system 59ms; wrote 3 files, 13797 bytes
+    findings_formats_test.go:821: recorded: email/testdata/mail/fixtures/generated/pst/conversations.pst dispatch run 2: wall 536ms, user 113ms, system 54ms, maxrss 33.3 MiB; own maxrss 18.6 MiB, user 7ms, system 3ms; children's maxrss 33.3 MiB, user 105ms, system 51ms; wrote 3 files, 13797 bytes
+    findings_formats_test.go:821: recorded: email/testdata/mail/fixtures/generated/pst/conversations.pst dispatch run 3: wall 535ms, user 80ms, system 77ms, maxrss 33.5 MiB; own maxrss 18.2 MiB, user 5ms, system 5ms; children's maxrss 33.5 MiB, user 75ms, system 72ms; wrote 3 files, 13797 bytes
+    findings_formats_test.go:821: recorded: email/testdata/mail/fixtures/generated/pst/conversations.pst dispatch, 3 runs: median wall 536ms, peak memory 33.5 MiB, its own 18.6 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: email/testdata/mail/fixtures/generated/pst/conversations.pst dispatch, 3 runs: median dispatch 3ms (dispatch 4ms, 1 parts (nested × prepared 1), 0 seen inputs, 0 seen parts, 1 messages, 0 seen messages, 14 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 13797 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.zip floor: maxrss 13.2 MiB
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.zip dispatch run 1: wall 1.676s, user 517ms, system 153ms, maxrss 33.5 MiB; own maxrss 17.5 MiB, user 23ms, system 20ms; children's maxrss 33.5 MiB, user 493ms, system 131ms; wrote 25 files, 18566 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.zip dispatch run 2: wall 1.712s, user 507ms, system 153ms, maxrss 33.2 MiB; own maxrss 18.0 MiB, user 32ms, system 17ms; children's maxrss 33.2 MiB, user 474ms, system 134ms; wrote 25 files, 18566 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.zip dispatch run 3: wall 1.703s, user 506ms, system 148ms, maxrss 33.3 MiB; own maxrss 16.4 MiB, user 21ms, system 23ms; children's maxrss 33.3 MiB, user 485ms, system 124ms; wrote 25 files, 18566 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.zip dispatch, 3 runs: median wall 1.703s, peak memory 33.5 MiB, its own 18.0 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/archive/mixed-bundle.zip dispatch, 3 runs: median dispatch 1.16s (dispatch 1.148s, 8 parts (archive × prepared 1, document × prepared 1, nested × prepared 1, office × prepared 2, text × prepared 2, vision × prepared 1), 0 seen inputs, 0 seen parts, 1 messages, 0 seen messages, 14 outputs, 0 failed; peak disk 347452 bytes of 115 samples; index 25 files, 18566 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.gz floor: maxrss 12.0 MiB
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.gz dispatch run 1: wall 1.752s, user 522ms, system 154ms, maxrss 33.3 MiB; own maxrss 16.6 MiB, user 25ms, system 22ms; children's maxrss 33.3 MiB, user 496ms, system 131ms; wrote 28 files, 19159 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.gz dispatch run 2: wall 1.687s, user 482ms, system 165ms, maxrss 33.4 MiB; own maxrss 19.1 MiB, user 23ms, system 27ms; children's maxrss 33.4 MiB, user 459ms, system 137ms; wrote 28 files, 19159 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.gz dispatch run 3: wall 1.688s, user 485ms, system 155ms, maxrss 33.4 MiB; own maxrss 17.2 MiB, user 20ms, system 22ms; children's maxrss 33.4 MiB, user 465ms, system 131ms; wrote 28 files, 19159 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.gz dispatch, 3 runs: median wall 1.688s, peak memory 33.4 MiB, its own 19.1 MiB, its children's 33.4 MiB
+    findings_formats_test.go:832: recorded: ~/docs/archive/mixed-bundle.tar.gz dispatch, 3 runs: median dispatch 1.146s (dispatch 1.196s, 9 parts (archive × prepared 2, document × prepared 1, nested × prepared 1, office × prepared 2, text × prepared 2, vision × prepared 1), 0 seen inputs, 0 seen parts, 1 messages, 0 seen messages, 14 outputs, 0 failed; peak disk 430396 bytes of 120 samples; index 28 files, 19159 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.zst floor: maxrss 13.3 MiB
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.zst dispatch run 1: wall 1.756s, user 537ms, system 164ms, maxrss 33.3 MiB; own maxrss 16.7 MiB, user 28ms, system 20ms; children's maxrss 33.3 MiB, user 508ms, system 142ms; wrote 28 files, 19159 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.zst dispatch run 2: wall 1.756s, user 484ms, system 188ms, maxrss 33.3 MiB; own maxrss 17.7 MiB, user 23ms, system 22ms; children's maxrss 33.3 MiB, user 461ms, system 165ms; wrote 28 files, 19159 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.zst dispatch run 3: wall 1.741s, user 514ms, system 160ms, maxrss 35.9 MiB; own maxrss 18.2 MiB, user 31ms, system 17ms; children's maxrss 35.9 MiB, user 483ms, system 141ms; wrote 28 files, 19159 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.tar.zst dispatch, 3 runs: median wall 1.756s, peak memory 35.9 MiB, its own 18.2 MiB, its children's 35.9 MiB
+    findings_formats_test.go:832: recorded: ~/docs/archive/mixed-bundle.tar.zst dispatch, 3 runs: median dispatch 1.182s (dispatch 1.182s, 9 parts (archive × prepared 2, document × prepared 1, nested × prepared 1, office × prepared 2, text × prepared 2, vision × prepared 1), 0 seen inputs, 0 seen parts, 1 messages, 0 seen messages, 14 outputs, 0 failed; peak disk 430396 bytes of 119 samples; index 28 files, 19159 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.7z floor: maxrss 14.7 MiB
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.7z dispatch run 1: wall 1.758s, user 514ms, system 170ms, maxrss 33.5 MiB; own maxrss 17.0 MiB, user 22ms, system 28ms; children's maxrss 33.5 MiB, user 492ms, system 141ms; wrote 25 files, 18584 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.7z dispatch run 2: wall 2.15s, user 551ms, system 161ms, maxrss 33.1 MiB; own maxrss 15.8 MiB, user 23ms, system 22ms; children's maxrss 33.1 MiB, user 528ms, system 138ms; wrote 25 files, 18584 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.7z dispatch run 3: wall 1.741s, user 537ms, system 155ms, maxrss 33.5 MiB; own maxrss 16.5 MiB, user 32ms, system 19ms; children's maxrss 33.5 MiB, user 504ms, system 135ms; wrote 25 files, 18584 bytes
+    findings_formats_test.go:821: recorded: ~/docs/archive/mixed-bundle.7z dispatch, 3 runs: median wall 1.758s, peak memory 33.5 MiB, its own 17.0 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/archive/mixed-bundle.7z dispatch, 3 runs: median dispatch 1.187s (dispatch 1.179s, 8 parts (archive × prepared 1, document × prepared 1, nested × prepared 1, office × prepared 2, text × prepared 2, vision × prepared 1), 0 seen inputs, 0 seen parts, 1 messages, 0 seen messages, 14 outputs, 0 failed; peak disk 347452 bytes of 118 samples; index 25 files, 18584 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-g4.tif floor: maxrss 11.4 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-g4.tif dispatch run 1: wall 818ms, user 396ms, system 130ms, maxrss 116.1 MiB; own maxrss 14.4 MiB, user 10ms, system 2ms; children's maxrss 116.1 MiB, user 387ms, system 127ms; wrote 3 files, 703 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-g4.tif dispatch run 2: wall 782ms, user 393ms, system 112ms, maxrss 115.0 MiB; own maxrss 13.0 MiB, user 5ms, system 7ms; children's maxrss 115.0 MiB, user 388ms, system 104ms; wrote 3 files, 703 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-g4.tif dispatch run 3: wall 829ms, user 412ms, system 135ms, maxrss 115.3 MiB; own maxrss 13.8 MiB, user 2ms, system 12ms; children's maxrss 115.3 MiB, user 410ms, system 124ms; wrote 3 files, 703 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-g4.tif dispatch, 3 runs: median wall 818ms, peak memory 116.1 MiB, its own 14.4 MiB, its children's 116.1 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/tiff/scanned-3page-g4.tif dispatch, 3 runs: median dispatch 249ms (dispatch 249ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 3 outputs, 0 failed; peak disk 30834 bytes of 25 samples; index 3 files, 703 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif floor: maxrss 12.3 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif dispatch run 1: wall 1.358s, user 876ms, system 111ms, maxrss 95.5 MiB; own maxrss 14.9 MiB, user 10ms, system 14ms; children's maxrss 95.5 MiB, user 866ms, system 96ms; wrote 3 files, 703 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif dispatch run 2: wall 1.406s, user 918ms, system 108ms, maxrss 95.9 MiB; own maxrss 13.9 MiB, user 14ms, system 11ms; children's maxrss 95.9 MiB, user 904ms, system 96ms; wrote 3 files, 703 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif dispatch run 3: wall 1.386s, user 895ms, system 109ms, maxrss 95.4 MiB; own maxrss 14.3 MiB, user 16ms, system 8ms; children's maxrss 95.4 MiB, user 879ms, system 100ms; wrote 3 files, 703 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif dispatch, 3 runs: median wall 1.386s, peak memory 95.9 MiB, its own 14.9 MiB, its children's 95.9 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/tiff/scanned-3page-lzw-gray.tif dispatch, 3 runs: median dispatch 834ms (dispatch 815ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 3 outputs, 0 failed; peak disk 4289226 bytes of 82 samples; index 3 files, 703 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/photo-deflate.tif floor: maxrss 11.2 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/photo-deflate.tif dispatch run 1: wall 751ms, user 269ms, system 93ms, maxrss 33.4 MiB; own maxrss 14.9 MiB, user 6ms, system 11ms; children's maxrss 33.4 MiB, user 263ms, system 81ms; wrote 3 files, 495 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/photo-deflate.tif dispatch run 2: wall 713ms, user 272ms, system 73ms, maxrss 33.4 MiB; own maxrss 13.5 MiB, user 10ms, system 4ms; children's maxrss 33.4 MiB, user 262ms, system 69ms; wrote 3 files, 495 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/photo-deflate.tif dispatch run 3: wall 740ms, user 266ms, system 79ms, maxrss 33.5 MiB; own maxrss 14.1 MiB, user 8ms, system 5ms; children's maxrss 33.5 MiB, user 258ms, system 73ms; wrote 3 files, 495 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/photo-deflate.tif dispatch, 3 runs: median wall 740ms, peak memory 33.5 MiB, its own 14.9 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/tiff/photo-deflate.tif dispatch, 3 runs: median dispatch 181ms (dispatch 182ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 1833453 bytes of 19 samples; index 3 files, 495 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/old-style-jpeg-compression.tif floor: maxrss 11.1 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/old-style-jpeg-compression.tif dispatch run 1: wall 1.435s, user 974ms, system 129ms, maxrss 101.0 MiB; own maxrss 14.1 MiB, user 9ms, system 7ms; children's maxrss 101.0 MiB, user 964ms, system 121ms; wrote 3 files, 495 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/old-style-jpeg-compression.tif dispatch run 2: wall 1.433s, user 965ms, system 121ms, maxrss 100.9 MiB; own maxrss 15.3 MiB, user 4ms, system 12ms; children's maxrss 100.9 MiB, user 960ms, system 108ms; wrote 3 files, 495 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/old-style-jpeg-compression.tif dispatch run 3: wall 1.463s, user 1.004s, system 118ms, maxrss 101.2 MiB; own maxrss 16.8 MiB, user 7ms, system 12ms; children's maxrss 101.2 MiB, user 997ms, system 105ms; wrote 3 files, 495 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/tiff/old-style-jpeg-compression.tif dispatch, 3 runs: median wall 1.435s, peak memory 101.2 MiB, its own 16.8 MiB, its children's 101.2 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/tiff/old-style-jpeg-compression.tif dispatch, 3 runs: median dispatch 881ms (dispatch 881ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 1693879 bytes of 89 samples; index 3 files, 495 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/heic/example.heic floor: maxrss 12.7 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/heic/example.heic dispatch run 1: wall 835ms, user 363ms, system 86ms, maxrss 53.0 MiB; own maxrss 13.9 MiB, user 3ms, system 9ms; children's maxrss 53.0 MiB, user 360ms, system 76ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/heic/example.heic dispatch run 2: wall 826ms, user 388ms, system 72ms, maxrss 53.2 MiB; own maxrss 13.7 MiB, user 11ms, system 4ms; children's maxrss 53.2 MiB, user 377ms, system 67ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/heic/example.heic dispatch run 3: wall 824ms, user 352ms, system 99ms, maxrss 52.8 MiB; own maxrss 13.1 MiB, user 9ms, system 4ms; children's maxrss 52.8 MiB, user 343ms, system 94ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/heic/example.heic dispatch, 3 runs: median wall 826ms, peak memory 53.2 MiB, its own 13.9 MiB, its children's 53.2 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/heic/example.heic dispatch, 3 runs: median dispatch 274ms (dispatch 271ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 2669283 bytes of 28 samples; index 3 files, 473 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/photo.webp floor: maxrss 11.5 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/photo.webp dispatch run 1: wall 1.339s, user 891ms, system 92ms, maxrss 62.8 MiB; own maxrss 14.7 MiB, user 13ms, system 6ms; children's maxrss 62.8 MiB, user 878ms, system 85ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/photo.webp dispatch run 2: wall 1.314s, user 867ms, system 90ms, maxrss 62.9 MiB; own maxrss 12.4 MiB, user 13ms, system 3ms; children's maxrss 62.9 MiB, user 854ms, system 86ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/photo.webp dispatch run 3: wall 1.341s, user 880ms, system 89ms, maxrss 63.1 MiB; own maxrss 17.5 MiB, user 9ms, system 10ms; children's maxrss 63.1 MiB, user 871ms, system 79ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/photo.webp dispatch, 3 runs: median wall 1.339s, peak memory 63.1 MiB, its own 17.5 MiB, its children's 63.1 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/webp/photo.webp dispatch, 3 runs: median dispatch 775ms (dispatch 781ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 2858429 bytes of 79 samples; index 3 files, 473 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/text-lossless.webp floor: maxrss 14.9 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/text-lossless.webp dispatch run 1: wall 586ms, user 112ms, system 64ms, maxrss 33.2 MiB; own maxrss 13.1 MiB, user 3ms, system 8ms; children's maxrss 33.2 MiB, user 109ms, system 56ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/text-lossless.webp dispatch run 2: wall 587ms, user 107ms, system 79ms, maxrss 33.5 MiB; own maxrss 14.1 MiB, user 5ms, system 6ms; children's maxrss 33.5 MiB, user 102ms, system 72ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/text-lossless.webp dispatch run 3: wall 567ms, user 105ms, system 66ms, maxrss 33.2 MiB; own maxrss 13.0 MiB, user 4ms, system 6ms; children's maxrss 33.2 MiB, user 100ms, system 60ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/webp/text-lossless.webp dispatch, 3 runs: median wall 586ms, peak memory 33.5 MiB, its own 14.1 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/webp/text-lossless.webp dispatch, 3 runs: median dispatch 15ms (dispatch 15ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 20082 bytes of 2 samples; index 3 files, 473 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/example.avif floor: maxrss 10.9 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/example.avif dispatch run 1: wall 681ms, user 198ms, system 88ms, maxrss 35.2 MiB; own maxrss 15.5 MiB, user 5ms, system 9ms; children's maxrss 35.2 MiB, user 193ms, system 78ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/example.avif dispatch run 2: wall 665ms, user 211ms, system 73ms, maxrss 36.3 MiB; own maxrss 13.8 MiB, user 4ms, system 9ms; children's maxrss 36.3 MiB, user 207ms, system 64ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/example.avif dispatch run 3: wall 676ms, user 208ms, system 85ms, maxrss 35.8 MiB; own maxrss 13.4 MiB, user 5ms, system 8ms; children's maxrss 35.8 MiB, user 203ms, system 76ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/example.avif dispatch, 3 runs: median wall 676ms, peak memory 36.3 MiB, its own 15.5 MiB, its children's 36.3 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/avif/example.avif dispatch, 3 runs: median dispatch 104ms (dispatch 103ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 916017 bytes of 11 samples; index 3 files, 473 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/bbb-alpha-inverted.avif floor: maxrss 11.4 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/bbb-alpha-inverted.avif dispatch run 1: wall 1.119s, user 768ms, system 204ms, maxrss 344.3 MiB; own maxrss 13.5 MiB, user 12ms, system 1ms; children's maxrss 344.3 MiB, user 755ms, system 203ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/bbb-alpha-inverted.avif dispatch run 2: wall 1.128s, user 764ms, system 220ms, maxrss 344.9 MiB; own maxrss 13.4 MiB, user 8ms, system 9ms; children's maxrss 344.9 MiB, user 756ms, system 211ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/bbb-alpha-inverted.avif dispatch run 3: wall 1.694s, user 784ms, system 203ms, maxrss 345.0 MiB; own maxrss 12.9 MiB, user 14ms, system 4ms; children's maxrss 345.0 MiB, user 770ms, system 198ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/bbb-alpha-inverted.avif dispatch, 3 runs: median wall 1.128s, peak memory 345.0 MiB, its own 13.5 MiB, its children's 345.0 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/avif/bbb-alpha-inverted.avif dispatch, 3 runs: median dispatch 563ms (dispatch 563ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 459629 bytes of 57 samples; index 3 files, 473 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/hdr-cosmos.avif floor: maxrss 11.8 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/hdr-cosmos.avif dispatch run 1: wall 1.719s, user 1.236s, system 101ms, maxrss 75.3 MiB; own maxrss 14.8 MiB, user 7ms, system 12ms; children's maxrss 75.3 MiB, user 1.228s, system 88ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/hdr-cosmos.avif dispatch run 2: wall 1.736s, user 1.252s, system 107ms, maxrss 75.6 MiB; own maxrss 14.6 MiB, user 16ms, system 4ms; children's maxrss 75.6 MiB, user 1.237s, system 102ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/hdr-cosmos.avif dispatch run 3: wall 1.74s, user 1.267s, system 111ms, maxrss 75.0 MiB; own maxrss 13.7 MiB, user 11ms, system 12ms; children's maxrss 75.0 MiB, user 1.256s, system 97ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/hdr-cosmos.avif dispatch, 3 runs: median wall 1.736s, peak memory 75.6 MiB, its own 14.8 MiB, its children's 75.6 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/avif/hdr-cosmos.avif dispatch, 3 runs: median dispatch 1.188s (dispatch 1.169s, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 1449948 bytes of 117 samples; index 3 files, 473 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/monochrome.avif floor: maxrss 12.8 MiB
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/monochrome.avif dispatch run 1: wall 660ms, user 189ms, system 87ms, maxrss 66.7 MiB; own maxrss 15.3 MiB, user 3ms, system 11ms; children's maxrss 66.7 MiB, user 186ms, system 76ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/monochrome.avif dispatch run 2: wall 663ms, user 176ms, system 101ms, maxrss 66.2 MiB; own maxrss 14.5 MiB, user 4ms, system 8ms; children's maxrss 66.2 MiB, user 171ms, system 92ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/monochrome.avif dispatch run 3: wall 661ms, user 199ms, system 83ms, maxrss 66.4 MiB; own maxrss 12.3 MiB, user 7ms, system 4ms; children's maxrss 66.4 MiB, user 192ms, system 79ms; wrote 3 files, 473 bytes
+    findings_formats_test.go:821: recorded: ~/docs/image/formats/avif/monochrome.avif dispatch, 3 runs: median wall 661ms, peak memory 66.7 MiB, its own 15.3 MiB, its children's 66.7 MiB
+    findings_formats_test.go:832: recorded: ~/docs/image/formats/avif/monochrome.avif dispatch, 3 runs: median dispatch 101ms (dispatch 101ms, 1 parts (vision-converted × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 146881 bytes of 11 samples; index 3 files, 473 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-nobom.txt floor: maxrss 11.7 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-nobom.txt dispatch run 1: wall 549ms, user 92ms, system 68ms, maxrss 33.6 MiB; own maxrss 13.9 MiB, user 5ms, system 3ms; children's maxrss 33.6 MiB, user 86ms, system 64ms; wrote 3 files, 443 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-nobom.txt dispatch run 2: wall 561ms, user 89ms, system 73ms, maxrss 33.2 MiB; own maxrss 12.5 MiB, user 3ms, system 7ms; children's maxrss 33.2 MiB, user 87ms, system 65ms; wrote 3 files, 443 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-nobom.txt dispatch run 3: wall 548ms, user 96ms, system 67ms, maxrss 33.1 MiB; own maxrss 13.2 MiB, user 4ms, system 8ms; children's maxrss 33.1 MiB, user 92ms, system 59ms; wrote 3 files, 443 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-nobom.txt dispatch, 3 runs: median wall 549ms, peak memory 33.6 MiB, its own 13.9 MiB, its children's 33.6 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/utf8-nobom.txt dispatch, 3 runs: median dispatch 0s (dispatch 0s, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 443 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-bom.txt floor: maxrss 12.0 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-bom.txt dispatch run 1: wall 553ms, user 84ms, system 75ms, maxrss 33.2 MiB; own maxrss 14.5 MiB, user 3ms, system 7ms; children's maxrss 33.2 MiB, user 81ms, system 68ms; wrote 3 files, 461 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-bom.txt dispatch run 2: wall 563ms, user 84ms, system 76ms, maxrss 33.4 MiB; own maxrss 12.7 MiB, user 2ms, system 7ms; children's maxrss 33.4 MiB, user 82ms, system 68ms; wrote 3 files, 461 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-bom.txt dispatch run 3: wall 537ms, user 102ms, system 62ms, maxrss 33.5 MiB; own maxrss 12.4 MiB, user 5ms, system 4ms; children's maxrss 33.5 MiB, user 97ms, system 57ms; wrote 3 files, 461 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf8-bom.txt dispatch, 3 runs: median wall 553ms, peak memory 33.5 MiB, its own 14.5 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/utf8-bom.txt dispatch, 3 runs: median dispatch 0s (dispatch 0s, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 461 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16le-bom.txt floor: maxrss 12.8 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16le-bom.txt dispatch run 1: wall 560ms, user 88ms, system 73ms, maxrss 33.4 MiB; own maxrss 14.5 MiB, user 3ms, system 5ms; children's maxrss 33.4 MiB, user 84ms, system 67ms; wrote 3 files, 464 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16le-bom.txt dispatch run 2: wall 546ms, user 91ms, system 77ms, maxrss 33.3 MiB; own maxrss 14.5 MiB, user 4ms, system 4ms; children's maxrss 33.3 MiB, user 87ms, system 72ms; wrote 3 files, 464 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16le-bom.txt dispatch run 3: wall 576ms, user 95ms, system 77ms, maxrss 33.3 MiB; own maxrss 14.6 MiB, user 7ms, system 5ms; children's maxrss 33.3 MiB, user 88ms, system 72ms; wrote 3 files, 464 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16le-bom.txt dispatch, 3 runs: median wall 560ms, peak memory 33.4 MiB, its own 14.6 MiB, its children's 33.4 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/utf16le-bom.txt dispatch, 3 runs: median dispatch 0s (dispatch 0s, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 464 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1252.txt floor: maxrss 14.9 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1252.txt dispatch run 1: wall 546ms, user 99ms, system 60ms, maxrss 33.4 MiB; own maxrss 17.4 MiB, user 6ms, system 4ms; children's maxrss 33.4 MiB, user 93ms, system 56ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1252.txt dispatch run 2: wall 550ms, user 96ms, system 66ms, maxrss 33.4 MiB; own maxrss 14.2 MiB, user 5ms, system 5ms; children's maxrss 33.4 MiB, user 90ms, system 61ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1252.txt dispatch run 3: wall 547ms, user 107ms, system 50ms, maxrss 33.4 MiB; own maxrss 15.3 MiB, user 10ms, system 1ms; children's maxrss 33.4 MiB, user 97ms, system 49ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1252.txt dispatch, 3 runs: median wall 547ms, peak memory 33.4 MiB, its own 17.4 MiB, its children's 33.4 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/windows-1252.txt dispatch, 3 runs: median dispatch 0s (dispatch 1ms, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 570 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/crlf-windows-1252.txt floor: maxrss 10.2 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/crlf-windows-1252.txt dispatch run 1: wall 565ms, user 97ms, system 68ms, maxrss 33.5 MiB; own maxrss 14.7 MiB, user 4ms, system 6ms; children's maxrss 33.5 MiB, user 93ms, system 61ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/crlf-windows-1252.txt dispatch run 2: wall 548ms, user 91ms, system 70ms, maxrss 33.3 MiB; own maxrss 14.7 MiB, user 4ms, system 4ms; children's maxrss 33.3 MiB, user 86ms, system 66ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/crlf-windows-1252.txt dispatch run 3: wall 539ms, user 91ms, system 66ms, maxrss 33.3 MiB; own maxrss 16.6 MiB, user 4ms, system 6ms; children's maxrss 33.3 MiB, user 87ms, system 59ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/crlf-windows-1252.txt dispatch, 3 runs: median wall 548ms, peak memory 33.5 MiB, its own 16.6 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/crlf-windows-1252.txt dispatch, 3 runs: median dispatch 0s (dispatch 1ms, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 570 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/iso-8859-1.txt floor: maxrss 10.2 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/iso-8859-1.txt dispatch run 1: wall 557ms, user 98ms, system 64ms, maxrss 33.1 MiB; own maxrss 15.2 MiB, user 9ms, system 2ms; children's maxrss 33.1 MiB, user 89ms, system 61ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/iso-8859-1.txt dispatch run 2: wall 563ms, user 91ms, system 72ms, maxrss 33.2 MiB; own maxrss 14.8 MiB, user 6ms, system 4ms; children's maxrss 33.2 MiB, user 85ms, system 68ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/iso-8859-1.txt dispatch run 3: wall 572ms, user 93ms, system 74ms, maxrss 33.6 MiB; own maxrss 13.7 MiB, user 4ms, system 4ms; children's maxrss 33.6 MiB, user 89ms, system 69ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/iso-8859-1.txt dispatch, 3 runs: median wall 563ms, peak memory 33.6 MiB, its own 15.2 MiB, its children's 33.6 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/iso-8859-1.txt dispatch, 3 runs: median dispatch 0s (dispatch 1ms, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 570 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/koi8-r.txt floor: maxrss 12.2 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/koi8-r.txt dispatch run 1: wall 550ms, user 97ms, system 62ms, maxrss 33.4 MiB; own maxrss 15.0 MiB, user 4ms, system 3ms; children's maxrss 33.4 MiB, user 93ms, system 58ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/koi8-r.txt dispatch run 2: wall 562ms, user 87ms, system 78ms, maxrss 33.3 MiB; own maxrss 13.5 MiB, user 7ms, system 3ms; children's maxrss 33.3 MiB, user 80ms, system 75ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/koi8-r.txt dispatch run 3: wall 572ms, user 91ms, system 72ms, maxrss 33.4 MiB; own maxrss 14.2 MiB, user 6ms, system 5ms; children's maxrss 33.4 MiB, user 85ms, system 67ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/koi8-r.txt dispatch, 3 runs: median wall 562ms, peak memory 33.4 MiB, its own 15.0 MiB, its children's 33.4 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/koi8-r.txt dispatch, 3 runs: median dispatch 1ms (dispatch 0s, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 570 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/euc-jp.txt floor: maxrss 12.1 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/euc-jp.txt dispatch run 1: wall 559ms, user 91ms, system 65ms, maxrss 33.4 MiB; own maxrss 12.7 MiB, user 5ms, system 4ms; children's maxrss 33.4 MiB, user 85ms, system 61ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/euc-jp.txt dispatch run 2: wall 557ms, user 96ms, system 58ms, maxrss 33.4 MiB; own maxrss 13.9 MiB, user 8ms, system 4ms; children's maxrss 33.4 MiB, user 88ms, system 54ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/euc-jp.txt dispatch run 3: wall 566ms, user 100ms, system 58ms, maxrss 33.5 MiB; own maxrss 12.3 MiB, user 6ms, system 2ms; children's maxrss 33.5 MiB, user 93ms, system 55ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/euc-jp.txt dispatch, 3 runs: median wall 559ms, peak memory 33.5 MiB, its own 13.9 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/euc-jp.txt dispatch, 3 runs: median dispatch 0s (dispatch 0s, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 570 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/shift-jis.txt floor: maxrss 11.7 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/shift-jis.txt dispatch run 1: wall 561ms, user 101ms, system 67ms, maxrss 33.5 MiB; own maxrss 12.5 MiB, user 4ms, system 4ms; children's maxrss 33.5 MiB, user 97ms, system 63ms; wrote 3 files, 621 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/shift-jis.txt dispatch run 2: wall 592ms, user 91ms, system 79ms, maxrss 33.5 MiB; own maxrss 13.7 MiB, user 4ms, system 9ms; children's maxrss 33.5 MiB, user 87ms, system 69ms; wrote 3 files, 621 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/shift-jis.txt dispatch run 3: wall 586ms, user 95ms, system 68ms, maxrss 33.4 MiB; own maxrss 12.4 MiB, user 4ms, system 5ms; children's maxrss 33.4 MiB, user 91ms, system 63ms; wrote 3 files, 621 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/shift-jis.txt dispatch, 3 runs: median wall 586ms, peak memory 33.5 MiB, its own 13.7 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/shift-jis.txt dispatch, 3 runs: median dispatch 0s (dispatch 0s, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 621 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1256-arabic.txt floor: maxrss 12.0 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1256-arabic.txt dispatch run 1: wall 578ms, user 93ms, system 71ms, maxrss 33.3 MiB; own maxrss 17.4 MiB, user 5ms, system 6ms; children's maxrss 33.3 MiB, user 88ms, system 65ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1256-arabic.txt dispatch run 2: wall 563ms, user 99ms, system 64ms, maxrss 33.3 MiB; own maxrss 14.1 MiB, user 5ms, system 7ms; children's maxrss 33.3 MiB, user 94ms, system 57ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1256-arabic.txt dispatch run 3: wall 560ms, user 91ms, system 70ms, maxrss 33.3 MiB; own maxrss 12.3 MiB, user 7ms, system 3ms; children's maxrss 33.3 MiB, user 84ms, system 66ms; wrote 3 files, 570 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/windows-1256-arabic.txt dispatch, 3 runs: median wall 563ms, peak memory 33.3 MiB, its own 17.4 MiB, its children's 33.3 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/windows-1256-arabic.txt dispatch, 3 runs: median dispatch 1ms (dispatch 1ms, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 570 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16be-nobom.txt floor: maxrss 11.9 MiB
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16be-nobom.txt dispatch run 1: wall 592ms, user 89ms, system 83ms, maxrss 33.2 MiB; own maxrss 14.2 MiB, user 4ms, system 7ms; children's maxrss 33.2 MiB, user 85ms, system 75ms; wrote 3 files, 621 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16be-nobom.txt dispatch run 2: wall 593ms, user 80ms, system 84ms, maxrss 33.3 MiB; own maxrss 12.3 MiB, user 1ms, system 9ms; children's maxrss 33.3 MiB, user 80ms, system 75ms; wrote 3 files, 621 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16be-nobom.txt dispatch run 3: wall 583ms, user 94ms, system 72ms, maxrss 33.5 MiB; own maxrss 13.9 MiB, user 3ms, system 7ms; children's maxrss 33.5 MiB, user 90ms, system 65ms; wrote 3 files, 621 bytes
+    findings_formats_test.go:821: recorded: ~/docs/text/encodings/utf16be-nobom.txt dispatch, 3 runs: median wall 592ms, peak memory 33.5 MiB, its own 14.2 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/text/encodings/utf16be-nobom.txt dispatch, 3 runs: median dispatch 0s (dispatch 0s, 1 parts (text × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 3 files, 621 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/test-rtf.rtf floor: maxrss 11.1 MiB
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/test-rtf.rtf dispatch run 1: wall 1.783s, user 145ms, system 112ms, maxrss 33.2 MiB; own maxrss 16.0 MiB, user 33ms, system 36ms; children's maxrss 33.2 MiB, user 113ms, system 75ms; wrote 3 files, 1092 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/test-rtf.rtf dispatch run 2: wall 1.437s, user 132ms, system 114ms, maxrss 33.1 MiB; own maxrss 18.5 MiB, user 14ms, system 20ms; children's maxrss 33.1 MiB, user 117ms, system 93ms; wrote 3 files, 1092 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/test-rtf.rtf dispatch run 3: wall 1.721s, user 129ms, system 105ms, maxrss 33.3 MiB; own maxrss 19.7 MiB, user 19ms, system 12ms; children's maxrss 33.3 MiB, user 111ms, system 92ms; wrote 3 files, 1092 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/test-rtf.rtf dispatch, 3 runs: median wall 1.721s, peak memory 33.3 MiB, its own 19.7 MiB, its children's 33.3 MiB
+    findings_formats_test.go:832: recorded: ~/docs/office/rtf/test-rtf.rtf dispatch, 3 runs: median dispatch 784ms (dispatch 1.21s, 1 parts (office × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 239688 bytes of 122 samples; index 3 files, 1092 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lists.libreoffice.rtf floor: maxrss 12.8 MiB
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lists.libreoffice.rtf dispatch run 1: wall 1.311s, user 131ms, system 92ms, maxrss 33.3 MiB; own maxrss 15.5 MiB, user 13ms, system 16ms; children's maxrss 33.3 MiB, user 118ms, system 75ms; wrote 3 files, 1240 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lists.libreoffice.rtf dispatch run 2: wall 1.331s, user 141ms, system 87ms, maxrss 33.3 MiB; own maxrss 15.3 MiB, user 15ms, system 15ms; children's maxrss 33.3 MiB, user 125ms, system 71ms; wrote 3 files, 1240 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lists.libreoffice.rtf dispatch run 3: wall 1.325s, user 120ms, system 101ms, maxrss 33.2 MiB; own maxrss 15.3 MiB, user 14ms, system 16ms; children's maxrss 33.2 MiB, user 106ms, system 84ms; wrote 3 files, 1240 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lists.libreoffice.rtf dispatch, 3 runs: median wall 1.325s, peak memory 33.3 MiB, its own 15.5 MiB, its children's 33.3 MiB
+    findings_formats_test.go:832: recorded: ~/docs/office/rtf/lists.libreoffice.rtf dispatch, 3 runs: median dispatch 767ms (dispatch 762ms, 1 parts (office × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 271973 bytes of 77 samples; index 3 files, 1240 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/tables.libreoffice.rtf floor: maxrss 11.4 MiB
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/tables.libreoffice.rtf dispatch run 1: wall 1.335s, user 132ms, system 92ms, maxrss 33.4 MiB; own maxrss 16.9 MiB, user 22ms, system 8ms; children's maxrss 33.4 MiB, user 109ms, system 83ms; wrote 3 files, 752 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/tables.libreoffice.rtf dispatch run 2: wall 1.345s, user 128ms, system 105ms, maxrss 33.4 MiB; own maxrss 14.4 MiB, user 14ms, system 18ms; children's maxrss 33.4 MiB, user 114ms, system 86ms; wrote 3 files, 752 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/tables.libreoffice.rtf dispatch run 3: wall 1.347s, user 128ms, system 92ms, maxrss 33.5 MiB; own maxrss 19.1 MiB, user 20ms, system 15ms; children's maxrss 33.5 MiB, user 108ms, system 76ms; wrote 3 files, 752 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/tables.libreoffice.rtf dispatch, 3 runs: median wall 1.345s, peak memory 33.5 MiB, its own 19.1 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/office/rtf/tables.libreoffice.rtf dispatch, 3 runs: median dispatch 779ms (dispatch 768ms, 1 parts (office × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 265105 bytes of 77 samples; index 3 files, 752 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lorem-ipsum-calibre.rtf floor: maxrss 12.8 MiB
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lorem-ipsum-calibre.rtf dispatch run 1: wall 1.363s, user 122ms, system 100ms, maxrss 33.2 MiB; own maxrss 17.4 MiB, user 18ms, system 12ms; children's maxrss 33.2 MiB, user 103ms, system 86ms; wrote 3 files, 6492 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lorem-ipsum-calibre.rtf dispatch run 2: wall 1.338s, user 123ms, system 85ms, maxrss 33.2 MiB; own maxrss 17.2 MiB, user 12ms, system 17ms; children's maxrss 33.2 MiB, user 111ms, system 67ms; wrote 3 files, 6492 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lorem-ipsum-calibre.rtf dispatch run 3: wall 1.34s, user 131ms, system 89ms, maxrss 33.5 MiB; own maxrss 16.5 MiB, user 18ms, system 15ms; children's maxrss 33.5 MiB, user 113ms, system 72ms; wrote 3 files, 6492 bytes
+    findings_formats_test.go:821: recorded: ~/docs/office/rtf/lorem-ipsum-calibre.rtf dispatch, 3 runs: median wall 1.34s, peak memory 33.5 MiB, its own 17.4 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/office/rtf/lorem-ipsum-calibre.rtf dispatch, 3 runs: median dispatch 772ms (dispatch 772ms, 1 parts (office × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 1 outputs, 0 failed; peak disk 246968 bytes of 78 samples; index 3 files, 6492 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf floor: maxrss 12.7 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf dispatch run 1: wall 592ms, user 100ms, system 73ms, maxrss 33.2 MiB; own maxrss 12.7 MiB, user 5ms, system 3ms; children's maxrss 33.2 MiB, user 94ms, system 69ms; wrote 2 files, 428 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf dispatch run 2: wall 564ms, user 89ms, system 83ms, maxrss 33.3 MiB; own maxrss 17.1 MiB, user 4ms, system 8ms; children's maxrss 33.3 MiB, user 85ms, system 74ms; wrote 2 files, 428 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf dispatch run 3: wall 565ms, user 89ms, system 84ms, maxrss 33.1 MiB; own maxrss 13.6 MiB, user 6ms, system 6ms; children's maxrss 33.1 MiB, user 83ms, system 78ms; wrote 2 files, 428 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf dispatch, 3 runs: median wall 565ms, peak memory 33.3 MiB, its own 17.1 MiB, its children's 33.3 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/encrypted/encryption-openpassword.pdf dispatch, 3 runs: median dispatch 7ms (dispatch 7ms, 1 parts (document × encrypted 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 0 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 2 files, 428 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/simple-open-password.pdf floor: maxrss 11.6 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/simple-open-password.pdf dispatch run 1: wall 573ms, user 97ms, system 67ms, maxrss 33.5 MiB; own maxrss 14.4 MiB, user 7ms, system 2ms; children's maxrss 33.5 MiB, user 89ms, system 65ms; wrote 2 files, 503 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/simple-open-password.pdf dispatch run 2: wall 568ms, user 104ms, system 61ms, maxrss 33.4 MiB; own maxrss 12.5 MiB, user 4ms, system 5ms; children's maxrss 33.4 MiB, user 100ms, system 55ms; wrote 2 files, 503 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/simple-open-password.pdf dispatch run 3: wall 575ms, user 89ms, system 77ms, maxrss 33.6 MiB; own maxrss 14.2 MiB, user 2ms, system 7ms; children's maxrss 33.6 MiB, user 86ms, system 70ms; wrote 2 files, 503 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/simple-open-password.pdf dispatch, 3 runs: median wall 573ms, peak memory 33.6 MiB, its own 14.4 MiB, its children's 33.6 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/encrypted/simple-open-password.pdf dispatch, 3 runs: median dispatch 4ms (dispatch 4ms, 1 parts (document × encrypted 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 0 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 2 files, 503 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf floor: maxrss 11.6 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf dispatch run 1: wall 594ms, user 108ms, system 63ms, maxrss 33.4 MiB; own maxrss 16.1 MiB, user 4ms, system 6ms; children's maxrss 33.4 MiB, user 104ms, system 57ms; wrote 2 files, 417 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf dispatch run 2: wall 598ms, user 101ms, system 69ms, maxrss 33.2 MiB; own maxrss 15.8 MiB, user 6ms, system 4ms; children's maxrss 33.2 MiB, user 95ms, system 65ms; wrote 2 files, 417 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf dispatch run 3: wall 587ms, user 94ms, system 79ms, maxrss 33.3 MiB; own maxrss 16.0 MiB, user 4ms, system 5ms; children's maxrss 33.3 MiB, user 90ms, system 72ms; wrote 2 files, 417 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf dispatch, 3 runs: median wall 594ms, peak memory 33.4 MiB, its own 16.1 MiB, its children's 33.4 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/encrypted/unicode-password-corrigendum5.pdf dispatch, 3 runs: median dispatch 6ms (dispatch 5ms, 1 parts (document × encrypted 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 0 outputs, 0 failed; peak disk 0 bytes of 1 samples; index 2 files, 417 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf floor: maxrss 12.7 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf dispatch run 1: wall 717ms, user 212ms, system 103ms, maxrss 33.1 MiB; own maxrss 14.0 MiB, user 8ms, system 6ms; children's maxrss 33.1 MiB, user 204ms, system 96ms; wrote 3 files, 1046 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf dispatch run 2: wall 702ms, user 195ms, system 98ms, maxrss 33.3 MiB; own maxrss 15.0 MiB, user 8ms, system 8ms; children's maxrss 33.3 MiB, user 187ms, system 89ms; wrote 3 files, 1046 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf dispatch run 3: wall 718ms, user 200ms, system 103ms, maxrss 33.5 MiB; own maxrss 17.1 MiB, user 5ms, system 9ms; children's maxrss 33.5 MiB, user 195ms, system 92ms; wrote 3 files, 1046 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf dispatch, 3 runs: median wall 717ms, peak memory 33.5 MiB, its own 17.1 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/encrypted/encryption-nocopy.pdf dispatch, 3 runs: median dispatch 136ms (dispatch 143ms, 1 parts (document × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 2 outputs, 0 failed; peak disk 70599 bytes of 15 samples; index 3 files, 1046 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf floor: maxrss 15.2 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf dispatch run 1: wall 695ms, user 212ms, system 90ms, maxrss 33.3 MiB; own maxrss 16.6 MiB, user 5ms, system 9ms; children's maxrss 33.3 MiB, user 207ms, system 81ms; wrote 3 files, 1046 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf dispatch run 2: wall 734ms, user 222ms, system 98ms, maxrss 33.5 MiB; own maxrss 13.5 MiB, user 10ms, system 7ms; children's maxrss 33.5 MiB, user 212ms, system 89ms; wrote 3 files, 1046 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf dispatch run 3: wall 713ms, user 195ms, system 112ms, maxrss 33.3 MiB; own maxrss 18.0 MiB, user 9ms, system 9ms; children's maxrss 33.3 MiB, user 186ms, system 103ms; wrote 3 files, 1046 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf dispatch, 3 runs: median wall 713ms, peak memory 33.5 MiB, its own 18.0 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/encrypted/encryption-notextaccess.pdf dispatch, 3 runs: median dispatch 136ms (dispatch 135ms, 1 parts (document × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 2 outputs, 0 failed; peak disk 70599 bytes of 14 samples; index 3 files, 1046 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf floor: maxrss 14.8 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf dispatch run 1: wall 707ms, user 190ms, system 97ms, maxrss 33.3 MiB; own maxrss 16.7 MiB, user 8ms, system 6ms; children's maxrss 33.3 MiB, user 182ms, system 90ms; wrote 3 files, 662 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf dispatch run 2: wall 694ms, user 198ms, system 98ms, maxrss 33.3 MiB; own maxrss 15.2 MiB, user 8ms, system 6ms; children's maxrss 33.3 MiB, user 190ms, system 91ms; wrote 3 files, 662 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf dispatch run 3: wall 725ms, user 201ms, system 101ms, maxrss 33.5 MiB; own maxrss 17.6 MiB, user 8ms, system 7ms; children's maxrss 33.5 MiB, user 193ms, system 93ms; wrote 3 files, 662 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf dispatch, 3 runs: median wall 707ms, peak memory 33.5 MiB, its own 17.6 MiB, its children's 33.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/encrypted/unicode-password-baseline.pdf dispatch, 3 runs: median dispatch 128ms (dispatch 127ms, 1 parts (document × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 2 outputs, 0 failed; peak disk 4421 bytes of 13 samples; index 3 files, 662 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/isartor-interactive-form.pdf floor: maxrss 12.6 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/isartor-interactive-form.pdf dispatch run 1: wall 715ms, user 193ms, system 99ms, maxrss 33.4 MiB; own maxrss 15.4 MiB, user 8ms, system 4ms; children's maxrss 33.4 MiB, user 184ms, system 94ms; wrote 3 files, 868 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/isartor-interactive-form.pdf dispatch run 2: wall 706ms, user 195ms, system 96ms, maxrss 33.4 MiB; own maxrss 15.3 MiB, user 7ms, system 10ms; children's maxrss 33.4 MiB, user 188ms, system 85ms; wrote 3 files, 868 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/isartor-interactive-form.pdf dispatch run 3: wall 712ms, user 200ms, system 101ms, maxrss 33.6 MiB; own maxrss 14.0 MiB, user 7ms, system 8ms; children's maxrss 33.6 MiB, user 193ms, system 92ms; wrote 3 files, 868 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/isartor-interactive-form.pdf dispatch, 3 runs: median wall 712ms, peak memory 33.6 MiB, its own 15.4 MiB, its children's 33.6 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/forms/isartor-interactive-form.pdf dispatch, 3 runs: median dispatch 126ms (dispatch 126ms, 1 parts (document × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 3 outputs, 0 failed; peak disk 47977 bytes of 13 samples; index 3 files, 868 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf floor: maxrss 11.3 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf dispatch run 1: wall 734ms, user 202ms, system 97ms, maxrss 33.2 MiB; own maxrss 14.9 MiB, user 4ms, system 11ms; children's maxrss 33.2 MiB, user 199ms, system 84ms; wrote 3 files, 659 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf dispatch run 2: wall 704ms, user 194ms, system 94ms, maxrss 33.3 MiB; own maxrss 15.2 MiB, user 6ms, system 9ms; children's maxrss 33.3 MiB, user 188ms, system 84ms; wrote 3 files, 659 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf dispatch run 3: wall 727ms, user 187ms, system 110ms, maxrss 33.4 MiB; own maxrss 13.6 MiB, user 9ms, system 7ms; children's maxrss 33.4 MiB, user 178ms, system 102ms; wrote 3 files, 659 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf dispatch, 3 runs: median wall 727ms, peak memory 33.4 MiB, its own 15.2 MiB, its children's 33.4 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/forms/pdfa2b-interactive-form-pass.pdf dispatch, 3 runs: median dispatch 126ms (dispatch 126ms, 1 parts (document × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 2 outputs, 0 failed; peak disk 5418 bytes of 13 samples; index 3 files, 659 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment.pdf floor: maxrss 14.7 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment.pdf dispatch run 1: wall 1.925s, user 209ms, system 86ms, maxrss 33.4 MiB; own maxrss 13.7 MiB, user 9ms, system 6ms; children's maxrss 33.4 MiB, user 200ms, system 79ms; wrote 5 files, 1560 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment.pdf dispatch run 2: wall 710ms, user 206ms, system 111ms, maxrss 35.1 MiB; own maxrss 22.9 MiB, user 5ms, system 12ms; children's maxrss 35.1 MiB, user 201ms, system 98ms; wrote 5 files, 1560 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment.pdf dispatch run 3: wall 691ms, user 215ms, system 98ms, maxrss 33.6 MiB; own maxrss 17.4 MiB, user 6ms, system 10ms; children's maxrss 33.6 MiB, user 209ms, system 87ms; wrote 5 files, 1560 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment.pdf dispatch, 3 runs: median wall 710ms, peak memory 35.1 MiB, its own 22.9 MiB, its children's 35.1 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/attachments/file-attachment.pdf dispatch, 3 runs: median dispatch 147ms (dispatch 137ms, 2 parts (document × prepared 1, unrouted × no processor yet 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 2 outputs, 0 failed; peak disk 78950 bytes of 14 samples; index 5 files, 1560 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf floor: maxrss 14.6 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf dispatch run 1: wall 692ms, user 234ms, system 84ms, maxrss 35.5 MiB; own maxrss 17.9 MiB, user 7ms, system 7ms; children's maxrss 35.5 MiB, user 227ms, system 76ms; wrote 5 files, 1471 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf dispatch run 2: wall 710ms, user 233ms, system 87ms, maxrss 33.6 MiB; own maxrss 16.8 MiB, user 9ms, system 6ms; children's maxrss 33.6 MiB, user 223ms, system 81ms; wrote 5 files, 1471 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf dispatch run 3: wall 687ms, user 231ms, system 85ms, maxrss 33.4 MiB; own maxrss 16.9 MiB, user 8ms, system 7ms; children's maxrss 33.4 MiB, user 222ms, system 78ms; wrote 5 files, 1471 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf dispatch, 3 runs: median wall 692ms, peak memory 35.5 MiB, its own 17.9 MiB, its children's 35.5 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/attachments/file-attachment-annotation.pdf dispatch, 3 runs: median dispatch 156ms (dispatch 154ms, 2 parts (document × prepared 1, unrouted × no processor yet 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 2 outputs, 0 failed; peak disk 57855 bytes of 16 samples; index 5 files, 1471 bytes)
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/embedded-video-avi.pdf floor: maxrss 14.9 MiB
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/embedded-video-avi.pdf dispatch run 1: wall 750ms, user 257ms, system 99ms, maxrss 33.3 MiB; own maxrss 16.0 MiB, user 8ms, system 10ms; children's maxrss 33.3 MiB, user 249ms, system 88ms; wrote 3 files, 1045 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/embedded-video-avi.pdf dispatch run 2: wall 714ms, user 243ms, system 93ms, maxrss 33.3 MiB; own maxrss 15.9 MiB, user 9ms, system 10ms; children's maxrss 33.3 MiB, user 234ms, system 82ms; wrote 3 files, 1045 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/embedded-video-avi.pdf dispatch run 3: wall 713ms, user 229ms, system 101ms, maxrss 33.3 MiB; own maxrss 18.5 MiB, user 9ms, system 7ms; children's maxrss 33.3 MiB, user 219ms, system 93ms; wrote 3 files, 1045 bytes
+    findings_formats_test.go:821: recorded: ~/docs/pdf/edge/attachments/embedded-video-avi.pdf dispatch, 3 runs: median wall 714ms, peak memory 33.3 MiB, its own 18.5 MiB, its children's 33.3 MiB
+    findings_formats_test.go:832: recorded: ~/docs/pdf/edge/attachments/embedded-video-avi.pdf dispatch, 3 runs: median dispatch 169ms (dispatch 177ms, 1 parts (document × prepared 1), 0 seen inputs, 0 seen parts, 0 messages, 0 seen messages, 2 outputs, 0 failed; peak disk 2053552 bytes of 18 samples; index 3 files, 1045 bytes)
+--- PASS: TestFindingsFormatsCost (116.95s)
+PASS
+ok  	github.com/JaimeStill/spike-ai-pipeline-processing/dispatch	136.831s
