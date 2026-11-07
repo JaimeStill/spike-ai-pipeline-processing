@@ -12,16 +12,17 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 )
 
-// tarTypes name the tar entry types the stage writes no part for, in its records' words.
-var tarTypes = map[byte]string{
-	tar.TypeSymlink: "symbolic link", tar.TypeLink: "hard link", tar.TypeChar: "character device",
-	tar.TypeBlock: "block device", tar.TypeFifo: "FIFO",
-}
-
-// tarChecks are the inspect checks that flag the tar entry types the stage writes no part for.
-var tarChecks = map[byte]inspect.Check{
-	tar.TypeSymlink: inspect.TarSymlink, tar.TypeLink: inspect.TarHardlink, tar.TypeChar: inspect.TarDevice,
-	tar.TypeBlock: inspect.TarDevice, tar.TypeFifo: inspect.TarDevice,
+// tarUnwritten are the tar entry types the stage writes no part for: each one's name, in its
+// records' words, and the inspect check that flags it.
+var tarUnwritten = map[byte]struct {
+	what  string
+	check inspect.Check
+}{
+	tar.TypeSymlink: {"symbolic link", inspect.TarSymlink},
+	tar.TypeLink:    {"hard link", inspect.TarHardlink},
+	tar.TypeChar:    {"character device", inspect.TarDevice},
+	tar.TypeBlock:   {"block device", inspect.TarDevice},
+	tar.TypeFifo:    {"FIFO", inspect.TarDevice},
 }
 
 // tarEntry is what a tar entry the stage can't write is recorded as: its stored name, its type,
@@ -87,16 +88,17 @@ func (s *ArchiveStage) tar(ctx context.Context, p Part, dir string, yield func(I
 // entry's content never fails it.
 func (s *ArchiveStage) tarEntry(ctx context.Context, h *tar.Header, r io.Reader, whole uint64, dir string) (Item, error) {
 	where := "tar entry " + h.Name
-	rec := tarEntry{Name: h.Name, Type: tarTypes[h.Typeflag], Link: h.Linkname, Declared: h.Size}
+	rec := tarEntry{Name: h.Name, Link: h.Linkname, Declared: h.Size}
 	recorded := func(rec tarEntry) (Item, error) {
 		return unwritten(where, rec, h.Name, rec.Reason, rec.Check, rec.Class, rec.Evidence)
 	}
 	quoted := fmt.Sprintf("entry %q", h.Name)
 	if h.Typeflag != tar.TypeReg && h.Typeflag != tar.TypeGNUSparse {
-		if check, ok := tarChecks[h.Typeflag]; ok {
+		if u, ok := tarUnwritten[h.Typeflag]; ok {
 			// Inspect quarantined the tar for it; a policy let it proceed. No link and no node
 			// is made, and a link's target is only its record's text.
-			rec.Reason, rec.Check, rec.Class, rec.Evidence = rec.Type+": no part", string(check), string(inspect.Unsafe), quoted
+			rec.Type = u.what
+			rec.Reason, rec.Check, rec.Class, rec.Evidence = u.what+": no part", string(u.check), string(inspect.Unsafe), quoted
 			return recorded(rec)
 		}
 		rec.Type = fmt.Sprintf("%q", h.Typeflag)
