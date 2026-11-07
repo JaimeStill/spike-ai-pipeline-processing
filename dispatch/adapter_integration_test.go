@@ -51,7 +51,7 @@ func allStages(t *testing.T) dispatch.Stages {
 	if err != nil {
 		t.Fatal(err)
 	}
-	oc, err := office.NewConverter(office.Config{Office: of, LibreOffice: lo, Magick: mg})
+	oc, err := office.NewConverter(t.Context(), office.Config{Office: of, LibreOffice: lo, Magick: mg})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +59,7 @@ func allStages(t *testing.T) dispatch.Stages {
 	if err != nil {
 		t.Fatal(err)
 	}
-	pc, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+	pc, err := picture.NewConverter(t.Context(), picture.Config{Magick: mg, LibreOffice: lo})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -150,17 +150,35 @@ func TestOfficeStageReal(t *testing.T) {
 	}
 }
 
-// TestPictureStageReal: an SVG converts to a PNG.
+// TestPictureStageReal: an SVG, a HEIC, a WebP, and an AVIF each convert to one PNG, and a TIFF
+// of three pages to three, in page order, each naming its page and the count.
 func TestPictureStageReal(t *testing.T) {
 	d := newDispatcher(t, allStages(t), dispatch.NewMemoryIndex())
-	events := dispatchAll(t, d, filepath.Join("..", "picture", "testdata", "shapes.svg"), func(ev *dispatch.Event) {
+	for name, kind := range map[string]route.Kind{
+		"shapes.svg": route.SVG, "two-images.heic": route.HEIC, "animated.webp": route.WebP, "animated.avif": route.AVIF,
+	} {
+		events := dispatchAll(t, d, filepath.Join("..", "picture", "testdata", name), func(ev *dispatch.Event) {
+			if ev.Output != nil {
+				wantPNG(t, *ev.Output)
+			}
+		})
+		wantSteps(t, events, []step{{name, 0, dispatch.Prepared}})
+		if o := events[0].Outputs; len(o) != 1 || o[0].Name != "picture" || o[0].Meta["from"] != string(kind) {
+			t.Errorf("%s: outputs %+v", name, o)
+		}
+	}
+	events := dispatchAll(t, d, filepath.Join("..", "picture", "testdata", "pages.tiff"), func(ev *dispatch.Event) {
 		if ev.Output != nil {
 			wantPNG(t, *ev.Output)
 		}
 	})
-	wantSteps(t, events, []step{{"shapes.svg", 0, dispatch.Prepared}})
-	if o := events[0].Outputs; len(o) != 1 || o[0].Meta["from"] != string(route.SVG) {
-		t.Errorf("outputs %+v", o)
+	wantSteps(t, events, []step{{"pages.tiff", 0, dispatch.Prepared}})
+	var got []string
+	for _, o := range events[0].Outputs {
+		got = append(got, o.Name+" "+o.Meta["page"]+"/"+o.Meta["count"]+" "+o.Meta["from"])
+	}
+	if want := []string{"page 1 1/3 tiff", "page 2 2/3 tiff", "page 3 3/3 tiff"}; !slices.Equal(got, want) {
+		t.Errorf("pages.tiff: outputs %q, want %q", got, want)
 	}
 }
 

@@ -20,7 +20,7 @@ import (
 // version included, and refuses none at all and an older one, whatever minimum the Tool's own
 // Spec declared; the spec's own minimum refuses an older office at the Tool's construction.
 func TestNewConverter(t *testing.T) {
-	if _, err := office.NewConverter(office.Config{}); err == nil {
+	if _, err := office.NewConverter(t.Context(), office.Config{}); err == nil {
 		t.Error("NewConverter with no office: no error")
 	}
 
@@ -32,7 +32,7 @@ func TestNewConverter(t *testing.T) {
 	if got := tl.Version().String(); got != "0.1.0" {
 		t.Errorf("version: got %s, want 0.1.0", got)
 	}
-	if _, err := office.NewConverter(office.Config{Office: tl}); err != nil {
+	if _, err := office.NewConverter(t.Context(), office.Config{Office: tl}); err != nil {
 		t.Errorf("NewConverter over 0.1.0+b9bb1a2: %v", err)
 	}
 
@@ -46,7 +46,7 @@ func TestNewConverter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = office.NewConverter(office.Config{Office: old})
+	_, err = office.NewConverter(t.Context(), office.Config{Office: old})
 	var verr *tool.VersionError
 	if !errors.As(err, &verr) || !errors.Is(err, tool.ErrTooOld) {
 		t.Fatalf("NewConverter over 0.0.9: got %v, want a VersionError wrapping ErrTooOld", err)

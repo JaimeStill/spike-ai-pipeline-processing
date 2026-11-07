@@ -24,9 +24,10 @@ repository's `context/README.md`.
   quarantined, a caller's policy over either; the dispatcher inspects every part before its stage.
   CheckListing holds a 7z's, a cabinet's, or a zstd stream's 7-Zip listing to the tar's rules, for
   the archive stage to call before it extracts anything, since inspect runs no program.
-- **pictures**: package picture, TIFF, EMF, WMF, and SVG converted to PNG, one picture or a batch,
-  named by SHA-256, EMF and WMF through soffice in the default gotenberg image and trimmed by
-  magick; and the corrections stage, ImageMagick corrections in a fixed order, their catalog for a
+- **pictures**: package picture, TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF converted to PNG, one
+  picture or a batch, named by SHA-256, a standalone TIFF page by page, EMF and WMF through soffice
+  in the default gotenberg image and trimmed by magick, HEIC, WebP, and AVIF through the readers
+  magick's format listing names; and the corrections stage, ImageMagick corrections in a fixed order, their catalog for a
   prompt, and Assess's measures.
 - **cli contract**: package internal/cli, the exit codes 1 to 4 as one set of errors that office's,
   email's, and onenote's exit errors are bound to, the stderr warning reader, and the bounded buffer

@@ -72,8 +72,38 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `sparse-bomb.tar`, an old GNU sparse entry written by hand, and `bomb.tar.gz`, written by
   `generate.go` with their SHA-256 in the testdata README. The integration tier dispatches each,
   and ~/docs' `mixed-bundle.tar.gz` when the machine has it.
+- `picture.Converter.ConvertPages` converts a TIFF to one PNG per page, its images in file order,
+  in one magick run, `tiff:<copy> +adjoin` writing each page without the run's time: each PNG is
+  named by the TIFF's SHA-256, `-page`, its number from 1, and .png, so no page shares a stem with
+  another or with a picture's PNG, and a page converted twice is the same bytes. A picture of any
+  other kind gives the one PNG `Convert` gives. A run that fails or leaves a gap in the pages is an
+  error, and the pages it wrote are removed. `Convert` and `ConvertBatch` still convert a TIFF's
+  first image alone, so office's pictures are unchanged.
+- The picture package converts HEIC, WebP, and AVIF to PNG through magick, in `Convert`,
+  `ConvertPages`, and `ConvertBatch`: the first image, read through the kind's coder, `heic:`,
+  `webp:`, or `avif:`, whatever the content, which is a HEIC's primary image, never a thumbnail, and
+  an animated WebP's or AVIF's first frame, turned upright by `-auto-orient`. libheif applies a
+  HEIC's or AVIF's irot and imir itself; -auto-orient applies a WebP's EXIF orientation.
+  `NewConverter` reads magick's format listing, `magick -list format`, once, and a kind whose
+  reader it doesn't mark readable is refused with `picture.ErrNoReader` before anything runs.
+- `dispatch.PictureStage` prepares a TIFF as one image output per page, in page order, named
+  "page N", its Meta naming `page` and `count` beside `from`, as the document stage names a PDF's
+  pages; and a HEIC, WebP, or AVIF as one image output named "picture". A HEIC, WebP, or AVIF whose
+  reader magick lacks has no processor yet, its reason naming `ErrNoReader`.
+- picture's fixtures: `pages.tiff`, three pages of different sizes; `two-images.heic`, a primary
+  image rotated by its irot box beside a second image, each with a thumbnail; `oriented.webp`,
+  under EXIF orientation 6; and `animated.webp` and `animated.avif`, three frames each, generated
+  with their commands and SHA-256 in the testdata README. The integration tier converts each, and
+  ~/docs' TIFF, HEIC, WebP, and AVIF samples when the machine has them; magick isn't pinned, so it
+  checks sizes, page order, pixels, and that two conversions give the same bytes, recording no sums.
 
 ### Changed
+
+- `picture.NewConverter` and `office.NewConverter` take a `context.Context`, under which the picture
+  Converter runs magick's format listing when it is given magick; a listing that fails is an error.
+- `dispatch.PictureStage` converts through `ConvertPages`: a standalone TIFF of one page is now
+  named by its SHA-256 and `-page1.png`, its output "page 1". `adapterVersion` is 3, so an index
+  prepares a picture stage's parts, and every adapter's, again.
 
 - `dispatch.ZipStage` is `dispatch.ArchiveStage`, built by `NewArchiveStage` over an
   `ArchiveConfig`, since it reads every archive kind; its identity is "archive", version 3, its

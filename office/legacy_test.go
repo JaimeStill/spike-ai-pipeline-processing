@@ -246,7 +246,7 @@ func TestNewConverterLibreOffice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = office.NewConverter(office.Config{Office: o, LibreOffice: old})
+	_, err = office.NewConverter(t.Context(), office.Config{Office: o, LibreOffice: old})
 	var verr *tool.VersionError
 	if !errors.As(err, &verr) || !errors.Is(err, tool.ErrTooOld) {
 		t.Fatalf("NewConverter over 7.6.4.1: got %v, want a VersionError wrapping ErrTooOld", err)

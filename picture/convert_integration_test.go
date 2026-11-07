@@ -28,7 +28,7 @@ func hostConverter(t *testing.T) *picture.Converter {
 	if err != nil {
 		t.Fatal(err)
 	}
-	c, err := picture.NewConverter(picture.Config{Magick: mg})
+	c, err := picture.NewConverter(t.Context(), picture.Config{Magick: mg})
 	if err != nil {
 		t.Fatal(err)
 	}

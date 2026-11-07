@@ -20,13 +20,17 @@ import (
 const standinPNG = "\x89PNG\r\n\x1a\nconverted: "
 
 // pictureStandin is the stand-in magick that the picture package's Converter is built over.
-// With -version alone it prints magick's version line, 7.1.2-34. Otherwise it appends its
+// With -version alone it prints magick's version line, 7.1.2-34, and with -list format a listing
+// of no formats, which the Converter reads when it is built. Otherwise it appends its
 // arguments to the log file and writes standinPNG and its input, its first argument with any
 // format prefix and frame suffix, "tiff:path[0]", to its output, its last argument, "png:path".
 func pictureStandin(name string, args []string) int {
 	switch {
 	case name == "magick" && len(args) == 1 && args[0] == "-version":
 		fmt.Println("Version: ImageMagick 7.1.2-34 Q16-HDRI x86_64 https://imagemagick.org")
+		return 0
+	case name == "magick" && len(args) == 2 && args[0] == "-list" && args[1] == "format":
+		fmt.Println("   Format  Module    Mode  Description")
 		return 0
 	case name != "magick" || len(args) < 2:
 		fmt.Fprintf(os.Stderr, "stand-in %s: unexpected arguments %q\n", name, args)
@@ -69,7 +73,7 @@ func pictureConverter(t *testing.T) (*picture.Converter, func() [][]string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	c, err := picture.NewConverter(picture.Config{Magick: mg})
+	c, err := picture.NewConverter(t.Context(), picture.Config{Magick: mg})
 	if err != nil {
 		t.Fatal(err)
 	}

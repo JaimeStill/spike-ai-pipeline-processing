@@ -54,7 +54,7 @@ func pinned(t *testing.T, spec tool.Spec) *tool.Tool {
 func officeStage(t *testing.T) *dispatch.OfficeStage {
 	t.Helper()
 	tl := pinned(t, office.OfficeSpec())
-	c, err := office.NewConverter(office.Config{Office: tl})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: tl})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,7 +99,7 @@ func onenoteStage(t *testing.T) *dispatch.OneNoteStage {
 // for any picture.
 func toollessPicture(t *testing.T) *dispatch.PictureStage {
 	t.Helper()
-	c, err := picture.NewConverter(picture.Config{})
+	c, err := picture.NewConverter(t.Context(), picture.Config{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -193,7 +193,7 @@ func TestAdapterIdentities(t *testing.T) {
 	if o.Name != "office" || o.Version != dispatch.Versions(officeTool) {
 		t.Errorf("office identity %v", o)
 	}
-	c, err := office.NewConverter(office.Config{Office: officeTool})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: officeTool})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -303,14 +303,14 @@ func TestDocumentStage(t *testing.T) {
 	}
 }
 
-// TestPictureNoProcessor: a WebP, a HEIC, and an AVIF have no processor yet, nor a TIFF or an EMF
-// for a Converter given no tool; each reason says why.
+// TestPictureNoProcessor: a Converter given no tool has no processor yet for a WebP, a HEIC, an
+// AVIF, a TIFF, or an EMF; each reason says why.
 func TestPictureNoProcessor(t *testing.T) {
 	d := newDispatcher(t, dispatch.Stages{route.VisionConverted: toollessPicture(t)}, dispatch.NewMemoryIndex())
 	for name, c := range map[string]struct{ content, reason string }{
-		"x.webp": {"RIFF\x10\x00\x00\x00WEBPVP8 ", "picture stage: no processor yet for a WebP picture"},
-		"x.heic": {"\x00\x00\x00\x18ftypheic\x00\x00\x00\x00mif1heic", "picture stage: no processor yet for a HEIC picture"},
-		"x.avif": {"\x00\x00\x00\x18ftypavif\x00\x00\x00\x00mif1avif", "picture stage: no processor yet for an AVIF picture"},
+		"x.webp": {"RIFF\x10\x00\x00\x00WEBPVP8 ", "is a WebP picture: no magick converter"},
+		"x.heic": {"\x00\x00\x00\x18ftypheic\x00\x00\x00\x00mif1heic", "is a HEIC picture: no magick converter"},
+		"x.avif": {"\x00\x00\x00\x18ftypavif\x00\x00\x00\x00mif1avif", "is an AVIF picture: no magick converter"},
 		"x.tif":  {"II*\x00\x08\x00\x00\x00", "no magick converter"},
 		"x.emf":  {"\x01\x00\x00\x00" + strings.Repeat("\x00", 36) + " EMF" + strings.Repeat("\x00", 40), "no LibreOffice converter"},
 	} {

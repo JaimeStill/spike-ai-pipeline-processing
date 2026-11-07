@@ -49,11 +49,11 @@ func stageConverter(t *testing.T) (*office.Converter, *picture.Converter) {
 		t.Fatalf("magick, a host prerequisite for TIFF: %v", err)
 	}
 	t.Logf("soffice %s in %s, magick %s", lo.Version(), picture.LibreOfficeImage, mg.Version())
-	c, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
+	c, err := office.NewConverter(t.Context(), office.Config{Office: o, LibreOffice: lo, Magick: mg})
 	if err != nil {
 		t.Fatal(err)
 	}
-	pc, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+	pc, err := picture.NewConverter(t.Context(), picture.Config{Magick: mg, LibreOffice: lo})
 	if err != nil {
 		t.Fatal(err)
 	}

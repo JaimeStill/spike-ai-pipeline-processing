@@ -136,8 +136,8 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 .eml, a .pst, or an mbox; `OneNote`; `Archive`, ZIP, tar, gzip, zstd, 7z, and a cabinet; `Audio`;
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
-that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, HEIC, WebP, AVIF, or text yet,
-nor a zstd stream, a 7z archive, or a cabinet without 7-Zip.
+that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, or text yet, nor a zstd stream, a
+7z archive, or a cabinet without 7-Zip, nor a HEIC, WebP, or AVIF without magick's reader.
 
 ```go
 r, why, err := route.File(path, "report.pdf", "application/octet-stream")
@@ -250,7 +250,8 @@ dispatch takes them over.
 The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader
 or converter the caller already built and the version of its Tools, which `dispatch.Versions`
 names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeStage`, office's
-Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF, EMF, WMF, or SVG to
+Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF to a PNG per page,
+"page N", its Meta naming the page and the count, and an EMF, WMF, SVG, HEIC, WebP, or AVIF to one
 PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
 mail's records, each message's attachments found as parts, then its record, then its Markdown,
 an embedded message mail gives no file for prepared inline in its attachment's place;
@@ -263,8 +264,8 @@ of its settings, then each frame as a PNG image output and each window as an aud
 the threshold it was cut under, interleaved as the run completes them. A found part's `Where`
 names its place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is
 dispatched again, so a PDF attached to a message reaches the document stage and a page's ink
-becomes a PNG. Kinds no adapter reads yet, ODF, RTF, WordPerfect, xlsb, HEIC, WebP, and AVIF, are
-no processor yet, as are audio and video when the caller has no ffmpeg and registers no audio or
+becomes a PNG. Kinds no adapter reads yet, ODF, RTF, WordPerfect, and xlsb, are no processor yet,
+as are a HEIC, WebP, or AVIF whose reader the caller's magick lacks, and audio and video when the caller has no ffmpeg and registers no audio or
 video stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with
 no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields frames only when it
 has no audio stream and windows only when it has no video stream; one with neither fails, its
@@ -410,11 +411,18 @@ defects, on Linux, the standard library, `tool`, and `route`. A `Converter`, bui
 `NewConverter` over a `Config` of a magick Tool that `MagickSpec` declares, minimum
 `MagickMinimum`, 7.1, and a LibreOffice Tool that `LibreOfficeSpec` declares, minimum
 `LibreOfficeMinimum`, 24.2, run through the container runner in `LibreOfficeImage`, converts the
-pictures `route.VisionConverted` names that it knows, TIFF, EMF, WMF, and SVG, told by their
+pictures `route.VisionConverted` names, TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF, told by their
 signature. `Converter.Convert` converts one, such as a mail attachment, to a PNG in the `Request`'s
-working directory named by the picture's SHA-256; `Converter.ConvertBatch` converts several, the
-EMFs and WMFs in one soffice run, as office converts a document's pictures. Either Tool may be
-nil, and a picture that needs it is refused, with `ErrNoMagick` or `ErrNoLibreOffice`.
+working directory named by the picture's SHA-256, a TIFF's first image alone;
+`Converter.ConvertPages` converts one as Convert does, but a TIFF to a PNG per page, in page order,
+in one magick run, each named by the TIFF's SHA-256, `-page`, its number from 1, and `.png`;
+`Converter.ConvertBatch` converts several, the EMFs and WMFs in one soffice run, as office converts
+a document's pictures. A HEIC's primary image, never a thumbnail or another image, and an animated
+WebP's or AVIF's first frame are read through the kind's own coder and turned upright by their
+stored orientation. Either Tool may be nil, and a picture that needs it is refused, with
+`ErrNoMagick` or `ErrNoLibreOffice`. `NewConverter` runs magick's format listing,
+`magick -list format`, once under its context, and a HEIC, WebP, or AVIF whose reader the listing
+doesn't mark readable is refused with `ErrNoReader`.
 
 ```go
 mg, err := tool.NewExec(ctx, picture.MagickSpec())
@@ -425,11 +433,11 @@ lo, err := tool.NewContainer(ctx, "", tool.Image{Ref: picture.LibreOfficeImage},
 if err != nil {
 	return err
 }
-pics, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+pics, err := picture.NewConverter(ctx, picture.Config{Magick: mg, LibreOffice: lo})
 if err != nil {
 	return err
 }
-png, err := pics.Convert(ctx, picture.Request{Dir: dir, Path: attachment})
+pngs, err := pics.ConvertPages(ctx, picture.Request{Dir: dir, Path: attachment})
 ```
 
 The corrections stage, a `Corrector` built by `NewCorrector` over the magick Tool, runs a page
@@ -524,7 +532,7 @@ mg, err := tool.NewExec(ctx, picture.MagickSpec())
 if err != nil {
 	return err
 }
-conv, err := office.NewConverter(office.Config{Office: o, LibreOffice: lo, Magick: mg})
+conv, err := office.NewConverter(ctx, office.Config{Office: o, LibreOffice: lo, Magick: mg})
 if err != nil {
 	return err
 }
@@ -1043,7 +1051,8 @@ The tests' vision and speech harnesses, the bake-offs, the staged flow, and the 
 test code, not released.
 
 Host prerequisites: gs 10.0 or later on PATH for `document`; ImageMagick's magick 7.1 or later on
-PATH for `picture`, its conversions and its corrections, and so for `document`'s corrections; and
+PATH for `picture`, its conversions and its corrections, and so for `document`'s corrections, with
+libheif, an AV1 decoder, and libwebp for HEIC, AVIF, and WebP; and
 docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice in
 the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the metafile

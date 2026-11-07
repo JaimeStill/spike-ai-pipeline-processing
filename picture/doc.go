@@ -7,11 +7,18 @@
 // MagickSpec declaring it, minimum 7.1, and LibreOffice's soffice, LibreOfficeSpec declaring it,
 // minimum 24.2, which the container runner runs in LibreOfficeImage under its full lockdown.
 //
-// A Converter, built over a Config of the two Tools, converts the four kinds a vision model
-// decodes only once converted, route.VisionConverted's TIFF, EMF, WMF, and SVG, to PNG, and no
-// conversion encodes a picture lossily: each writes PNG, without the time of the run, so a
+// A Converter, built over a Config of the two Tools, converts the kinds a vision model decodes
+// only once converted, route.VisionConverted's TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF, to PNG,
+// and no conversion encodes a picture lossily: each writes PNG, without the time of the run, so a
 // picture converted twice is the same bytes both times. A TIFF's first image, the one an Office
-// application displays, is converted through magick. An EMF or WMF is rendered through soffice's
+// application displays, is converted through magick; ConvertPages converts a standalone TIFF's
+// every page instead, one PNG each, in one magick run. A HEIC's primary image, never a thumbnail
+// or another image, and an animated WebP's or AVIF's first frame are converted through magick,
+// read through the kind's own coder and turned upright by their stored orientation: libheif
+// applies a HEIC's or AVIF's rotation and mirror, and -auto-orient a WebP's EXIF orientation.
+// NewConverter runs magick's format listing, magick -list format, once, and a HEIC, WebP, or AVIF
+// whose reader the listing doesn't mark readable, as when ImageMagick was built without libheif
+// or libwebp, is refused with ErrNoReader. An EMF or WMF is rendered through soffice's
 // Draw PNG export as an A4 page at a scale times 96 dpi, DefaultMetafileScale, 3, by default and
 // at most MaxMetafileScale, 8, the run's profile giving LibreOffice a British English locale so
 // the page is A4 whatever the system's paper, and the page is trimmed to the picture through
@@ -30,11 +37,14 @@
 // Convert converts one picture, its kind told by its content's signature as route.Identify tells
 // it, never by its name, and writes its PNG into the working directory, named by the lowercase hex
 // SHA-256 of the picture's bytes and .png, so a picture mail or office named by its SHA-256 gives
-// the PNG of its own stem. ConvertBatch converts several at once, each read as the kind its
+// the PNG of its own stem. ConvertPages converts one picture as Convert does, but a TIFF to a PNG
+// per page, each named by the TIFF's SHA-256, -page, its number from 1, and .png, returned in page
+// order: the dispatch package's picture stage converts a standalone picture through it. ConvertBatch converts several at once, each read as the kind its
 // Picture names and written to the PNG it names, the EMFs and WMFs in one soffice run: the office
 // package converts a document's pictures through it. A picture whose converter the Converter
 // wasn't given is refused before anything runs, an EMF or WMF without LibreOffice with
-// ErrNoLibreOffice and any picture without magick with ErrNoMagick, as is a scale out of range,
+// ErrNoLibreOffice, any picture without magick with ErrNoMagick, and a HEIC, WebP, or AVIF whose
+// reader magick lacks with ErrNoReader, as is a scale out of range,
 // with ErrScale, which CheckMetafileScale makes; a conversion that fails leaves no PNG.
 //
 // The corrections stage, a Corrector, runs a page image through ImageMagick's operators for the
@@ -57,10 +67,11 @@
 //   - [LibreOfficeMinimum] is the oldest LibreOffice the package accepts, 24.2.
 //   - [LibreOfficeImage] is the default image soffice runs in through the container runner.
 //   - [Config] is the Tools a Converter is built over: magick and LibreOffice.
-//   - [Converter] converts TIFF, EMF, WMF, and SVG to PNG.
-//   - [NewConverter] builds a Converter over a Config.
+//   - [Converter] converts TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF to PNG.
+//   - [NewConverter] builds a Converter over a Config, reading magick's format listing.
 //   - [Converter.Convert] converts one picture, told by its signature, to a PNG named by its
 //     SHA-256, as a Request says.
+//   - [Converter.ConvertPages] converts one picture as Convert does, but a TIFF to a PNG per page.
 //   - [Request] is one picture's conversion: its working directory, the picture's path, and the
 //     scale an EMF or WMF is rendered at.
 //   - [Converter.ConvertBatch] converts several pictures, each to the PNG its Picture names, as a
@@ -74,7 +85,7 @@
 //   - [ErrScale] is a refused scale's cause.
 //   - [SVGDensity] is the density an SVG is rendered at, 150 dpi.
 //   - [ErrNoMagick] and [ErrNoLibreOffice] are the causes of a picture's refusal without the
-//     converter it needs.
+//     converter it needs, and [ErrNoReader] of a HEIC's, WebP's, or AVIF's without magick's reader.
 //   - [Correction] is one scan correction: [Deskew], [Despeckle], [ContrastStretch], [Unsharp],
 //     or [Grayscale].
 //   - [Correction.String] returns a correction's name.

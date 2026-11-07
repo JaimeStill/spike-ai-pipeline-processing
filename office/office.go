@@ -66,15 +66,16 @@ type Converter struct {
 // LibreOffice and Magick. It refuses a nil Office, and an Office whose version is older than
 // OfficeMinimum, a LibreOffice older than picture.LibreOfficeMinimum, or a Magick older than
 // picture.MagickMinimum, whatever minimum the Tool's own Spec declared, with a *tool.VersionError
-// wrapping tool.ErrTooOld.
-func NewConverter(cfg Config) (*Converter, error) {
+// wrapping tool.ErrTooOld. Given a Magick, the picture package's Converter runs magick's format
+// listing under ctx, and its failure is an error.
+func NewConverter(ctx context.Context, cfg Config) (*Converter, error) {
 	if cfg.Office == nil {
 		return nil, errors.New("office: no office tool")
 	}
 	if err := atLeast(cfg.Office, OfficeMinimum); err != nil {
 		return nil, err
 	}
-	pictures, err := picture.NewConverter(picture.Config{Magick: cfg.Magick, LibreOffice: cfg.LibreOffice})
+	pictures, err := picture.NewConverter(ctx, picture.Config{Magick: cfg.Magick, LibreOffice: cfg.LibreOffice})
 	if err != nil {
 		return nil, err
 	}

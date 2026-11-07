@@ -294,7 +294,7 @@ func findingStages(ctx context.Context) (dispatch.Stages, error) {
 	if err != nil {
 		return nil, err
 	}
-	oc, err := office.NewConverter(office.Config{Office: of, LibreOffice: lo, Magick: mg})
+	oc, err := office.NewConverter(ctx, office.Config{Office: of, LibreOffice: lo, Magick: mg})
 	if err != nil {
 		return nil, err
 	}
@@ -302,7 +302,7 @@ func findingStages(ctx context.Context) (dispatch.Stages, error) {
 	if err != nil {
 		return nil, err
 	}
-	pc, err := picture.NewConverter(picture.Config{Magick: mg, LibreOffice: lo})
+	pc, err := picture.NewConverter(ctx, picture.Config{Magick: mg, LibreOffice: lo})
 	if err != nil {
 		return nil, err
 	}

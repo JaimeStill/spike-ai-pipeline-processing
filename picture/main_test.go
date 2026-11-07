@@ -11,6 +11,8 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -46,7 +48,30 @@ const (
 	// sofficeNothingEnv, when set, makes a soffice run exit zero having written nothing, as
 	// soffice does when it can't export what it loaded.
 	sofficeNothingEnv = "PICTURE_TEST_SOFFICE_NOTHING"
+	// formatsEnv, when set, is the format listing the stand-in magick's -list format prints in
+	// place of fullListing; listFailEnv, when set, makes it write its value to stderr and exit 1.
+	formatsEnv  = "PICTURE_TEST_MAGICK_FORMATS"
+	listFailEnv = "PICTURE_TEST_MAGICK_LIST_FAIL"
+	// pagesEnv is how many pages a pages run of the stand-in magick writes: 1 when it is unset.
+	pagesEnv = "PICTURE_TEST_MAGICK_PAGES"
+	// gapEnv, when set, makes a pages run leave out its second page, as a run that failed partway
+	// might.
+	gapEnv = "PICTURE_TEST_MAGICK_GAP"
 )
+
+// fullListing is the stand-in magick's format listing by default: the lines ImageMagick 7.1.2-34
+// prints for the formats the Converter checks, with a header, a TIFF line, and a line of
+// continuation around them, each readable.
+const fullListing = `   Format  Module    Mode  Description
+-------------------------------------------------------------------------------
+     AVCI  HEIC      rw+   AVC Image File Format (1.23.6)
+     AVIF  HEIC      rw+   AV1 Image File Format (1.23.6)
+     HEIC  HEIC      rw+   High Efficiency Image Format (1.23.6)
+     HEIF  HEIC      rw+   High Efficiency Image Format (1.23.6)
+     TIFF* TIFF      rw+   Tagged Image File Format (LIBTIFF, Version 4.7.2)
+             Compression options: None, Fax/Group3, Group4, JBIG, JPEG, LERC, LZW, LZMA, RLE, ZIP, ZSTD, WEBP
+     WEBP* WEBP      rw+   WebP Image Format (libwebp 1.6.0 [0210])
+`
 
 // convertedPrefix begins what either stand-in writes for a picture after PNG's signature: the
 // prefix, then its input.
@@ -89,18 +114,32 @@ func filePath(arg string) (string, bool) {
 }
 
 // magickStandin is the stand-in magick. With -version alone it prints the version line the real
-// one prints first. A run whose first argument is png:-, the corrections stage's, reads stdin:
+// one prints first, and with -list format its format listing, formatsEnv's value or fullListing,
+// or fails when listFailEnv is set; neither is logged. A run whose first argument is png:-, the corrections stage's, reads stdin:
 // it logs its arguments, then fails when failEnv is set, or else writes stdoutEnv's value when it
 // is set, and copies stdin when it isn't, so a corrected image is the image it was given. Any
 // other run, a conversion's, reads its input, its first argument that names an absolute path,
 // "tiff:path[0]", "rsvg:path", or "png:path", and writes its last, "png:path": it logs its
 // arguments and its input's content, then fails when failEnv is set, or else writes PNG's
 // signature, convertedPrefix, and its input, less any PNG signature it begins with, without the
-// signature when rawEnv is set. A metafile's PNG, which soffice and then magick wrote, holds
+// signature when rawEnv is set; a pages run, one with +adjoin, writes that to each page, as
+// magickPages says. A metafile's PNG, which soffice and then magick wrote, holds
 // convertedPrefix twice.
 func magickStandin(args []string) int {
 	if len(args) == 1 && args[0] == "-version" {
 		fmt.Printf("Version: ImageMagick %s Q16-HDRI x86_64 https://imagemagick.org\n", os.Getenv(magickVersionEnv))
+		return 0
+	}
+	if len(args) == 2 && args[0] == "-list" && args[1] == "format" {
+		if msg := os.Getenv(listFailEnv); msg != "" {
+			fmt.Fprint(os.Stderr, msg)
+			return 1
+		}
+		listing, set := os.LookupEnv(formatsEnv)
+		if !set {
+			listing = fullListing
+		}
+		fmt.Print(listing)
 		return 0
 	}
 	if len(args) < 2 {
@@ -134,9 +173,37 @@ func magickStandin(args []string) int {
 		out = pngSignature + out
 	}
 	path, _ := filePath(args[len(args)-1])
+	if slices.Contains(args, "+adjoin") {
+		return magickPages(path, out)
+	}
 	if err := os.WriteFile(path, []byte(out), 0o644); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 2
+	}
+	return 0
+}
+
+// magickPages writes a pages run's pages, pagesEnv's count of them, 1 when it is unset: each to
+// pattern, a path relative to the run's working directory with %d for the page's index from 0,
+// holding out and "page N" for its number from 1, the second left out when gapEnv is set.
+func magickPages(pattern, out string) int {
+	n := 1
+	if v := os.Getenv(pagesEnv); v != "" {
+		var err error
+		if n, err = strconv.Atoi(v); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 2
+		}
+	}
+	for i := range n {
+		if i == 1 && os.Getenv(gapEnv) != "" {
+			continue
+		}
+		page := fmt.Sprintf("%s page %d", out, i+1)
+		if err := os.WriteFile(fmt.Sprintf(pattern, i), []byte(page), 0o644); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 2
+		}
 	}
 	return 0
 }
@@ -372,7 +439,7 @@ func standinConverter(t *testing.T, libreoffice, magick bool) (*picture.Converte
 			t.Fatal(err)
 		}
 	}
-	c, err := picture.NewConverter(cfg)
+	c, err := picture.NewConverter(t.Context(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}

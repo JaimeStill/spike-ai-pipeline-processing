@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"strconv"
 
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
@@ -26,11 +27,13 @@ type PictureConfig struct {
 }
 
 // PictureStage prepares a picture a vision model decodes only once converted, route.
-// VisionConverted's parts, through picture's Converter: a TIFF, EMF, WMF, or SVG to a PNG in the
-// part's directory, an [ImageOutput] named "picture", its Meta naming the kind it was converted
-// from. It has no processor yet for HEIC, WebP, or AVIF, nor for a picture whose converter the
-// Converter wasn't given, magick for any, LibreOffice too for a metafile: each ends with
-// [ErrNoProcessor], its reason naming why.
+// VisionConverted's parts, through picture's Converter, to PNGs in the part's directory: a TIFF
+// to one [ImageOutput] per page, in page order, named "page N", its Meta naming the page and the
+// TIFF's page count; an EMF, WMF, SVG, HEIC, WebP, or AVIF to one ImageOutput named "picture",
+// a HEIC's primary image, a WebP's or AVIF's first frame. Every output's Meta names the kind it
+// was converted from. It has no processor yet for a picture whose converter the Converter wasn't
+// given, magick for any, LibreOffice too for a metafile, nor for a HEIC, WebP, or AVIF whose
+// reader the Converter's magick lacks: each ends with [ErrNoProcessor], its reason naming why.
 type PictureStage struct {
 	converter *picture.Converter
 	scale     int
@@ -54,32 +57,31 @@ func NewPictureStage(cfg PictureConfig) (*PictureStage, error) {
 // Identity returns the stage's identity: "picture", its tools' version, and its options' hash.
 func (s *PictureStage) Identity() Identity { return s.id }
 
-// unconverted names the vision-converted kinds the stage has no processor for yet.
-var unconverted = map[route.Kind]string{
-	route.HEIC: "a HEIC picture",
-	route.WebP: "a WebP picture",
-	route.AVIF: "an AVIF picture",
-}
-
 // Prepare converts the picture at p.Path, as the type's doc says.
 func (s *PictureStage) Prepare(ctx context.Context, p Part, dir string) iter.Seq2[Item, error] {
 	return func(yield func(Item, error) bool) {
-		if what, ok := unconverted[p.Kind]; ok {
-			yield(Item{}, fmt.Errorf("picture stage: %w for %s", ErrNoProcessor, what))
-			return
-		}
-		png, err := s.converter.Convert(ctx, picture.Request{Dir: dir, Path: p.Path, MetafileScale: s.scale})
+		pngs, err := s.converter.ConvertPages(ctx, picture.Request{Dir: dir, Path: p.Path, MetafileScale: s.scale})
 		switch {
-		case errors.Is(err, picture.ErrNoMagick), errors.Is(err, picture.ErrNoLibreOffice):
+		case errors.Is(err, picture.ErrNoMagick), errors.Is(err, picture.ErrNoLibreOffice), errors.Is(err, picture.ErrNoReader):
 			yield(Item{}, fmt.Errorf("picture stage: %w: %w", ErrNoProcessor, err))
 			return
 		case err != nil:
 			yield(Item{}, fmt.Errorf("picture stage: %w", err))
 			return
 		}
-		yield(OutputItem(Output{
-			Kind: ImageOutput, Name: "picture", MediaType: "image/png", Path: png,
-			Meta: map[string]string{"from": string(p.Kind)},
-		}), nil)
+		for i, png := range pngs {
+			o := Output{
+				Kind: ImageOutput, Name: "picture", MediaType: "image/png", Path: png,
+				Meta: map[string]string{"from": string(p.Kind)},
+			}
+			if p.Kind == route.TIFF {
+				// A TIFF yields its every page, as the document stage yields a PDF's.
+				o.Name = "page " + strconv.Itoa(i+1)
+				o.Meta["page"], o.Meta["count"] = strconv.Itoa(i+1), strconv.Itoa(len(pngs))
+			}
+			if !yield(OutputItem(o), nil) {
+				return
+			}
+		}
 	}
 }

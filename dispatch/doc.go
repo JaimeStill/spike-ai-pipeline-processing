@@ -82,9 +82,10 @@
 //     converted picture as its PNG, found as a part. ODF, RTF, WordPerfect, an Excel binary
 //     workbook, and a legacy document without LibreOffice have no processor yet; an encrypted
 //     OOXML package, which office refuses, ends with [ErrEncrypted].
-//   - [PictureStage], for route.VisionConverted: a TIFF, EMF, WMF, or SVG to a PNG through
-//     picture's Converter. HEIC, WebP, and AVIF, and a picture whose tool the Converter lacks,
-//     have no processor yet.
+//   - [PictureStage], for route.VisionConverted: a TIFF to a PNG per page, "page N", its Meta
+//     naming the page and the count, and an EMF, WMF, SVG, HEIC, WebP, or AVIF to one PNG,
+//     through picture's Converter. A picture whose tool the Converter lacks, or a HEIC, WebP, or
+//     AVIF whose reader its magick lacks, has no processor yet.
 //   - [VisionStage], for route.Vision: a PNG, JPEG, GIF, or BMP passed through as an image
 //     output, so every picture reaches a layer above as one.
 //   - [EmailStage], for route.Nested: mail's records, each a record output, and each
