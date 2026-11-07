@@ -273,8 +273,8 @@ func TestZipBombAsWritten(t *testing.T) {
 	}
 }
 
-// TestZipUnsafeNames: inspect quarantines a ZIP with a traversing, an absolute, or a drive
-// letter name, or a symbolic link, and the archive stage never sees it. Under a policy that lets them
+// TestZipUnsafeNames: inspect quarantines a ZIP with a traversing, an absolute, or a drive letter
+// name, or a symbolic link, and the archive stage never sees it. Under a policy that lets them
 // proceed, each entry is written by its SHA-256 inside the working directory, its stored name only
 // its name, no file lands outside, and the link is a file holding its target's text.
 func TestZipUnsafeNames(t *testing.T) {

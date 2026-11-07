@@ -244,11 +244,11 @@ and `pdfa2b-interactive-form-pass.pdf` 1, `Button`, a pushbutton. `clean.pdf`, w
 yields none.
 
 **Attachments.** Both kinds are found: `file-attachment.pdf`'s name tree holds `KSBASE.WQ2`, and
-`file-attachment-annotation.pdf`'s file attachment annotation holds `PF.WK1`, each found
-"attachment <name>", written under its SHA-256, inspected, and routed again: both unrouted, legacy
-spreadsheets by their extensions, a Quattro Pro and a Lotus 1-2-3 file, which no stage takes. `embedded-video-avi.pdf`'s video
-sits behind a Screen annotation's rendition, which isn't an embedded file: no part is found, and
-its page renders alone.
+`file-attachment-annotation.pdf`'s file attachment annotation holds `PF.WK1`, each found "attachment
+<name>", written under its SHA-256, inspected, and routed again: both unrouted, legacy spreadsheets
+by their extensions, a Quattro Pro and a Lotus 1-2-3 file, which no stage takes.
+`embedded-video-avi.pdf`'s video sits behind a Screen annotation's rendition, which isn't an
+embedded file: no part is found, and its page renders alone.
 
 **The attachment bomb.** A PDF of 8,762 bytes embedding 8 MiB of zeros
 (`TestDocumentStageAttachmentBombReal`) is saved whole under the defaults; under 1 MiB and 100:1,

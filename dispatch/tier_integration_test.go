@@ -22,13 +22,13 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/route"
 )
 
-// The integration tier's run of every fixture through Dispatch against the real stages: office
-// over the office CLI, LibreOffice in its pinned image for the legacy formats and RTF, and magick; the
+// The integration tier's run of every fixture through Dispatch against the real stages: office over
+// the office CLI, LibreOffice in its pinned image for the legacy formats and RTF, and magick; the
 // document stage over gs; the email stage over mail; the onenote stage over onenote; the picture
-// stage over magick and LibreOffice; the vision stage; the audio stage over ffmpeg and ffprobe;
-// and the archive stage over 7zz. Each route is held to testdata/tier-routes.tsv, the hand route
-// truth, and a sample of the image outputs is sent to Gemma 4 26B-A4B on the router
-// SPIKE_ROUTER_URL names, which set A loads.
+// stage over magick and LibreOffice; the vision stage; the audio stage over ffmpeg and ffprobe; and
+// the archive stage over 7zz. Each route is held to testdata/tier-routes.tsv, the hand route truth,
+// and a sample of the image outputs is sent to Gemma 4 26B-A4B on the router SPIKE_ROUTER_URL
+// names, which set A loads.
 
 const (
 	// tierRoutes is the hand route truth, as its header says.
@@ -45,11 +45,11 @@ const (
 	tierLogEnv = "DISPATCH_TIER_LOG"
 )
 
-// tierInputs are the committed fixture inputs, as globs under the repository's root, in the
-// order the tier dispatches them, each glob's matches sorted, but for a README.md or a Go file,
-// which is no fixture: every input the format packages' fixtures hold, the inspect package's
-// hazards, the sevenzip package's archives, and the tool package's WAV. A notebook is its .onetoc2, which onenote reads with the
-// sections beside it.
+// tierInputs are the committed fixture inputs, as globs under the repository's root, in the order
+// the tier dispatches them, each glob's matches sorted, but for a README.md or a Go file, which is
+// no fixture: every input the format packages' fixtures hold, the inspect package's hazards, the
+// sevenzip package's archives, and the tool package's WAV. A notebook is its .onetoc2, which
+// onenote reads with the sections beside it.
 var tierInputs = []string{
 	"document/testdata/*.pdf",
 	"office/testdata/ooxml/*",

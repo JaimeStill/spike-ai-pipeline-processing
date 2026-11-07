@@ -12,9 +12,9 @@ onenote's `sections.json`, `notebooks.json`, and `content.json`), not generated 
 output. It gives the route and outcome `TestTierRoutes` expects of every committed fixture input,
 dispatched in the order the test lists them over one file index, and of the found parts that matter:
 each attachment kind, each office medium kind, each OneNote medium, the ZIP, tar, 7z, and cabinet
-entries, and the gzip and zstd streams' content. Its header gives its columns. Content an input shares with one dispatched
-before it is seen, and the comments above each group say which content repeats and why. A new
-fixture input needs a row here before the tier passes.
+entries, and the gzip and zstd streams' content. Its header gives its columns. Content an input
+shares with one dispatched before it is seen, and the comments above each group say which content
+repeats and why. A new fixture input needs a row here before the tier passes.
 
 ## handwriting-truth.txt
 

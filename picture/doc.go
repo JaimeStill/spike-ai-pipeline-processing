@@ -39,13 +39,14 @@
 // SHA-256 of the picture's bytes and .png, so a picture mail or office named by its SHA-256 gives
 // the PNG of its own stem. ConvertPages converts one picture as Convert does, but a TIFF to a PNG
 // per page, each named by the TIFF's SHA-256, -page, its number from 1, and .png, returned in page
-// order: the dispatch package's picture stage converts a standalone picture through it. ConvertBatch converts several at once, each read as the kind its
-// Picture names and written to the PNG it names, the EMFs and WMFs in one soffice run: the office
-// package converts a document's pictures through it. A picture whose converter the Converter
-// wasn't given is refused before anything runs, an EMF or WMF without LibreOffice with
-// ErrNoLibreOffice, any picture without magick with ErrNoMagick, and a HEIC, WebP, or AVIF whose
-// reader magick lacks with ErrNoReader, as is a scale out of range,
-// with ErrScale, which CheckMetafileScale makes; a conversion that fails leaves no PNG.
+// order: the dispatch package's picture stage converts a standalone picture through it.
+// ConvertBatch converts several at once, each read as the kind its Picture names and written to the
+// PNG it names, the EMFs and WMFs in one soffice run: the office package converts a document's
+// pictures through it. A picture whose converter the Converter wasn't given is refused before
+// anything runs, an EMF or WMF without LibreOffice with ErrNoLibreOffice, any picture without
+// magick with ErrNoMagick, and a HEIC, WebP, or AVIF whose reader magick lacks with ErrNoReader, as
+// is a scale out of range, with ErrScale, which CheckMetafileScale makes; a conversion that fails
+// leaves no PNG.
 //
 // The corrections stage, a Corrector, runs a page image through ImageMagick's operators for the
 // corrections a request names: Deskew (-deskew 40%), Despeckle (-despeckle), ContrastStretch

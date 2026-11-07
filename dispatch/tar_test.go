@@ -109,11 +109,11 @@ func TestGzipStem(t *testing.T) {
 	wantEmpty(t, work)
 }
 
-// TestTarUnsafe: inspect quarantines a tar with a traversing, an absolute, or a drive letter
-// name, a symbolic or hard link, or a device or a FIFO, and the archive stage never sees it. Under a
-// policy that lets them proceed, each regular entry is written by its SHA-256 inside the
-// working directory, its stored name only its name, no file lands outside, and each link,
-// device, and FIFO is a record naming its check, no link or node made.
+// TestTarUnsafe: inspect quarantines a tar with a traversing, an absolute, or a drive letter name,
+// a symbolic or hard link, or a device or a FIFO, and the archive stage never sees it. Under a
+// policy that lets them proceed, each regular entry is written by its SHA-256 inside the working
+// directory, its stored name only its name, no file lands outside, and each link, device, and FIFO
+// is a record naming its check, no link or node made.
 func TestTarUnsafe(t *testing.T) {
 	permissive := inspect.Options{Policy: map[inspect.Check]inspect.Verdict{
 		inspect.TarTraversal: inspect.Proceed, inspect.TarAbsolutePath: inspect.Proceed, inspect.TarSymlink: inspect.Proceed,

@@ -29,13 +29,13 @@ streams its windows and frames as they arrive.
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
 whose first capture group is the version, the minimum version, `VersionExit`, the exit code of a
-version command that exits nonzero having printed it, as pdfdetach's `-v` exits 99, and
-`KillAfter`, the KillAfter period: how long a cancelled run has after SIGTERM before SIGKILL. A runner's constructor builds
-a `Tool` bound to that one program; it finds the program and checks its version, so a missing or
-outdated tool fails at startup, and the Tool reports its `Name` and the `Version` found.
-`Tool.Run` runs one `Invocation`, its arguments, a working directory the caller owns, and optional
-stdin, stdout, and stderr, under the caller's context. An Invocation names nothing about the
-runner, so an adapter written against Tool runs the same code whichever runner built it.
+version command that exits nonzero having printed it, as pdfdetach's `-v` exits 99, and `KillAfter`,
+the KillAfter period: how long a cancelled run has after SIGTERM before SIGKILL. A runner's
+constructor builds a `Tool` bound to that one program; it finds the program and checks its version,
+so a missing or outdated tool fails at startup, and the Tool reports its `Name` and the `Version`
+found. `Tool.Run` runs one `Invocation`, its arguments, a working directory the caller owns, and
+optional stdin, stdout, and stderr, under the caller's context. An Invocation names nothing about
+the runner, so an adapter written against Tool runs the same code whichever runner built it.
 
 ```go
 spec := tool.Spec{
@@ -171,11 +171,11 @@ or a lying header can be, and headers that can't all be read. `CheckListing` hol
 cabinet's, or a zstd stream's listing, as 7-Zip lists it, to the same rules, by the same name
 checks: `Inspect` runs no program, so the archive stage lists such an archive through 7-Zip and
 calls it before extracting anything, a 7z's encrypted entry active as a ZIP's is. `Options.Policy`
-overrides any check's action. The report is a function of the bytes and the name, so an index may record it by SHA-256. A
-container's members are inspected as parts of their own once a stage extracts them, so a .tar.gz's
-tar is inspected once the archive stage decompresses it, and that stage enforces the bomb rule again
-on the bytes it writes, since a declared size may lie, a gzip stream's among them, which declares
-its expanded size only modulo 4 GiB.
+overrides any check's action. The report is a function of the bytes and the name, so an index may
+record it by SHA-256. A container's members are inspected as parts of their own once a stage
+extracts them, so a .tar.gz's tar is inspected once the archive stage decompresses it, and that
+stage enforces the bomb rule again on the bytes it writes, since a declared size may lie, a gzip
+stream's among them, which declares its expanded size only modulo 4 GiB.
 
 ```go
 rep, err := inspect.Inspect(ctx, path, "invoice.pdf.exe", inspect.Options{})
@@ -234,52 +234,52 @@ error yielded last.
 
 `Input.After` resumes a .pst or an mbox after a message, its node id or ordinal: the email stage
 passes it to mail as `--after`, mail 0.3.0 or later, and the store yields its store and folder
-records and only the messages after it, with their attachments found. A resumed input's own entry
-is never recorded, its outputs being the tail alone. For each message, the email stage yields its
+records and only the messages after it, with their attachments found. A resumed input's own entry is
+never recorded, its outputs being the tail alone. For each message, the email stage yields its
 attachments first, each found part dispatched whole, then its record, its Meta `id` the message's,
 then its Markdown, which the record's Meta `markdown: follows` announces, so the message's last
 output is the last of everything it holds. A message of a conversation class is a conversation
 record, `conversation <id>`, an `email.Conversation`, then its transcript's Markdown, the Meta of
-both naming its topic and `missed`; it moves the cursor as a message does, and feeds no Threader. A caller resuming after a crash keeps a `FileIndex`
-that outlives the process, so the attachments recorded before the crash are seen; the cursor, the
-id of the last message whose outputs it has persisted, moved at each message's last output; and
-an `email.Threader`, fed each message record of the store's own, decoded. Every N messages, or on a
-timer, at a message's last output, it saves the cursor and the Threader, by `MarshalBinary`,
-together: a checkpoint. Not at every message: each save marshals every message's keys so far,
-3.5 ms at 25,000 messages in the onenote finding, so saving at every message grows with the
-square of the store. It restores the Threader by `UnmarshalBinary`, dispatches with `After` set
-to the checkpoint's cursor, and feeds the Threader the rest, whose threads are then the whole
-store's; every message past the checkpoint comes again, and it overwrites what it had of them. A
-dead process's claims and pending outputs wait out `FileOptions.Stale` before the resumed
-dispatch takes them over.
+both naming its topic and `missed`; it moves the cursor as a message does, and feeds no Threader. A
+caller resuming after a crash keeps a `FileIndex` that outlives the process, so the attachments
+recorded before the crash are seen; the cursor, the id of the last message whose outputs it has
+persisted, moved at each message's last output; and an `email.Threader`, fed each message record of
+the store's own, decoded. Every N messages, or on a timer, at a message's last output, it saves the
+cursor and the Threader, by `MarshalBinary`, together: a checkpoint. Not at every message: each save
+marshals every message's keys so far, 3.5 ms at 25,000 messages in the onenote finding, so saving at
+every message grows with the square of the store. It restores the Threader by `UnmarshalBinary`,
+dispatches with `After` set to the checkpoint's cursor, and feeds the Threader the rest, whose
+threads are then the whole store's; every message past the checkpoint comes again, and it overwrites
+what it had of them. A dead process's claims and pending outputs wait out `FileOptions.Stale` before
+the resumed dispatch takes them over.
 
-The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader
-or converter the caller already built and the version of its Tools, which `dispatch.Versions`
-names: `DocumentStage`, a PDF's pages, each its text layer and a PNG, and, given qpdf and pdfdetach
-through `DocumentConfig.QPDF` and `DocumentConfig.PDFDetach`, a PDF that needs a password
-encrypted with nothing rendered, its AcroForm's fields as a `forms` record before its pages, and
-each embedded file found as a part, `attachment <name>`, written under its SHA-256 with the bomb
-rule enforced on the bytes pdfdetach writes; `OfficeStage`, office's
-Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF to a PNG per page,
-"page N", its Meta naming the page and the count, and an EMF, WMF, SVG, HEIC, WebP, or AVIF to one
-PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
-mail's records, each message's attachments found as parts, then its record, then its Markdown,
-an embedded message mail gives no file for prepared inline in its attachment's place;
-`OneNoteStage`, onenote's records, each page's record then its Markdown, and each of its media
-found as a part; `AudioStage`, an audio part's plan as a record, then each of its windows in
-plan order as an audio output, a 16 kHz mono WAV whose Meta carries its index, span, cut, and
-seams, for a layer above to transcribe and join with `audio.Join`; and `VideoStage`, an MP4,
-Matroska, WebM, or AVI read by one unpaced run of media's `Streamer`, which yields a plan record
-of its settings, then each frame as a PNG image output and each window as an audio output, with
-the threshold it was cut under, interleaved as the run completes them. A found part's `Where`
-names its place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is
-dispatched again, so a PDF attached to a message reaches the document stage and a page's ink
-becomes a PNG. Kinds no adapter reads yet, ODF, WordPerfect, and xlsb, are no processor yet, as
-are an RTF and a legacy document when the caller's Converter has no LibreOffice, a HEIC, WebP, or AVIF whose reader the caller's magick lacks, and audio and video when the caller has no ffmpeg and registers no audio or
-video stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with
-no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields frames only when it
-has no audio stream and windows only when it has no video stream; one with neither fails, its
-error wrapping `media.ErrNoMedia`.
+The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader or
+converter the caller already built and the version of its Tools, which `dispatch.Versions` names:
+`DocumentStage`, a PDF's pages, each its text layer and a PNG, and, given qpdf and pdfdetach through
+`DocumentConfig.QPDF` and `DocumentConfig.PDFDetach`, a PDF that needs a password encrypted with
+nothing rendered, its AcroForm's fields as a `forms` record before its pages, and each embedded file
+found as a part, `attachment <name>`, written under its SHA-256 with the bomb rule enforced on the
+bytes pdfdetach writes; `OfficeStage`, office's Markdown, each medium office wrote found as a part;
+`PictureStage`, a TIFF to a PNG per page, "page N", its Meta naming the page and the count, and an
+EMF, WMF, SVG, HEIC, WebP, or AVIF to one PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed
+through as an image output; `EmailStage`, mail's records, each message's attachments found as parts,
+then its record, then its Markdown, an embedded message mail gives no file for prepared inline in
+its attachment's place; `OneNoteStage`, onenote's records, each page's record then its Markdown, and
+each of its media found as a part; `AudioStage`, an audio part's plan as a record, then each of its
+windows in plan order as an audio output, a 16 kHz mono WAV whose Meta carries its index, span, cut,
+and seams, for a layer above to transcribe and join with `audio.Join`; and `VideoStage`, an MP4,
+Matroska, WebM, or AVI read by one unpaced run of media's `Streamer`, which yields a plan record of
+its settings, then each frame as a PNG image output and each window as an audio output, with the
+threshold it was cut under, interleaved as the run completes them. A found part's `Where` names its
+place, such as `message 2097220, attachment 1` or `page {...}, page ink`, and it is dispatched
+again, so a PDF attached to a message reaches the document stage and a page's ink becomes a PNG.
+Kinds no adapter reads yet, ODF, WordPerfect, and xlsb, are no processor yet, as are an RTF and a
+legacy document when the caller's Converter has no LibreOffice, a HEIC, WebP, or AVIF whose reader
+the caller's magick lacks, and audio and video when the caller has no ffmpeg and registers no audio
+or video stage. An encrypted OOXML package, which office refuses, is encrypted. An audio source with
+no audio stream fails, its error wrapping `audio.ErrNoAudio`. A video yields frames only when it has
+no audio stream and windows only when it has no video stream; one with neither fails, its error
+wrapping `media.ErrNoMedia`.
 
 `ArchiveStage`, for the archive route, on any platform, reads a ZIP, a tar, and a gzip stream on
 the standard library, and, given 7-Zip, a zstd stream, a 7z archive, a cabinet not named .onepkg,
@@ -617,48 +617,48 @@ on every conversion. In a Markdown result, each link to a converted picture is r
 PNG by swapping the exact stored name; no Markdown is parsed.
 
 A legacy document is one with the OLE2 compound-file signature and a legacy extension in
-`Request.Name`: .doc and .dot become docx, .xls and .xlt xlsx, and .ppt, .pps, and .pot pptx.
-Given a LibreOffice Tool, `Convert` converts it to that OOXML format through soffice headless,
-then runs office on the result; without one it is refused with `ErrNoLibreOffice` before anything
-runs. An RTF, known by its signature whatever its name, is converted the same way to docx,
-through Writer's docx export filter as a .doc is, and `ConvertedFrom` is "rtf"; without a
-LibreOffice Tool it too is refused with `ErrNoLibreOffice`. `picture.LibreOfficeSpec` declares soffice, minimum `picture.LibreOfficeMinimum`, 24.2, and
-`picture.LibreOfficeImage` is the default image a caller may replace:
-gotenberg/gotenberg:9.1.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest, which
-`mise run currency` scans. soffice runs in it under
-the container runner's full lockdown, with its user profile inside the mounted working directory.
+`Request.Name`: .doc and .dot become docx, .xls and .xlt xlsx, and .ppt, .pps, and .pot pptx. Given
+a LibreOffice Tool, `Convert` converts it to that OOXML format through soffice headless, then runs
+office on the result; without one it is refused with `ErrNoLibreOffice` before anything runs. An
+RTF, known by its signature whatever its name, is converted the same way to docx, through Writer's
+docx export filter as a .doc is, and `ConvertedFrom` is "rtf"; without a LibreOffice Tool it too is
+refused with `ErrNoLibreOffice`. `picture.LibreOfficeSpec` declares soffice, minimum
+`picture.LibreOfficeMinimum`, 24.2, and `picture.LibreOfficeImage` is the default image a caller may
+replace: gotenberg/gotenberg:9.1.0-libreoffice, LibreOffice 26.8.2.2, pinned by digest, which `mise
+run currency` scans. soffice runs in it under the container runner's full lockdown, with its user
+profile inside the mounted working directory.
 
 [docs/findings/office.md](docs/findings/office.md) records what the legacy round trip loses, per
 element kind and format, the container's footprint, the picture conversions, and each picture's
 vision time and image tokens. The run results it cites are in `docs/findings/office-results/`.
 
-`email` reads mail stores, Outlook .pst stores and .msg messages, and MIME messages, .eml and
-mbox files, for a model, on Linux, the standard library, `tool`, and `route`. It runs
+`email` reads mail stores, Outlook .pst stores and .msg messages, and MIME messages, .eml and mbox
+files, for a model, on Linux, the standard library, `tool`, and `route`. It runs
 spike-ai-pipeline-mail's CLI and provides pre-inference preparation only. A `Reader`, built by
 `NewReader` over a `Config` holding a mail Tool that `MailSpec` declares, minimum `MailMinimum`,
-0.2.0, reads one input per `Request`. `Reader.Read`
-returns a `Stream`, or refuses an invalid `Request`, one with no input or a path that can't be
-made absolute, with an error matching `ErrRequest` before anything runs. A `Request`'s `After`
-resumes a .pst's or an mbox's read after the message whose id it is, through mail's `--after`: the
-store, its folders, and only the messages after it, the whole read's tail byte for byte. It needs
-mail `MailAfterMinimum`, 0.3.0, which `Read` checks only when `After` is set, refusing an older one
-with an error matching `ErrRequest` and `tool.ErrTooOld`. Ranging over
-`Stream.Records` runs mail once and yields each line it writes while it runs,
-decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
+0.2.0, reads one input per `Request`. `Reader.Read` returns a `Stream`, or refuses an invalid
+`Request`, one with no input or a path that can't be made absolute, with an error matching
+`ErrRequest` before anything runs. A `Request`'s `After` resumes a .pst's or an mbox's read after
+the message whose id it is, through mail's `--after`: the store, its folders, and only the messages
+after it, the whole read's tail byte for byte. It needs mail `MailAfterMinimum`, 0.3.0, which `Read`
+checks only when `After` is set, refusing an older one with an error matching `ErrRequest` and
+`tool.ErrTooOld`. Ranging over `Stream.Records` runs mail once and yields each line it writes while
+it runs, decoded from a pipe one line at a time into typed Go values that mirror its schema "1": the
 `Store` first, then for a .pst each `Folder` before its `Message`s, and a `Skipped` record wherever
 mail couldn't read one; for a .msg or an .eml its message, an embedded message nested under its
 attachment; for an mbox each message in the file's order. Memory follows the record being read,
 never the store. A message of a conversation class, `email.ConversationClass`
-(IPM.Note.Microsoft.Conversation) or `email.MissedClass` (IPM.Note.Microsoft.Missed), which a
-Skype for Business client saves its instant-message history under in Conversation History, is a
+(IPM.Note.Microsoft.Conversation) or `email.MissedClass` (IPM.Note.Microsoft.Missed), which a Skype
+for Business client saves its instant-message history under in Conversation History, is a
 `Conversation` in its place: its participants, the sender then the recipients; its start and end,
 the submit and delivery times; its topic, the conversation topic, else the subject; whether it was
 missed, by its class; and its transcript as mail's Markdown and as the stored HTML. The class
 decides, not the folder, and every other class, the Voice classes among them, is a `Message` as
-before; `Message.Conversation` reads a decoded `Message` the same way. It is one record per item:
-no turn is parsed from the transcript. The tests hold every item of mail's generated
-`conversations.pst` to the hand truth in mail's `truth.json`. mail's warnings are the Stream's `Warnings`, and its exit codes 1 to 4 are an
-`*ExitError` that matches `ErrNotWritten`, `ErrUsage`, `ErrRefused`, or `ErrFailed`.
+before; `Message.Conversation` reads a decoded `Message` the same way. It is one record per item: no
+turn is parsed from the transcript. The tests hold every item of mail's generated
+`conversations.pst` to the hand truth in mail's `truth.json`. mail's warnings are the Stream's
+`Warnings`, and its exit codes 1 to 4 are an `*ExitError` that matches `ErrNotWritten`, `ErrUsage`,
+`ErrRefused`, or `ErrFailed`.
 
 ```go
 m, err := tool.NewExec(ctx, email.MailSpec())
@@ -1129,22 +1129,22 @@ each ~/docs input; it calls no model, and a run keeps its results only in the di
 The tests' vision and speech harnesses, the bake-offs, the staged flow, and the findings tier are
 test code, not released.
 
-Host prerequisites: gs 10.0 or later on PATH for `document`, and, for its password check, forms,
-and embedded files, qpdf 11.0 or later and poppler's pdfdetach 22.02 or later, each optional; ImageMagick's magick 7.1 or later on
-PATH for `picture`, its conversions and its corrections, and so for `document`'s corrections, with
-libheif, an AV1 decoder, and libwebp for HEIC, AVIF, and WebP; and
-docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
+Host prerequisites: gs 10.0 or later on PATH for `document`, and, for its password check, forms, and
+embedded files, qpdf 11.0 or later and poppler's pdfdetach 22.02 or later, each optional;
+ImageMagick's magick 7.1 or later on PATH for `picture`, its conversions and its corrections, and so
+for `document`'s corrections, with libheif, an AV1 decoder, and libwebp for HEIC, AVIF, and WebP;
+and docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office
 0.1.0 or later, which mise pins from its GitHub release for the tests; docker, which runs soffice in
 the default image, pulled on first use; and magick 7.1 or later for TIFF pictures and the metafile
 trim. For `email`: spike-ai-pipeline-mail 0.2.0 or later, 0.3.0 or later to resume a read, which
 mise pins, at 0.3.1, from its GitHub release for the tests. For `onenote`: spike-ai-pipeline-onenote
 0.1.0 or later, which mise pins from its GitHub release for the tests. For `audio` and `media`:
 ffmpeg and ffprobe 9.0 or later on PATH, or docker, which runs them in `audio.FFmpegImage`; a URL
-source through docker needs the image to name a docker network. `mise run fixtures:streams`
-rebuilds `audio/testdata`'s streams fixtures through the host's ffmpeg. The renderer
-bake-off also runs poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to
-regenerate the fixtures in `document/testdata`, and .NET, which mise installs, only to rebuild
-`email/testdata`'s built .msg, as their READMEs say.
+source through docker needs the image to name a docker network. `mise run fixtures:streams` rebuilds
+`audio/testdata`'s streams fixtures through the host's ffmpeg. The renderer bake-off also runs
+poppler's pdftoppm and pdftocairo and libvips. typst and qpdf are needed only to regenerate the
+fixtures in `document/testdata`, and .NET, which mise installs, only to rebuild `email/testdata`'s
+built .msg, as their READMEs say.
 
 The layer requires spike-ai-pipeline-client at v0.4.0 for its tests alone, the vision and speech
 harnesses the integration, bake-off, and findings tiers run on; no released package imports it.

@@ -113,17 +113,17 @@ func filePath(arg string) (string, bool) {
 	return arg, filepath.IsAbs(arg)
 }
 
-// magickStandin is the stand-in magick. With -version alone it prints the version line the real
-// one prints first, and with -list format its format listing, formatsEnv's value or fullListing,
-// or fails when listFailEnv is set; neither is logged. A run whose first argument is png:-, the corrections stage's, reads stdin:
-// it logs its arguments, then fails when failEnv is set, or else writes stdoutEnv's value when it
-// is set, and copies stdin when it isn't, so a corrected image is the image it was given. Any
-// other run, a conversion's, reads its input, its first argument that names an absolute path,
-// "tiff:path[0]", "rsvg:path", or "png:path", and writes its last, "png:path": it logs its
-// arguments and its input's content, then fails when failEnv is set, or else writes PNG's
-// signature, convertedPrefix, and its input, less any PNG signature it begins with, without the
-// signature when rawEnv is set; a pages run, one with +adjoin, writes that to each page, as
-// magickPages says. A metafile's PNG, which soffice and then magick wrote, holds
+// magickStandin is the stand-in magick. With -version alone it prints the version line the real one
+// prints first, and with -list format its format listing, formatsEnv's value or fullListing, or
+// fails when listFailEnv is set; neither is logged. A run whose first argument is png:-, the
+// corrections stage's, reads stdin: it logs its arguments, then fails when failEnv is set, or else
+// writes stdoutEnv's value when it is set, and copies stdin when it isn't, so a corrected image is
+// the image it was given. Any other run, a conversion's, reads its input, its first argument that
+// names an absolute path, "tiff:path[0]", "rsvg:path", or "png:path", and writes its last,
+// "png:path": it logs its arguments and its input's content, then fails when failEnv is set, or
+// else writes PNG's signature, convertedPrefix, and its input, less any PNG signature it begins
+// with, without the signature when rawEnv is set; a pages run, one with +adjoin, writes that to
+// each page, as magickPages says. A metafile's PNG, which soffice and then magick wrote, holds
 // convertedPrefix twice.
 func magickStandin(args []string) int {
 	if len(args) == 1 && args[0] == "-version" {

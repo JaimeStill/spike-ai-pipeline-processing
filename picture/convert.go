@@ -297,26 +297,27 @@ type Picture struct {
 // ConvertBatch converts b's pictures to PNG, each in a directory of its own: each picture is
 // copied, under its PNG's stem and its kind's extension, into a fresh directory made for it in a
 // picture-* directory in b.Dir, which holds nothing else, so an SVG's relative references find
-// nothing, and its converter reads the copy. A TIFF's first image is converted through magick,
-// read as TIFF whatever its content, one run each. An SVG is rendered through magick's librsvg
-// coder at SVGDensity and flattened onto white, one run each; librsvg runs no script and fetches
-// nothing over a network, and reads no file the SVG names outside its directory, which holds the
-// copy alone. A HEIC's primary image, or a WebP's or AVIF's first frame, is converted through
-// magick, read through the coder its kind names whatever its content and turned upright by its
-// stored orientation, one run each. Every EMF and WMF is rendered in one soffice run, whose profile gives LibreOffice a
-// British English locale, so Draw places each on an A4 page at b.MetafileScale times 96 dpi, and
-// each page is trimmed to its picture through magick, one run each. Each writes PNG, so nothing
-// is encoded lossily, and without the time of the run, so a picture converted twice is the same
-// bytes both times. Each PNG is written beside its copy and then moved to its Picture's PNG, so
-// no PNG is written in part. The picture-* directory is removed when ConvertBatch returns,
+// nothing, and its converter reads the copy. A TIFF's first image is converted through magick, read
+// as TIFF whatever its content, one run each. An SVG is rendered through magick's librsvg coder at
+// SVGDensity and flattened onto white, one run each; librsvg runs no script and fetches nothing
+// over a network, and reads no file the SVG names outside its directory, which holds the copy
+// alone. A HEIC's primary image, or a WebP's or AVIF's first frame, is converted through magick,
+// read through the coder its kind names whatever its content and turned upright by its stored
+// orientation, one run each. Every EMF and WMF is rendered in one soffice run, whose profile gives
+// LibreOffice a British English locale, so Draw places each on an A4 page at b.MetafileScale times
+// 96 dpi, and each page is trimmed to its picture through magick, one run each. Each writes PNG, so
+// nothing is encoded lossily, and without the time of the run, so a picture converted twice is the
+// same bytes both times. Each PNG is written beside its copy and then moved to its Picture's PNG,
+// so no PNG is written in part. The picture-* directory is removed when ConvertBatch returns,
 // however it ends.
 //
 // A picture of no converted kind, a picture whose converter the Converter wasn't given, two
 // pictures that share a PNG stem, an empty b.Dir, and a MetafileScale CheckMetafileScale refuses
-// are each an error before anything runs: a missing LibreOffice matches ErrNoLibreOffice, a
-// missing magick ErrNoMagick, and a HEIC, WebP, or AVIF whose reader magick lacks ErrNoReader. A conversion that fails, or writes no PNG, is an error naming the
-// picture by its copy's name, with the converter's message, and the PNGs the batch wrote are
-// removed. When ctx ends a run, the error matches ctx's, as every Tool run's does.
+// are each an error before anything runs: a missing LibreOffice matches ErrNoLibreOffice, a missing
+// magick ErrNoMagick, and a HEIC, WebP, or AVIF whose reader magick lacks ErrNoReader. A conversion
+// that fails, or writes no PNG, is an error naming the picture by its copy's name, with the
+// converter's message, and the PNGs the batch wrote are removed. When ctx ends a run, the error
+// matches ctx's, as every Tool run's does.
 func (c *Converter) ConvertBatch(ctx context.Context, b Batch) error {
 	scale, err := CheckMetafileScale(b.MetafileScale)
 	if err != nil {

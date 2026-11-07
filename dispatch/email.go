@@ -26,21 +26,21 @@ type EmailConfig struct {
 	Version string
 }
 
-// EmailStage prepares a message or a mail store, route.Nested's parts, a .msg, an .eml, an mbox,
-// or a .pst, through email's Reader, its attachments written into the part's directory. Each of
-// mail's records is a [RecordOutput], its JSON as email's record marshals it, in mail's order:
-// the store line, named "store"; each folder, "folder <id>", its Meta naming its id and path; each
-// message, "message <id>", or "message" for a .msg's or an .eml's, which has none, then its
-// derived Markdown body, when it has one, a [MarkdownOutput] of the same name, the Meta of both
-// naming its id, its folder's path, its subject, and its Message-ID, and an embedded one's the
-// message it is embedded in, and the record's Meta "markdown" saying "follows" when a Markdown
-// follows it; each message of a conversation class, a Skype for Business conversation or missed
-// conversation, as email reads it, an email.Conversation record, "conversation <id>", or
-// "conversation" without one, then its transcript's Markdown, of the same name, in the same
-// order, with the same Meta less the subject and Message-ID and with its topic and "missed",
-// "true" or "false", an embedded one's too, since the class decides; each skipped record, "skipped <kind>", its Meta naming its reason; and a record of a
-// kind email doesn't know, by its kind. mail's warnings, when it gave any, are a last record,
-// "warnings", a JSON array.
+// EmailStage prepares a message or a mail store, route.Nested's parts, a .msg, an .eml, an mbox, or
+// a .pst, through email's Reader, its attachments written into the part's directory. Each of mail's
+// records is a [RecordOutput], its JSON as email's record marshals it, in mail's order: the store
+// line, named "store"; each folder, "folder <id>", its Meta naming its id and path; each message,
+// "message <id>", or "message" for a .msg's or an .eml's, which has none, then its derived Markdown
+// body, when it has one, a [MarkdownOutput] of the same name, the Meta of both naming its id, its
+// folder's path, its subject, and its Message-ID, and an embedded one's the message it is embedded
+// in, and the record's Meta "markdown" saying "follows" when a Markdown follows it; each message of
+// a conversation class, a Skype for Business conversation or missed conversation, as email reads
+// it, an email.Conversation record, "conversation <id>", or "conversation" without one, then its
+// transcript's Markdown, of the same name, in the same order, with the same Meta less the subject
+// and Message-ID and with its topic and "missed", "true" or "false", an embedded one's too, since
+// the class decides; each skipped record, "skipped <kind>", its Meta naming its reason; and a
+// record of a kind email doesn't know, by its kind. mail's warnings, when it gave any, are a last
+// record, "warnings", a JSON array.
 //
 // A message's attachments come before its own outputs, in their order: mail writes a message's
 // attachments before its line, so each is a part dispatched, every part found in it with it,

@@ -194,12 +194,12 @@ func (s *Stream) Warnings() []string { return s.warnings }
 // message.
 const stderrLimit = 1 << 20
 
-// Records runs mail once on the input and yields each line it writes as a Record while it runs:
-// the store first, then, for a .pst, folders, messages, and skipped records in mail's order, or,
-// for a .msg, its message and skipped records. A message of a conversation class is yielded as a
-// *Conversation in its place, as Message.Conversation reads it. mail's stdout passes through a pipe and is decoded
-// one line at a time, so memory follows the record being read, never the store; a slow consumer
-// holds mail back rather than buffering its output.
+// Records runs mail once on the input and yields each line it writes as a Record while it runs: the
+// store first, then, for a .pst, folders, messages, and skipped records in mail's order, or, for a
+// .msg, its message and skipped records. A message of a conversation class is yielded as a
+// *Conversation in its place, as Message.Conversation reads it. mail's stdout passes through a pipe
+// and is decoded one line at a time, so memory follows the record being read, never the store; a
+// slow consumer holds mail back rather than buffering its output.
 //
 // A read that fails yields one last pair, nil and its error. A store line whose schema isn't
 // Schema is an error matching ErrSchema, naming the schema. mail's exit codes 1 to 4 are an

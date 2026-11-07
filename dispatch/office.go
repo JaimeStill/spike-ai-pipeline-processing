@@ -30,11 +30,12 @@ type OfficeConfig struct {
 
 // OfficeStage prepares an office document, route.Office's parts, through office's Converter:
 // office's Markdown as a [MarkdownOutput] named "document", its Meta naming the format a legacy
-// document or an RTF was converted from, "rtf" for an RTF, and office's warnings, a line each; and each file office
-// wrote in its media directory as a [Found] part, the dispatcher's to route and inspect again:
-// a picture converted to PNG as its PNG, any other as stored, a picture whose converter the
-// Converter wasn't given among them, so its own stage may convert it. A part's Where names the
-// medium by office's name for it, "media <SHA-256>.<ext>", and ", as PNG" for a converted one.
+// document or an RTF was converted from, "rtf" for an RTF, and office's warnings, a line each; and
+// each file office wrote in its media directory as a [Found] part, the dispatcher's to route and
+// inspect again: a picture converted to PNG as its PNG, any other as stored, a picture whose
+// converter the Converter wasn't given among them, so its own stage may convert it. A part's Where
+// names the medium by office's name for it, "media <SHA-256>.<ext>", and ", as PNG" for a converted
+// one.
 //
 // An RTF is office's to convert through LibreOffice to docx, as a .doc is. The stage has no
 // processor yet for an ODF package, a WordPerfect document, or an Excel binary workbook, which

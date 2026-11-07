@@ -40,10 +40,10 @@ type Config struct {
 	// required.
 	Office *tool.Tool
 	// LibreOffice is LibreOffice's soffice, typically built from picture.LibreOfficeSpec through
-	// the container runner in picture.LibreOfficeImage. It converts legacy documents to OOXML,
-	// and RTFs to docx; nil leaves the Converter without one, and a legacy document or an RTF is
-	// then refused with ErrNoLibreOffice. It renders EMF and WMF pictures to PNG too, through the picture package,
-	// with Magick; without either, they have no file handed onward.
+	// the container runner in picture.LibreOfficeImage. It converts legacy documents to OOXML, and
+	// RTFs to docx; nil leaves the Converter without one, and a legacy document or an RTF is then
+	// refused with ErrNoLibreOffice. It renders EMF and WMF pictures to PNG too, through the
+	// picture package, with Magick; without either, they have no file handed onward.
 	LibreOffice *tool.Tool
 	// Magick is ImageMagick's magick, typically built from picture.MagickSpec. It converts TIFF
 	// pictures to PNG, and trims an EMF or WMF picture's rendered page to the picture, through
@@ -156,10 +156,9 @@ type Result struct {
 	// converted the rest without. A conversion with warnings has still succeeded.
 	Warnings []string
 	// ConvertedFrom is the format a legacy document or an RTF was converted from to OOXML before
-	// office ran: a legacy document's extension without the dot and lowercased, such as "doc",
-	// or "rtf"; "" when the
-	// document went to office as it was. Document.Format, for a JSON request, is the OOXML format
-	// it was converted to.
+	// office ran: a legacy document's extension without the dot and lowercased, such as "doc", or
+	// "rtf"; "" when the document went to office as it was. Document.Format, for a JSON request, is
+	// the OOXML format it was converted to.
 	ConvertedFrom string
 }
 
@@ -294,10 +293,10 @@ func (c *Converter) Convert(ctx context.Context, doc io.Reader, req Request) (*R
 	return res, nil
 }
 
-// convertLegacy runs office on the document spooled at path, in dir, as convert does; for a
-// legacy document or an RTF, from naming its format, it first converts the document to the OOXML format to
-// and runs office on that, removing the converted document and soffice's profile afterwards.
-// Metafiles are rendered at scale.
+// convertLegacy runs office on the document spooled at path, in dir, as convert does; for a legacy
+// document or an RTF, from naming its format, it first converts the document to the OOXML format
+// its extension names and runs office on that, removing the converted document and soffice's
+// profile afterwards. Metafiles are rendered at scale.
 func (c *Converter) convertLegacy(ctx context.Context, dir, path, from, to string, format Format, scale int) (*Result, error) {
 	if from == "" {
 		return c.convert(ctx, dir, path, format, scale)

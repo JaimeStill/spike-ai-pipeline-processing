@@ -96,7 +96,8 @@ func TestTextStage(t *testing.T) {
 			if !slices.Equal(warnings, c.warnings) {
 				t.Errorf("warnings %q, want %q", warnings, c.warnings)
 			}
-			// Valid UTF-8 without a mark is the part's own file; anything else a file of the stage's.
+			// Valid UTF-8 without a mark is the part's own file; anything else a file of the
+			// stage's.
 			if pass := c.encoding == "utf-8"; (o.Path == path) != pass {
 				t.Errorf("output at %s, the part at %s", o.Path, path)
 			}

@@ -1,9 +1,10 @@
-// Package dispatch walks an input and every part found in it to the stages that prepare them,
-// on the standard library and this module's route and inspect packages and sevenzip's types,
+// Package dispatch walks an input and every part found in it to the stages that prepare them, on
+// the standard library and this module's route and inspect packages and sevenzip's types,
 // golang.org/x/text for the text stage's decoding, and, for the format packages' adapters, which
-// build on Linux only, on document, office, picture, email, onenote, audio, media, and tool. It never calls a model: it reports what each part is and what its stage
-// prepared, for a layer above to send on. The stages are the caller's, registered by route; the
-// format packages' adapters are stages.
+// build on Linux only, on document, office, picture, email, onenote, audio, media, and tool. It
+// never calls a model: it reports what each part is and what its stage prepared, for a layer above
+// to send on. The stages are the caller's, registered by route; the format packages' adapters are
+// stages.
 //
 // [Dispatcher.Dispatch] takes an [Input], a file the caller owns and the dispatcher never
 // removes, and yields [Event]s, depth-first, in each stage's own order: each output a stage
