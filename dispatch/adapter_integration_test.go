@@ -26,7 +26,7 @@ var builtMSG = filepath.Join("..", "email", "testdata", "built", "msg", "office-
 // allStages returns every adapter, over this machine's gs, magick, ffmpeg, and ffprobe,
 // LibreOffice through the container runner in its pinned image, and the office, mail, and onenote
 // mise pins (the last two through emailStage and onenoteStage), as a composition root wires them:
-// the document stage reading each page's text layer.
+// the document stage reading each page's text layer, and the text stage, which runs no tool.
 func allStages(t *testing.T) dispatch.Stages {
 	t.Helper()
 	gs := pinned(t, document.GhostscriptSpec())
@@ -93,6 +93,7 @@ func allStages(t *testing.T) dispatch.Stages {
 		route.OneNote:         onenoteStage(t),
 		route.Audio:           audios,
 		route.Video:           videos,
+		route.Text:            dispatch.NewTextStage(),
 	}
 }
 

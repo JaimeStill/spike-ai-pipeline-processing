@@ -1,7 +1,7 @@
 // Package dispatch walks an input and every part found in it to the stages that prepare them,
-// on the standard library and this module's route and inspect packages and sevenzip's types, and,
-// for the format packages' adapters, which build on Linux only, on document, office, picture,
-// email, onenote, audio, media, and tool. It never calls a model: it reports what each part is and what its stage
+// on the standard library and this module's route and inspect packages and sevenzip's types,
+// golang.org/x/text for the text stage's decoding, and, for the format packages' adapters, which
+// build on Linux only, on document, office, picture, email, onenote, audio, media, and tool. It never calls a model: it reports what each part is and what its stage
 // prepared, for a layer above to send on. The stages are the caller's, registered by route; the
 // format packages' adapters are stages.
 //
@@ -163,6 +163,17 @@
 // still writes each entry by its hash, inside the part's directory, as it does a 7z's or a
 // cabinet's.
 //
+// [TextStage], for route.Text, is no format package's adapter either, and runs no tool, on any
+// platform: it yields one [TextOutput], "text", UTF-8, its line endings as stored. Its encoding
+// is decided, never detected: a byte order mark, UTF-8's, UTF-32's, or UTF-16's, either byte
+// order, which the output drops; else UTF-8, when the whole part is valid UTF-8; else
+// windows-1252, as a fallback, with a warning. It decodes through golang.org/x/text. Its Meta
+// "encoding" names the encoding and how it was decided, as "utf-8 (byte order mark)", "utf-8", or
+// "windows-1252 (fallback)"; bytes the encoding can't decode become U+FFFD, which its Meta
+// "warnings" counts. Valid UTF-8 without a mark is passed through, the output's Path the part's
+// own file; other text is decoded, streamed, into a file in the part's directory. It sets no cap
+// of its own: a large part is held to the dispatcher's [Limits].
+//
 // A skipped record, a medium or attachment with no content, an archive's entry or a gzip or zstd
 // stream's content the archive stage can't write, and a CLI's warnings are each a record output,
 // never dropped.
@@ -322,6 +333,7 @@
 //     tools' version.
 //   - [ArchiveStage], made by [NewArchiveStage] over an [ArchiveConfig], on any platform, reading
 //     7-Zip's kinds through its [SevenZip].
+//   - [TextStage], made by [NewTextStage], on any platform.
 //   - [Index], keyed by a [Key], holding [Entry]s, each counting its outputs and its [Child]ren,
 //     both appended under a claim and read back streamed; the shipped
 //     ones are [MemoryIndex], made by [NewMemoryIndex], and [FileIndex], made by

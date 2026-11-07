@@ -67,7 +67,9 @@ repository's `context/README.md`.
 - **dispatch**: an input and every part found in it walked to the caller's stages by route, hashed,
   routed, and inspected first, the format packages' adapters and the archive stage, which reads
   ZIP, tar, and gzip on the standard library and, through sevenzip, zstd, 7z, cabinets, and ZIP's
-  other methods, quarantining an archive whose 7-Zip listing is unsafe, among them, under a content-addressed index, in memory or a directory, whose claims
+  other methods, quarantining an archive whose 7-Zip listing is unsafe, and the text stage, which
+  decides a text part's encoding by a byte order mark, else UTF-8, else windows-1252 as a fallback,
+  and decodes it to UTF-8 through golang.org/x/text, detecting none, among them, under a content-addressed index, in memory or a directory, whose claims
   make one of concurrent dispatches prepare shared content; a pool over N workers sharing the index,
   its events merged onto the caller's goroutine, each worker held until the loop takes its event;
   and a store's read resumed after a message, Input.After, its entry not recorded, from a

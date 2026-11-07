@@ -21,10 +21,11 @@ linters:
     depguard:
       rules:
         # The module depends on nothing but the standard library (unsafe
-        # among it, which waitid in tool/exec.go uses) and
-        # spike-ai-pipeline-client. The rule covers every Go file, tests
-        # included: they drive the API with the same imports plus the module
-        # itself. Allow entries match by prefix unless they end in `$`, so the
+        # among it, which waitid in tool/exec.go uses),
+        # spike-ai-pipeline-client, and golang.org/x/text's packages, which
+        # the text stage decodes through (dispatch/text.go). The rule covers
+        # every Go file, tests included: they drive the API with the same
+        # imports plus the module itself. Allow entries match by prefix unless they end in `$`, so the
         # module entries are anchored: each module as itself or a package
         # under it (not a sibling like spike-ai-pipeline-processing-extra).
         module:
@@ -37,3 +38,4 @@ linters:
             - github.com/JaimeStill/spike-ai-pipeline-processing/
             - github.com/JaimeStill/spike-ai-pipeline-client$
             - github.com/JaimeStill/spike-ai-pipeline-client/
+            - golang.org/x/text/

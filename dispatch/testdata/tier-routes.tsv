@@ -83,18 +83,18 @@ picture/testdata/script-bearing.svg	-	*	vision-converted	prepared
 picture/testdata/shapes.svg	-	*	vision-converted	prepared
 
 # email, the generated messages as .eml: moth.png first prepared here; the CSV and the text
-# attachment are text, which no stage takes yet.
+# attachment are text, prepared by the text stage here and seen in the .msg copies and the store.
 email/testdata/mail/fixtures/generated/eml/01-plain.eml	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/eml/02-reply-latin1.eml	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/eml/03-html-inline-image.eml	message, attachment *	moth.png	vision	prepared
 email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	-	*	nested	prepared
-email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	message, attachment *	отчёт.csv	text	no processor yet
+email/testdata/mail/fixtures/generated/eml/04-attachment-cyrillic.eml	message, attachment *	отчёт.csv	text	prepared
 email/testdata/mail/fixtures/generated/eml/05-japanese.eml	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/eml/06-chinese.eml	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/eml/07-html-only-bcc.eml	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	-	*	nested	prepared
-email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	message, attachment *	note-g.txt	text	no processor yet
+email/testdata/mail/fixtures/generated/eml/08-forward-attached-message.eml	message, attachment *	note-g.txt	text	prepared
 
 # email, the same messages as .msg: moth.png is seen; the forwarded message is a file of its own,
 # the email stage's again.
@@ -103,19 +103,19 @@ email/testdata/mail/fixtures/generated/msg/02-reply-latin1.msg	-	*	nested	prepar
 email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/msg/03-html-inline-image.msg	message, attachment *	moth.png	vision	seen
 email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	-	*	nested	prepared
-email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	message, attachment *	отчёт.csv	text	no processor yet
+email/testdata/mail/fixtures/generated/msg/04-attachment-cyrillic.msg	message, attachment *	отчёт.csv	text	seen
 email/testdata/mail/fixtures/generated/msg/05-japanese.msg	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/msg/06-chinese.msg	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/msg/07-html-only-bcc.msg	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	-	*	nested	prepared
-email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment *	note-g.txt	text	no processor yet
+email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment *	note-g.txt	text	seen
 email/testdata/mail/fixtures/generated/msg/08-forward-attached-message.msg	message, attachment *	Notes on the engine (draft).eml	nested	prepared
 
 # email, the generated store: the same attachments again.
 email/testdata/mail/fixtures/generated/pst/mailbox.pst	-	*	nested	prepared
 email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	moth.png	vision	seen
-email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	отчёт.csv	text	no processor yet
-email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	note-g.txt	text	no processor yet
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	отчёт.csv	text	seen
+email/testdata/mail/fixtures/generated/pst/mailbox.pst	message *, attachment *	note-g.txt	text	seen
 
 # email, the MIME inputs: an .eml, an mboxrd, and the rlug mbox. mbox.rlug-0 to -4 are its
 # messages one a file, each beginning with its header, no "From " line, and named with no .eml
@@ -221,7 +221,8 @@ onenote/testdata/onenote/fixtures/onenote-rs/object-revision/Open Notebook.oneto
 # zeros, which no stage takes, bomb.tar.gz's tar first; a gzip stream holding an unsafe tar is
 # prepared and the tar quarantined; clean.tar.gz's and unnamed.tgz's tar is clean.tar's bytes,
 # dispatched before them, so seen; the encrypted ZIP's readable entry is dispatched and the ZIP is
-# encrypted; the other hazards' flags are active, which proceed to their stages.
+# encrypted, that entry clean.tar's notes.txt, byte for byte, so seen; the other hazards' flags are
+# active, which proceed to their stages.
 inspect/testdata/absolute.tar	-	*	archive	quarantined
 inspect/testdata/absolute.zip	-	*	archive	quarantined
 inspect/testdata/bomb.tar.gz	-	*	archive	prepared
@@ -230,7 +231,7 @@ inspect/testdata/bomb.tar.gz	gzip content bomb.tar > tar entry zeros.bin	zeros.b
 inspect/testdata/bomb.zip	-	*	archive	prepared
 inspect/testdata/bomb.zip	zip entry zeros.bin	zeros.bin	unrouted	no processor yet
 inspect/testdata/clean.tar	-	*	archive	prepared
-inspect/testdata/clean.tar	tar entry docs/notes.txt	docs/notes.txt	text	no processor yet
+inspect/testdata/clean.tar	tar entry docs/notes.txt	docs/notes.txt	text	prepared
 inspect/testdata/clean.tar	tar entry docs/pixel.png	docs/pixel.png	vision	prepared
 inspect/testdata/clean.tar.gz	-	*	archive	prepared
 inspect/testdata/clean.tar.gz	gzip content clean.tar	clean.tar	archive	seen
@@ -238,7 +239,7 @@ inspect/testdata/declared-bomb.zip	-	*	archive	quarantined
 inspect/testdata/device.tar	-	*	archive	quarantined
 inspect/testdata/encrypted.xlsx	-	*	office	encrypted
 inspect/testdata/encrypted.zip	-	*	archive	encrypted
-inspect/testdata/encrypted.zip	zip entry notes.txt	notes.txt	text	no processor yet
+inspect/testdata/encrypted.zip	zip entry notes.txt	notes.txt	text	seen
 inspect/testdata/hardlink.tar	-	*	archive	quarantined
 inspect/testdata/hyperlink.docx	-	*	office	prepared
 inspect/testdata/invoice.pdf.exe	-	*	unrouted	no processor yet
@@ -265,19 +266,21 @@ inspect/testdata/unnamed.tgz	gzip content unnamed.tar	unnamed.tar	archive	seen
 # entry, a link, or a FIFO, and a zstd stream whose header declares 4 GiB, is quarantined by the
 # stage before anything is extracted; the 8 MiB bombs are under the default size, so their zeros
 # are written, which no stage takes. clean.tar.zst holds inspect's clean.tar, and notebook.cab
-# onenote.rs's section and notebook, all dispatched before, so seen. encrypted.7z's clear entry is
-# dispatched and the 7z is encrypted; encrypted-headers.7z lists nothing, so it is encrypted at once.
+# onenote.rs's section and notebook, all dispatched before, so seen. The implode ZIP's LOREM.TXT is
+# the Deflate64 ZIP's lorem-ipsum.txt, byte for byte, so seen. encrypted.7z's clear entry, inspect's
+# notes.txt again, is seen, and the 7z is encrypted; encrypted-headers.7z lists nothing, so it is
+# encrypted at once.
 sevenzip/testdata/commons-compress/bzip2-zip.zip	-	*	archive	prepared
 sevenzip/testdata/commons-compress/bzip2-zip.zip	zip entry lots-of-as	lots-of-as	unrouted	no processor yet
 sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip	-	*	archive	prepared
-sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip	zip entry lorem-ipsum.txt	lorem-ipsum.txt	text	no processor yet
+sevenzip/testdata/commons-compress/lorem-ipsum-deflate64.zip	zip entry lorem-ipsum.txt	lorem-ipsum.txt	text	prepared
 sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip	-	*	archive	prepared
-sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip	zip entry LOREM.TXT	LOREM.TXT	text	no processor yet
+sevenzip/testdata/commons-compress/lorem-ipsum-implode.zip	zip entry LOREM.TXT	LOREM.TXT	text	seen
 sevenzip/testdata/commons-compress/test-method-xz.zip	-	*	archive	prepared
-sevenzip/testdata/commons-compress/test-method-xz.zip	zip entry LICENSE.txt	LICENSE.txt	text	no processor yet
+sevenzip/testdata/commons-compress/test-method-xz.zip	zip entry LICENSE.txt	LICENSE.txt	text	prepared
 sevenzip/testdata/commons-compress/bla.deflate64.7z	-	*	archive	prepared
-sevenzip/testdata/commons-compress/bla.deflate64.7z	7z entry test1.xml	test1.xml	text	no processor yet
-sevenzip/testdata/commons-compress/bla.deflate64.7z	7z entry test2.xml	test2.xml	text	no processor yet
+sevenzip/testdata/commons-compress/bla.deflate64.7z	7z entry test1.xml	test1.xml	text	prepared
+sevenzip/testdata/commons-compress/bla.deflate64.7z	7z entry test2.xml	test2.xml	text	prepared
 sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx	-	*	archive	prepared
 sevenzip/testdata/libarchive/test_read_format_zip_lzma.zipx	zip entry vimrc	vimrc	unrouted	no processor yet
 sevenzip/testdata/libarchive/test_read_format_zip_ppmd8.zipx	-	*	archive	prepared
@@ -293,7 +296,7 @@ sevenzip/testdata/generated/bomb.cab	cabinet entry zeros.bin	zeros.bin	unrouted	
 sevenzip/testdata/generated/bomb.zst	-	*	archive	prepared
 sevenzip/testdata/generated/bomb.zst	zstd content bomb	bomb	unrouted	no processor yet
 sevenzip/testdata/generated/clean.7z	-	*	archive	prepared
-sevenzip/testdata/generated/clean.7z	7z entry docs/notes.txt	docs/notes.txt	text	no processor yet
+sevenzip/testdata/generated/clean.7z	7z entry docs/notes.txt	docs/notes.txt	text	prepared
 sevenzip/testdata/generated/clean.7z	7z entry docs/pixel.png	docs/pixel.png	vision	prepared
 sevenzip/testdata/generated/clean.tar.zst	-	*	archive	prepared
 sevenzip/testdata/generated/clean.tar.zst	zstd content clean.tar	clean.tar	archive	seen
@@ -301,7 +304,7 @@ sevenzip/testdata/generated/declared-bomb.zst	-	*	archive	quarantined
 sevenzip/testdata/generated/device.7z	-	*	archive	quarantined
 sevenzip/testdata/generated/encrypted-headers.7z	-	*	archive	encrypted
 sevenzip/testdata/generated/encrypted.7z	-	*	archive	encrypted
-sevenzip/testdata/generated/encrypted.7z	7z entry notes.txt	notes.txt	text	no processor yet
+sevenzip/testdata/generated/encrypted.7z	7z entry notes.txt	notes.txt	text	seen
 sevenzip/testdata/generated/notebook.cab	-	*	archive	prepared
 sevenzip/testdata/generated/notebook.cab	cabinet entry Open Notebook.onetoc2	Open Notebook.onetoc2	onenote	seen
 sevenzip/testdata/generated/notebook.cab	cabinet entry New Section 1.one	New Section 1.one	onenote	seen

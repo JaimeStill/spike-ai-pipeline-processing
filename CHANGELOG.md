@@ -96,8 +96,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   with their commands and SHA-256 in the testdata README. The integration tier converts each, and
   ~/docs' TIFF, HEIC, WebP, and AVIF samples when the machine has them; magick isn't pinned, so it
   checks sizes, page order, pixels, and that two conversions give the same bytes, recording no sums.
+- `dispatch.TextStage`, made by `NewTextStage`, for route.Text, on any platform, running no tool:
+  one text output, "text", UTF-8, its line endings as stored. Its encoding is decided, never
+  detected: a byte order mark (UTF-8, UTF-16LE or BE, UTF-32LE or BE), which the output drops; else
+  UTF-8, when the whole part is valid UTF-8; else windows-1252 as a fallback, with a warning. It
+  decodes through golang.org/x/text v0.43.0, the module's first dependency outside the standard
+  library and the spike's own. Meta `encoding` names the encoding and how it was decided, such as
+  `utf-8 (byte order mark)`, `utf-8`, or `windows-1252 (fallback)`; bytes the encoding can't decode
+  become U+FFFD, counted in Meta `warnings`. Valid UTF-8 without a mark is passed through, its
+  output's Path the part's own file; other text is decoded, streamed, into a file in the part's
+  directory, and a large part is held to the dispatcher's `Limits` alone. The unit tier holds it to
+  ~/docs' encodings and their truth when the machine has them: correct for UTF-8 with and without a
+  mark, UTF-16LE with one, windows-1252, with CRLF too, and ISO-8859-1; garbled, the known limit,
+  for UTF-16BE without a mark, KOI8-R, EUC-JP, Shift_JIS, and windows-1256.
 
 ### Changed
+
+- The integration tier registers the text stage, so its route truth has the text parts it held as
+  no processor yet prepared, or seen where an earlier fixture holds the same bytes.
 
 - `picture.NewConverter` and `office.NewConverter` take a `context.Context`, under which the picture
   Converter runs magick's format listing when it is given magick; a listing that fails is an error.

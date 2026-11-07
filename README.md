@@ -136,7 +136,7 @@ package, an RTF, a WordPerfect document, or an .xlsb; `Vision`, PNG, JPEG, GIF, 
 .eml, a .pst, or an mbox; `OneNote`; `Archive`, ZIP, tar, gzip, zstd, 7z, and a cabinet; `Audio`;
 `Video`; `Text`; and `Unrouted`, an executable, an .ost, HTML, and anything else, each with a reason
 in a few words. The caller, or a dispatcher, runs the stage, and reports "no processor yet" for one
-that doesn't exist: no stage takes ODF, RTF, WordPerfect, .xlsb, or text yet, nor a zstd stream, a
+that doesn't exist: no stage takes ODF, RTF, WordPerfect, or .xlsb yet, nor a zstd stream, a
 7z archive, or a cabinet without 7-Zip, nor a HEIC, WebP, or AVIF without magick's reader.
 
 ```go
@@ -185,7 +185,8 @@ if rep.Verdict == inspect.Quarantine {
 ```
 
 `dispatch` walks an input and every part found in it to the stages that prepare them, on the
-standard library, `route`, and `inspect`, and never calls a model. A caller registers a `Stage` per
+standard library, `route`, and `inspect`, and, for the text stage's decoding, golang.org/x/text,
+and never calls a model. A caller registers a `Stage` per
 route; each names its `Identity`, its name, tool version, and configuration hash, and yields the
 `Output`s it prepares, text, Markdown, an image, or a record, in a file or inline, and the parts it
 finds. `Dispatcher.Dispatch` hashes each part, SHA-256, streamed, before any stage runs, routes and
@@ -301,6 +302,20 @@ recorded quarantined with its evidence. A ZIP or tar with an unsafe name, a link
 quarantined by `inspect` before the stage runs. With no 7-Zip, a zstd stream, a 7z archive, or a
 cabinet is no processor yet, and a ZIP entry 7-Zip would read is a record.
 
+`TextStage`, for the text route, on any platform, runs no tool: it yields one text output, "text",
+UTF-8, its line endings as stored. It decides the encoding, never detects it: a byte order mark,
+UTF-8's, UTF-32's, or UTF-16's, either byte order, which the output drops; else UTF-8, when the
+whole part is valid UTF-8, ASCII among it; else windows-1252, as a fallback, with a warning that the
+text may be in another encoding. It decodes through golang.org/x/text. Its Meta `encoding` names
+the encoding and how it was decided, such as `utf-8 (byte order mark)`, `utf-16le (byte order
+mark)`, `utf-8`, or `windows-1252 (fallback)`; bytes the encoding can't decode become U+FFFD, and
+its Meta `warnings` counts them, a line each with the fallback's. Valid UTF-8 without a mark is
+passed through, the output's file the part's own, as the vision stage passes a picture; other
+text is decoded, streamed, into a file in the part's directory, never held in memory, and a large
+part is held to the dispatcher's `Limits` alone. Over ~/docs' encodings, the fallback's text is the
+truth for windows-1252 and ISO-8859-1, and garbled, the stage's known limit, for UTF-16 without a
+mark and for KOI8-R, EUC-JP, Shift_JIS, and windows-1256.
+
 `sevenzip` lists and extracts through 7-Zip's 7zz, minimum 24.01, which mise pins from its GitHub
 release. `NewReader` builds a `Reader` over a `Config` of the Tool, refusing a missing or older one.
 `Reader.List` reads an archive's technical listing, `-slt`, into a `Listing` of `Entry` items, each
@@ -368,6 +383,7 @@ d, err := dispatch.New(dispatch.Config{
 		route.Document: docs, route.Office: offices, route.VisionConverted: pictures,
 		route.Vision: dispatch.NewVisionStage(), route.Nested: mail, route.OneNote: notes,
 		route.Archive: archives, route.Audio: speech, route.Video: videos,
+		route.Text: dispatch.NewTextStage(),
 	},
 	Index: dispatch.NewMemoryIndex(), Dir: work, Inspect: opts,
 })
