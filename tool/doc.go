@@ -19,8 +19,10 @@
 // files through either runner.
 //
 // A Spec declares the version check: arguments that print the version, a pattern whose first
-// capture group is the version, and a minimum. A Version is dotted numbers compared as numbers,
-// a missing component counting as zero, and the check is a minimum, never an exact version.
+// capture group is the version, and a minimum; and, for a program whose version command exits
+// nonzero, as pdfdetach's -v exits 99, the exit code that means it printed the version. A
+// Version is dotted numbers compared as numbers, a missing component counting as zero, and the
+// check is a minimum, never an exact version.
 //
 // Cancelling a run's context stops its tool. Through the exec runner the program's process group
 // gets SIGTERM, then SIGKILL once the Spec's KillAfter period passes, 10 s when unset. Through the
@@ -45,8 +47,8 @@
 //
 // Its exported identifiers:
 //
-//   - [Spec] declares a tool: its program, its version command and pattern, its minimum version,
-//     and a cancelled run's KillAfter period.
+//   - [Spec] declares a tool: its program, its version command, exit code, and pattern, its
+//     minimum version, and a cancelled run's KillAfter period.
 //   - [Invocation] is one run of a tool: arguments, working directory, standard streams, and
 //     where to report its usage.
 //   - [Usage] is a run's resource usage: user and system CPU time.

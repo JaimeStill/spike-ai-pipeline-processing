@@ -1,8 +1,9 @@
 # testdata
 
-The document fixtures: letter-size PDFs with each page's ground truth, in three sets. Each set is
-one multi-page PDF, so a renderer test names a page of it and a page stream test takes the whole
-PDF. The clean and degraded sets are generated from `clean.typ`; the scanned set is real scans.
+The document fixtures: letter-size PDFs with each page's ground truth, in three sets, and a
+generated AcroForm for the forms record. Each set is one multi-page PDF, so a renderer test names
+a page of it and a page stream test takes the whole PDF. The clean and degraded sets are
+generated from `clean.typ`; the scanned set is real scans.
 
 - `clean.pdf` is six pages, one layout each: prose, two columns, a table, 8 pt print, a filled-in
   form, and a figure (shapes only) with a caption.
@@ -115,6 +116,46 @@ c78b22d17c06925c3ed829a4d3cf163b61fa4f741ad33625df302aa039321b53  scanned/page-4
 114405efbf857a531f2c0cc4868cab9996e60808be48903ff2a18c7328728680  scanned/page-5.txt
 75184a354cef398e536a1953112aa930879cafd6a99260fe325f8960e8188f59  scanned/page-6.txt
 3697cea8fba85a5696ee7dd941854ee7edc3e998fb02ec1ff74f404b2be8b573  scanned/page-7.txt
+```
+
+## The forms fixture
+
+`forms/acroform.pdf` is this repository's, Apache-2.0: a one-page PDF whose AcroForm holds seven
+filled fields, written by hand by `forms/generate.go`, every byte fixed, so a rerun writes the
+same bytes. Run it in `document/testdata/forms`:
+
+```sh
+mise exec -- go run generate.go
+```
+
+Its fields, in the AcroForm's order, are its truth, which the generator's doc lists and the tests
+hold the forms record to exactly:
+
+| Field | Type | Value |
+| ----- | ---- | ----- |
+| `applicant.name` | text, under a non-terminal parent | `Ada Lovelace` |
+| `applicant.city` | text, its value UTF-16BE | `Zürich` |
+| `subscribe` | checkbox | checked, `/Yes` |
+| `newsletter` | checkbox | unchecked, `/Off` |
+| `contact` | radio group of two buttons, `Email` and `Phone` | `Phone` |
+| `colour` | combo box of `Red`, `Green`, and `Blue` | `Green` |
+| `languages` | multi-select list box of `English`, `French`, and `German`, export values `en`, `fr`, and `de` | `en` and `de` |
+
+`forms/acroform.json` is qpdf 12.4.2's JSON of the fixture's AcroForm, recorded so the check reads
+it without qpdf; the integration tier reads the fixture through the host's qpdf and holds it to
+the same fields:
+
+```sh
+qpdf --json=2 --json-key=acroform acroform.pdf > acroform.json
+```
+
+qpdf gives a choice's options by their display text and its value by its export value, so the
+list box's options read `English`, `French`, and `German` and its selection `en` and `de`. Their
+SHA-256 sums, which `TestFixtureSums` holds them to:
+
+```
+bf77a44be70876ecd682b1d2f0f6b7a710c17a7ce76288f018bf165ad44a3e2a  forms/acroform.pdf
+c4449427e48adef6d2fe6cd8f769a4157e59906dc69d7cc3f19d5579494c2fe5  forms/acroform.json
 ```
 
 ## Golden sums

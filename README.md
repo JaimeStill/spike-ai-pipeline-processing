@@ -7,7 +7,8 @@ through vision, whether the payload is a whole blob or a stream.
 Go builds only what the layer must own. Mature system tools do the specialized work behind the
 tool contract this layer defines in its `tool` package, as herald's processing layer did: an exec
 runner for binaries and scripts, and a container runner for pinned images. The tools the layer's
-adapters run are Ghostscript for PDF pages (chosen by bake-off), ImageMagick for images and image
+adapters run are Ghostscript for PDF pages (chosen by bake-off), qpdf and poppler's pdfdetach for
+a PDF's password check, form fields, and embedded files, ImageMagick for images and image
 correction, ffmpeg and ffprobe for audio and video, spike-ai-pipeline-office's Open XML CLI for
 office documents, LibreOffice in a container for legacy office formats and RTF only,
 spike-ai-pipeline-mail's CLI for Outlook mail stores and MIME messages,
@@ -27,8 +28,9 @@ streams its windows and frames as they arrive.
 
 `tool` runs one program behind one contract, on Linux and the standard library alone. A `Spec`
 declares the program: its name or path, the arguments that make it print its version, a pattern
-whose first capture group is the version, the minimum version, and `KillAfter`, the KillAfter
-period: how long a cancelled run has after SIGTERM before SIGKILL. A runner's constructor builds
+whose first capture group is the version, the minimum version, `VersionExit`, the exit code of a
+version command that exits nonzero having printed it, as pdfdetach's `-v` exits 99, and
+`KillAfter`, the KillAfter period: how long a cancelled run has after SIGTERM before SIGKILL. A runner's constructor builds
 a `Tool` bound to that one program; it finds the program and checks its version, so a missing or
 outdated tool fails at startup, and the Tool reports its `Name` and the `Version` found.
 `Tool.Run` runs one `Invocation`, its arguments, a working directory the caller owns, and optional
@@ -251,7 +253,11 @@ dispatch takes them over.
 
 The format packages' adapters ship in `dispatch`, on Linux, each a `Stage` built over the reader
 or converter the caller already built and the version of its Tools, which `dispatch.Versions`
-names: `DocumentStage`, a PDF's pages, each its text layer and a PNG; `OfficeStage`, office's
+names: `DocumentStage`, a PDF's pages, each its text layer and a PNG, and, given qpdf and pdfdetach
+through `DocumentConfig.QPDF` and `DocumentConfig.PDFDetach`, a PDF that needs a password
+encrypted with nothing rendered, its AcroForm's fields as a `forms` record before its pages, and
+each embedded file found as a part, `attachment <name>`, written under its SHA-256 with the bomb
+rule enforced on the bytes pdfdetach writes; `OfficeStage`, office's
 Markdown, each medium office wrote found as a part; `PictureStage`, a TIFF to a PNG per page,
 "page N", its Meta naming the page and the count, and an EMF, WMF, SVG, HEIC, WebP, or AVIF to one
 PNG; `VisionStage`, a PNG, JPEG, GIF, or BMP passed through as an image output; `EmailStage`,
@@ -336,8 +342,17 @@ prep, err := document.NewPreparer(render, nil)
 if err != nil {
 	return err
 }
+q, err := document.NewQPDF(qp)
+if err != nil {
+	return err
+}
+detach, err := document.NewDetacher(pd)
+if err != nil {
+	return err
+}
 docs, err := dispatch.NewDocumentStage(dispatch.DocumentConfig{
-	Preparer: prep, Version: dispatch.Versions(gs), Request: document.ImagesRequest{Text: true},
+	Preparer: prep, Version: dispatch.Versions(gs, qp, pd), Request: document.ImagesRequest{Text: true},
+	QPDF: q, PDFDetach: detach, Inspect: opts,
 })
 if err != nil {
 	return err
@@ -516,6 +531,27 @@ for page, err := range prep.Images(ctx, pdf, document.ImagesRequest{Dir: dir, Sk
 	// page.Text when HasText(page.Text), page.PNG otherwise
 }
 ```
+
+`QPDF`, built by `NewQPDF` over a qpdf Tool that `QPDFSpec` declares, minimum `QPDFMinimum`, 11.0,
+the first whose JSON is version 2, reads what a PDF's structure says before it is rendered.
+`QPDF.RequiresPassword` asks `qpdf --requires-password`: exit 0 means the PDF needs a password, 2
+that it isn't encrypted, and 3 that it is encrypted but opens without one, as a PDF restricted
+only by its permissions does; an exit 2 whose stderr holds qpdf's error, not only warnings, is a
+file qpdf can't open, and fails. `QPDF.Form` reads `qpdf --json=2 --json-key=acroform` into a
+`Form` of `FormField`s, in the AcroForm's order, a radio group's widgets as one field: each
+field's full name, its type (`TextField`, `CheckboxField`, `RadioField`, `ChoiceField`,
+`PushbuttonField`, `SignatureField`, or the PDF's own type), and its value, decoded from qpdf's
+string and name encodings; a checkbox's or radio group's `Checked`, its state other than `Off`;
+and a choice's `Options`, by their display text, and `Selected`, by their export values. A PDF
+with no AcroForm has no fields.
+
+A `Detacher`, built by `NewDetacher` over a pdfdetach Tool that `PDFDetachSpec` declares, minimum
+`PDFDetachMinimum`, 22.02, reads a PDF's embedded files, the name tree's and the file attachment
+annotations', not the media behind a Screen or Rendition annotation, which pdfdetach doesn't
+read. `Detacher.List` reads `pdfdetach -list -enc UTF-8` into `Attachment`s, each its number and
+stored name; `Detacher.Save` writes one file to the caller's writer through `pdfdetach -save N -o
+/dev/stdout`, so pdfdetach writes no file and a stored name is only ever a name, and a write that
+fails stops it. A number the PDF has no file of is `ErrNoAttachment`.
 
 [docs/findings/documents.md](docs/findings/documents.md) records what the measurements behind
 these choices found: which renderer, whether to reason while transcribing, whether corrections
@@ -1069,7 +1105,8 @@ midway; its paced runs take about 75 minutes, and a run keeps its results only i
 The tests' vision and speech harnesses, the bake-offs, the staged flow, and the findings tier are
 test code, not released.
 
-Host prerequisites: gs 10.0 or later on PATH for `document`; ImageMagick's magick 7.1 or later on
+Host prerequisites: gs 10.0 or later on PATH for `document`, and, for its password check, forms,
+and embedded files, qpdf 11.0 or later and poppler's pdfdetach 22.02 or later, each optional; ImageMagick's magick 7.1 or later on
 PATH for `picture`, its conversions and its corrections, and so for `document`'s corrections, with
 libheif, an AV1 decoder, and libwebp for HEIC, AVIF, and WebP; and
 docker, server 20.10 or later, for the container runner. For `office`: spike-ai-pipeline-office

@@ -129,6 +129,11 @@ const (
 	// declares its expanded size only modulo 4 GiB, in its trailer, so the stage that
 	// decompresses the stream raises it on the bytes it writes.
 	GzipBomb Check = "gzip-bomb"
+	// PDFAttachmentBomb is a PDF's embedded file past both the expansion ratio, against the
+	// whole PDF's size, and the expanded size its [Options] allow, by the bytes it is saved as.
+	// [Inspect] raises it for no part: the dispatcher's document stage raises it on the bytes
+	// pdfdetach writes, since an embedded file's stream may be compressed.
+	PDFAttachmentBomb Check = "pdf-attachment-bomb"
 )
 
 // The checks of a listing, which [CheckListing] raises, and [Inspect] never: an archive only a
@@ -180,7 +185,7 @@ var classes = map[Check]Class{
 	ZIPTraversal: Unsafe, ZIPAbsolutePath: Unsafe, ZIPSymlink: Unsafe, ZIPBomb: Unsafe,
 	ZIPUnreadable: Unsafe,
 	TarTraversal:  Unsafe, TarAbsolutePath: Unsafe, TarSymlink: Unsafe, TarHardlink: Unsafe,
-	TarDevice: Unsafe, TarBomb: Unsafe, TarUnreadable: Unsafe, GzipBomb: Unsafe,
+	TarDevice: Unsafe, TarBomb: Unsafe, TarUnreadable: Unsafe, GzipBomb: Unsafe, PDFAttachmentBomb: Unsafe,
 	SevenZipTraversal: Unsafe, SevenZipAbsolutePath: Unsafe, SevenZipSymlink: Unsafe,
 	SevenZipHardlink: Unsafe, SevenZipDevice: Unsafe, SevenZipBomb: Unsafe, SevenZipEncrypted: Active,
 	CabTraversal: Unsafe, CabAbsolutePath: Unsafe, CabBomb: Unsafe, ZstdBomb: Unsafe,

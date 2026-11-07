@@ -38,7 +38,8 @@
 //     ratio, against the whole tar's size, and the size, by the size its header declares, as only
 //     a sparse entry or a lying header can be; and a tar whose headers can't all be read, as a
 //     truncated tar's can't. A gzip stream past both by the bytes it decompresses to, which a
-//     stage raises, not Inspect: a gzip declares its expanded size only modulo 4 GiB. A 7z,
+//     stage raises, not Inspect: a gzip declares its expanded size only modulo 4 GiB; and a PDF's
+//     embedded file past both by the bytes it is saved as, which the document stage raises. A 7z,
 //     cabinet, or zstd stream's listing's findings, which [CheckListing] raises: a 7z or cabinet
 //     entry whose name has a ".." element, is absolute, or begins with a drive letter; a 7z entry
 //     that is a symbolic or hard link, or a device, a FIFO, or a socket; a 7z or cabinet entry
@@ -82,7 +83,7 @@
 //     [SVGExternalHref], and [SVGForeignObject]. Of class Unsafe: [ZIPTraversal],
 //     [ZIPAbsolutePath], [ZIPSymlink], [ZIPBomb], and [ZIPUnreadable]; [TarTraversal],
 //     [TarAbsolutePath], [TarSymlink], [TarHardlink], [TarDevice], [TarBomb], and
-//     [TarUnreadable]; [GzipBomb]; and, of a listing, [SevenZipTraversal],
+//     [TarUnreadable]; [GzipBomb]; [PDFAttachmentBomb]; and, of a listing, [SevenZipTraversal],
 //     [SevenZipAbsolutePath], [SevenZipSymlink], [SevenZipHardlink], [SevenZipDevice], and
 //     [SevenZipBomb]; [CabTraversal], [CabAbsolutePath], and [CabBomb]; and [ZstdBomb]. Of class
 //     Active too: [SevenZipEncrypted]. [Checks] lists them, and [ClassOf] returns a check's

@@ -26,6 +26,10 @@ type Spec struct {
 	VersionPattern *regexp.Regexp
 	// Minimum is the oldest version the tool accepts, dotted numbers.
 	Minimum string
+	// VersionExit is the exit code the version command exits with when it prints the version: 0
+	// unless set. poppler's pdfdetach prints its version for -v and exits 99, as it does for its
+	// usage text.
+	VersionExit int
 	// KillAfter is the KillAfter period: how long a cancelled run has to exit after SIGTERM
 	// before SIGKILL ends it; zero or less is 10 s.
 	KillAfter time.Duration
@@ -196,7 +200,11 @@ func (s Spec) minimum(name string) (Version, error) {
 func checkVersion(ctx context.Context, name string, spec Spec, minimum Version, run runFunc) (Version, error) {
 	var out bytes.Buffer
 	verr := &VersionError{Program: name, Minimum: spec.Minimum}
-	if err := run(ctx, Invocation{Args: spec.VersionArgs, Stdout: &out, Stderr: &out}); err != nil {
+	err := run(ctx, Invocation{Args: spec.VersionArgs, Stdout: &out, Stderr: &out})
+	if exit, ok := errors.AsType[*ExitError](err); ok && spec.VersionExit != 0 && exit.Code == spec.VersionExit {
+		err = nil
+	}
+	if err != nil {
 		verr.Err = fmt.Errorf("version command: %w", err)
 		if line := firstLine(out.Bytes()); line != "" {
 			verr.Err = fmt.Errorf("%w: %s", verr.Err, line)

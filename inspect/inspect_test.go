@@ -339,7 +339,7 @@ func TestCancelled(t *testing.T) {
 }
 
 // TestClasses: every check has a class, active or unsafe, and the unsafe ones are the ZIP, tar,
-// gzip, 7z, cabinet, and zstd checks the safety standard names unsafe to read; 7z-encrypted, like
+// gzip, 7z, cabinet, zstd, and PDF attachment bomb checks the safety standard names unsafe to read; 7z-encrypted, like
 // zip-encrypted, is active.
 func TestClasses(t *testing.T) {
 	var unsafe []inspect.Check
@@ -356,7 +356,7 @@ func TestClasses(t *testing.T) {
 		inspect.SevenZipAbsolutePath, inspect.SevenZipBomb, inspect.SevenZipDevice, inspect.SevenZipHardlink,
 		inspect.SevenZipSymlink, inspect.SevenZipTraversal,
 		inspect.CabAbsolutePath, inspect.CabBomb, inspect.CabTraversal,
-		inspect.GzipBomb,
+		inspect.GzipBomb, inspect.PDFAttachmentBomb,
 		inspect.TarAbsolutePath, inspect.TarBomb, inspect.TarDevice, inspect.TarHardlink, inspect.TarSymlink,
 		inspect.TarTraversal, inspect.TarUnreadable,
 		inspect.ZIPAbsolutePath, inspect.ZIPBomb, inspect.ZIPSymlink, inspect.ZIPTraversal, inspect.ZIPUnreadable,

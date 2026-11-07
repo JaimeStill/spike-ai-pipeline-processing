@@ -78,6 +78,14 @@
 //
 //   - [DocumentStage], for route.Document: a PDF's pages through document's Preparer, each
 //     page's text layer a text output and its image a PNG, under the request the caller gives.
+//     Given qpdf, through its [QPDF], a PDF that needs a password ends with [ErrEncrypted],
+//     nothing rendered, one restricted only by its permissions rendering as any other, and a PDF
+//     whose AcroForm has fields yields a "forms" record of them, a document.Form, before its
+//     pages. Given pdfdetach, through its [PDFDetach], each embedded file, the name tree's and
+//     the file attachment annotations', is written under its SHA-256, never its stored name, and
+//     found "attachment <name>", the bomb rule enforced on the bytes written, as the archive
+//     stage enforces it, its check inspect.PDFAttachmentBomb; the media behind a Screen or
+//     Rendition annotation isn't extracted.
 //   - [OfficeStage], for route.Office: office's Markdown, and each medium office wrote, a
 //     converted picture as its PNG, found as a part, an RTF converted to docx first, as a legacy
 //     document is. ODF, WordPerfect, an Excel binary workbook, and a legacy document or an RTF
@@ -176,8 +184,8 @@
 // of its own: a large part is held to the dispatcher's [Limits].
 //
 // A skipped record, a medium or attachment with no content, an archive's entry or a gzip or zstd
-// stream's content the archive stage can't write, and a CLI's warnings are each a record output,
-// never dropped.
+// stream's content the archive stage can't write, a PDF's embedded file the document stage can't
+// write, and a CLI's warnings are each a record output, never dropped.
 // The email and onenote stages place each file they find in a directory of its own, a hard link to
 // the file the CLI wrote, since the CLI writes each distinct content once, named by its SHA-256,
 // for every record that names it, and the dispatcher removes a found part's file once its event is
@@ -328,10 +336,11 @@
 //     [OneNoteStage], [AudioStage], and [VideoStage], made by [NewDocumentStage], [NewOfficeStage],
 //     [NewPictureStage], [NewEmailStage], [NewOneNoteStage], [NewAudioStage], and [NewVideoStage]
 //     over a [DocumentConfig], [OfficeConfig], [PictureConfig], [EmailConfig], [OneNoteConfig],
-//     [AudioConfig], and [VideoConfig]; the audio stage's plan record an [AudioPlan] of
-//     [AudioWindow]s and [AudioSpan]s, and the video stage's a [VideoPlan] of its [VideoWindowing]
-//     and [VideoSampling]; [VisionStage], made by [NewVisionStage]; and [Versions], a stage's
-//     tools' version.
+//     [AudioConfig], and [VideoConfig]; the document stage reading a PDF's structure through its
+//     [QPDF] and its embedded files through its [PDFDetach]; the audio stage's plan record an
+//     [AudioPlan] of [AudioWindow]s and [AudioSpan]s, and the video stage's a [VideoPlan] of its
+//     [VideoWindowing] and [VideoSampling]; [VisionStage], made by [NewVisionStage]; and
+//     [Versions], a stage's tools' version.
 //   - [ArchiveStage], made by [NewArchiveStage] over an [ArchiveConfig], on any platform, reading
 //     7-Zip's kinds through its [SevenZip].
 //   - [TextStage], made by [NewTextStage], on any platform.

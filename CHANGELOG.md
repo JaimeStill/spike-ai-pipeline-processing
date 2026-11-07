@@ -8,6 +8,39 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `document.QPDF`, over qpdf, minimum 11.0 (`QPDFSpec`, `QPDFMinimum`), built by `NewQPDF`.
+  `QPDF.RequiresPassword` asks `qpdf --requires-password`: exit 0 a password is needed, 2 not
+  encrypted, 3 encrypted but opening without one; an exit 2 with qpdf's error, a file it can't
+  open, fails. `QPDF.Form` reads `qpdf --json=2 --json-key=acroform` into a `Form` of `FormField`s:
+  each terminal field's full name, type (`TextField`, `CheckboxField`, `RadioField`,
+  `ChoiceField`, `PushbuttonField`, `SignatureField`, or the PDF's own), and value; a checkbox's
+  or radio group's `Checked`; and a choice's `Options` and `Selected`. A radio group's widgets are
+  one field.
+- `document.Detacher`, over poppler's pdfdetach, minimum 22.02 (`PDFDetachSpec`,
+  `PDFDetachMinimum`), built by `NewDetacher`. `Detacher.List` lists a PDF's embedded files, the
+  name tree's and the file attachment annotations', as `Attachment`s; `Detacher.Save` writes one
+  to the caller's writer through `pdfdetach -save N -o /dev/stdout`, never to its stored name; a
+  number the PDF has none of is `ErrNoAttachment`.
+- `dispatch.DocumentStage`, given qpdf through `DocumentConfig.QPDF`, ends a PDF that needs a
+  password with `ErrEncrypted` before anything is rendered, so it is encrypted with no output; a
+  PDF restricted only by its permissions renders as before. It yields a PDF's AcroForm, when it has
+  fields, as a `forms` record, a `document.Form`, before its pages. Given pdfdetach through
+  `DocumentConfig.PDFDetach`, each embedded file is written under its SHA-256 and found as a part,
+  `attachment <name>`, inspected and routed again; the bomb rule, `DocumentConfig.Inspect`'s
+  thresholds, the ratio against the whole PDF's size, is enforced on the bytes pdfdetach writes,
+  a file past it a record with `inspect.PDFAttachmentBomb`'s evidence, quarantined. The media
+  behind a Screen or Rendition annotation isn't extracted, and XFA is flagged only, as before. A
+  qpdf or pdfdetach failure fails the PDF once its pages are prepared. Without either tool the
+  stage is as before, its identity unchanged; each given changes its configuration's hash.
+- `inspect.PDFAttachmentBomb`, of class Unsafe, which the document stage raises on an embedded
+  file's written bytes, as the archive stage raises `GzipBomb`.
+- `tool.Spec.VersionExit`, the exit code of a version command that exits nonzero having printed
+  the version, as pdfdetach's `-v` exits 99.
+- document's generated AcroForm fixture, `document/testdata/forms/acroform.pdf`, written by hand by
+  `generate.go`, with seven filled fields, text, a checkbox checked and one not, a radio group, a
+  combo box, and a multi-select list box, and qpdf's JSON of it; the forms record is held to its
+  fields exactly. The integration tier reads ~/docs' encrypted, form, and attachment PDFs.
+
 - The `sevenzip` package, the adapter over 7-Zip's 7zz, minimum 24.01 (`SevenZipSpec`,
   `SevenZipMinimum`), which mise pins at 26.05 from ip7z/7zip's GitHub release, its digest checked.
   `NewReader` builds a `Reader` over a `Config` of the Tool, refusing a missing one with

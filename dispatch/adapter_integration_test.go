@@ -13,6 +13,7 @@ import (
 	"github.com/JaimeStill/spike-ai-pipeline-processing/audio"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/dispatch"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/document"
+	"github.com/JaimeStill/spike-ai-pipeline-processing/inspect"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/media"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/office"
 	"github.com/JaimeStill/spike-ai-pipeline-processing/picture"
@@ -23,10 +24,11 @@ import (
 // builtMSG is email's built .msg, attaching a docx, a legacy xls, a TIFF, an EMF, and a .msg.
 var builtMSG = filepath.Join("..", "email", "testdata", "built", "msg", "office-attachments.msg")
 
-// allStages returns every adapter, over this machine's gs, magick, ffmpeg, and ffprobe,
-// LibreOffice through the container runner in its pinned image, and the office, mail, and onenote
-// mise pins (the last two through emailStage and onenoteStage), as a composition root wires them:
-// the document stage reading each page's text layer, and the text stage, which runs no tool.
+// allStages returns every adapter, over this machine's gs, qpdf, pdfdetach, magick, ffmpeg, and
+// ffprobe, LibreOffice through the container runner in its pinned image, and the office, mail,
+// and onenote mise pins (the last two through emailStage and onenoteStage), as a composition root
+// wires them: the document stage reading each page's text layer, and the text stage, which runs
+// no tool.
 func allStages(t *testing.T) dispatch.Stages {
 	t.Helper()
 	gs := pinned(t, document.GhostscriptSpec())
@@ -45,12 +47,7 @@ func allStages(t *testing.T) dispatch.Stages {
 	if err != nil {
 		t.Fatal(err)
 	}
-	docs, err := dispatch.NewDocumentStage(dispatch.DocumentConfig{
-		Preparer: prep, Version: dispatch.Versions(gs), Request: document.ImagesRequest{Text: true},
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	docs := pdfStage(t, prep, gs, inspect.Options{})
 	oc, err := office.NewConverter(t.Context(), office.Config{Office: of, LibreOffice: lo, Magick: mg})
 	if err != nil {
 		t.Fatal(err)
@@ -95,6 +92,30 @@ func allStages(t *testing.T) dispatch.Stages {
 		route.Video:           videos,
 		route.Text:            dispatch.NewTextStage(),
 	}
+}
+
+// pdfStage returns the document stage over prep, whose renderer runs gs, as a composition root
+// wires it: reading each page's text layer, and with this machine's qpdf and pdfdetach, its
+// embedded files held to opts's bomb thresholds.
+func pdfStage(t *testing.T, prep *document.Preparer, gs *tool.Tool, opts inspect.Options) *dispatch.DocumentStage {
+	t.Helper()
+	qt, dt := pinned(t, document.QPDFSpec()), pinned(t, document.PDFDetachSpec())
+	q, err := document.NewQPDF(qt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	detach, err := document.NewDetacher(dt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s, err := dispatch.NewDocumentStage(dispatch.DocumentConfig{
+		Preparer: prep, Version: dispatch.Versions(gs, qt, dt), Request: document.ImagesRequest{Text: true},
+		QPDF: q, PDFDetach: detach, Inspect: opts,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return s
 }
 
 // wantPNG fails the test unless the image output o is a PNG file.

@@ -146,6 +146,32 @@ func TestNewExecFailingVersionCommand(t *testing.T) {
 	}
 }
 
+// TestNewExecVersionExit: a version command that exits with the Spec's VersionExit, as
+// pdfdetach -v exits 99, has printed the version; any other nonzero exit still fails, and a Spec
+// with no VersionExit takes the same command's exit as the failure it is.
+func TestNewExecVersionExit(t *testing.T) {
+	installStandin(t)
+	spec := standinSpec("standin", "", "1.0")
+	spec.VersionArgs = []string{"exit", "99", "standin version 1.2.3"}
+	spec.VersionExit = 99
+	tl, err := tool.NewExec(t.Context(), spec)
+	if err != nil {
+		t.Fatalf("NewExec: %v", err)
+	}
+	if got := tl.Version().String(); got != "1.2.3" {
+		t.Errorf("Version() = %q, want 1.2.3", got)
+	}
+	spec.VersionArgs = []string{"exit", "3", "standin version 1.2.3"}
+	if _, err := tool.NewExec(t.Context(), spec); err == nil {
+		t.Error("a version command exiting 3, not the Spec's 99, was taken")
+	}
+	spec.VersionArgs, spec.VersionExit = []string{"exit", "99", "standin version 1.2.3"}, 0
+	_, err = tool.NewExec(t.Context(), spec)
+	if exitErr, ok := errors.AsType[*tool.ExitError](err); !ok || exitErr.Code != 99 {
+		t.Errorf("a version command exiting 99 under no VersionExit: %v, want its exit error", err)
+	}
+}
+
 // TestNewExecRefusesBadSpec checks that a malformed spec fails as itself, before the program is
 // looked up: the program is missing, and the error still names the spec's defect.
 func TestNewExecRefusesBadSpec(t *testing.T) {

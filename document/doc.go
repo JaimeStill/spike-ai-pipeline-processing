@@ -5,7 +5,8 @@
 // provides pre-inference preparation only; a layer above sends the prepared pages to a model and
 // owns the requests, retries, and any final step. The package builds on Linux only, on the
 // standard library and this module's tool and picture packages; every system tool it runs is a
-// tool.Tool the caller built.
+// tool.Tool the caller built. It also reads what a PDF holds beside its pages, its password
+// requirement, its form fields, and its embedded files, through qpdf and pdfdetach.
 //
 // A Renderer works per page. Count returns a PDF's page count, and Render writes one page, 1-based,
 // as PNG at a DPI to a writer, one process per page. A renderer counts pages with a tool from its
@@ -31,6 +32,19 @@
 // names its corrections, picture.Correction values, and each page's image goes through them in
 // one magick run. Its catalog, Corrections, and Assess, which measures a page image for the
 // defects the corrections fix, are the picture package's too.
+//
+// Two adapters read what a PDF's structure holds beside its pages, each over a tool.Tool the
+// caller built. QPDF, over qpdf, minimum 11.0, the first whose JSON is version 2: RequiresPassword
+// asks qpdf --requires-password whether the PDF needs a password to open, exit 0 yes, 2 not
+// encrypted, 3 encrypted but opening without one, as a PDF restricted only by its permissions
+// does, and an exit 2 with qpdf's error a file it can't open; and Form reads qpdf's JSON of the
+// AcroForm, --json-key=acroform, into a Form, each terminal field's full name, type, and value,
+// a checkbox's or radio group's checked state, and a choice's options and selected values, a
+// radio group's widgets as one field. Detacher, over poppler's pdfdetach, minimum 22.02, whose -v
+// exits 99: List lists the embedded files, the name tree's and the file attachment annotations',
+// not the media behind a Screen or Rendition annotation; and Save writes one file's content to
+// the caller's writer, pdfdetach told to save it to /dev/stdout, so it writes no file and a stored
+// name is only ever a name. Each reads the PDF by its absolute path in the PDF's directory.
 //
 // A Preparer puts the stages together, built at the composition root from a Renderer and,
 // optionally, a picture.Corrector. Images streams a PDF's prepared pages: it spools the PDF, read
@@ -71,4 +85,15 @@
 //     concurrency, text layers, and region.
 //   - [PageImage] is one prepared page's number, the page count, its PNG, and its text layer.
 //   - [Preparer.Images] streams a PDF's prepared pages, in page order.
+//   - [QPDF] reads a PDF's password requirement and AcroForm through qpdf; [NewQPDF] builds one,
+//     [QPDFSpec] declares qpdf, and [QPDFMinimum] is the oldest it accepts, 11.0.
+//   - [QPDF.RequiresPassword] reports whether a PDF needs a password to open.
+//   - [QPDF.Form] reads a PDF's AcroForm into a [Form] of [FormField]s, typed [TextField],
+//     [CheckboxField], [RadioField], [ChoiceField], [PushbuttonField], or [SignatureField].
+//   - [Detacher] lists and saves a PDF's embedded files through pdfdetach; [NewDetacher] builds
+//     one, [PDFDetachSpec] declares pdfdetach, and [PDFDetachMinimum] is the oldest it accepts,
+//     22.02.
+//   - [Detacher.List] lists a PDF's embedded files as [Attachment]s.
+//   - [Detacher.Save] writes one embedded file's content to a writer; [ErrNoAttachment] is the
+//     cause of a number the PDF has no file of.
 package document

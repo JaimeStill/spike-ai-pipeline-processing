@@ -137,19 +137,9 @@ type ArchiveStage struct {
 // NewArchiveStage builds an ArchiveStage over cfg, refusing a negative bomb ratio, a policy
 // inspect refuses, and a SevenZip with no Version.
 func NewArchiveStage(cfg ArchiveConfig) (*ArchiveStage, error) {
-	ratio, size := cfg.Inspect.BombRatio, cfg.Inspect.BombSize
-	if ratio < 0 {
-		return nil, fmt.Errorf("dispatch: archive stage: bomb ratio %g", ratio)
-	}
-	// CheckListing refuses what Inspect refuses; an empty listing checks the options alone.
-	if _, err := inspect.CheckListing(route.Zstd, 0, nil, cfg.Inspect); err != nil {
-		return nil, fmt.Errorf("dispatch: archive stage: %w", err)
-	}
-	if ratio == 0 {
-		ratio = inspect.DefaultBombRatio
-	}
-	if size == 0 {
-		size = inspect.DefaultBombSize
+	ratio, size, err := bombRule("archive stage", cfg.Inspect)
+	if err != nil {
+		return nil, err
 	}
 	if cfg.SevenZip != nil && cfg.Version == "" {
 		return nil, errors.New("dispatch: archive stage: 7-Zip with no version")
@@ -170,6 +160,26 @@ func NewArchiveStage(cfg ArchiveConfig) (*ArchiveStage, error) {
 		ratio: ratio, size: size, opts: cfg.Inspect, sevenZip: cfg.SevenZip,
 		id: Identity{Name: "archive", Version: archiveVersion, Config: hash},
 	}, nil
+}
+
+// bombRule returns the bomb rule's thresholds in opts, inspect's defaults for those unset,
+// refusing a negative ratio and options inspect refuses, for the stage named stage.
+func bombRule(stage string, opts inspect.Options) (ratio float64, size uint64, err error) {
+	ratio, size = opts.BombRatio, opts.BombSize
+	if ratio < 0 {
+		return 0, 0, fmt.Errorf("dispatch: %s: bomb ratio %g", stage, ratio)
+	}
+	// CheckListing refuses what Inspect refuses; an empty listing checks the options alone.
+	if _, err := inspect.CheckListing(route.Zstd, 0, nil, opts); err != nil {
+		return 0, 0, fmt.Errorf("dispatch: %s: %w", stage, err)
+	}
+	if ratio == 0 {
+		ratio = inspect.DefaultBombRatio
+	}
+	if size == 0 {
+		size = inspect.DefaultBombSize
+	}
+	return ratio, size, nil
 }
 
 // Identity returns the stage's identity: "archive", this package's version of it, and a hash of
@@ -211,7 +221,8 @@ func unwritten(where string, rec any, name, reason, check, class, evidence strin
 		meta["check"], meta["class"], meta["evidence"] = check, class, evidence
 	}
 	switch inspect.Check(check) {
-	case inspect.ZIPBomb, inspect.TarBomb, inspect.GzipBomb, inspect.SevenZipBomb, inspect.CabBomb, inspect.ZstdBomb:
+	case inspect.ZIPBomb, inspect.TarBomb, inspect.GzipBomb, inspect.SevenZipBomb, inspect.CabBomb, inspect.ZstdBomb,
+		inspect.PDFAttachmentBomb:
 		meta["outcome"] = string(Quarantined)
 	case inspect.ZIPEncrypted, inspect.SevenZipEncrypted:
 		meta["outcome"] = string(Encrypted)
@@ -242,9 +253,17 @@ func copyFrom(r io.Reader) func(io.Writer) error {
 func (s *ArchiveStage) extract(ctx context.Context, fill func(io.Writer) error, dir string, compressed uint64,
 	whole func(w *bombWriter, fillErr error) error,
 ) (path string, written uint64, why, err error) {
+	return writeBySum(ctx, "archive stage", s.ratio, s.size, fill, dir, compressed, whole)
+}
+
+// writeBySum is extract's writing, for any stage that writes content it reads from a program or
+// a reader under the bomb rule, its thresholds ratio and size, its errors naming stage.
+func writeBySum(ctx context.Context, stage string, ratio float64, size uint64, fill func(io.Writer) error, dir string,
+	compressed uint64, whole func(w *bombWriter, fillErr error) error,
+) (path string, written uint64, why, err error) {
 	tmp, err := os.CreateTemp(dir, "entry-*")
 	if err != nil {
-		return "", 0, nil, fmt.Errorf("archive stage: %w", err)
+		return "", 0, nil, fmt.Errorf("%s: %w", stage, err)
 	}
 	keep := false
 	defer func() {
@@ -254,11 +273,11 @@ func (s *ArchiveStage) extract(ctx context.Context, fill func(io.Writer) error, 
 	}()
 	w := &bombWriter{
 		ctx: ctx, w: tmp, sum: sha256.New(), crc: crc32.NewIEEE(),
-		compressed: max(compressed, 1), ratio: s.ratio, size: s.size,
+		compressed: max(compressed, 1), ratio: ratio, size: size,
 	}
 	fillErr := fill(w)
 	if err := tmp.Close(); err != nil {
-		return "", w.n, nil, fmt.Errorf("archive stage: %w", err)
+		return "", w.n, nil, fmt.Errorf("%s: %w", stage, err)
 	}
 	switch {
 	case ctx.Err() != nil:
@@ -267,7 +286,7 @@ func (s *ArchiveStage) extract(ctx context.Context, fill func(io.Writer) error, 
 	case w.bomb:
 		return "", w.n, errBomb, nil
 	case w.writeErr != nil:
-		return "", w.n, nil, fmt.Errorf("archive stage: %w", w.writeErr)
+		return "", w.n, nil, fmt.Errorf("%s: %w", stage, w.writeErr)
 	}
 	if why := whole(w, fillErr); why != nil {
 		return "", w.n, why, nil
@@ -278,10 +297,10 @@ func (s *ArchiveStage) extract(ctx context.Context, fill func(io.Writer) error, 
 	if _, err := os.Lstat(path); err == nil {
 		return path, w.n, nil, nil
 	} else if !errors.Is(err, fs.ErrNotExist) {
-		return "", w.n, nil, fmt.Errorf("archive stage: %w", err)
+		return "", w.n, nil, fmt.Errorf("%s: %w", stage, err)
 	}
 	if err := os.Rename(tmp.Name(), path); err != nil {
-		return "", w.n, nil, fmt.Errorf("archive stage: %w", err)
+		return "", w.n, nil, fmt.Errorf("%s: %w", stage, err)
 	}
 	keep = true
 	return path, w.n, nil, nil

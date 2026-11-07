@@ -9,7 +9,8 @@ repository's `context/README.md`.
 ## Capability map
 
 - **tools**: the Tool contract, its exec runner and its locked-down container runner (the docker
-  CLI, digest-pinned images), the minimum version check, and cancellation by process group and
+  CLI, digest-pinned images), the minimum version check, a version command's nonzero exit taken
+  where a Spec names it (pdfdetach's -v exits 99), and cancellation by process group and
   docker stop, and a run's CPU usage (no peak memory: the Go parent's shows through).
 - **routes**: package route, content identified by its signature and the stage it goes to next
   named, pure functions on the standard library: document, office, vision, vision-converted, nested,
@@ -22,6 +23,8 @@ repository's `context/README.md`.
   pure functions of its bytes and name: active content flagged and let proceed, content unsafe to
   read (ZIP and tar traversal, absolute paths, links, a tar's devices, bombs by declared sizes)
   quarantined, a caller's policy over either; the dispatcher inspects every part before its stage.
+  A PDF's embedded file past the bomb thresholds as pdfdetach writes it is the document stage's
+  check, pdf-attachment-bomb, raised as a gzip's is, since inspect runs no program.
   CheckListing holds a 7z's, a cabinet's, or a zstd stream's 7-Zip listing to the tar's rules, for
   the archive stage to call before it extracts anything, since inspect runs no program.
 - **pictures**: package picture, TIFF, EMF, WMF, SVG, HEIC, WebP, and AVIF converted to PNG, one
@@ -35,7 +38,14 @@ repository's `context/README.md`.
   package follows.
 - **documents**: pre-inference preparation of a PDF's pages: Ghostscript, the renderer bake-off's
   winner, for page counts, pages and regions as PNG, and text layers; picture's corrections; and
-  Preparer.Images, the lazy, ordered, concurrent page stream over them. Inference is test code: the
+  Preparer.Images, the lazy, ordered, concurrent page stream over them. qpdf, through QPDF, says
+  whether a PDF needs a password (`--requires-password`, exit 0, 2, or 3) and reads its AcroForm
+  (`--json=2 --json-key=acroform`) into typed fields; poppler's pdfdetach, through Detacher, lists
+  a PDF's embedded files and saves one to a writer through `-o /dev/stdout`, never the stored name.
+  The dispatcher's document stage, given them, ends a PDF that needs a password encrypted with
+  nothing rendered, yields a forms record before the pages, and finds each embedded file as a part,
+  "attachment <name>", by its SHA-256 under the bomb rule; each is optional, and without it the
+  stage is as before, its identity unchanged. Inference is test code: the
   vision harness and the bake-off tier, whose results `docs/findings/documents.md` records.
 - **office**: the adapter over spike-ai-pipeline-office's CLI, its JSON model decoded into typed
   schema "1" values or its Markdown, with the media list and office's exit codes as errors; legacy
